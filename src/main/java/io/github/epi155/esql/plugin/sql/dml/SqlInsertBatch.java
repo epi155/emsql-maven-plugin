@@ -1,5 +1,6 @@
 package io.github.epi155.esql.plugin.sql.dml;
 
+import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
@@ -14,7 +15,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,13 +46,13 @@ public class SqlInsertBatch extends SqlAction {
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, Set<String> set) {
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         int iSize = iMap.size();
         if (1<iSize && iSize<=IMAX) {
-            set.add("io.github.epi155.esql.runtime.ESqlInsertBatch"+iSize);
+            cc.add("io.github.epi155.esql.runtime.ESqlInsertBatch"+iSize);
         } else {
-            set.add("io.github.epi155.esql.runtime.ESqlInsertBatch");
+            cc.add("io.github.epi155.esql.runtime.ESqlInsertBatch");
         }
         String cName = Tools.capitalize(name);
         docBegin(ipw);

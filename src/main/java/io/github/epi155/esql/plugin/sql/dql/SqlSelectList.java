@@ -1,5 +1,6 @@
 package io.github.epi155.esql.plugin.sql.dql;
 
+import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
@@ -15,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,9 +49,9 @@ public class SqlSelectList extends SqlAction {
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, Set<String> set) {
-        set.add("java.util.List");
-        set.add("java.util.ArrayList");
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
+        cc.add("java.util.List");
+        cc.add("java.util.ArrayList");
 
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
@@ -64,7 +64,7 @@ public class SqlSelectList extends SqlAction {
         docOutput(ipw, oMap);
         docEnd(ipw);
 
-        ipw.putf("public static ");
+        ipw.printf("public static ");
         declareGenerics(ipw, cName, iSize, oSize);
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getAccess();
@@ -75,19 +75,20 @@ public class SqlSelectList extends SqlAction {
 
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
-        declareOutput(ipw, oSize, set);
+        declareOutput(ipw, oSize, cc);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         ipw.more();
         setInput(ipw, iMap);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
+        debugAction(ipw, kPrg, iMap, cc);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
         ipw.printf("List<O> list = new ArrayList<>();%n");
         ipw.printf("while (rs.next()) {%n");
         ipw.more();
-        fetch(ipw, oMap, set);
+        fetch(ipw, oMap, cc);
         ipw.printf("list.add(o);%n");
         ipw.ends();
         ipw.printf("return list;%n");

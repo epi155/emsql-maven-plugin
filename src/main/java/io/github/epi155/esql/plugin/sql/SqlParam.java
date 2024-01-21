@@ -1,5 +1,6 @@
 package io.github.epi155.esql.plugin.sql;
 
+import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
 import lombok.Data;
@@ -22,28 +23,28 @@ public class SqlParam {
         type.setValue(ipw, k, name);
     }
 
-    public void fetchParameter(IndentPrintWriter ipw, int k, Set<String> set) {
+    public void fetchParameter(IndentPrintWriter ipw, int k, ClassContext cc) {
         String cName = Tools.capitalize(name);
-        type.rsGet(ipw, k, cName, set);
+        type.rsGet(ipw, k, cName, cc);
     }
     public void pullParameter(IndentPrintWriter ipw, Integer k) {
         type.rsPull(ipw, k, name);
     }
 
-    public void fetchValue(IndentPrintWriter ipw, int k, Set<String> set) {
-        type.rsGetValue(ipw, k, set);
+    public void fetchValue(IndentPrintWriter ipw, int k, ClassContext cc) {
+        type.rsGetValue(ipw, k, cc);
     }
 
     public void register(IndentPrintWriter ipw, int k) {
         type.register(ipw, k);
     }
 
-    public void getValue(IndentPrintWriter ipw, int k, Set<String> set) {
-        type.psGetValue(ipw, k, set);
+    public void getValue(IndentPrintWriter ipw, int k, ClassContext cc) {
+        type.psGetValue(ipw, k, cc);
     }
 
-    public void getParameter(IndentPrintWriter ipw, int k, Set<String> set) {
+    public void getParameter(IndentPrintWriter ipw, int k, ClassContext cc) {
         String cName = Tools.capitalize(name);
-        type.psGet(ipw, k, cName, set);
+        type.psGet(ipw, k, cName, cc);
     }
 }

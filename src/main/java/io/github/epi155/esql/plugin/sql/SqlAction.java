@@ -1,5 +1,6 @@
 package io.github.epi155.esql.plugin.sql;
 
+import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
 import lombok.Data;
@@ -26,7 +27,7 @@ public abstract class SqlAction {
 
     public abstract JdbcStatement sql() throws MojoExecutionException;
 
-    public abstract void writeMethod(IndentPrintWriter pw, String methodName, JdbcStatement jdbc, String kPrg, Set<String> set);
+    public abstract void writeMethod(IndentPrintWriter pw, String methodName, JdbcStatement jdbc, String kPrg, ClassContext cc);
 
     protected void declareInput(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap, String cName) {
         int iSize = iMap.size();
@@ -46,7 +47,7 @@ public abstract class SqlAction {
     }
     protected void declareNewInstance(IndentPrintWriter ipw, String eSqlObject, Map<Integer, SqlParam> iMap, String cName) {
         int iSize = iMap.size();
-        ipw.putf("public static ");
+        ipw.printf("public static ");
         declareGenerics(ipw, cName, iSize, 1);
         ipw.putf("%s", eSqlObject);
         if (iSize == 0) {
@@ -91,21 +92,21 @@ public abstract class SqlAction {
             ipw.printf("        I i");
         }
     }
-    protected void declareOutput(IndentPrintWriter ipw, int oSize, Set<String> set) {
+    protected void declareOutput(IndentPrintWriter ipw, int oSize, ClassContext cc) {
         if (oSize > 1) {
             ipw.commaLn();
-            set.add("java.util.function.Supplier");
+            cc.add("java.util.function.Supplier");
             ipw.printf("        Supplier<O> so)%n");
         } else {
             ipw.putf(")%n");
         }
         ipw.printf("        throws SQLException {%n");
     }
-    protected void declareOutputUpdate(IndentPrintWriter ipw, int oSize, String type, Set<String> set) {
+    protected void declareOutputUpdate(IndentPrintWriter ipw, int oSize, String type, ClassContext cc) {
         ipw.commaLn();
-        set.add("java.util.function.Function");
+        cc.add("java.util.function.Function");
         if (oSize > 1) {
-            set.add("java.util.function.Supplier");
+            cc.add("java.util.function.Supplier");
             ipw.printf("        Supplier<O> so,%n");
             ipw.printf("        Function<O,Optional<O>> uo)%n");
         } else {
@@ -113,11 +114,11 @@ public abstract class SqlAction {
         }
         ipw.printf("        throws SQLException {%n");
     }
-    protected void declareOutputUse(IndentPrintWriter ipw, int oSize, String type, Set<String> set) {
+    protected void declareOutputUse(IndentPrintWriter ipw, int oSize, String type, ClassContext cc) {
         ipw.commaLn();
-        set.add("java.util.function.Consumer");
+        cc.add("java.util.function.Consumer");
         if (oSize > 1) {
-            set.add("java.util.function.Supplier");
+            cc.add("java.util.function.Supplier");
             ipw.printf("        Supplier<O> so,%n");
             ipw.printf("        Consumer<O> co)%n");
         } else {
@@ -125,28 +126,28 @@ public abstract class SqlAction {
         }
         ipw.printf("        throws SQLException {%n");
     }
-    protected void fetch(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, Set<String> set) {
+    protected void fetch(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, ClassContext cc) {
         if (oMap.size() > 1) {
             ipw.printf("O o = so.get();%n");
             if (reflect) {
                 oMap.forEach((k,s) -> s.pullParameter(ipw, k));
             } else {
-                oMap.forEach((k,s) -> s.fetchParameter(ipw, k, set));
+                oMap.forEach((k,s) -> s.fetchParameter(ipw, k, cc));
             }
         } else {
-            oMap.forEach((k,v) -> v.fetchValue(ipw, k, set));
+            oMap.forEach((k,v) -> v.fetchValue(ipw, k, cc));
         }
     }
-    protected void getOutput(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, Set<String> set) {
+    protected void getOutput(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, ClassContext cc) {
         if (oMap.size() > 1) {
             ipw.printf("O o = so.get();%n");
 //            if (reflect) {
 //                oMap.forEach((k,s) -> s.pullParameter(ipw, k, set));
 //            } else {
-                oMap.forEach((k,s) -> s.getParameter(ipw, k, set));
+                oMap.forEach((k,s) -> s.getParameter(ipw, k, cc));
 //            }
         } else {
-            oMap.forEach((k,v) -> v.getValue(ipw, k, set)); // once
+            oMap.forEach((k,v) -> v.getValue(ipw, k, cc)); // once
         }
     }
 
@@ -231,7 +232,7 @@ public abstract class SqlAction {
 
     protected void docEnd(IndentPrintWriter ipw) {
         ipw.printf(" * @throws SQLException SQL error%n");
-        ipw.printf("*/%n");
+        ipw.printf(" */%n");
     }
     protected void declareGenerics(IndentPrintWriter ipw, String cName, int iSize, int oSize) {
         if (oSize == 1) {
@@ -258,6 +259,20 @@ public abstract class SqlAction {
                     ipw.putf("<I extends %1$s"+REQUEST+",O extends %1$s" + RESPONSE + "> ", cName);
                 }
             }
+        }
+    }
+    protected void debugAction(IndentPrintWriter ipw, String kPrg, Map<Integer, SqlParam> iMap, ClassContext cc) {
+        if (cc.isDebug()) {
+            ipw.printf("if (log.isDebugEnabled()) {%n");
+            ipw.more();
+            ipw.printf("ESQL.showQuery(Q_%s, () -> {%n", kPrg);
+            ipw.more();
+            ipw.printf("List list = new ArrayList(%d);%n", iMap.size());
+            ipw.printf("// list.add (..) see setInput;%n");
+            ipw.printf("return list;%n");
+            ipw.less();
+            ipw.printf("});%n");
+            ipw.ends();
         }
     }
 

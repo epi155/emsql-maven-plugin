@@ -1,5 +1,6 @@
 package io.github.epi155.esql.plugin.sql;
 
+import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.MojoContext;
 import lombok.Data;
@@ -24,22 +25,19 @@ public class SqlApi {
     private List<SqlMethod> methods;
 
     private static final String DOT_JAVA = ".java";
-    private SortedSet<String> importSet = new TreeSet<>();
 
     public void create(MojoContext cx) throws FileNotFoundException, MojoExecutionException {
         log.info("Creating {} ...", className);
+        ClassContext cc = new ClassContext(cx);
         File srcMainJava = new File(cx.sourceDirectory);
         File pkgFolder = new File(srcMainJava, packageName.replace('.', File.separatorChar));
         File clsFile = new File(pkgFolder, className+DOT_JAVA);
         try (PrintWriter pw = new PrintWriter(clsFile)) {
             Set<String> basket = new HashSet<>();
             writePackage(pw, cx);
-
-            importSet.add("java.sql.*");
-
             StringWriter swCls = new StringWriter();
             IndentPrintWriter ipw = new IndentPrintWriter(4, swCls);
-            classBegin(ipw);
+            classBegin(ipw, cx);
             int kMethod = 0;
             for(val method: methods) {
                 String methodName = method.getMethodName();
@@ -48,15 +46,15 @@ public class SqlApi {
                     log.warn("Duplicate method name {}, skipped", methodName);
                 } else {
                     ipw.println();
-                    /*------------------------------------------*/
-                    writeMethod(ipw, method, ++kMethod, importSet);
-                    /*------------------------------------------*/
+                    /*------------------------------------*/
+                    writeMethod(ipw, method, ++kMethod, cc);
+                    /*------------------------------------*/
                     basket.add(methodName);
                 }
             }
             ipw.ends(); // close class
 
-            importSet.forEach(it -> pw.printf("import %s;%n", it));
+            cc.writeImport(pw);
             pw.println();
 
             pw.print(swCls);
@@ -65,14 +63,17 @@ public class SqlApi {
 
     }
 
-    private void writeMethod(IndentPrintWriter ipw, SqlMethod method, int km, Set<String> set) throws MojoExecutionException {
-        method.writeQuery(ipw, km, set);
+    private void writeMethod(IndentPrintWriter ipw, SqlMethod method, int km, ClassContext cc) throws MojoExecutionException {
+        method.writeQuery(ipw, km, cc);
     }
 
 
-    private void classBegin(IndentPrintWriter pw) {
+    private void classBegin(IndentPrintWriter pw, MojoContext cx) {
         pw.printf("public class %s {%n", className);
         pw.more();
+        if (cx.debug) {
+            pw.printf("private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(%s.class);%n", className);
+        }
         pw.printf("private %s() {}%n", className);
     }
 

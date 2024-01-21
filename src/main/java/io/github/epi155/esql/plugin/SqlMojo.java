@@ -52,6 +52,10 @@ public class SqlMojo extends AbstractMojo {
     @Parameter(required = true)
     private String[] modules;
 
+    @Parameter(defaultValue = "true",
+            property = "maven.esql.debugCode", required = true)
+    private Boolean debugCode;
+
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
     @Parameter(defaultValue = "${plugin}", readonly = true, required = true)
@@ -126,6 +130,7 @@ public class SqlMojo extends AbstractMojo {
                 .group(plugin.getGroupId())
                 .artifact(plugin.getArtifactId())
                 .version(plugin.getVersion())
+                .debug(debugCode)
                 .build();
 
         for (val module : modules) {

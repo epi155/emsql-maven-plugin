@@ -10,4 +10,5 @@ public class MojoContext {
     public final String group;
     public final String artifact;
     public final String version;
+    public final boolean debug;
 }

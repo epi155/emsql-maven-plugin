@@ -1,5 +1,6 @@
 package io.github.epi155.esql.plugin.sql.dml;
 
+import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
@@ -15,7 +16,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +48,7 @@ public class SqlInsertReturningInto extends SqlAction {
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, Set<String> set) {
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
         int iSize = iMap.size();
@@ -60,7 +60,7 @@ public class SqlInsertReturningInto extends SqlAction {
         docOutput(ipw, oMap);
         docEnd(ipw);
 
-        ipw.putf("public static ");
+        ipw.printf("public static ");
         declareGenerics(ipw, cName, iSize, oSize);
         if (oSize == 1) {
             // oMap.get(1) may be NULL, the output parameter is NOT the first one
@@ -71,15 +71,16 @@ public class SqlInsertReturningInto extends SqlAction {
 
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
-        declareOutput(ipw, oSize, set);
+        declareOutput(ipw, oSize, cc);
         ipw.more();
         ipw.printf("try (CallableStatement ps = c.prepareCall(Q_%s)) {%n", kPrg);
         ipw.more();
         setInput(ipw, iMap);
         registerOut(ipw, oMap);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
+        debugAction(ipw, kPrg, iMap, cc);
         ipw.printf("ps.execute();%n");
-        getOutput(ipw, oMap, set);
+        getOutput(ipw, oMap, cc);
         ipw.printf("return o;%n");
         ipw.ends();
         ipw.ends();

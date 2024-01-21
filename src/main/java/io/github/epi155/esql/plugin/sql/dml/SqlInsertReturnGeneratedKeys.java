@@ -1,5 +1,6 @@
 package io.github.epi155.esql.plugin.sql.dml;
 
+import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
@@ -16,7 +17,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,8 +53,8 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction {
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, Set<String> set) {
-        set.add("java.util.Optional");
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
+        cc.add("java.util.Optional");
 
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
@@ -67,7 +67,7 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction {
         docOutput(ipw, oMap);
         docEnd(ipw);
 
-        ipw.putf("public static ");
+        ipw.printf("public static ");
         declareGenerics(ipw, cName, iSize, oSize);
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getAccess();
@@ -78,18 +78,19 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction {
 
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
-        declareOutput(ipw, oSize, set);
+        declareOutput(ipw, oSize, cc);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s, Statement.RETURN_GENERATED_KEYS)) {%n", kPrg);
         ipw.more();
         setInput(ipw, iMap);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
+        debugAction(ipw, kPrg, iMap, cc);
         ipw.printf("ps.executeUpdate();%n");
         ipw.printf("ResultSet rs = ps.getGeneratedKeys();%n");
         ipw.printf("if (rs.next()) {%n");
         ipw.more();
         ipw.printf("if (rs.getMetaData().getColumnType(1) == Types.ROWID) throw new IllegalArgumentException(\"Unsupported operation\");%n");
-        fetch(ipw, oMap, set);
+        fetch(ipw, oMap, cc);
         ipw.printf("return Optional.of(o);%n");
         ipw.ends();
         ipw.printf("return Optional.empty();%n");

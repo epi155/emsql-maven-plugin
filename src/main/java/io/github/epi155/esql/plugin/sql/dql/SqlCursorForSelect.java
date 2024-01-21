@@ -49,17 +49,17 @@ public class SqlCursorForSelect extends SqlAction {
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, Set<String> set) {
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
 
         if (mode == ProgrammingModeEnum.Functional) {
-            writeFunctional(ipw, name, jdbc, kPrg, set);
+            writeFunctional(ipw, name, jdbc, kPrg, cc);
         } else {
-            set.add("io.github.epi155.esql.runtime.ESqlCursor");
-            writeImperative(ipw, name, jdbc, kPrg, set);
+            cc.add("io.github.epi155.esql.runtime.ESqlCursor");
+            writeImperative(ipw, name, jdbc, kPrg, cc);
         }
     }
 
-    private void writeImperative(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, Set<String> set) {
+    private void writeImperative(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
         int iSize = iMap.size();
@@ -71,7 +71,7 @@ public class SqlCursorForSelect extends SqlAction {
         docEnd(ipw);
         String cName = Tools.capitalize(name);
 
-        ipw.putf("public static ");
+        ipw.printf("public static ");
         declareGenerics(ipw, cName, iSize, oSize);
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getAccess();
@@ -82,7 +82,7 @@ public class SqlCursorForSelect extends SqlAction {
 
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
-        declareOutput(ipw, oSize, set);
+        declareOutput(ipw, oSize, cc);
         ipw.more();
         ipw.printf("return new ESqlCursor<>() {%n");
         ipw.more();
@@ -94,6 +94,7 @@ public class SqlCursorForSelect extends SqlAction {
         setInput(ipw, iMap);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
+        debugAction(ipw, kPrg, iMap, cc);
         ipw.printf("this.rs = ps.executeQuery();%n");
         ipw.ends();
         ipw.printf("@Override%n");
@@ -104,7 +105,7 @@ public class SqlCursorForSelect extends SqlAction {
         ipw.printf("@Override%n");
         ipw.printf("public O next() throws SQLException {%n");
         ipw.more();
-        fetch(ipw, oMap, set);
+        fetch(ipw, oMap, cc);
         ipw.printf("return o;%n");
         ipw.ends();
         ipw.printf("@Override%n");
@@ -119,7 +120,7 @@ public class SqlCursorForSelect extends SqlAction {
     }
 
 
-    private void writeFunctional(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, Set<String> set) {
+    private void writeFunctional(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
         int oSize = oMap.size();
@@ -136,7 +137,7 @@ public class SqlCursorForSelect extends SqlAction {
         }
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
-        declareOutputUse(ipw, oSize, oMap.get(1).getType().getAccess(), set);
+        declareOutputUse(ipw, oSize, oMap.get(1).getType().getAccess(), cc);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         ipw.more();
@@ -147,7 +148,7 @@ public class SqlCursorForSelect extends SqlAction {
         ipw.more();
         ipw.printf("while (rs.next()) {%n");
         ipw.more();
-        fetch(ipw, oMap, set);
+        fetch(ipw, oMap, cc);
         ipw.printf("co.accept(o);%n");
         ipw.ends();
         ipw.ends();
