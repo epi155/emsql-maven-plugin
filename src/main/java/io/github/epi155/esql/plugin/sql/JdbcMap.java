@@ -1,4 +1,4 @@
-package io.github.epi155.esql.plugin;
+package io.github.epi155.esql.plugin.sql;
 
 import java.util.Map;
 

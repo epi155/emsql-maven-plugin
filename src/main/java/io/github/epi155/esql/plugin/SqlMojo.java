@@ -1,5 +1,6 @@
 package io.github.epi155.esql.plugin;
 
+import io.github.epi155.esql.plugin.sql.SqlApi;
 import io.github.epi155.esql.plugin.td.TdProgrammingModeEnum;
 import io.github.epi155.esql.plugin.td.TdSqlEnum;
 import io.github.epi155.esql.plugin.td.dml.*;
@@ -98,8 +99,9 @@ public class SqlMojo extends AbstractMojo {
         Yaml apiYaml = new Yaml(c1);
 
         try {
+            /*-----------------*/
             loadSqlApi(apiYaml);
-
+            /*-----------------*/
             setupMavenPaths(generateDirectory);
 
             log.info("Done.");
@@ -136,7 +138,9 @@ public class SqlMojo extends AbstractMojo {
             try (InputStream inputStream = Files.newInputStream(apiFile.toPath())) {
                 SqlApi api = yaml.load(inputStream);
                 makeDirectory(generateDirectory, api.getPackageName());
+                /*----------------*/
                 generateApi(cx, api);
+                /*----------------*/
             }
         }
     }
@@ -146,7 +150,9 @@ public class SqlMojo extends AbstractMojo {
         if (! classLogbook.add(classFullName)) {
             throw new MojoExecutionException("Class <" + classFullName + "> duplicated");
         }
+        /*-----------*/
         api.create(cx);
+        /*-----------*/
     }
 
 public void makeDirectory(@NotNull File base, @Nullable String packg) throws MojoExecutionException {

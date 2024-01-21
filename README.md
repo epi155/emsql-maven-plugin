@@ -103,11 +103,11 @@ where `XProd` is a client class that implements `CercaProdottoResponse` interfac
 
 [3) Plugin parameters details](#3)<br/>
 [4) Configuration YAML details (DQL)](#4)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.1) SelectCount](#41)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2) SelectList](#42)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.3) SelectOptional](#43)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1) SelectCount](#doc/SelectCount.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2) SelectList](#doc/SelectList.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3) SelectOptional](#SelectOptional.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.4) SelectSingle](doc/SelectSingle.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.5) CursorForSelect](#45)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.5) CursorForSelect](#doc/CursorForSelect.md)<br/>
 [5) Configuration YAML details (DML)](#5)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[5.1) Delete](#51)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[5.2) DeleteBatch](#52)<br/>

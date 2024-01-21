@@ -1,5 +1,6 @@
-package io.github.epi155.esql.plugin;
+package io.github.epi155.esql.plugin.sql;
 
+import io.github.epi155.esql.plugin.IndentPrintWriter;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -1227,16 +1228,8 @@ public enum SqlEnum {
     public abstract void register(IndentPrintWriter ipw, int k);
     public abstract void psGetValue(IndentPrintWriter ipw, int k, Set<String> set);
     public abstract void psGet(IndentPrintWriter ipw, int k, String cName, Set<String> set);
-
-    public void rsUpdate(IndentPrintWriter ipw, int k, String cName) {
-    }
-    public void rsUpdateValue(IndentPrintWriter ipw, int k, Set<String> set) {
-    }
-
+    public abstract void rsPull(IndentPrintWriter ipw, Integer k, String name);
     public Collection<String> requires() {
         return Set.of();
     }
-
-    public abstract void rsPull(IndentPrintWriter ipw, Integer k, String name);
-
 }

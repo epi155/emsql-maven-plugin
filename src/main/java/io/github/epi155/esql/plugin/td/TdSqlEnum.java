@@ -1,6 +1,6 @@
 package io.github.epi155.esql.plugin.td;
 
-import io.github.epi155.esql.plugin.SqlEnum;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;

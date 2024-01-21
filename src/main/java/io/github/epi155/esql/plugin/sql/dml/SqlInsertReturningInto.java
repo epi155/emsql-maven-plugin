@@ -1,8 +1,8 @@
 package io.github.epi155.esql.plugin.sql.dml;
 
 import io.github.epi155.esql.plugin.IndentPrintWriter;
-import io.github.epi155.esql.plugin.SqlEnum;
-import io.github.epi155.esql.plugin.SqlParam;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
+import io.github.epi155.esql.plugin.sql.SqlParam;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
@@ -59,15 +59,16 @@ public class SqlInsertReturningInto extends SqlAction {
         docInput(ipw, iMap);
         docOutput(ipw, oMap);
         docEnd(ipw);
-        if (oSize > 1) {
-            ipw.printf("public static <R extends %s"+RESPONSE+"> R %s(%n", cName, name);
+
+        ipw.putf("public static ");
+        declareGenerics(ipw, cName, iSize, oSize);
+        if (oSize == 1) {
+            // oMap.get(1) may be NULL, the output parameter is NOT the first one
+            oMap.forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getRaw(), name));
         } else {
-            if (isReflect() && iSize > IMAX) {
-                oMap.forEach((k,v) -> ipw.printf("public static <T> %s %s(%n", v.getType().getRaw(), name));
-            } else {
-                oMap.forEach((k,v) -> ipw.printf("public static %s %s(%n", v.getType().getRaw(), name));
-            }
+            ipw.putf("O %s(%n", name);
         }
+
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
         declareOutput(ipw, oSize, set);

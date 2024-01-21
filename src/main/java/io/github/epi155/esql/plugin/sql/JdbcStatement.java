@@ -1,7 +1,5 @@
 package io.github.epi155.esql.plugin.sql;
 
-import io.github.epi155.esql.plugin.JdbcMap;
-import io.github.epi155.esql.plugin.SqlParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

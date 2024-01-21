@@ -1,8 +1,8 @@
 package io.github.epi155.esql.plugin.sql.dql;
 
 import io.github.epi155.esql.plugin.IndentPrintWriter;
-import io.github.epi155.esql.plugin.SqlEnum;
-import io.github.epi155.esql.plugin.SqlParam;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
+import io.github.epi155.esql.plugin.sql.SqlParam;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
@@ -48,11 +48,16 @@ public class SqlSelectCount extends SqlAction {
         set.add("io.github.epi155.esql.runtime.ESqlCode");
 
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
+        int iSize = iMap.size();
         String cName = Tools.capitalize(name);
         docBegin(ipw);
         docInput(ipw, iMap);
         docEnd(ipw);
-        ipw.printf("public static long %s(%n", cName, name);
+
+        ipw.putf("public static ");
+        declareGenerics(ipw, cName, iSize, 1);
+        ipw.putf("long %s(%n", name);
+
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
         ipw.closeParenthesisLn();

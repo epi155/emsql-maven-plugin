@@ -1,8 +1,8 @@
 package io.github.epi155.esql.plugin.sql.dml;
 
 import io.github.epi155.esql.plugin.IndentPrintWriter;
-import io.github.epi155.esql.plugin.SqlEnum;
-import io.github.epi155.esql.plugin.SqlParam;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
+import io.github.epi155.esql.plugin.sql.SqlParam;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
@@ -47,10 +47,16 @@ public class SqlUpdate extends SqlAction {
     @Override
     public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, Set<String> set) {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
+        int iSize = iMap.size();
         String cName = Tools.capitalize(name);
         docBegin(ipw);
         docInput(ipw, iMap);
         docEnd(ipw);
+
+        ipw.putf("public static ");
+        declareGenerics(ipw, cName, iSize, 1);
+        ipw.putf("int %s(%n", name);
+
         if (isReflect() && iMap.size() > IMAX) {
             ipw.printf("public static <T> int %s(%n", name);
         } else {

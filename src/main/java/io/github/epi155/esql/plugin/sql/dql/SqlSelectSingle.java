@@ -1,8 +1,8 @@
 package io.github.epi155.esql.plugin.sql.dql;
 
 import io.github.epi155.esql.plugin.IndentPrintWriter;
-import io.github.epi155.esql.plugin.SqlEnum;
-import io.github.epi155.esql.plugin.SqlParam;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
+import io.github.epi155.esql.plugin.sql.SqlParam;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
@@ -53,6 +53,7 @@ public class SqlSelectSingle extends SqlAction {
 
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
+        int iSize = iMap.size();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
@@ -60,15 +61,16 @@ public class SqlSelectSingle extends SqlAction {
         docInput(ipw, iMap);
         docOutput(ipw, oMap);
         docEnd(ipw);
-        if (oSize > 1) {
-            if (isReflect()) {
-                ipw.printf("public static <R> R %s(%n", name);
-            } else {
-                ipw.printf("public static <R extends %s"+RESPONSE+"> R %s(%n", cName, name);
-            }
+
+        ipw.putf("public static ");
+        declareGenerics(ipw, cName, iSize, oSize);
+        if (oSize == 1) {
+            String oType = oMap.get(1).getType().getAccess();
+            ipw.putf("%s %s(%n", oType, name);
         } else {
-            ipw.printf("public static %s %s(%n", oMap.get(1).getType().getAccess(), name);
+            ipw.putf("O %s(%n", name);
         }
+
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
         declareOutput(ipw, oSize, set);

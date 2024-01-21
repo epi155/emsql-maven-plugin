@@ -1,7 +1,7 @@
-package io.github.epi155.esql.plugin;
+package io.github.epi155.esql.plugin.sql;
 
-import io.github.epi155.esql.plugin.sql.JdbcStatement;
-import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.IndentPrintWriter;
+import io.github.epi155.esql.plugin.Tools;
 import lombok.Data;
 import org.apache.maven.plugin.MojoExecutionException;
 

@@ -1,5 +1,7 @@
-package io.github.epi155.esql.plugin;
+package io.github.epi155.esql.plugin.sql;
 
+import io.github.epi155.esql.plugin.IndentPrintWriter;
+import io.github.epi155.esql.plugin.MojoContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -12,10 +14,7 @@ import java.io.StringWriter;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 @Data
 @Slf4j
@@ -33,6 +32,7 @@ public class SqlApi {
         File pkgFolder = new File(srcMainJava, packageName.replace('.', File.separatorChar));
         File clsFile = new File(pkgFolder, className+DOT_JAVA);
         try (PrintWriter pw = new PrintWriter(clsFile)) {
+            Set<String> basket = new HashSet<>();
             writePackage(pw, cx);
 
             importSet.add("java.sql.*");
@@ -42,9 +42,17 @@ public class SqlApi {
             classBegin(ipw);
             int kMethod = 0;
             for(val method: methods) {
-                log.info("- method {} ...", method.getMethodName());
-                ipw.println();
-                writeMethod(ipw, method, ++kMethod, importSet);
+                String methodName = method.getMethodName();
+                log.info("- method {} ...", methodName);
+                if (basket.contains(methodName)) {
+                    log.warn("Duplicate method name {}, skipped", methodName);
+                } else {
+                    ipw.println();
+                    /*------------------------------------------*/
+                    writeMethod(ipw, method, ++kMethod, importSet);
+                    /*------------------------------------------*/
+                    basket.add(methodName);
+                }
             }
             ipw.ends(); // close class
 

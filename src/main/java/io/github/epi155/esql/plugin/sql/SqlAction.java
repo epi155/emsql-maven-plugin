@@ -1,7 +1,6 @@
 package io.github.epi155.esql.plugin.sql;
 
 import io.github.epi155.esql.plugin.IndentPrintWriter;
-import io.github.epi155.esql.plugin.SqlParam;
 import io.github.epi155.esql.plugin.Tools;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,8 +18,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public abstract class SqlAction {
     protected static final int IMAX = 3;
-    protected static final String REQUEST = "Request";
-    protected static final String RESPONSE = "Response";
+    protected static final String REQUEST = "PS";
+    protected static final String RESPONSE = "RS";
     private String query;
     /** seconds */ private Integer timeout;
     /** DO NOT USE, reduces performance by 14% */ private boolean reflect;
@@ -42,16 +41,14 @@ public abstract class SqlAction {
             });
         } else {
             ipw.commaLn();
-            if (reflect) {
-                ipw.printf("        T i", cName);
-            } else {
-                ipw.printf("        %s"+REQUEST+" i", cName);
-            }
+            ipw.printf("        I i", cName);
         }
     }
     protected void declareNewInstance(IndentPrintWriter ipw, String eSqlObject, Map<Integer, SqlParam> iMap, String cName) {
         int iSize = iMap.size();
-        ipw.printf("public static %s", eSqlObject);
+        ipw.putf("public static ");
+        declareGenerics(ipw, cName, iSize, 1);
+        ipw.putf("%s", eSqlObject);
         if (iSize == 0) {
             ipw.putf("<Void>");
         } else if (iSize == 1) {
@@ -59,17 +56,13 @@ public abstract class SqlAction {
         } else if (iSize <= IMAX) {
             ipw.putf("%d<%s>", iSize, iMap.values().stream().map(it -> it.getType().getAccess()).collect(Collectors.joining(", ")));
         } else {
-            if (reflect) {
-                ipw.putf("<T>", cName);
-            } else {
-                ipw.putf("<%s"+REQUEST+">", cName);
-            }
+            ipw.putf("<I>", cName);
         }
         ipw.putf(" new%s(%n", cName);
         ipw.printf("        Connection c)%n", cName);
         ipw.printf("        throws SQLException {%n");
     }
-    protected void declareReturnNew(IndentPrintWriter ipw, String eSqlObject, Map<Integer, SqlParam> iMap, String cName) {
+    protected void declareReturnNew(IndentPrintWriter ipw, String eSqlObject, Map<Integer, SqlParam> iMap, int batchSize) {
         int iSize = iMap.size();
         ipw.printf("return new %s", eSqlObject);
         if (iSize == 0) {
@@ -81,10 +74,10 @@ public abstract class SqlAction {
         } else {
             ipw.putf("<>");
         }
-        ipw.putf("() {%n", cName);
+        ipw.putf("(ps, %d) {%n", batchSize);
     }
 
-    protected void declareInputBatch(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap, String cName) {
+    protected void declareInputBatch(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap) {
         int iSize = iMap.size();
         if (iSize == 1) {
             SqlParam parm = iMap.get(1);
@@ -95,18 +88,14 @@ public abstract class SqlAction {
                 if (k<iSize) ipw.commaLn();
             });
         } else {
-            if (reflect) {
-                ipw.printf("        T i");
-            } else {
-                ipw.printf("        %s"+REQUEST+" i", cName);
-            }
+            ipw.printf("        I i");
         }
     }
     protected void declareOutput(IndentPrintWriter ipw, int oSize, Set<String> set) {
         if (oSize > 1) {
             ipw.commaLn();
             set.add("java.util.function.Supplier");
-            ipw.printf("        Supplier<R> so)%n");
+            ipw.printf("        Supplier<O> so)%n");
         } else {
             ipw.putf(")%n");
         }
@@ -117,8 +106,8 @@ public abstract class SqlAction {
         set.add("java.util.function.Function");
         if (oSize > 1) {
             set.add("java.util.function.Supplier");
-            ipw.printf("        Supplier<R> so,%n");
-            ipw.printf("        Function<R,Optional<R>> uo)%n");
+            ipw.printf("        Supplier<O> so,%n");
+            ipw.printf("        Function<O,Optional<O>> uo)%n");
         } else {
             ipw.printf("        Function<%s,Optional<%1$s>> uo)%n", type);
         }
@@ -129,8 +118,8 @@ public abstract class SqlAction {
         set.add("java.util.function.Consumer");
         if (oSize > 1) {
             set.add("java.util.function.Supplier");
-            ipw.printf("        Supplier<R> so,%n");
-            ipw.printf("        Consumer<R> co)%n");
+            ipw.printf("        Supplier<O> so,%n");
+            ipw.printf("        Consumer<O> co)%n");
         } else {
             ipw.printf("        Consumer<%s> co)%n", type);
         }
@@ -138,9 +127,9 @@ public abstract class SqlAction {
     }
     protected void fetch(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, Set<String> set) {
         if (oMap.size() > 1) {
-            ipw.printf("R o = so.get();%n");
+            ipw.printf("O o = so.get();%n");
             if (reflect) {
-                oMap.forEach((k,s) -> s.pullParameter(ipw, k, set));
+                oMap.forEach((k,s) -> s.pullParameter(ipw, k));
             } else {
                 oMap.forEach((k,s) -> s.fetchParameter(ipw, k, set));
             }
@@ -150,7 +139,7 @@ public abstract class SqlAction {
     }
     protected void getOutput(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, Set<String> set) {
         if (oMap.size() > 1) {
-            ipw.printf("R o = so.get();%n");
+            ipw.printf("O o = so.get();%n");
 //            if (reflect) {
 //                oMap.forEach((k,s) -> s.pullParameter(ipw, k, set));
 //            } else {
@@ -158,15 +147,6 @@ public abstract class SqlAction {
 //            }
         } else {
             oMap.forEach((k,v) -> v.getValue(ipw, k, set)); // once
-        }
-    }
-
-
-    protected void update(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, Set<String> set) {
-        if (oMap.size() > 1) {
-            oMap.forEach((k,s) -> s.updateParameter(ipw, k));
-        } else {
-            oMap.get(1).updateValue(ipw, 1, set);
         }
     }
 
@@ -204,7 +184,7 @@ public abstract class SqlAction {
     public void writeResponse(IndentPrintWriter ipw, String cMethodName, Collection<SqlParam> sp) {
         if (sp.size()<=1) return;
         if (reflect) return;
-        ipw.printf("public interface %sResponse {%n", cMethodName);
+        ipw.printf("public interface %s"+RESPONSE+" {%n", cMethodName);
         ipw.more();
         sp.forEach(p -> {
             String cName = Tools.capitalize(p.getName());
@@ -252,6 +232,33 @@ public abstract class SqlAction {
     protected void docEnd(IndentPrintWriter ipw) {
         ipw.printf(" * @throws SQLException SQL error%n");
         ipw.printf("*/%n");
+    }
+    protected void declareGenerics(IndentPrintWriter ipw, String cName, int iSize, int oSize) {
+        if (oSize == 1) {
+            if (iSize <= IMAX) {
+                // nop
+            } else {
+                if (isReflect()) {
+                    ipw.putf("<I> ");
+                } else {
+                    ipw.putf("<I extends %s"+REQUEST+"> ",cName);
+                }
+            }
+        } else {
+            if (iSize <= IMAX) {
+                if (isReflect()) {
+                    ipw.putf("<O> ");
+                } else {
+                    ipw.putf("<O extends %s" + RESPONSE + "> ", cName);
+                }
+            } else {
+                if (isReflect()) {
+                    ipw.putf("<I,O> ");
+                } else {
+                    ipw.putf("<I extends %1$s"+REQUEST+",O extends %1$s" + RESPONSE + "> ", cName);
+                }
+            }
+        }
     }
 
 }

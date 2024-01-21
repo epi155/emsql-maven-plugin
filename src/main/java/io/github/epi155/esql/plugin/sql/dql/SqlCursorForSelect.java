@@ -3,6 +3,8 @@ package io.github.epi155.esql.plugin.sql.dql;
 import io.github.epi155.esql.plugin.*;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
+import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -60,6 +62,7 @@ public class SqlCursorForSelect extends SqlAction {
     private void writeImperative(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, Set<String> set) {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
+        int iSize = iMap.size();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
@@ -67,15 +70,16 @@ public class SqlCursorForSelect extends SqlAction {
         docOutput(ipw, oMap);
         docEnd(ipw);
         String cName = Tools.capitalize(name);
-        if (oSize > 1) {
-            if (isReflect()) {
-                ipw.printf("public static <R> ESqlCursor<R> open%1$s(%n", cName);
-            } else {
-                ipw.printf("public static <R extends %s"+RESPONSE+"> ESqlCursor<R> open%1$s(%n", cName);
-            }
+
+        ipw.putf("public static ");
+        declareGenerics(ipw, cName, iSize, oSize);
+        if (oSize == 1) {
+            String oType = oMap.get(1).getType().getAccess();
+            ipw.putf("ESqlCursor<%s> open%s(%n", oType, cName);
         } else {
-            ipw.printf("public static ESqlCursor<%s> open%s(%n", oMap.get(1).getType().getAccess(), cName);
+            ipw.putf("ESqlCursor<O> open%s(%n", cName);
         }
+
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
         declareOutput(ipw, oSize, set);
@@ -98,7 +102,7 @@ public class SqlCursorForSelect extends SqlAction {
         ipw.printf("return rs.next();%n");
         ipw.ends();
         ipw.printf("@Override%n");
-        ipw.printf("public R next() throws SQLException {%n");
+        ipw.printf("public O next() throws SQLException {%n");
         ipw.more();
         fetch(ipw, oMap, set);
         ipw.printf("return o;%n");
@@ -126,7 +130,7 @@ public class SqlCursorForSelect extends SqlAction {
         docOutputUse(ipw, oMap);
         docEnd(ipw);
         if (oSize > 1) {
-            ipw.printf("public static <R extends %s"+RESPONSE+"> void loop%1$s(%n", cName);
+            ipw.printf("public static <O extends %s"+RESPONSE+"> void loop%1$s(%n", cName);
         } else {
             ipw.printf("public static void loop%s(%n", oMap.get(1).getType().getAccess(), cName);
         }

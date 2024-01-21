@@ -1,11 +1,11 @@
-## SelectSingle 
+## <a id="44">4.4. SelectSingle</a>
 
 
 Template example
 
 ~~~yaml
 methods:
-  - methodName: MyMethod
+  - methodName: myMethod
     perform: !SelectSingle
       inFields:       # optional, input parameters
         dsPrd: VarChar
@@ -29,4 +29,15 @@ methods:
           :idUni
         from C03_PRODOTTO
         where ds_prd like :dsPrd
+~~~
+
+Generated DAO code (metod body omitted)
+
+~~~java
+    public static <R extends MyMethodResponse> R myMethod(
+            Connection c,
+            String dsPrd,
+            Supplier<R> so)
+            throws SQLException ;
+
 ~~~
