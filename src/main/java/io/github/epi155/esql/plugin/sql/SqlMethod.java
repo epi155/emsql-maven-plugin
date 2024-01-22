@@ -25,8 +25,8 @@ public class SqlMethod {
         /*-------------------------------------------------*/
 
         String cName = Tools.capitalize(methodName);
-        perform.writeRequest(ipw, cName, jdbc.getIMap().values());
-        perform.writeResponse(ipw, cName, jdbc.getOMap().values());
+        perform.writeRequest(ipw, cName, cc, jdbc.getIMap().values());
+        perform.writeResponse(ipw, cName, cc, jdbc.getOMap().values());
 
         if (perform.isReflect()) {
             cc.add("io.github.epi155.esql.runtime.ESQL");

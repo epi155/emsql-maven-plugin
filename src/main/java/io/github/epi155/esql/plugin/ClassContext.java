@@ -17,8 +17,6 @@ public class ClassContext {
         importSet.add("java.sql.*");
         if (debug) {
             importSet.add("io.github.epi155.esql.runtime.ESQL");
-            importSet.add("java.util.List");
-            importSet.add("java.util.ArrayList");
         }
     }
 

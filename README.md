@@ -13,7 +13,7 @@ Configuration plugin example:
 <plugin>
     <groupId>io.github.epi155</groupId>
     <artifactId>esql-maven-plugin</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <executions>
         <execution>
             <goals>
@@ -87,7 +87,7 @@ Generated code requires dependencies
         <dependency>
             <groupId>io.github.epi155</groupId>
             <artifactId>esql-runtime</artifactId>
-            <version>0.5.0-SNAPSHOT</version>
+            <version>0.1-SNAPSHOT</version>
         </dependency>
 ~~~
 
@@ -102,12 +102,12 @@ where `XProd` is a client class that implements `CercaProdottoResponse` interfac
 
 
 [3) Plugin parameters details](#3)<br/>
-[4) Configuration YAML details (DQL)](#4)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.1) SelectCount](#doc/SelectCount.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2) SelectList](#doc/SelectList.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.3) SelectOptional](#SelectOptional.md)<br/>
+[4) Configuration YAML details (DQL)](doc/ConfigYaml.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1) SelectCount](doc/SelectCount.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2) SelectList](doc/SelectList.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3) SelectOptional](doc/SelectOptional.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.4) SelectSingle](doc/SelectSingle.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.5) CursorForSelect](#doc/CursorForSelect.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.5) CursorForSelect](doc/CursorForSelect.md)<br/>
 [5) Configuration YAML details (DML)](#5)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[5.1) Delete](#51)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[5.2) DeleteBatch](#52)<br/>

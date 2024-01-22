@@ -11,13 +11,13 @@ import java.util.Set;
 public enum SqlEnum {
     BooleanStd {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("ps.setBoolean(%d, i.get%s());%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setBoolean(%d, %s);%n", k, source);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(rs.getBoolean(%d));%n", cName, k);
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getBoolean(%d));%n", target, k);
         }
 
         @Override
@@ -67,14 +67,14 @@ public enum SqlEnum {
     },
     BooleanNil {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("{ Boolean it = i.get%s(); if (it==null) ps.setNull(%2$d, Types.BOOLEAN); else ps.setBoolean(%2$d, it); }%n", cName, k);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("{ Boolean it = %s; if (it==null) ps.setNull(%2$d, Types.BOOLEAN); else ps.setBoolean(%2$d, it); }%n", source, k);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
             cc.add("io.github.epi155.esql.runtime.ESQL");
-            ipw.printf("o.set%s(ESQL.box(rs.getBoolean(%d), rs.wasNull()));%n", cName, k);
+            ipw.printf("%s(ESQL.box(rs.getBoolean(%d), rs.wasNull()));%n", target, k);
         }
 
         @Override
@@ -132,8 +132,8 @@ public enum SqlEnum {
     },
     ShortStd {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("ps.setShort(%d, i.get%s());%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setShort(%d, %s);%n", k, source);
         }
 
         @Override
@@ -188,14 +188,14 @@ public enum SqlEnum {
     },
     ShortNil {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("{ Short it = i.get%s(); if (it==null) ps.setNull(%2$d, Types.SMALLINT); else ps.setShort(%2$d, it); }%n", cName, k);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("{ Short it = %s; if (it==null) ps.setNull(%2$d, Types.SMALLINT); else ps.setShort(%2$d, it); }%n", source, k);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
             cc.add("io.github.epi155.esql.runtime.ESQL");
-            ipw.printf("o.set%s(ESQL.box(rs.getShort(%d), rs.wasNull()));%n", cName, k);
+            ipw.printf("%s(ESQL.box(rs.getShort(%d), rs.wasNull()));%n", target, k);
         }
 
         @Override
@@ -253,8 +253,8 @@ public enum SqlEnum {
     },
     IntegerStd {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("ps.setInt(%d, i.get%s());%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setInt(%d, %s);%n", k, source);
         }
 
         @Override
@@ -283,8 +283,8 @@ public enum SqlEnum {
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(rs.getInt(%d));%n", cName, k);
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getInt(%d));%n", target, k);
         }
 
         @Override
@@ -309,8 +309,8 @@ public enum SqlEnum {
     },
     IntegerNil {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("{ Integer it = i.get%s(); if (it==null) ps.setNull(%2$d, Types.INTEGER); else ps.setInt(%2$d, it); }%n", cName, k);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("{ Integer it = %s; if (it==null) ps.setNull(%2$d, Types.INTEGER); else ps.setInt(%2$d, it); }%n", source, k);
         }
         @Override
         public void psPush(IndentPrintWriter ipw, int k, String name) {
@@ -340,9 +340,9 @@ public enum SqlEnum {
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
             cc.add("io.github.epi155.esql.runtime.ESQL");
-            ipw.printf("o.set%s(ESQL.box(rs.getInt(%d), rs.wasNull()));%n", cName, k);
+            ipw.printf("%s(ESQL.box(rs.getInt(%d), rs.wasNull()));%n", target, k);
         }
 
         @Override
@@ -373,13 +373,13 @@ public enum SqlEnum {
     },
     LongStd {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("ps.setLong(%d, i.get%s());%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setLong(%d, %s);%n", k, source);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(rs.getLong(%d));%n", cName, k);
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getLong(%d));%n", target, k);
         }
 
         @Override
@@ -429,14 +429,14 @@ public enum SqlEnum {
     },
     LongNil {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("{ Long it = i.get%s(); if (it==null) ps.setNull(%2$d, Types.BIGINT); else ps.setLong(%2$d, it); }%n", cName, k);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("{ Long it = %s; if (it==null) ps.setNull(%2$d, Types.BIGINT); else ps.setLong(%2$d, it); }%n", source, k);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
             cc.add("io.github.epi155.esql.runtime.ESQL");
-            ipw.printf("o.set%s(ESQL.box(rs.getLong(%d), rs.wasNull()));%n", cName, k);
+            ipw.printf("%s(ESQL.box(rs.getLong(%d), rs.wasNull()));%n", target, k);
         }
 
         @Override
@@ -494,8 +494,8 @@ public enum SqlEnum {
     },
     VarCharStd {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("ps.setString(%d, i.get%s());%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setString(%d, %s);%n", k, source);
         }
 
         @Override
@@ -524,8 +524,8 @@ public enum SqlEnum {
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(rs.getString(%d));%n", cName, k);
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getString(%d));%n", target, k);
         }
 
         @Override
@@ -550,8 +550,8 @@ public enum SqlEnum {
     },
     VarCharNil {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("{ String it = i.get%s(); if (it==null) ps.setNull(%2$d, Types.VARCHAR); else ps.setString(%2$d, it); }%n", cName, k);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("{ String it = %s; if (it==null) ps.setNull(%2$d, Types.VARCHAR); else ps.setString(%2$d, it); }%n", source, k);
         }
         @Override
         public void psPush(IndentPrintWriter ipw, int k, String name) {
@@ -610,13 +610,13 @@ public enum SqlEnum {
     },
     DateStd {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("ps.setDate(%d, i.get%s());%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setDate(%d, %s);%n", k, source);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(rs.getDate(%d));%n", cName, k);
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getDate(%d));%n", target, k);
         }
 
         @Override
@@ -666,13 +666,13 @@ public enum SqlEnum {
     },
     DateNil {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("{ Date it = i.get%s(); if (it==null) ps.setNull(%2$d, Types.DATE); else ps.setDate(%2$d, it); }%n", cName, k);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("{ Date it = %s; if (it==null) ps.setNull(%2$d, Types.DATE); else ps.setDate(%2$d, it); }%n", source, k);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(rs.getDate(%d));%n", cName, k);
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getDate(%d));%n", target, k);
         }
 
         @Override
@@ -727,13 +727,13 @@ public enum SqlEnum {
     },
     TimestampStd {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("ps.setTimestamp(%d, i.get%s());%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setTimestamp(%d, %s);%n", k, source);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(rs.getTimestamp(%d));%n", cName, k);
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getTimestamp(%d));%n", target, k);
         }
 
         @Override
@@ -783,8 +783,8 @@ public enum SqlEnum {
     },
     TimestampNil {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("{ Timestamp it = i.get%s(); if (it==null) ps.setNull(%2$d, Types.TIMESTAMP); else ps.setTimestamp(%2$d, it); }%n", cName, k);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("{ Timestamp it = %s; if (it==null) ps.setNull(%2$d, Types.TIMESTAMP); else ps.setTimestamp(%2$d, it); }%n", source, k);
         }
 
         @Override
@@ -844,13 +844,13 @@ public enum SqlEnum {
     },
     NumericStd {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("ps.setBigDecimal(%d, i.get%s());%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setBigDecimal(%d, %s);%n", k, source);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(rs.getBigDecimal(%d));%n", cName, k);
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getBigDecimal(%d));%n", target, k);
         }
 
         @Override
@@ -905,8 +905,8 @@ public enum SqlEnum {
     },
     NumericNil {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("{ BigDecimal it = i.get%s(); if (it==null) ps.setNull(%2$d, Types.NUMERIC); else ps.setBigDecimal(%2$d, it); }%n", cName, k);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("{ BigDecimal it = %s; if (it==null) ps.setNull(%2$d, Types.NUMERIC); else ps.setBigDecimal(%2$d, it); }%n", source, k);
         }
 
         @Override
@@ -971,13 +971,13 @@ public enum SqlEnum {
     },
     LocalDateStd {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("ps.setDate(%d, Date.valueOf(i.get%s()));%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setDate(%d, Date.valueOf(%s));%n", k, source);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(rs.getDate(%d).toLocalDate());%n", cName, k);
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getDate(%d).toLocalDate());%n", target, k);
         }
 
         @Override
@@ -1031,14 +1031,14 @@ public enum SqlEnum {
     },
     LocalDateNil {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("{ LocalDate it = i.get%s(); if (it==null) ps.setNull(%2$d, Types.DATE); else ps.setDate(%2$d, Date.valueOf(it)); }%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("{ LocalDate it = %s; if (it==null) ps.setNull(%2$d, Types.DATE); else ps.setDate(%2$d, Date.valueOf(it)); }%n", k, source);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
             cc.add("io.github.epi155.esql.runtime.ESQL");
-            ipw.printf("o.set%s(ESQL.toLocalDate(rs.getDate(%d)));%n", cName, k);
+            ipw.printf("%s(ESQL.toLocalDate(rs.getDate(%d)));%n", target, k);
         }
 
         @Override
@@ -1096,13 +1096,13 @@ public enum SqlEnum {
     },
     LocalDateTimeStd {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("ps.setTimestamp(%d, Timestamp.valueOf(i.get%s()));%n", k, cName);
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setTimestamp(%d, Timestamp.valueOf(%s));%n", k, source);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(rs.getTimestamp(%d).toLocalDateTime());%n", cName, k);
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getTimestamp(%d).toLocalDateTime());%n", target, k);
         }
 
         @Override
@@ -1156,14 +1156,14 @@ public enum SqlEnum {
     },
     LocalDateTimeNil {
         @Override
-        public void psSet(IndentPrintWriter ipw, int k, String cName) {
-            ipw.printf("{ LocalDateTime it = i.get%s(); if (it==null) ps.setNull(%2$d, Types.TIMESTAMP); else ps.setTimestamp(%2$d, Timestamp.valueOf(it)); }%n", cName, k);
+        public void psSet(IndentPrintWriter ipw, int k, String so) {
+            ipw.printf("{ LocalDateTime it = %s; if (it==null) ps.setNull(%2$d, Types.TIMESTAMP); else ps.setTimestamp(%2$d, Timestamp.valueOf(it)); }%n", so, k);
         }
 
         @Override
-        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
             cc.add("io.github.epi155.esql.runtime.ESQL");
-            ipw.printf("o.set%s(ESQL.toLocalDateTime(rs.getTimestamp(%d)));%n", cName, k);
+            ipw.printf("%s(ESQL.toLocalDateTime(rs.getTimestamp(%d)));%n", target, k);
         }
 
         @Override
@@ -1219,8 +1219,8 @@ public enum SqlEnum {
             ipw.printf("ESQL.set(o, \"%s\", ESQL.toLocalDateTime(ps.getTimestamp(%d)));%n", name, k);
         }
     };
-    public abstract void psSet(IndentPrintWriter ipw, int k, String cName);
-    public abstract void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc);
+    public abstract void psSet(IndentPrintWriter ipw, int k, String source);
+    public abstract void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc);
     public abstract String getRaw();
     public abstract String getAccess();
     public abstract void setValue(IndentPrintWriter ipw, int k, String name);
