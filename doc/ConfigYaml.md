@@ -7,10 +7,21 @@ methods:      # List<SqlMethod>
   - methodName:   # String
     perform:      # SqlAction
       timeout:        # Integer (seconds)
-      reflect:        # boolean
-      delegate:       # boolean
-      # fields depending on SqlAction template
+      input:
+        reflect:        # boolean
+        delegate:       # boolean
+        fields:			# Map<String, SqlEnum>
+          fieldName: fieldTYpe
+      output:
+        reflect:        # boolean
+        delegate:       # boolean
+        fields:			# Map<String, SqlEnum>
+          fieldName: fieldTYpe?
 ~~~
+
+`fieldName` are case-sensitive, `fieldType` are case-insensitive, the question 
+mark after the data type indicates that the field is nullable in the database 
+(kotlin style).
 
 In the default configuration the plugin, in addition to the DAO that executes 
 the query, generates the input interface with getters and the output interface 
@@ -44,9 +55,13 @@ The delegate flag replaces the creation of DTO interfaces with direct getters
 and setters, with DTO classes with indirect getters and setters.
 
 The getters of the delegated DAO class do not return the field values, but the 
-pointers of the getters to call to retrieve the field values.
+pointers (method references) of the getters to call to retrieve the field values.
 The setters of the generated DAO class do not contain the values of the fields, 
-but pointers to the setters to use to set the fields.
+but pointers (method references) to the setters to use to set the fields.
 
 In addition to the delegated DTO class, a builder is generated to facilitate 
 setting the getter and setter pointers
+
+Of course it makes no sense to use a delegated DAO class when the output is a 
+list of objects, the value taken from the resultSet is always put on the same 
+object

@@ -1,20 +1,18 @@
 package io.github.epi155.esql.plugin.sql.dml;
 
 import io.github.epi155.esql.plugin.ClassContext;
+import io.github.epi155.esql.plugin.ComAreaStd;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
-import io.github.epi155.esql.plugin.sql.SqlEnum;
-import io.github.epi155.esql.plugin.sql.SqlParam;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,8 +22,8 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class SqlInsertReturningInto extends SqlAction {
-    private Map<String, SqlEnum> inFields = new HashMap<>();
-    private Map<String, SqlEnum> outFields = new LinkedHashMap<>();
+    private ComAreaStd input;
+    private ComAreaStd output;
 
     private static final String tmpl =
             "^INSERT INTO (\\w+) [(](.*)[)] VALUES [(](.*)[)] RETURNING (.*) INTO (.*)$";
@@ -41,7 +39,7 @@ public class SqlInsertReturningInto extends SqlAction {
             String oCols  = m.group(4).trim();
             String oParms = m.group(5).trim();
             String oText = "BEGIN INSERT INTO "+sTable+" ( "+iCols+" ) VALUES ( "+iParms+" ) RETURNING "+oCols + " INTO " + oParms + " ; END;";
-            return Tools.replacePlaceholder(oText, inFields, outFields);
+            return Tools.replacePlaceholder(oText, input.getFields(), output.getFields());
         } else {
             throw new MojoExecutionException("Invalid query format: "+ getQuery());
         }

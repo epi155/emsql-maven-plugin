@@ -3,7 +3,6 @@ package io.github.epi155.esql.plugin.sql.dql;
 import io.github.epi155.esql.plugin.*;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
-import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,9 +11,7 @@ import lombok.experimental.SuperBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,8 +20,8 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class SqlCursorForSelect extends SqlAction {
-    private Map<String, SqlEnum> inFields = new HashMap<>();
-    private Map<String, SqlEnum> outFields = new HashMap<>();
+    private ComAreaStd input;
+    private ComAreaStd output;
     private Integer fetchSize;
     private ProgrammingModeEnum mode = ProgrammingModeEnum.Imperative;
 
@@ -40,8 +37,8 @@ public class SqlCursorForSelect extends SqlAction {
             String sInto = m.group(3);
             String sTables = m.group(4);
             String oText = "SELECT " + sFld + " FROM " + sTables;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, inFields);
-            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, outFields);
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, input);
+            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, output.getFields());
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {
             throw new MojoExecutionException("Invalid query format: "+ getQuery());
@@ -54,7 +51,6 @@ public class SqlCursorForSelect extends SqlAction {
         if (mode == ProgrammingModeEnum.Functional) {
             writeFunctional(ipw, name, jdbc, kPrg, cc);
         } else {
-            cc.add("io.github.epi155.esql.runtime.ESqlCursor");
             writeImperative(ipw, name, jdbc, kPrg, cc);
         }
     }
@@ -77,14 +73,24 @@ public class SqlCursorForSelect extends SqlAction {
             String oType = oMap.get(1).getType().getAccess();
             ipw.putf("ESqlCursor<%s> open%s(%n", oType, cName);
         } else {
-            ipw.putf("ESqlCursor<O> open%s(%n", cName);
+            if (output.isDelegate()) {
+                cc.add("io.github.epi155.esql.runtime.ESqlDelegateCursor");
+                ipw.putf("ESqlDelegateCursor open%s(%n", cName);
+            } else {
+                cc.add("io.github.epi155.esql.runtime.ESqlCursor");
+                ipw.putf("ESqlCursor<O> open%s(%n", cName);
+            }
         }
 
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
         declareOutput(ipw, oSize, cc);
         ipw.more();
-        ipw.printf("return new ESqlCursor<>() {%n");
+        if (output.isDelegate()) {
+            ipw.printf("return new ESqlDelegateCursor() {%n");
+        } else {
+            ipw.printf("return new ESqlCursor<>() {%n");
+        }
         ipw.more();
         ipw.printf("private final ResultSet rs;%n");
         ipw.printf("private final PreparedStatement ps;%n");
@@ -103,10 +109,15 @@ public class SqlCursorForSelect extends SqlAction {
         ipw.printf("return rs.next();%n");
         ipw.ends();
         ipw.printf("@Override%n");
-        ipw.printf("public O next() throws SQLException {%n");
+        if (output.isDelegate()) {
+            ipw.printf("public void next() throws SQLException {%n");
+        } else {
+            ipw.printf("public O next() throws SQLException {%n");
+        }
         ipw.more();
         fetch(ipw, oMap, cc);
-        ipw.printf("return o;%n");
+        if (!output.isDelegate())
+            ipw.printf("return o;%n");
         ipw.ends();
         ipw.printf("@Override%n");
         ipw.printf("public void close() throws SQLException {%n");
@@ -131,7 +142,11 @@ public class SqlCursorForSelect extends SqlAction {
         docOutputUse(ipw, oMap);
         docEnd(ipw);
         if (oSize > 1) {
-            ipw.printf("public static <O extends %s"+RESPONSE+"> void loop%1$s(%n", cName);
+            if (output.isDelegate()) {
+                ipw.printf("public static <DO extends Delegate%s"+RESPONSE+"> void loop%1$s(%n", cName);
+            } else {
+                ipw.printf("public static <O extends %s"+RESPONSE+"> void loop%1$s(%n", cName);
+            }
         } else {
             ipw.printf("public static void loop%s(%n", oMap.get(1).getType().getAccess(), cName);
         }
@@ -149,7 +164,11 @@ public class SqlCursorForSelect extends SqlAction {
         ipw.printf("while (rs.next()) {%n");
         ipw.more();
         fetch(ipw, oMap, cc);
-        ipw.printf("co.accept(o);%n");
+        if (output.isDelegate()) {
+            ipw.printf("co.run();%n");
+        } else {
+            ipw.printf("co.accept(o);%n");
+        }
         ipw.ends();
         ipw.ends();
         ipw.ends();

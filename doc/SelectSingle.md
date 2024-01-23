@@ -7,15 +7,20 @@ Template example
 methods:
   - methodName: myMethod
     perform: !SelectSingle
-      inFields:       # optional, input parameters
-        dsPrd: VarChar
-      outFields:      # required, output parameters
-        idPrd: Int
-        idCat: Int?
-        idSco: Int?
-        idUni: Int
+      input:
+        reflect: false    # optional, default false
+        delegate: false   # optional, default false
+        fields:           # optional, input parameters
+          dsPrd: VarChar
+      output:
+        reflect: false    # optional, default false
+        delegate: false   # optional, default false
+        fields:           # required, output parameters
+          idPrd: Int
+          idCat: Int?
+          idSco: Int?
+          idUni: Int
       timeout: 0      # (seconds) optional, default null (system default)
-      reflect: false  # optional, default false
       query: |
         select 
           id_prd,
@@ -31,13 +36,13 @@ methods:
         where ds_prd like :dsPrd
 ~~~
 
-Generated DAO code (metod body omitted)
+Generated DAO code (method body omitted)
 
 ~~~java
-    public static <R extends MyMethodResponse> R myMethod(
+    public static <O extends MyMethodResponse> O myMethod(
             Connection c,
             String dsPrd,
-            Supplier<R> so)
+            Supplier<O> so)
             throws SQLException ;
 
 ~~~

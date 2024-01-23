@@ -1,19 +1,18 @@
 package io.github.epi155.esql.plugin.sql.dml;
 
 import io.github.epi155.esql.plugin.ClassContext;
+import io.github.epi155.esql.plugin.ComAreaStd;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
-import io.github.epi155.esql.plugin.sql.SqlEnum;
-import io.github.epi155.esql.plugin.sql.SqlParam;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +22,7 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class SqlInsert extends SqlAction {
-    private Map<String, SqlEnum> inFields = new HashMap<>();
+    private ComAreaStd input;
 
     private static final String tmpl =
             "^INSERT INTO (\\w+) [(](.*)[)] VALUES [(](.*)[)]$";
@@ -37,7 +36,7 @@ public class SqlInsert extends SqlAction {
             String sCols  = m.group(2).trim();
             String sParms = m.group(3).trim();
             String oText = "INSERT INTO "+sTable+" ( "+sCols+" ) VALUES ( "+sParms+" )";
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, inFields);
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, input);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), Map.of());
         } else {
             throw new MojoExecutionException("Invalid query format: "+ getQuery());

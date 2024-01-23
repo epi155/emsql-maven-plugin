@@ -1,12 +1,12 @@
 package io.github.epi155.esql.plugin.sql.dql;
 
 import io.github.epi155.esql.plugin.ClassContext;
+import io.github.epi155.esql.plugin.ComAreaStd;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
-import io.github.epi155.esql.plugin.sql.SqlEnum;
-import io.github.epi155.esql.plugin.sql.SqlParam;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,6 @@ import lombok.experimental.SuperBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,8 +23,8 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class SqlSelectSingle extends SqlAction {
-    private Map<String, SqlEnum> inFields = new HashMap<>();
-    private Map<String, SqlEnum> outFields = new HashMap<>();
+    private ComAreaStd input;
+    private ComAreaStd output;
 
     private static final String tmpl =
             "^SELECT (.*) (INTO (.*)) FROM (.*)$";
@@ -39,8 +38,8 @@ public class SqlSelectSingle extends SqlAction {
             String sInto = m.group(3);
             String sTables = m.group(4);
             String oText = "SELECT " + sFld + " FROM " + sTables;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, inFields);
-            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, outFields);
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, input);
+            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, output.getFields());
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {
             throw new MojoExecutionException("Invalid query format: "+ getQuery());
@@ -68,7 +67,11 @@ public class SqlSelectSingle extends SqlAction {
             String oType = oMap.get(1).getType().getAccess();
             ipw.putf("%s %s(%n", oType, name);
         } else {
-            ipw.putf("O %s(%n", name);
+            if (output.isDelegate()) {
+                ipw.putf("void %s(%n", name);
+            } else {
+                ipw.putf("O %s(%n", name);
+            }
         }
 
         ipw.printf("        Connection c");
@@ -89,8 +92,10 @@ public class SqlSelectSingle extends SqlAction {
         ipw.printf("if (rs.next()) {%n");
         ipw.more();
         ipw.printf("throw ESqlCode.N811.getInstance();%n");
-        ipw.orElse();
-        ipw.printf("return o;%n");
+        if (oSize==1 || !output.isDelegate()) {
+            ipw.orElse();
+            ipw.printf("return o;%n");
+        }
         ipw.ends();
         ipw.orElse();
         ipw.printf("throw ESqlCode.P100.getInstance();%n");

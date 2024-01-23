@@ -1,6 +1,7 @@
 package io.github.epi155.esql.plugin.sql;
 
 import io.github.epi155.esql.plugin.ClassContext;
+import io.github.epi155.esql.plugin.ComAttribute;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
 import lombok.Data;
@@ -28,7 +29,9 @@ public class SqlMethod {
         perform.writeRequest(ipw, cName, cc, jdbc.getIMap().values());
         perform.writeResponse(ipw, cName, cc, jdbc.getOMap().values());
 
-        if (perform.isReflect()) {
+        ComAttribute ia = perform.getInput();
+        ComAttribute oa = perform.getOutput();
+        if (ia != null && ia.isReflect() || oa != null && oa.isReflect()) {
             cc.add("io.github.epi155.esql.runtime.ESQL");
         }
 

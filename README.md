@@ -33,52 +33,66 @@ Configuration file example:
 
 ~~~yaml
 packageName: com.example.esql
-className: DaoProdotto
+className: DaoUser
 methods:
-  - methodName: searchByDescription
+  - methodName: findUser
     perform: !SelectOptional
-      inFields:
-        dsPrd: VarChar
-      outFields:
-        idPrd: Int
-        idCat: Int?
-        idSco: Int?
-        idUni: Int
+      input:
+        fields:
+          idUser: int
+      output:
+        fields:
+          surname: VarChar
+          givenName: VarChar
+          birthDate: LocalDate
+          birthPlace: VarChar
+          birthState: VarChar?
+          birthCountry: VarChar
+          citizenship: VarChar
       query: |
-        select 
-          id_prd,
-          id_cat,
-          id_sco,
-          id_uni
-        into
-          :idPrd,
-          :idCat,
-          :idSco,
-          :idUni
-        from C03_PRODOTTO
-        where ds_prd like :dsPrd
+        SELECT
+          SURNAME,
+          GIVEN_NAME, 
+          BIRTH_DATE,
+          BIRTH_PLACE,
+          BIRTH_STATE,
+          BIRTH_COUNTRY,
+          CITIZENSHIP
+        INTO
+          :surname,
+          :givenName, 
+          :birthDate,
+          :birthPlace,
+          :birthState,
+          :birthCountry,
+          :citizenship
+        FROM U01_USER
+        WHERE ID_USER = :idUser
 ~~~
 
 Generate code (metod body omitted)
 
 ~~~java
-    public static <R extends SearchByDescriptionResponse> Optional<R> searchByDescription(
-            Connection c,
-            String dsPrd,
-            Supplier<R> so)
-            throws SQLException ;
+    public static <O extends FindUserRS> Optional<O> findUser(
+        Connection c,
+        int idUser,
+        Supplier<O> so)
+        throws SQLException;
 
 ~~~
 
 Input and output interface are created as nexted classes
 
 ~~~java
-    public interface SearchByDescriptionResponse {
-        void setIdPrd(int s);
-        void setIdCat(Integer s);
-        void setIdSco(Integer s);
-        void setIdUni(int s);
-    }
+public interface FindUserRS {
+    void setSurname(String s);
+    void setGivenName(String s);
+    void setBirthDate(LocalDate s);
+    void setBirthPlace(String s);
+    void setBirthState(String s);
+    void setBirthCountry(String s);
+    void setCitizenship(String s);
+}
 ~~~
 
 Generated code requires dependencies
@@ -95,10 +109,10 @@ Generated code requires dependencies
 Example of client code
 
 ~~~java
-    Optional<XProd> oPrd = DaoProdotto.searchByDescription(con, "%SPA%", XProd::new);
+    Optional<XUser> oUser = DaoU01.findUser(c, 1, XUser::new);
 ~~~
 
-where `XProd` is a client class that implements `CercaProdottoResponse` interface.
+where `XUser` is a client class that implements `FindUserRS` interface.
 
 
 [3) Plugin parameters details](#3)<br/>

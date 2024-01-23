@@ -16,7 +16,7 @@ public class ClassContext {
         this.debug = cx.debug;
         importSet.add("java.sql.*");
         if (debug) {
-            importSet.add("io.github.epi155.esql.runtime.ESQL");
+            importSet.add("io.github.epi155.esql.runtime.ESqlTrace");
         }
     }
 

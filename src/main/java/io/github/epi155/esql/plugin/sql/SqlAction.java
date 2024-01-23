@@ -1,6 +1,7 @@
 package io.github.epi155.esql.plugin.sql;
 
 import io.github.epi155.esql.plugin.ClassContext;
+import io.github.epi155.esql.plugin.ComAttribute;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
 import lombok.Data;
@@ -22,8 +23,8 @@ public abstract class SqlAction {
     protected static final String RESPONSE = "RS";
     private String query;
     /** seconds */ private Integer timeout;
-    /** DO NOT USE, reduces performance by 14% */ private boolean reflect;
-    /** ?? */ private boolean delegate;
+    protected abstract ComAttribute getInput();
+    protected ComAttribute getOutput() { return null; }
 
     public abstract JdbcStatement sql() throws MojoExecutionException;
 
@@ -42,7 +43,11 @@ public abstract class SqlAction {
             });
         } else {
             ipw.commaLn();
-            ipw.printf("        I i", cName);
+            if (getInput().isDelegate()) {
+                ipw.printf("        DI i", cName);
+            } else {
+                ipw.printf("        I i", cName);
+            }
         }
     }
     protected void declareNewInstance(IndentPrintWriter ipw, String eSqlObject, Map<Integer, SqlParam> iMap, String cName) {
@@ -89,14 +94,18 @@ public abstract class SqlAction {
                 if (k<iSize) ipw.commaLn();
             });
         } else {
-            ipw.printf("        I i");
+            if (getInput().isDelegate()) {
+                ipw.printf("        DI i");
+            } else {
+                ipw.printf("        I i");
+            }
         }
     }
     protected void declareOutput(IndentPrintWriter ipw, int oSize, ClassContext cc) {
-        if (oSize > 1) {
+        if (oSize > 1 || getOutput().isDelegate()) {
             ipw.commaLn();
-            if (isDelegate()) {
-                ipw.printf("        O o)%n");
+            if (getOutput().isDelegate()) {
+                ipw.printf("        DO o)%n");
             } else {
                 cc.add("java.util.function.Supplier");
                 ipw.printf("        Supplier<O> so)%n");
@@ -120,22 +129,31 @@ public abstract class SqlAction {
     }
     protected void declareOutputUse(IndentPrintWriter ipw, int oSize, String type, ClassContext cc) {
         ipw.commaLn();
-        cc.add("java.util.function.Consumer");
         if (oSize > 1) {
-            cc.add("java.util.function.Supplier");
-            ipw.printf("        Supplier<O> so,%n");
-            ipw.printf("        Consumer<O> co)%n");
+            if (getOutput().isDelegate()) {
+                ipw.printf("        DO o,%n");
+                ipw.printf("        Runnable co)%n");
+            } else {
+                cc.add("java.util.function.Supplier");
+                cc.add("java.util.function.Consumer");
+                ipw.printf("        Supplier<O> so,%n");
+                ipw.printf("        Consumer<O> co)%n");
+            }
         } else {
-            ipw.printf("        Consumer<%s> co)%n", type);
+            if(getOutput().isDelegate()) {
+                ipw.printf("        Runnable co)%n");
+            } else {
+                ipw.printf("        Consumer<%s> co)%n", type);
+            }
         }
         ipw.printf("        throws SQLException {%n");
     }
     protected void fetch(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, ClassContext cc) {
         if (oMap.size() > 1) {
-            if (reflect) {
+            if (getOutput().isReflect()) {
                 ipw.printf("O o = so.get();%n");
                 oMap.forEach((k,s) -> s.pullParameter(ipw, k));
-            } else if (delegate){
+            } else if (getOutput().isDelegate()){
                 oMap.forEach((k,s) -> s.fetchDelegateParameter(ipw, k, cc));
             } else {
                 ipw.printf("O o = so.get();%n");
@@ -165,9 +183,9 @@ public abstract class SqlAction {
         } else if (iSize <= IMAX) {
             iMap.forEach((k,s) -> s.setValue(ipw, k));
         } else {
-            if (reflect) {
+            if (getInput().isReflect()) {
                 iMap.forEach((k, s) -> s.pushParameter(ipw, k));
-            } else if (delegate) {
+            } else if (getInput().isDelegate()) {
                 iMap.forEach((k, s) -> s.setDelegateParameter(ipw, k));
             } else {
                 iMap.forEach((k, s) -> s.setParameter(ipw, k));
@@ -180,8 +198,8 @@ public abstract class SqlAction {
 
     public void writeRequest(IndentPrintWriter ipw, String cMethodName, ClassContext cc, Collection<SqlParam> sp) {
         if (sp.size()<=IMAX) return;
-        if (reflect) return;
-        if (delegate) {
+        if (getInput().isReflect()) return;
+        if (getInput().isDelegate()) {
             cc.add("java.util.function.Supplier");
             ipw.printf("public static class Delegate%s"+REQUEST+" {%n", cMethodName);
             ipw.more();
@@ -221,8 +239,8 @@ public abstract class SqlAction {
 
     public void writeResponse(IndentPrintWriter ipw, String cMethodName, ClassContext cc, Collection<SqlParam> sp) {
         if (sp.size()<=1) return;
-        if (reflect) return;
-        if (delegate) {
+        if (getOutput().isReflect()) return;
+        if (getOutput().isDelegate()) {
             cc.add("java.util.function.Consumer");
             ipw.printf("public static class Delegate%s"+RESPONSE+" {%n", cMethodName);
             ipw.more();
@@ -304,30 +322,50 @@ public abstract class SqlAction {
             if (iSize <= IMAX) {
                 // nop
             } else {
-                if (isReflect()) {
+                if (getInput().isReflect()) {
                     ipw.putf("<I> ");
-                } else if (isDelegate()){
-                    ipw.putf("<I extends Delegate%s"+REQUEST+"> ",cName);
+                } else if (getInput().isDelegate()){
+                    ipw.putf("<DI extends Delegate%s"+REQUEST+"> ",cName);
                 } else {
                     ipw.putf("<I extends %s"+REQUEST+"> ",cName);
                 }
             }
         } else {
             if (iSize <= IMAX) {
-                if (isReflect()) {
+                if (getOutput().isReflect()) {
                     ipw.putf("<O> ");
-                } else if (isDelegate()){
-                    ipw.putf("<O extends Delegate%s" + RESPONSE + "> ", cName);
+                } else if (getOutput().isDelegate()){
+                    ipw.putf("<DO extends Delegate%s" + RESPONSE + "> ", cName);
                 } else {
                     ipw.putf("<O extends %s" + RESPONSE + "> ", cName);
                 }
             } else {
-                if (isReflect()) {
-                    ipw.putf("<I,O> ");
-                } else if (isDelegate()){
-                    ipw.putf("<I extends Delegate%1$s"+REQUEST+",O extends Delegate%1$s" + RESPONSE + "> ", cName);
+                ComAttribute ia = getInput();
+                ComAttribute oa = getOutput();
+                if (ia.isReflect()) {
+                    if (oa.isReflect()) {
+                        ipw.putf("<I,O> ");
+                    } else if (oa.isDelegate()) {
+                        ipw.putf("<I,DO extends Delegate%1$s" + RESPONSE + "> ", cName);
+                    } else {
+                        ipw.putf("<I,O extends %1$s" + RESPONSE + "> ", cName);
+                    }
+                } else if (ia.isDelegate()) {
+                    if (oa.isReflect()) {
+                        ipw.putf("<DI extends Delegate%1$s"+REQUEST+",O> ", cName);
+                    } else if (oa.isDelegate()) {
+                        ipw.putf("<DI extends Delegate%1$s"+REQUEST+",DO extends Delegate%1$s" + RESPONSE + "> ", cName);
+                    } else {
+                        ipw.putf("<DI extends Delegate%1$s"+REQUEST+",O extends %1$s" + RESPONSE + "> ", cName);
+                    }
                 } else {
-                    ipw.putf("<I extends %1$s"+REQUEST+",O extends %1$s" + RESPONSE + "> ", cName);
+                    if (oa.isReflect()) {
+                        ipw.putf("<I extends %1$s"+REQUEST+",O> ", cName);
+                    } else if (oa.isDelegate()) {
+                        ipw.putf("<I extends %1$s"+REQUEST+",DO extends Delegate%1$s" + RESPONSE + "> ", cName);
+                    } else {
+                        ipw.putf("<I extends %1$s"+REQUEST+",O extends %1$s" + RESPONSE + "> ", cName);
+                    }
                 }
             }
         }
@@ -337,7 +375,7 @@ public abstract class SqlAction {
             int iSize = iMap.size();
             ipw.printf("if (log.isDebugEnabled()) {%n");
             ipw.more();
-            ipw.printf("ESQL.showQuery(Q_%s, () -> {%n", kPrg);
+            ipw.printf("ESqlTrace.showQuery(Q_%s, () -> {%n", kPrg);
             ipw.more();
             ipw.printf("Object[] parms =  new Object[]{%n");
             ipw.more();
@@ -345,10 +383,10 @@ public abstract class SqlAction {
                 iMap.forEach((k,v) ->
                         ipw.printf("%s%s%n", v.getName(), k<iSize?",":""));
             } else {
-                if (isReflect()) {
+                if (getInput().isReflect()) {
                     iMap.forEach((k,v) ->
                             ipw.printf("ESQL.get(i, \"%s\", %s.class)%s%n", v.getName(), v.getType().getAccess(), k<iSize?",":""));
-                } else if (isDelegate()) {
+                } else if (getInput().isDelegate()) {
                     iMap.forEach((k,v) ->
                             ipw.printf("i.%s.get()%s%n", v.getName(), k<iSize?",":""));
                 } else {

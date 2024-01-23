@@ -1,12 +1,12 @@
 package io.github.epi155.esql.plugin.sql.dml;
 
 import io.github.epi155.esql.plugin.ClassContext;
+import io.github.epi155.esql.plugin.ComAreaStd;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
-import io.github.epi155.esql.plugin.sql.SqlEnum;
-import io.github.epi155.esql.plugin.sql.SqlParam;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -25,8 +24,8 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class SqlInsertReturnGeneratedKeys extends SqlAction {
-    private Map<String, SqlEnum> inFields = new HashMap<>();
-    private Map<String, SqlEnum> outFields = new LinkedHashMap<>();
+    private ComAreaStd input;
+    private ComAreaStd output;
 
     private static final String tmpl =
             "^INSERT INTO (\\w+) [(](.*)[)] VALUES [(](.*)[)]$";
@@ -40,10 +39,10 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction {
             String sCols  = m.group(2).trim();
             String sParms = m.group(3).trim();
             String oText = "INSERT INTO "+sTable+" ( "+sCols+" ) VALUES ( "+sParms+" )";
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, inFields);
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, input);
             Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
             int k=0;
-            for(val e: outFields.entrySet()) {
+            for(val e: output.getFields().entrySet()) {
                 oMap.put(++k, new SqlParam(e.getKey(), e.getValue()));
             }
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
