@@ -3,6 +3,7 @@ package io.github.epi155.esql.plugin.sql.dql;
 import io.github.epi155.esql.plugin.*;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +30,7 @@ public class SqlCursorForSelect extends SqlAction {
             "^SELECT (.*?) (INTO (.*)) FROM (.*)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
-    public JdbcStatement sql() throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(getQuery());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
@@ -37,8 +38,8 @@ public class SqlCursorForSelect extends SqlAction {
             String sInto = m.group(3);
             String sTables = m.group(4);
             String oText = "SELECT " + sFld + " FROM " + sTables;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, input);
-            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, output.getFields());
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
+            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {
             throw new MojoExecutionException("Invalid query format: "+ getQuery());
@@ -73,7 +74,7 @@ public class SqlCursorForSelect extends SqlAction {
             String oType = oMap.get(1).getType().getAccess();
             ipw.putf("ESqlCursor<%s> open%s(%n", oType, cName);
         } else {
-            if (output.isDelegate()) {
+            if (output!=null && output.isDelegate()) {
                 cc.add("io.github.epi155.esql.runtime.ESqlDelegateCursor");
                 ipw.putf("ESqlDelegateCursor open%s(%n", cName);
             } else {
@@ -86,7 +87,7 @@ public class SqlCursorForSelect extends SqlAction {
         declareInput(ipw, iMap, cName);
         declareOutput(ipw, oSize, cc);
         ipw.more();
-        if (output.isDelegate()) {
+        if (output!=null && output.isDelegate()) {
             ipw.printf("return new ESqlDelegateCursor() {%n");
         } else {
             ipw.printf("return new ESqlCursor<>() {%n");
@@ -109,14 +110,14 @@ public class SqlCursorForSelect extends SqlAction {
         ipw.printf("return rs.next();%n");
         ipw.ends();
         ipw.printf("@Override%n");
-        if (output.isDelegate()) {
-            ipw.printf("public void next() throws SQLException {%n");
+        if (output!=null && output.isDelegate()) {
+            ipw.printf("public void fetchNext() throws SQLException {%n");
         } else {
-            ipw.printf("public O next() throws SQLException {%n");
+            ipw.printf("public O fetchNext() throws SQLException {%n");
         }
         ipw.more();
         fetch(ipw, oMap, cc);
-        if (!output.isDelegate())
+        if (output==null || !output.isDelegate())
             ipw.printf("return o;%n");
         ipw.ends();
         ipw.printf("@Override%n");
@@ -142,7 +143,7 @@ public class SqlCursorForSelect extends SqlAction {
         docOutputUse(ipw, oMap);
         docEnd(ipw);
         if (oSize > 1) {
-            if (output.isDelegate()) {
+            if (output!=null && output.isDelegate()) {
                 ipw.printf("public static <DO extends Delegate%s"+RESPONSE+"> void loop%1$s(%n", cName);
             } else {
                 ipw.printf("public static <O extends %s"+RESPONSE+"> void loop%1$s(%n", cName);
@@ -164,7 +165,7 @@ public class SqlCursorForSelect extends SqlAction {
         ipw.printf("while (rs.next()) {%n");
         ipw.more();
         fetch(ipw, oMap, cc);
-        if (output.isDelegate()) {
+        if (output!=null && output.isDelegate()) {
             ipw.printf("co.run();%n");
         } else {
             ipw.printf("co.accept(o);%n");

@@ -70,11 +70,7 @@ public class Tools {
         return c=='\n' || c=='\r';
     }
     @NotNull
-    public static SqlStatement replacePlaceholder(String text, ComFields com) {
-        if (com == null) {
-            return new SqlStatement(text, Map.of());
-        }
-        Map<String, SqlEnum> fields = com.getFields();
+    public static SqlStatement replacePlaceholder(String text, Map<String, SqlEnum> fields) {
         int ixCol = text.indexOf(':');
         if (ixCol<0) {
             // there are no parameters

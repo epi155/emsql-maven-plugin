@@ -6,6 +6,7 @@ import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,7 +31,7 @@ public class SqlSelectSingle extends SqlAction {
             "^SELECT (.*) (INTO (.*)) FROM (.*)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
-    public JdbcStatement sql() throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(getQuery());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
@@ -38,8 +39,8 @@ public class SqlSelectSingle extends SqlAction {
             String sInto = m.group(3);
             String sTables = m.group(4);
             String oText = "SELECT " + sFld + " FROM " + sTables;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, input);
-            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, output.getFields());
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
+            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {
             throw new MojoExecutionException("Invalid query format: "+ getQuery());
@@ -64,10 +65,10 @@ public class SqlSelectSingle extends SqlAction {
         ipw.printf("public static ");
         declareGenerics(ipw, cName, iSize, oSize);
         if (oSize == 1) {
-            String oType = oMap.get(1).getType().getAccess();
+            String oType = oMap.get(1).getType().getRaw();
             ipw.putf("%s %s(%n", oType, name);
         } else {
-            if (output.isDelegate()) {
+            if (output!=null && output.isDelegate()) {
                 ipw.putf("void %s(%n", name);
             } else {
                 ipw.putf("O %s(%n", name);
@@ -92,7 +93,7 @@ public class SqlSelectSingle extends SqlAction {
         ipw.printf("if (rs.next()) {%n");
         ipw.more();
         ipw.printf("throw ESqlCode.N811.getInstance();%n");
-        if (oSize==1 || !output.isDelegate()) {
+        if (oSize==1 || output==null || !output.isDelegate()) {
             ipw.orElse();
             ipw.printf("return o;%n");
         }

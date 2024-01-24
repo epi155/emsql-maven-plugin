@@ -6,6 +6,7 @@ import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +31,7 @@ public class SqlInsertReturningInto extends SqlAction {
             "^INSERT INTO (\\w+) [(](.*)[)] VALUES [(](.*)[)] RETURNING (.*) INTO (.*)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
-    public JdbcStatement sql() throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(getQuery());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
@@ -37,9 +39,19 @@ public class SqlInsertReturningInto extends SqlAction {
             String iCols  = m.group(2).trim();
             String iParms = m.group(3).trim();
             String oCols  = m.group(4).trim();
-            String oParms = m.group(5).trim();
-            String oText = "BEGIN INSERT INTO "+sTable+" ( "+iCols+" ) VALUES ( "+iParms+" ) RETURNING "+oCols + " INTO " + oParms + " ; END;";
-            return Tools.replacePlaceholder(oText, input.getFields(), output.getFields());
+            String sInto = m.group(5).trim();
+            String oText = "BEGIN INSERT INTO "+sTable+" ( "+iCols+" ) VALUES ( "+iParms+" ) RETURNING "+oCols + " INTO " + sInto + " ; END;";
+            Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);
+            Map<String,SqlEnum> inpFields = new HashMap<>();
+            Map<String,SqlEnum> outFields = new HashMap<>();
+            oMap.forEach((k,v) -> outFields.put(v.getName(), v.getType()));
+            fields.forEach((k,v) -> {
+                if (! outFields.containsKey(k)) {
+                    inpFields.put(k,v);
+                }
+            });
+            return Tools.replacePlaceholder(oText, inpFields, outFields);
+
         } else {
             throw new MojoExecutionException("Invalid query format: "+ getQuery());
         }

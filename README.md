@@ -34,21 +34,18 @@ Configuration file example:
 ~~~yaml
 packageName: com.example.esql
 className: DaoUser
+declare:
+  idUser: int
+  surname: VarChar
+  givenName: VarChar
+  birthDate: LocalDate
+  birthPlace: VarChar
+  birthState: VarChar?
+  birthCountry: VarChar
+  citizenship: VarChar
 methods:
   - methodName: findUser
     perform: !SelectOptional
-      input:
-        fields:
-          idUser: int
-      output:
-        fields:
-          surname: VarChar
-          givenName: VarChar
-          birthDate: LocalDate
-          birthPlace: VarChar
-          birthState: VarChar?
-          birthCountry: VarChar
-          citizenship: VarChar
       query: |
         SELECT
           SURNAME,

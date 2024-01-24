@@ -6,6 +6,7 @@ import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,7 +31,7 @@ public class SqlSelectOptional extends SqlAction {
             "^SELECT (.*) (INTO (.*)) FROM (.*)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
-    public JdbcStatement sql() throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(getQuery());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
@@ -38,8 +39,8 @@ public class SqlSelectOptional extends SqlAction {
             String sInto = m.group(3);
             String sTables = m.group(4);
             String oText = "SELECT " + sFld + " FROM " + sTables;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, input);
-            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, output.getFields());
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
+            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {
             throw new MojoExecutionException("Invalid query format: "+ getQuery());
@@ -68,7 +69,7 @@ public class SqlSelectOptional extends SqlAction {
             String oType = oMap.get(1).getType().getAccess();
             ipw.putf("Optional<%s> %s(%n", oType, name);
         } else {
-            if (output.isDelegate()) {
+            if (output != null && output.isDelegate()) {
                 ipw.putf("boolean %s(%n", name);
             } else {
                 ipw.putf("Optional<O> %s(%n", name);
@@ -94,14 +95,14 @@ public class SqlSelectOptional extends SqlAction {
         ipw.more();
         ipw.printf("throw ESqlCode.N811.getInstance();%n");
         ipw.orElse();
-        if (output.isDelegate() && oSize > 1) {
+        if (output != null && output.isDelegate() && oSize > 1) {
             ipw.printf("return true;%n");
         } else {
             ipw.printf("return Optional.of(o);%n");
         }
         ipw.ends();
         ipw.orElse();
-        if (output.isDelegate() && oSize > 1) {
+        if (output != null && output.isDelegate() && oSize > 1) {
             ipw.printf("return false;%n");
         } else {
             ipw.printf("return Optional.empty();%n");

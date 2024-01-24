@@ -608,6 +608,122 @@ public enum SqlEnum {
             ipw.printf("String o = rs.getString(%d);%n", k);
         }
     },
+    CharStd {
+        @Override
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setString(%d, %s);%n", k, source);
+        }
+
+        @Override
+        public void psPush(IndentPrintWriter ipw, int k, String name) {
+            ipw.printf("ps.setString(%d, ESQL.get(i, \"%s\", String.class));%n", k, name);
+        }
+
+        @Override
+        public void register(IndentPrintWriter ipw, int k) {
+            ipw.printf("ps.registerOutParameter(%d, Types.CHAR);%n", k);
+        }
+
+        @Override
+        public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
+            ipw.printf("String o = ps.getString(%d);%n", k);
+        }
+
+        @Override
+        public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+            ipw.printf("o.set%s(ps.getString(%d));%n", cName, k);
+        }
+
+        @Override
+        public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
+            ipw.printf("ESQL.set(o, \"%s\", rs.getString(%d));%n", name, k);
+        }
+
+        @Override
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getString(%d));%n", target, k);
+        }
+
+        @Override
+        public String getRaw() {
+            return "String";
+        }
+
+        @Override
+        public String getAccess() {
+            return "String";
+        }
+
+        @Override
+        public void setValue(IndentPrintWriter ipw, int k, String name) {
+            ipw.printf("ps.setString(%d, %s);%n", k, name);
+        }
+
+        @Override
+        public void rsGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
+            ipw.printf("String o = rs.getString(%d);%n", k);
+        }
+    },
+    CharNil {
+        @Override
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("{ String it = %s; if (it==null) ps.setNull(%2$d, Types.CHAR); else ps.setString(%2$d, it); }%n", source, k);
+        }
+        @Override
+        public void psPush(IndentPrintWriter ipw, int k, String name) {
+            ipw.printf("{ String it = ESQL.get(i, \"%s\", String.class); if (it==null) ps.setNull(%2$d, Types.CHAR); else ps.setInt(%2$d, it); };%n", name, k);
+        }
+
+        @Override
+        public void register(IndentPrintWriter ipw, int k) {
+            CharStd.register(ipw, k);
+        }
+
+        @Override
+        public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
+            CharStd.psGetValue(ipw, k, cc);
+        }
+
+        @Override
+        public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+            CharStd.psGet(ipw, k, cName, cc);
+        }
+
+        @Override
+        public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
+            CharStd.rsPull(ipw,k,name);
+        }
+
+        @Override
+        public void rsGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+            CharStd.rsGet(ipw, k, cName, cc);
+        }
+
+        @Override
+        public String getRaw() {
+            return CharStd.getRaw();
+        }
+
+        @Override
+        public String getAccess() {
+            return CharStd.getAccess();
+        }
+
+        @Override
+        public void setValue(IndentPrintWriter ipw, int k, String name) {
+            ipw.printf("if (%s == null) {%n", name);
+            ipw.more();
+            ipw.printf("ps.setNull(%d, Types.CHAR);%n", k);
+            ipw.orElse();
+            ipw.printf("ps.setString(%d, %s);%n", k, name);
+            ipw.ends();
+        }
+
+        @Override
+        public void rsGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
+            ipw.printf("String o = rs.getString(%d);%n", k);
+        }
+    },
     DateStd {
         @Override
         public void psSet(IndentPrintWriter ipw, int k, String source) {

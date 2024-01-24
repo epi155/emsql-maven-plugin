@@ -6,6 +6,7 @@ import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,7 +29,7 @@ public class SqlUpdate extends SqlAction {
             "^UPDATE (\\w+) SET (.*) WHERE (.*)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
-    public JdbcStatement sql() throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(getQuery());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
@@ -36,7 +37,7 @@ public class SqlUpdate extends SqlAction {
             String sAlter = m.group(2);
             String sWhere = m.group(3);
             String oText = "UPDATE " + sTable + " SET " + sAlter + " WHERE " + sWhere;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, input);
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), Map.of());
         } else {
             throw new MojoExecutionException("Invalid query format: "+ getQuery());

@@ -1,11 +1,9 @@
 package io.github.epi155.esql.plugin.sql.dml;
 
-import io.github.epi155.esql.plugin.ClassContext;
-import io.github.epi155.esql.plugin.ComAreaStd;
-import io.github.epi155.esql.plugin.IndentPrintWriter;
-import io.github.epi155.esql.plugin.Tools;
+import io.github.epi155.esql.plugin.*;
 import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
+import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,13 +23,13 @@ import java.util.regex.Pattern;
 @EqualsAndHashCode(callSuper = true)
 public class SqlInsertReturnGeneratedKeys extends SqlAction {
     private ComAreaStd input;
-    private ComAreaStd output;
+    private ComAreaDef output;
 
     private static final String tmpl =
             "^INSERT INTO (\\w+) [(](.*)[)] VALUES [(](.*)[)]$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
-    public JdbcStatement sql() throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(getQuery());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
@@ -39,7 +37,7 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction {
             String sCols  = m.group(2).trim();
             String sParms = m.group(3).trim();
             String oText = "INSERT INTO "+sTable+" ( "+sCols+" ) VALUES ( "+sParms+" )";
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, input);
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
             Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
             int k=0;
             for(val e: output.getFields().entrySet()) {

@@ -17,7 +17,7 @@ public class SqlMethod {
 
     private static final NumberFormat NF = new DecimalFormat("0000");
     public void writeQuery(IndentPrintWriter ipw, int km, ClassContext cc) throws MojoExecutionException {
-        JdbcStatement jdbc = perform.sql();
+        JdbcStatement jdbc = perform.sql(cc.getFields());
         String sQuery = jdbc.getText();
         String kPrg = NF.format(km);
         ipw.printf("private static final String Q_%s = \"%s\";%n", kPrg, sQuery);

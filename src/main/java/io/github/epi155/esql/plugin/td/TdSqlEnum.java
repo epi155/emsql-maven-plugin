@@ -31,6 +31,10 @@ public class TdSqlEnum extends TypeDescription {
                     return SqlEnum.VarCharStd;
                 case "VARCHAR?":
                     return SqlEnum.VarCharNil;
+                case "CHAR":
+                    return SqlEnum.CharStd;
+                case "CHAR?":
+                    return SqlEnum.CharNil;
                 case "DATE":
                     return SqlEnum.DateStd;
                 case "DATE?":
@@ -47,8 +51,10 @@ public class TdSqlEnum extends TypeDescription {
                 case "BIGINTEGER?":
                     return SqlEnum.LongNil;
                 case "NUMERIC":
+                case "NUMBER":
                     return SqlEnum.NumericStd;
                 case "NUMERIC?":
+                case "NUMBER?":
                     return SqlEnum.NumericNil;
                 case "LOCALDATE":
                     return SqlEnum.LocalDateStd;

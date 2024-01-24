@@ -22,13 +22,14 @@ import java.util.*;
 public class SqlApi {
     private String packageName;
     private String className;
+    private Map<String, SqlEnum> declare = new LinkedHashMap<>();
     private List<SqlMethod> methods;
 
     private static final String DOT_JAVA = ".java";
 
     public void create(MojoContext cx) throws FileNotFoundException, MojoExecutionException {
         log.info("Creating {} ...", className);
-        ClassContext cc = new ClassContext(cx);
+        ClassContext cc = new ClassContext(cx, declare);
         File srcMainJava = new File(cx.sourceDirectory);
         File pkgFolder = new File(srcMainJava, packageName.replace('.', File.separatorChar));
         File clsFile = new File(pkgFolder, className+DOT_JAVA);

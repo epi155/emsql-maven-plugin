@@ -3,6 +3,9 @@
 ~~~yaml
 packageName:  # String
 className:    # String
+declare:      # input/output fields
+  fieldName1: fieldTYpe     # Map<String, SqlEnum> NOT NULL field
+  fieldName2: fieldTYpe?    # Map<String, SqlEnum> NULLABLE field
 methods:      # List<SqlMethod>
   - methodName:   # String
     perform:      # SqlAction
@@ -10,13 +13,9 @@ methods:      # List<SqlMethod>
       input:
         reflect:        # boolean
         delegate:       # boolean
-        fields:			# Map<String, SqlEnum>
-          fieldName: fieldTYpe
       output:
         reflect:        # boolean
         delegate:       # boolean
-        fields:			# Map<String, SqlEnum>
-          fieldName: fieldTYpe?
 ~~~
 
 `fieldName` are case-sensitive, `fieldType` are case-insensitive, the question 
