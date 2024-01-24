@@ -69,7 +69,7 @@ Example of client code:
 
 where `Xuser` classe implements `FindUserRS` interface.
 
-### 4,1,2. Delegate output
+### 4.1.2. Delegate output
 
 ~~~yaml
   - methodName: findUser
@@ -112,13 +112,60 @@ The method returns nothing, the output field is set using the rules provided by 
 Example of client code:
 
 ~~~java
-    XUser user = new XUser();
-    val rule = DaoU01.DelegateFindUserRS.builder()
+        NUser user = new NUser();
+        BUser born = new BUser();
+        val rule = DaoU01.DelegateFindUserRS.builder()
                 .surname(user::setSurname)
                 .givenName(user::setGivenName)
-                .birthDate(user::setBirthDate)
+                .birthDate(born::setBirthDate)
+                .birthPlace(born::setBirthPlace)
                 // more fields
                 .build();
-    DaoU01.findUser(c, 1, rule);
-    // user is set
+        DaoU01.findUser(c, 1, rule);
+        // user and born are set
 ~~~
+
+The use of output delegation is more laborious than a normal DTO interface, the advantage is that it is possible to set fields on different objects
+
+
+### 4.1.3. Delegate input
+
+~~~yaml
+  - methodName: findUserId
+    perform: !SelectSingle
+      input:
+        delegate: yes
+      query: |
+        select
+          ID_USER
+        into
+          :idUser
+        from u01_user
+        where SURNAME     = :surname
+          and GIVEN_NAME  = :givenName
+          and BIRTH_DATE  = :birthDate
+          and BIRTH_PLACE = :birthPlace 
+~~~
+
+Generated DAO method signature (body omitted):
+
+~~~java
+    public static <DI extends DelegateFindUserIdPS> long findUserId(
+            Connection c,
+            DI i)
+            throws SQLException ;
+~~~
+
+Example of client code:
+
+~~~java
+        val rule = DaoU01.DelegateFindUserIdPS.builder()
+                .surname(user::getSurname)
+                .givenName(user::getGivenName)
+                .birthDate(born::getBirthDate)
+                .birthPlace(born::getBirthPlace)
+                .build();
+        long userId = DaoU01.findUserId(c, rule);
+~~~
+
+The use of input delegation is more laborious than a normal DTO interface, the advantage is that it is possible to obtain the value of the fields from different objects
