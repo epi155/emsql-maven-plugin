@@ -54,11 +54,25 @@ public class Tools {
         StringBuilder sb = new StringBuilder();
         char[] ac = text.toCharArray();
         boolean wasBreak = isBreak(ac[0]);
+        byte minus = 0;
         for (val c: ac) {
             boolean isBreak = isBreak(c);
             if (!isBreak) {
-                sb.append(c);
+                if (c=='-') {
+                    if (minus<2) {
+                        minus++;
+                    }
+                } else {
+                    if (minus==1) {
+                        sb.append("-");
+                        minus = 0;
+                    }
+                    if (minus==0) {
+                        sb.append(c);
+                    }
+                }
             } else if (!wasBreak) {
+                minus = 0;
                 sb.append(' ');
             }
             wasBreak = isBreak;

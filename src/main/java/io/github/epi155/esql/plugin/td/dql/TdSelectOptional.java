@@ -6,6 +6,6 @@ import org.yaml.snakeyaml.TypeDescription;
 public class TdSelectOptional extends TypeDescription {
     public TdSelectOptional() {
         super(SqlSelectOptional.class, "!SelectOptional");
-        substituteProperty("exec-sql", String.class, null, "setQuery");
+        substituteProperty("exec-sql", String.class, null, "setExecSql");
     }
 }

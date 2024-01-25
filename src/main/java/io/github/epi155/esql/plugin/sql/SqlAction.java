@@ -21,7 +21,7 @@ public abstract class SqlAction {
     protected static final int IMAX = 3;
     protected static final String REQUEST = "PS";
     protected static final String RESPONSE = "RS";
-    private String query;
+    private String execSql;
     /** seconds */ private Integer timeout;
     protected abstract ComAttribute getInput();
     protected ComAttribute getOutput() { return null; }
@@ -285,7 +285,7 @@ public abstract class SqlAction {
         ipw.printf("/**%n");
         ipw.printf(" * Template %s%n", this.getClass().getSimpleName());
         ipw.printf(" * <pre>%n");
-        val lines = query.split("\n");
+        val lines = execSql.split("\n");
         for(val line: lines) {
             ipw.printf(" * %s%n", line);
         }
@@ -298,10 +298,14 @@ public abstract class SqlAction {
         if (iSize == 1) {
             SqlParam parm = iMap.get(1);
             ipw.printf(" * @param %s :%1$s (parameter #1)%n", parm.getName());
-        } else if (iSize <= 2){
+        } else if (iSize <= IMAX){
             iMap.forEach((k,s) -> ipw.printf(" * @param %s :%1$s (parameter #%d)%n", s.getName(), k));
         } else {
-            ipw.printf(" * @param i input parameter wrapper%n");
+            if (getInput() != null && getInput().isDelegate()) {
+                ipw.printf(" * @param i input parameter delegate%n");
+            } else {
+                ipw.printf(" * @param i input parameter wrapper%n");
+            }
         }
     }
     protected void docOutput(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {

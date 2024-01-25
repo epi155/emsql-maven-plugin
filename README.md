@@ -46,7 +46,7 @@ declare:
 methods:
   - methodName: findUser
     perform: !SelectOptional
-      query: |
+      execSql: |
         SELECT
           SURNAME,
           GIVEN_NAME, 
@@ -113,18 +113,19 @@ where `XUser` is a client class that implements `FindUserRS` interface.
 
 
 [3) Plugin parameters details](#3)<br/>
-[4) Configuration YAML details (DQL)](doc/ConfigYaml.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.1) SelectCount](doc/SelectCount.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2) SelectList](doc/SelectList.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.3) SelectOptional](doc/SelectOptional.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.4) SelectSingle](doc/SelectSingle.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.5) CursorForSelect](doc/CursorForSelect.md)<br/>
-[5) Configuration YAML details (DML)](#5)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[5.1) Delete](#51)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[5.2) DeleteBatch](#52)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[5.3) Insert](#53)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[5.4) InsertBatch](#54)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[5.5) Update](#55)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[5.6) UpdateBatch](#56)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[5.7) InsertReturnKeys](#57)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[5.8) InsertReturnInto](#58)<br/>
+[4) Configuration YAML details](doc/ConfigYaml.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;4.1) Details (DQL)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1) SelectSingle](doc/SelectSingle.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2) SelectOptional](doc/SelectOptional.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3) SelectList](doc/SelectList.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.4) SelectCount](doc/SelectCount.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.5) CursorForSelect](doc/CursorForSelect.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;4.2) Details (DML)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2.1) Insert](#53)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) Update](#55)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2.3) Delete](#51)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2.4) InsertBatch](#54)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2.5) UpdateBatch](#56)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2.6) DeleteBatch](#52)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2.7) InsertReturnKeys](#57)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2.8) InsertReturnInto](#58)<br/>

@@ -6,6 +6,6 @@ import org.yaml.snakeyaml.TypeDescription;
 public class TdSelectSingle extends TypeDescription {
     public TdSelectSingle() {
         super(SqlSelectSingle.class, "!SelectSingle");
-        substituteProperty("exec-sql", String.class, null, "setQuery");
+        substituteProperty("exec-sql", String.class, null, "setExecSql");
     }
 }

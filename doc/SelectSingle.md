@@ -1,9 +1,9 @@
-## <a id="44">4.4. SelectSingle</a>
+## 4.1.1. SelectSingle
 
 
 The SelectSingle template is designed for the situation where the selection needs to return a single element, no elements, or multiple elements throw a SqlException
 
-### 4,1,1. Standard use
+### 4.1.1.a. Standard use
 
 Template example
 
@@ -22,14 +22,14 @@ declare:
 methods:
   - methodName: findUser
     perform: !SelectSingle
-      input:
+      input:              # optional
         reflect: false    # optional, default false
         delegate: false   # optional, default false
-      output:
+      output:             # optional
         reflect: false    # optional, default false
         delegate: false   # optional, default false
-      timeout: 5      # (seconds) optional, default null (system default)
-      query: |
+      timeout: 5          # (seconds) optional, default null (system default)
+      execSql: |
         select
           SURNAME,
           GIVEN_NAME, 
@@ -69,14 +69,14 @@ Example of client code:
 
 where `Xuser` classe implements `FindUserRS` interface.
 
-### 4.1.2. Delegate output
+### 4.1.1.b. Delegate output
 
 ~~~yaml
   - methodName: findUser
     perform: !SelectSingle
       output:
         delegate: yes
-      query: |
+      execSql: |
         select
           SURNAME,
           GIVEN_NAME, 
@@ -128,14 +128,14 @@ Example of client code:
 The use of output delegation is more laborious than a normal DTO interface, the advantage is that it is possible to set fields on different objects
 
 
-### 4.1.3. Delegate input
+### 4.1.1.c. Delegate input
 
 ~~~yaml
   - methodName: findUserId
     perform: !SelectSingle
       input:
         delegate: yes
-      query: |
+      execSql: |
         select
           ID_USER
         into

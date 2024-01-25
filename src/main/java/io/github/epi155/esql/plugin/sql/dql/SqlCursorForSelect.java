@@ -31,7 +31,7 @@ public class SqlCursorForSelect extends SqlAction {
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
     public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
-        String nText = Tools.oneLine(getQuery());
+        String nText = Tools.oneLine(getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
             String sFld = m.group(1);
@@ -42,7 +42,7 @@ public class SqlCursorForSelect extends SqlAction {
             @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {
-            throw new MojoExecutionException("Invalid query format: "+ getQuery());
+            throw new MojoExecutionException("Invalid query format: "+ getExecSql());
         }
     }
 

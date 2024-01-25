@@ -6,5 +6,6 @@ import org.yaml.snakeyaml.TypeDescription;
 public class TdInsertReturnGeneratedKeys extends TypeDescription {
     public TdInsertReturnGeneratedKeys() {
         super(SqlInsertReturnGeneratedKeys.class, "!InsertReturnKeys");
+        substituteProperty("exec-sql", String.class, null, "setExecSql");
     }
 }

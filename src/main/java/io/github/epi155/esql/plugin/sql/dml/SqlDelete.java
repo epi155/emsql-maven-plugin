@@ -30,7 +30,7 @@ public class SqlDelete extends SqlAction {
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
     public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
-        String nText = Tools.oneLine(getQuery());
+        String nText = Tools.oneLine(getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
             String sTables = m.group(1);
@@ -38,7 +38,7 @@ public class SqlDelete extends SqlAction {
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), Map.of());
         } else {
-            throw new MojoExecutionException("Invalid query format: "+ getQuery());
+            throw new MojoExecutionException("Invalid query format: "+ getExecSql());
         }
     }
 
