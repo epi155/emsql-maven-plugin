@@ -5,10 +5,8 @@ import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -17,10 +15,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Data
-@SuperBuilder
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@Setter
+@Getter
 public class SqlInsertReturnGeneratedKeys extends SqlAction {
     private ComAreaStd input;
     private ComAreaDef output;
@@ -67,7 +63,7 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction {
         ipw.printf("public static ");
         declareGenerics(ipw, cName, iSize, oSize);
         if (oSize == 1) {
-            String oType = oMap.get(1).getType().getAccess();
+            String oType = oMap.get(1).getType().getWrapper();
             ipw.putf("Optional<%s> %s(%n", oType, name);
         } else {
             ipw.putf("Optional<O> %s(%n", name);

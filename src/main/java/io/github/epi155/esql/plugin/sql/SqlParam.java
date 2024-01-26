@@ -3,9 +3,13 @@ package io.github.epi155.esql.plugin.sql;
 import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
 public class SqlParam {
     private final String name;
     private final SqlEnum type;
@@ -41,8 +45,8 @@ public class SqlParam {
         type.rsGetValue(ipw, k, cc);
     }
 
-    public void register(IndentPrintWriter ipw, int k) {
-        type.register(ipw, k);
+    public void registerOutParms(IndentPrintWriter ipw, int k) {
+        type.registerOut(ipw, k);
     }
 
     public void getValue(IndentPrintWriter ipw, int k, ClassContext cc) {

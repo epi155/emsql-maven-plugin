@@ -4,14 +4,16 @@ import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.ComAttribute;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-@Data
+@Setter
 public class SqlMethod {
+    @Getter
     private String methodName;
     private SqlAction perform;
 

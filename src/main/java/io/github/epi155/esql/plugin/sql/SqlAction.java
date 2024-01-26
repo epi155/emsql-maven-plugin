@@ -4,9 +4,9 @@ import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.ComAttribute;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.Tools;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.Setter;
 import lombok.val;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Data
-@SuperBuilder
+@Setter
+@Getter
 @NoArgsConstructor
 public abstract class SqlAction {
     protected static final int IMAX = 3;
@@ -35,11 +35,11 @@ public abstract class SqlAction {
         if (iSize == 1) {
             ipw.commaLn();
             SqlParam parm = iMap.get(1);
-            ipw.printf("        %s %s", parm.getType().getRaw(), parm.getName());
+            ipw.printf("        %s %s", parm.getType().getPrimitive(), parm.getName());
         } else if (iSize <= IMAX){
             iMap.forEach((k,s) -> {
                 ipw.commaLn();
-                ipw.printf("        %s %s", s.getType().getRaw(), s.getName());
+                ipw.printf("        %s %s", s.getType().getPrimitive(), s.getName());
             });
         } else {
             ipw.commaLn();
@@ -58,11 +58,15 @@ public abstract class SqlAction {
         if (iSize == 0) {
             ipw.putf("<Void>");
         } else if (iSize == 1) {
-            ipw.putf("<%s>", iMap.get(1).getType().getAccess());
+            ipw.putf("<%s>", iMap.get(1).getType().getWrapper());
         } else if (iSize <= IMAX) {
-            ipw.putf("%d<%s>", iSize, iMap.values().stream().map(it -> it.getType().getAccess()).collect(Collectors.joining(", ")));
+            ipw.putf("%d<%s>", iSize, iMap.values().stream().map(it -> it.getType().getWrapper()).collect(Collectors.joining(", ")));
         } else {
-            ipw.putf("<I>", cName);
+            if (getInput() != null && getInput().isDelegate()) {
+                ipw.putf("<DI>", cName);
+            } else {
+                ipw.putf("<I>", cName);
+            }
         }
         ipw.putf(" new%s(%n", cName);
         ipw.printf("        Connection c)%n", cName);
@@ -85,12 +89,14 @@ public abstract class SqlAction {
 
     protected void declareInputBatch(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap) {
         int iSize = iMap.size();
-        if (iSize == 1) {
+        if (iSize == 0) {
+            ipw.printf("        Void nil");     // any use case ??
+        } else if (iSize == 1) {
             SqlParam parm = iMap.get(1);
-            ipw.printf("        %s %s", parm.getType().getAccess(), parm.getName());
+            ipw.printf("        %s %s", parm.getType().getWrapper(), parm.getName());
         } else if (iSize <= IMAX) {
             iMap.forEach((k,s) -> {
-                ipw.printf("        %s %s", s.getType().getAccess(), s.getName());
+                ipw.printf("        %s %s", s.getType().getWrapper(), s.getName());
                 if (k<iSize) ipw.commaLn();
             });
         } else {
@@ -116,18 +122,7 @@ public abstract class SqlAction {
         }
         ipw.printf("        throws SQLException {%n");
     }
-    protected void declareOutputUpdate(IndentPrintWriter ipw, int oSize, String type, ClassContext cc) {
-        ipw.commaLn();
-        cc.add("java.util.function.Function");
-        if (oSize > 1) {
-            cc.add("java.util.function.Supplier");
-            ipw.printf("        Supplier<O> so,%n");
-            ipw.printf("        Function<O,Optional<O>> uo)%n");
-        } else {
-            ipw.printf("        Function<%s,Optional<%1$s>> uo)%n", type);
-        }
-        ipw.printf("        throws SQLException {%n");
-    }
+
     protected void declareOutputUse(IndentPrintWriter ipw, int oSize, String type, ClassContext cc) {
         boolean isDelegate = getOutput()!=null && getOutput().isDelegate();
         ipw.commaLn();
@@ -197,7 +192,7 @@ public abstract class SqlAction {
         }
     }
     protected void registerOut(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {
-        oMap.forEach((k,s) -> s.register(ipw, k));
+        oMap.forEach((k,s) -> s.registerOutParms(ipw, k));
     }
 
     public void writeRequest(IndentPrintWriter ipw, String cMethodName, ClassContext cc, Collection<SqlParam> sp) {
@@ -209,7 +204,7 @@ public abstract class SqlAction {
             ipw.more();
             ipw.printf("private Delegate%s"+REQUEST+"() {}%n", cMethodName);
             sp.forEach(p -> {
-                String claz = p.getType().getAccess();
+                String claz = p.getType().getWrapper();
                 ipw.printf("protected Supplier<%s> %s;%n", claz, p.getName());
             });
             ipw.printf("public static Builder%s"+REQUEST+" builder() { return new Builder%1$s"+REQUEST+"(); }%n", cMethodName);
@@ -217,7 +212,7 @@ public abstract class SqlAction {
             ipw.more();
             ipw.printf("private Builder%s"+REQUEST+"() {}%n", cMethodName);
             sp.forEach(p -> {
-                String claz = p.getType().getAccess();
+                String claz = p.getType().getWrapper();
                 ipw.printf("private Supplier<%s> %s;%n", claz, p.getName());
             });
             ipw.printf("public Delegate%s"+REQUEST+" build() {%n", cMethodName);
@@ -227,14 +222,14 @@ public abstract class SqlAction {
             ipw.printf("return  result;%n");
             ipw.ends();
             sp.forEach(p -> ipw.printf("public Builder%s"+REQUEST+" %s(Supplier<%s> %2$s) { this.%2$s = %2$s; return this; }%n",
-                    cMethodName, p.getName(), p.getType().getAccess()));
+                    cMethodName, p.getName(), p.getType().getWrapper()));
             ipw.ends();
         } else {
             ipw.printf("public interface %s"+REQUEST+" {%n", cMethodName);
             ipw.more();
             sp.forEach(p -> {
                 String cName = Tools.capitalize(p.getName());
-                String claz = p.getType().getRaw();
+                String claz = p.getType().getPrimitive();
                 ipw.printf("%s get%s();%n", claz, cName);
             });
         }
@@ -249,7 +244,7 @@ public abstract class SqlAction {
             ipw.printf("public static class Delegate%s"+RESPONSE+" {%n", cMethodName);
             ipw.more();
             sp.forEach(p -> {
-                String claz = p.getType().getAccess();
+                String claz = p.getType().getWrapper();
                 ipw.printf("protected Consumer<%s> %s;%n", claz, p.getName());
             });
             ipw.printf("public static Builder%s"+RESPONSE+" builder() { return new Builder%1$s"+RESPONSE+"(); }%n", cMethodName);
@@ -257,7 +252,7 @@ public abstract class SqlAction {
             ipw.more();
             ipw.printf("private Builder%s"+RESPONSE+"() {}%n", cMethodName);
             sp.forEach(p -> {
-                String claz = p.getType().getAccess();
+                String claz = p.getType().getWrapper();
                 ipw.printf("private Consumer<%s> %s;%n", claz, p.getName());
             });
             ipw.printf("public Delegate%s"+RESPONSE+" build() {%n", cMethodName);
@@ -267,7 +262,7 @@ public abstract class SqlAction {
             ipw.printf("return  result;%n");
             ipw.ends();
             sp.forEach(p -> ipw.printf("public Builder%s"+RESPONSE+" %s(Consumer<%s> %2$s) { this.%2$s = %2$s; return this; }%n",
-                    cMethodName, p.getName(), p.getType().getAccess()));
+                    cMethodName, p.getName(), p.getType().getWrapper()));
             ipw.ends();
 
         } else {
@@ -275,7 +270,7 @@ public abstract class SqlAction {
             ipw.more();
             sp.forEach(p -> {
                 String cName = Tools.capitalize(p.getName());
-                String claz = p.getType().getRaw();
+                String claz = p.getType().getPrimitive();
                 ipw.printf("void set%s(%s s);%n", cName, claz);
             });
         }
@@ -399,7 +394,7 @@ public abstract class SqlAction {
                 boolean isDelegate = getInput() != null && getInput().isDelegate();
                 if (isReflect) {
                     iMap.forEach((k,v) ->
-                            ipw.printf("ESQL.get(i, \"%s\", %s.class)%s%n", v.getName(), v.getType().getAccess(), k<iSize?",":""));
+                            ipw.printf("ESQL.get(i, \"%s\", %s.class)%s%n", v.getName(), v.getType().getWrapper(), k<iSize?",":""));
                 } else if (isDelegate) {
                     iMap.forEach((k,v) ->
                             ipw.printf("i.%s.get()%s%n", v.getName(), k<iSize?",":""));

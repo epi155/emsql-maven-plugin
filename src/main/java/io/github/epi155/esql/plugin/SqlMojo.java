@@ -4,8 +4,11 @@ import io.github.epi155.esql.plugin.sql.SqlApi;
 import io.github.epi155.esql.plugin.td.TdProgrammingModeEnum;
 import io.github.epi155.esql.plugin.td.TdSqlEnum;
 import io.github.epi155.esql.plugin.td.dml.*;
-import io.github.epi155.esql.plugin.td.dql.*;
-import lombok.Getter;
+import io.github.epi155.esql.plugin.td.dql.TdCursorForSelect;
+import io.github.epi155.esql.plugin.td.dql.TdSelectList;
+import io.github.epi155.esql.plugin.td.dql.TdSelectOptional;
+import io.github.epi155.esql.plugin.td.dql.TdSelectSingle;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.maven.plugin.AbstractMojo;
@@ -41,24 +44,27 @@ import java.util.logging.Logger;
 public class SqlMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/esql",
             property = "maven.esql.generateDirectory", required = true)
-    @Getter
+    @Setter
     private File generateDirectory;
 
     @Parameter(defaultValue = "${project.build.resources[0].directory}",
             property = "maven.esql.settingsDirectory", required = true)
+    @Setter
     private File settingsDirectory;
 
-@SuppressWarnings("MismatchedReadAndWriteOfArray")
     @Parameter(required = true)
+    @Setter
     private String[] modules;
 
     @Parameter(defaultValue = "true",
             property = "maven.esql.debugCode", required = true)
+    @Setter
     private Boolean debugCode;
 
     @Parameter(defaultValue = "${project}", readonly = true)
+    @Setter
     private MavenProject project;
-    @Parameter(defaultValue = "${plugin}", readonly = true, required = true)
+    @Parameter(defaultValue = "${plugin}", readonly = true, required = true) @Setter
     protected org.apache.maven.plugin.descriptor.PluginDescriptor plugin;
 
     /**
@@ -67,6 +73,7 @@ public class SqlMojo extends AbstractMojo {
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(defaultValue = "true", property = "maven.esql.addCompileSourceRoot")
+    @Setter
     private boolean addCompileSourceRoot = true;
 
     /**
@@ -75,6 +82,7 @@ public class SqlMojo extends AbstractMojo {
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(defaultValue = "false", property = "maven.esql.addTestCompileSourceRoot")
+    @Setter
     private boolean addTestCompileSourceRoot = false;
     private final Set<String> classLogbook = new HashSet<>();
 
@@ -89,7 +97,6 @@ public class SqlMojo extends AbstractMojo {
         c1.addTypeDescription(new TdSelectSingle());
         c1.addTypeDescription(new TdSelectList());
         c1.addTypeDescription(new TdCursorForSelect());
-        c1.addTypeDescription(new TdSelectCount());
         c1.addTypeDescription(new TdDelete());
         c1.addTypeDescription(new TdUpdate());
         c1.addTypeDescription(new TdInsert());
@@ -162,7 +169,7 @@ public class SqlMojo extends AbstractMojo {
 
 public void makeDirectory(@NotNull File base, @Nullable String packg) throws MojoExecutionException {
         if (!base.exists()) {
-            log.debug("Source Directory <{}> does not exist, creating", base.getName());
+            log.debug("Source Directory <{}> does not exist, creating", base.getAbsolutePath());
             if (!base.mkdirs())
                 throw new MojoExecutionException("Error creating Source Directory <" + base.getName() + ">");
         }

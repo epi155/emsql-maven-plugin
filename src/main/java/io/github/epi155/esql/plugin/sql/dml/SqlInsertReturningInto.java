@@ -8,10 +8,8 @@ import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.HashMap;
@@ -19,10 +17,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Data
-@SuperBuilder
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@Setter @Getter
 public class SqlInsertReturningInto extends SqlAction {
     private ComAreaStd input;
     private ComAreaStd output;
@@ -74,7 +69,7 @@ public class SqlInsertReturningInto extends SqlAction {
         declareGenerics(ipw, cName, iSize, oSize);
         if (oSize == 1) {
             // oMap.get(1) may be NULL, the output parameter is NOT the first one
-            oMap.forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getRaw(), name));
+            oMap.forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getPrimitive(), name));
         } else {
             ipw.putf("O %s(%n", name);
         }

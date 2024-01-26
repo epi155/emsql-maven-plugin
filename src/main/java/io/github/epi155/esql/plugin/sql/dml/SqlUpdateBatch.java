@@ -8,21 +8,17 @@ import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Data
-@SuperBuilder
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@Setter
 public class SqlUpdateBatch extends SqlAction {
+    @Getter
     private ComAreaStd input;
     private int batchSize = 1024;
 

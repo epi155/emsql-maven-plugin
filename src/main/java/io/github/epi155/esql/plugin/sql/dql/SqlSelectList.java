@@ -5,10 +5,8 @@ import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,12 +14,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Data
-@SuperBuilder
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@Setter
 public class SqlSelectList extends SqlAction {
+    @Getter
     private ComAreaStd input;
+    @Getter
     private ComAreaLst output;
     private Integer fetchSize;
 
@@ -64,7 +61,7 @@ public class SqlSelectList extends SqlAction {
         ipw.printf("public static ");
         declareGenerics(ipw, cName, iSize, oSize);
         if (oSize == 1) {
-            String oType = oMap.get(1).getType().getAccess();
+            String oType = oMap.get(1).getType().getWrapper();
             ipw.putf("List<%s> %s(%n", oType, name);
         } else {
             ipw.putf("List<O> %s(%n", name);

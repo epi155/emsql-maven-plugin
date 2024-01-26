@@ -118,8 +118,7 @@ where `XUser` is a client class that implements `FindUserRS` interface.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1) SelectSingle](doc/SelectSingle.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2) SelectOptional](doc/SelectOptional.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3) SelectList](doc/SelectList.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.4) SelectCount](doc/SelectCount.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.5) CursorForSelect](doc/CursorForSelect.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.4) CursorForSelect](doc/CursorForSelect.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;4.2) Details (DML)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2.1) Insert](#53)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) Update](#55)<br/>

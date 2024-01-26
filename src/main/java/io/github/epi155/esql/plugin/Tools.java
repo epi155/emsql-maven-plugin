@@ -4,51 +4,50 @@ import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
 public class Tools {
     private Tools() {}
-    public static List<String> camelToSnake(String[] as) {
-        List<String> result = new ArrayList<>(as.length);
-        for(val s: as) {
-            result.add(camelToSnake(s));
-        }
-        return result;
-    }
-
-    public static String camelToSnake(@NotNull String s) {
-        char[] ac = s.toCharArray();
-        StringBuilder sb = new StringBuilder();
-        if (! Character.isLowerCase(ac[0]))
-            throw new IllegalArgumentException("Invalid camel field name");
-        boolean wasUpper = false;
-        boolean wasDigit = false;
-        for (val c: ac) {
-            boolean isUpper = Character.isUpperCase(c);
-            boolean isDigit = Character.isDigit(c);
-            if (isUpper && !wasUpper) {
-                sb.append("_");
-                sb.append(Character.toLowerCase(c));
-            } else if (isDigit && !wasDigit) {
-                sb.append("_");
-                sb.append(c);
-            } else {
-                sb.append(c);
-            }
-            wasUpper = isUpper;
-            wasDigit = isDigit;
-        }
-        return sb.toString();
-    }
+//    public static List<String> camelToSnake(String[] as) {
+//        List<String> result = new ArrayList<>(as.length);
+//        for(val s: as) {
+//            result.add(camelToSnake(s));
+//        }
+//        return result;
+//    }
+//
+//    public static String camelToSnake(@NotNull String s) {
+//        char[] ac = s.toCharArray();
+//        StringBuilder sb = new StringBuilder();
+//        if (! Character.isLowerCase(ac[0]))
+//            throw new IllegalArgumentException("Invalid camel field name");
+//        boolean wasUpper = false;
+//        boolean wasDigit = false;
+//        for (val c: ac) {
+//            boolean isUpper = Character.isUpperCase(c);
+//            boolean isDigit = Character.isDigit(c);
+//            if (isUpper && !wasUpper) {
+//                sb.append("_");
+//                sb.append(Character.toLowerCase(c));
+//            } else if (isDigit && !wasDigit) {
+//                sb.append("_");
+//                sb.append(c);
+//            } else {
+//                sb.append(c);
+//            }
+//            wasUpper = isUpper;
+//            wasDigit = isDigit;
+//        }
+//        return sb.toString();
+//    }
 
     public static String oneLine(@NotNull String text) {
         StringBuilder sb = new StringBuilder();
@@ -254,7 +253,6 @@ public class Tools {
         int k=1;
         map.put(k++, new SqlParam(parm, type));
         while(ixEnd<text.length()) {
-            int ixOld = ixEnd;
             ixCol = text.indexOf(':', ixEnd);
             if (ixCol<0) {
                 // there are no more parameters
@@ -297,7 +295,8 @@ public class Tools {
         return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
-    @Data @AllArgsConstructor
+    @Setter @Getter
+    @AllArgsConstructor
     public static class SqlStatement {
         private final String text;
         private final Map<Integer, SqlParam> map;

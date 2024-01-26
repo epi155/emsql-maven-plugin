@@ -1,11 +1,13 @@
 package io.github.epi155.esql.plugin.sql;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 public class JdbcStatement implements JdbcMap {
     private final String text;

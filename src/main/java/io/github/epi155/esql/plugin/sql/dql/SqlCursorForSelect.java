@@ -5,10 +5,8 @@ import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,12 +14,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Data
-@SuperBuilder
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@Setter
 public class SqlCursorForSelect extends SqlAction {
+    @Getter
     private ComAreaStd input;
+    @Getter
     private ComAreaStd output;
     private Integer fetchSize;
     private ProgrammingModeEnum mode = ProgrammingModeEnum.Imperative;
@@ -71,7 +68,7 @@ public class SqlCursorForSelect extends SqlAction {
         ipw.printf("public static ");
         declareGenerics(ipw, cName, iSize, oSize);
         if (oSize == 1) {
-            String oType = oMap.get(1).getType().getAccess();
+            String oType = oMap.get(1).getType().getWrapper();
             ipw.putf("ESqlCursor<%s> open%s(%n", oType, cName);
         } else {
             if (output!=null && output.isDelegate()) {
@@ -149,11 +146,11 @@ public class SqlCursorForSelect extends SqlAction {
                 ipw.printf("public static <O extends %s"+RESPONSE+"> void loop%1$s(%n", cName);
             }
         } else {
-            ipw.printf("public static void loop%s(%n", oMap.get(1).getType().getAccess(), cName);
+            ipw.printf("public static void loop%s(%n", oMap.get(1).getType().getWrapper(), cName);
         }
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
-        declareOutputUse(ipw, oSize, oMap.get(1).getType().getAccess(), cc);
+        declareOutputUse(ipw, oSize, oMap.get(1).getType().getWrapper(), cc);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         ipw.more();

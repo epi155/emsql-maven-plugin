@@ -3,7 +3,8 @@ package io.github.epi155.esql.plugin.sql;
 import io.github.epi155.esql.plugin.ClassContext;
 import io.github.epi155.esql.plugin.IndentPrintWriter;
 import io.github.epi155.esql.plugin.MojoContext;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -17,10 +18,12 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@Data
+@Setter
 @Slf4j
 public class SqlApi {
+    @Getter
     private String packageName;
+    @Getter
     private String className;
     private Map<String, SqlEnum> declare = new LinkedHashMap<>();
     private List<SqlMethod> methods;
