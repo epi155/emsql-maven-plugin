@@ -13,6 +13,8 @@ declare:
 methods:
   - methodName: update01
     perform: !Update
+      input:
+        delegate: no
       execSql: |
         update tbool
         set bool11 = :bool11

@@ -13,6 +13,8 @@ declare:
 methods:
   - methodName: insert01
     perform: !Insert
+      input:
+        delegate: no
       execSql: |
         insert into tbool (
           bool01,
@@ -28,6 +30,8 @@ methods:
 
   - methodName: insert02
     perform: !InsertReturnKeys
+      input:
+        delegate: no
       output:
         fields:
           idBool: long
@@ -42,10 +46,35 @@ methods:
           :bool02,
           :bool11,
           :bool12
+        )
+
+  - methodName: insert22
+    perform: !InsertReturnKeys
+      timeout: 5
+      input:
+        delegate: no
+      output:
+        fields:
+          idBool: long
+          bool14: bool
+      execSql: |
+        insert into tbool (
+          bool01,
+          bool02,
+          bool11,
+          bool12
+        ) values (
+          :bool01,
+          :bool02,
+          :bool11,
+          :bool12
         ) 
-        
+
   - methodName: insert03
     perform: !InsertBatch
+      input:
+        delegate: no
+      batch-size: 500
       execSql: |
         insert into tbool (
           bool01,
@@ -70,3 +99,23 @@ methods:
           :bool01,
           :bool02
         ) 
+
+  - methodName: insert05
+    perform: !InsertReturnInto
+      input:
+        delegate: no
+      output:
+        delegate: no
+      execSql: |
+        insert into tbool (
+          bool01,
+          bool02,
+          bool11,
+          bool12
+        ) values (
+          :bool01,
+          :bool02,
+          :bool11,
+          :bool12
+        )
+        returning idBool into :idBool

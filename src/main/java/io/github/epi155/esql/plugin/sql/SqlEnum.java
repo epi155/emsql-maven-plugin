@@ -6,7 +6,6 @@ import lombok.Getter;
 
 import java.util.Collection;
 import java.util.Set;
-@Getter
 public enum SqlEnum {
     BooleanStd("Boolean", "BOOLEAN", "boolean", "Boolean"),
     BooleanNil("Boolean", "BOOLEAN", "Boolean"),
@@ -200,6 +199,7 @@ public enum SqlEnum {
     };
     private final String jdbc;
     private final String sql;
+    private final boolean isPlainClass;
     @Getter
     private final String primitive;
     @Getter
@@ -207,20 +207,25 @@ public enum SqlEnum {
     SqlEnum(String jdbc, String sql, String primitive, String wrapper) {
         this.jdbc = jdbc;
         this.sql = sql;
+        if (primitive.equals(wrapper))
+            throw new IllegalArgumentException("primitive and wrapper are equals "+primitive);
         this.primitive = primitive;
         this.wrapper = wrapper;
+        this.isPlainClass = false;
     }
     SqlEnum(String jdbc, String sql, String wrapper) {
         this.jdbc = jdbc;
         this.sql = sql;
         this.primitive = wrapper;
         this.wrapper = wrapper;
+        this.isPlainClass = false;
     }
     SqlEnum(String jdbc, String sql) {
         this.jdbc = jdbc;
         this.sql = sql;
         this.primitive = jdbc;
         this.wrapper = jdbc;
+        this.isPlainClass = true;
     }
     public void psSet(IndentPrintWriter ipw, int k, String source) {
         if (name().endsWith("Std")) {
@@ -230,7 +235,7 @@ public enum SqlEnum {
         }
     }
     public  void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
-        if (name().endsWith("Std") || primitive.equals(wrapper)) {
+        if (name().endsWith("Std") || isPlainClass) {
             ipw.printf("%s(rs.get%s(%d));%n", target, jdbc, k);
         } else {
             ipw.printf("{ %s it=rs.get%s(%d); %s(rs.wasNull() ? null : it); }%n", wrapper, jdbc, k, target);
@@ -247,7 +252,7 @@ public enum SqlEnum {
         }
     }
     public void rsGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-        if (name().endsWith("Std") || primitive.equals(wrapper)) {
+        if (name().endsWith("Std") || isPlainClass) {
             ipw.printf("%s o =  rs.get%s(%d);%n", primitive, jdbc, k);
         } else {
             ipw.printf("{ %s it=rs.get%s(%d); %1$s o=rs.wasNull() ? null : it; }%n", wrapper, jdbc, k);
@@ -263,7 +268,7 @@ public enum SqlEnum {
         }
     }
     public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
-        if (name().endsWith("Std") || primitive.equals(wrapper)) {
+        if (name().endsWith("Std") || isPlainClass) {
             ipw.printf("ESQL.set(o, \"%s\", rs.get%s(%d));%n", name, jdbc, k);
         } else {
             ipw.printf("ESQL.set(o, \"%s\", ESQL.box(rs.get%s(%d), rs.wasNull()));%n", name, jdbc, k);
@@ -273,14 +278,14 @@ public enum SqlEnum {
         ipw.printf("ps.registerOutParameter(%d, Types.%s);%n", k, sql);
     }
     public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-        if (name().endsWith("Std") || primitive.equals(wrapper)) {
+        if (name().endsWith("Std") || isPlainClass) {
             ipw.printf("%s o =  ps.get%s(%d);%n", primitive, jdbc, k);
         } else {
             ipw.printf("{ %s it=ps.get%s(%d); %1$s o=ps.wasNull() ? null : it; }%n", wrapper, jdbc, k);
         }
     }
     public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-        if (name().endsWith("Std") || primitive.equals(wrapper)) {
+        if (name().endsWith("Std") || isPlainClass) {
             ipw.printf("o.set%s(ps.get%s(%d));%n", cName, jdbc, k);
         } else {
             ipw.printf("{ %s it=ps.get%s(%d); set%s(ps.wasNull() ? null : it); }%n", wrapper, jdbc, k, cName);

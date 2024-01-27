@@ -17,8 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Setter
-@Getter
 public class SqlDeleteBatch extends SqlAction {
+    @Getter
     private ComAreaStd input;
     private int batchSize = 1024;
 

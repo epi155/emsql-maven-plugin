@@ -28,6 +28,8 @@ methods:
   - methodName: delete03
     perform: !Delete
       timeout: 5
+      input:
+        delegate: no
       execSql: |
         delete from tbool
         where bool01 = :bool01
@@ -45,6 +47,9 @@ methods:
 
   - methodName: delete12
     perform: !DeleteBatch
+      batchSize: 1000
+      input:
+        delegate: no
       execSql: |
         delete from tbool
         where bool01 = :bool01

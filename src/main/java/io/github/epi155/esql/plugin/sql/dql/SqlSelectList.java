@@ -79,7 +79,11 @@ public class SqlSelectList extends SqlAction {
         debugAction(ipw, kPrg, iMap, cc);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
-        ipw.printf("List<O> list = new ArrayList<>();%n");
+        if (oSize == 1) {
+            ipw.printf("List<%s> list = new ArrayList<>();%n", oMap.get(1).getType().getWrapper());
+        } else {
+            ipw.printf("List<O> list = new ArrayList<>();%n");
+        }
         ipw.printf("while (rs.next()) {%n");
         ipw.more();
         fetch(ipw, oMap, cc);

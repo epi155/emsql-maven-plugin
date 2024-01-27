@@ -98,7 +98,8 @@
             <groupId>io.github.epi155</groupId>
             <artifactId>esql-runtime</artifactId>
             <version>0.1-SNAPSHOT</version>
-            <scope>test</scope>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
     </dependencies>
@@ -175,6 +176,26 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.19.0</version>
+                <configuration>
+                    <linkXRef>false</linkXRef>
+                    <inputEncoding>utf-8</inputEncoding>
+                    <minimumTokens>100</minimumTokens>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate-pmd</goal>
+                            <goal>aggregate-cpd</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.8</version>
@@ -237,6 +258,11 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+                            <Build-OS>${os.name} (${os.arch}) ${os.version}</Build-OS>
+                            <Build-Jdk>${java.vm.name} (${java.vm.vendor}) ${java.vm.version}</Build-Jdk>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
