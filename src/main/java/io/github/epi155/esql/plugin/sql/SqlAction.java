@@ -30,7 +30,7 @@ public abstract class SqlAction {
 
     public abstract void writeMethod(IndentPrintWriter pw, String methodName, JdbcStatement jdbc, String kPrg, ClassContext cc);
 
-    protected void declareInput(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap, String cName) {
+    public void declareInput(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap, String cName) {
         int iSize = iMap.size();
         if (iSize == 1) {
             ipw.commaLn();
@@ -50,7 +50,7 @@ public abstract class SqlAction {
             }
         }
     }
-    protected void declareNewInstance(IndentPrintWriter ipw, String eSqlObject, Map<Integer, SqlParam> iMap, String cName) {
+    public void declareNewInstance(IndentPrintWriter ipw, String eSqlObject, Map<Integer, SqlParam> iMap, String cName) {
         int iSize = iMap.size();
         ipw.printf("public static ");
         declareGenerics(ipw, cName, iSize, 1);
@@ -72,7 +72,7 @@ public abstract class SqlAction {
         ipw.printf("        Connection c)%n", cName);
         ipw.printf("        throws SQLException {%n");
     }
-    protected void declareReturnNew(IndentPrintWriter ipw, String eSqlObject, Map<Integer, SqlParam> iMap, int batchSize) {
+    public void declareReturnNew(IndentPrintWriter ipw, String eSqlObject, Map<Integer, SqlParam> iMap, int batchSize) {
         int iSize = iMap.size();
         ipw.printf("return new %s", eSqlObject);
         if (iSize == 0) {
@@ -87,7 +87,7 @@ public abstract class SqlAction {
         ipw.putf("(ps, %d) {%n", batchSize);
     }
 
-    protected void declareInputBatch(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap) {
+    public void declareInputBatch(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap) {
         int iSize = iMap.size();
         if (iSize == 0) {
             ipw.printf("        Void nil");     // any use case ??
@@ -107,7 +107,7 @@ public abstract class SqlAction {
             }
         }
     }
-    protected void declareOutput(IndentPrintWriter ipw, int oSize, ClassContext cc) {
+    public void declareOutput(IndentPrintWriter ipw, int oSize, ClassContext cc) {
         boolean isDelegate = getOutput() != null && getOutput().isDelegate();
         if (oSize > 1 || isDelegate) {
             ipw.commaLn();
@@ -123,7 +123,7 @@ public abstract class SqlAction {
         ipw.printf("        throws SQLException {%n");
     }
 
-    protected void declareOutputUse(IndentPrintWriter ipw, int oSize, String type, ClassContext cc) {
+    public void declareOutputUse(IndentPrintWriter ipw, int oSize, String type, ClassContext cc) {
         boolean isDelegate = getOutput()!=null && getOutput().isDelegate();
         ipw.commaLn();
         if (oSize > 1) {
@@ -145,7 +145,7 @@ public abstract class SqlAction {
         }
         ipw.printf("        throws SQLException {%n");
     }
-    protected void fetch(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, ClassContext cc) {
+    public void fetch(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, ClassContext cc) {
         if (oMap.size() > 1) {
             if (getOutput()!=null && getOutput().isReflect()) {
                 ipw.printf("O o = so.get();%n");
@@ -160,7 +160,7 @@ public abstract class SqlAction {
             oMap.forEach((k,v) -> v.fetchValue(ipw, k, cc));
         }
     }
-    protected void getOutput(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, ClassContext cc) {
+    public void getOutput(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, ClassContext cc) {
         if (oMap.size() > 1) {
             ipw.printf("O o = so.get();%n");
 //            if (reflect) {
@@ -173,7 +173,7 @@ public abstract class SqlAction {
         }
     }
 
-    protected void setInput(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap) {
+    public void setInput(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap) {
         int iSize = iMap.size();
         if (iSize == 1) {
             iMap.get(1).setValue(ipw, 1);
@@ -191,7 +191,7 @@ public abstract class SqlAction {
             }
         }
     }
-    protected void registerOut(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {
+    public void registerOut(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {
         oMap.forEach((k,s) -> s.registerOutParms(ipw, k));
     }
 
@@ -276,7 +276,7 @@ public abstract class SqlAction {
         }
         ipw.ends();
     }
-    protected void docBegin(IndentPrintWriter ipw) {
+    public void docBegin(IndentPrintWriter ipw) {
         ipw.printf("/**%n");
         ipw.printf(" * Template %s%n", this.getClass().getSimpleName());
         ipw.printf(" * <pre>%n");
@@ -288,7 +288,7 @@ public abstract class SqlAction {
         ipw.printf(" *%n");
         ipw.printf(" * @param c connection%n");
     }
-    protected void docInput(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap) {
+    public void docInput(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap) {
         int iSize = iMap.size();
         if (iSize == 1) {
             SqlParam parm = iMap.get(1);
@@ -303,24 +303,24 @@ public abstract class SqlAction {
             }
         }
     }
-    protected void docOutput(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {
+    public void docOutput(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {
         if (oMap.size() > 1) {
             ipw.printf(" * @param so output constructor%n");
         }
     }
 
-    protected void docOutputUse(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {
+    public void docOutputUse(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {
         if (oMap.size() > 1) {
             ipw.printf(" * @param so output constructor%n");
         }
         ipw.printf(" * @param co output consumer%n");
     }
 
-    protected void docEnd(IndentPrintWriter ipw) {
+    public void docEnd(IndentPrintWriter ipw) {
         ipw.printf(" * @throws SQLException SQL error%n");
         ipw.printf(" */%n");
     }
-    protected void declareGenerics(IndentPrintWriter ipw, String cName, int iSize, int oSize) {
+    public void declareGenerics(IndentPrintWriter ipw, String cName, int iSize, int oSize) {
         ComAttribute ia = getInput();
         ComAttribute oa = getOutput();
         boolean inpIsReflect = ia != null && ia.isReflect();
@@ -328,9 +328,7 @@ public abstract class SqlAction {
         boolean outIsReflect = oa != null && oa.isReflect();
         boolean outIsDelegate = oa != null && oa.isDelegate();
         if (oSize == 1) {
-            if (iSize <= IMAX) {
-                // nop
-            } else {
+            if (iSize > IMAX) {
                 if (inpIsReflect) {
                     ipw.putf("<I> ");
                 } else if (inpIsDelegate){
@@ -377,7 +375,7 @@ public abstract class SqlAction {
             }
         }
     }
-    protected void debugAction(IndentPrintWriter ipw, String kPrg, Map<Integer, SqlParam> iMap, ClassContext cc) {
+    public void debugAction(IndentPrintWriter ipw, String kPrg, Map<Integer, SqlParam> iMap, ClassContext cc) {
         if (cc.isDebug()) {
             int iSize = iMap.size();
             ipw.printf("if (log.isDebugEnabled()) {%n");

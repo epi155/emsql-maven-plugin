@@ -16,6 +16,13 @@ import java.util.Map;
 @Slf4j
 public class Tools {
     private Tools() {}
+
+    interface ApiStore<T> {
+
+        T close(String text);
+
+        void push(String parm);
+    }
 //    public static List<String> camelToSnake(String[] as) {
 //        List<String> result = new ArrayList<>(as.length);
 //        for(val s: as) {
@@ -82,7 +89,6 @@ public class Tools {
     private static boolean isBreak(char c) {
         return c=='\n' || c=='\r';
     }
-    @NotNull
     public static SqlStatement replacePlaceholder(String text, Map<String, SqlEnum> fields) {
         int ixCol = text.indexOf(':');
         if (ixCol<0) {
@@ -100,7 +106,7 @@ public class Tools {
         }
         String parm = text.substring(ixCol + 1, ixEnd);
 
-        class MapStore {
+        class MapStore implements ApiStore<SqlStatement> {
             private final Map<Integer, SqlParam> iMap = new LinkedHashMap<>();
             private int k=1;
 
@@ -119,6 +125,11 @@ public class Tools {
         }
         val store = new MapStore();
         store.push(parm);
+        return deepScan(text, ixCol, ixEnd, store);
+    }
+
+    private static <R> R deepScan(String text, int ixCol, int ixEnd, ApiStore<R> store) {
+        String parm;
         val sb = new StringBuilder();
         sb.append(text, 0, ixCol).append('?');
         while(ixEnd<text.length()) {
@@ -142,9 +153,9 @@ public class Tools {
             sb.append(text, ixOld, ixCol).append('?');
         }
 
-        return new SqlStatement(text, Map.of());    // dead exit point
+        return null;    // dead exit point
     }
-    @NotNull
+
     public static JdbcStatement replacePlaceholder(String text, Map<String, SqlEnum> iFields, Map<String, SqlEnum> oFields) {
         log.debug("Query: {}", text);
         int ixCol = text.indexOf(':');
@@ -176,7 +187,7 @@ public class Tools {
         }
         String parm = text.substring(ixCol + 1, ixEnd);
 
-        class MapStore {
+        class MapStore implements ApiStore<JdbcStatement> {
             private final Map<Integer, SqlParam> iMap = new LinkedHashMap<>();
             private final Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
             private int k=1;
@@ -200,32 +211,8 @@ public class Tools {
             }
         }
         val store = new MapStore();
-
-        val sb = new StringBuilder();
         store.push(parm);
-        sb.append(text, 0, ixCol).append('?');
-        while(ixEnd<text.length()) {
-            int ixOld = ixEnd;
-            ixCol = text.indexOf(':', ixEnd);
-            if (ixCol<0) {
-                // there are no more parameters
-                sb.append(text.substring(ixOld));
-                return store.close(sb.toString());
-            }
-            ixEnd = indexOf(text, ixCol + 1, ' ', ',');
-            if (ixEnd<0) {
-                // parameter at end-of-text (no space)
-                parm = text.substring(ixCol + 1);
-                store.push(parm);
-                sb.append(text, ixOld, ixCol).append('?');
-                return store.close(sb.toString());
-            }
-            parm = text.substring(ixCol + 1, ixEnd);
-            store.push(parm);
-            sb.append(text, ixOld, ixCol).append('?');
-        }
-
-        return new JdbcStatement(text, Map.of(), Map.of());     // dead exit point
+        return deepScan(text, ixCol, ixEnd, store);
     }
     @NotNull
     public static Map<Integer, SqlParam> mapPlaceholder(String text, Map<String, SqlEnum> fields) {
@@ -282,10 +269,8 @@ public class Tools {
         int k = -1;
         for(val c: cs) {
             int ix = text.indexOf(c, i);
-            if (ix >= 0) {
-                if (k<0 || ix<k) {
-                    k = ix;
-                }
+            if (ix >= 0 && (k<0 || ix<k)) {
+                k = ix;
             }
         }
         return k;

@@ -13,34 +13,23 @@ import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-@Setter
-public class SqlInsertBatch extends SqlAction {
+public class SqlInsertBatch extends SqlAction implements ApiInsert {
+    private final DelegateInsert delegateInsert;
+    @Setter
     @Getter
     private ComAreaStd input;
+    @Setter
     private int batchSize = 1024;
 
-    private static final String tmpl =
-            "^INSERT INTO (\\w+) [(](.*?)[)] VALUES [(](.*?)[)]$";
-    private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
+    SqlInsertBatch() {
+        super();
+        this.delegateInsert = new DelegateInsert(this);
+    }
     @Override
     public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
-        String nText = Tools.oneLine(getExecSql());
-        Matcher m = regx.matcher(nText);
-        if (m.find()) {
-            String sTable = m.group(1);
-            String sCols  = m.group(2).trim();
-            String sParms = m.group(3).trim();
-            String oText = "INSERT INTO "+sTable+" ( "+sCols+" ) VALUES ( "+sParms+" )";
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
-            return new JdbcStatement(iStmt.getText(), iStmt.getMap(), Map.of());
-        } else {
-            throw new MojoExecutionException("Invalid query format: "+ getExecSql());
-        }
+        return delegateInsert.proceed(fields);
     }
-
     @Override
     public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();

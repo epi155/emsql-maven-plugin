@@ -86,7 +86,8 @@ public class SqlInsertReturningInto extends SqlAction {
         debugAction(ipw, kPrg, iMap, cc);
         ipw.printf("ps.execute();%n");
         getOutput(ipw, oMap, cc);
-        ipw.printf("return o;%n");
+        if (oSize>1)
+            ipw.printf("return o;%n");
         ipw.ends();
         ipw.ends();
     }

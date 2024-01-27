@@ -13,32 +13,23 @@ import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-@Setter
-public class SqlUpdateBatch extends SqlAction {
+public class SqlUpdateBatch extends SqlAction implements ApiUpdate {
+    private final DelegateUpdate delegateUpdate;
     @Getter
+    @Setter
     private ComAreaStd input;
+    @Setter
     private int batchSize = 1024;
 
-    private static final String tmpl =
-            "^UPDATE (\\w+) SET (.*) WHERE (.*)$";
-    private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
+    SqlUpdateBatch() {
+        super();
+        this.delegateUpdate = new DelegateUpdate(this);
+    }
+
     @Override
     public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
-        String nText = Tools.oneLine(getExecSql());
-        Matcher m = regx.matcher(nText);
-        if (m.find()) {
-            String sTable = m.group(1);
-            String sAlter = m.group(2);
-            String sWhere = m.group(3);
-            String oText = "UPDATE " + sTable + " SET " + sAlter + " WHERE " + sWhere;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
-            return new JdbcStatement(iStmt.getText(), iStmt.getMap(), Map.of());
-        } else {
-            throw new MojoExecutionException("Invalid query format: "+ getExecSql());
-        }
+        return delegateUpdate.proceed(fields);
     }
 
     @Override

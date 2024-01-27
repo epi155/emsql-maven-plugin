@@ -8,38 +8,28 @@ import io.github.epi155.esql.plugin.sql.SqlParam;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-@Setter
-public class SqlSelectList extends SqlAction {
+public class SqlSelectList extends SqlAction implements ApiSelect {
+    private final DelegateSelect delegateSelect;
     @Getter
+    @Setter
     private ComAreaStd input;
     @Getter
+    @Setter
     private ComAreaLst output;
+    @Setter
     private Integer fetchSize;
 
-    private static final String tmpl =
-            "^SELECT (.*) (INTO (.*?)) FROM (.*)$";
-    private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
+    SqlSelectList() {
+        super();
+        this.delegateSelect = new DelegateSelect(this);
+    }
+
     @Override
     public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
-        String nText = Tools.oneLine(getExecSql());
-        Matcher m = regx.matcher(nText);
-        if (m.find()) {
-            String sFld = m.group(1);
-            String sInto = m.group(3);
-            String sTables = m.group(4);
-            String oText = "SELECT " + sFld + " FROM " + sTables;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
-            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);
-            return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
-        } else {
-            throw new MojoExecutionException("Invalid query format: "+ getExecSql());
-        }
+        return delegateSelect.sql(fields);
     }
 
     @Override

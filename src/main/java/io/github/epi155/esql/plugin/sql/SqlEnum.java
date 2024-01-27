@@ -66,7 +66,7 @@ public enum SqlEnum {
         }
         @Override
         public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-            ipw.printf("LocalDate o = ps.getDate(%d).toLocalDate();%n", k);
+            ipw.printf("return ps.getDate(%d).toLocalDate();%n", k);
         }
         @Override
         public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
@@ -104,7 +104,7 @@ public enum SqlEnum {
         @Override
         public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
             cc.add("io.github.epi155.esql.runtime.ESQL");
-            ipw.printf("LocalDate o = ESQL.toLocalDate(ps.getDate(%d));%n", k);
+            ipw.printf("return ESQL.toLocalDate(ps.getDate(%d));%n", k);
         }
         @Override
         public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
@@ -147,7 +147,7 @@ public enum SqlEnum {
         }
         @Override
         public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-            ipw.printf("LocalDateTime o = ps.getTimestamp(%d).toLocalDateTime();%n", k);
+            ipw.printf("return ps.getTimestamp(%d).toLocalDateTime();%n", k);
         }
         @Override
         public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
@@ -185,7 +185,7 @@ public enum SqlEnum {
         @Override
         public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
             cc.add("io.github.epi155.esql.runtime.ESQL");
-            ipw.printf("LocalDateTime o = ESQL.toLocalDateTime(ps.getTimestamp(%d));%n", k);
+            ipw.printf("return ESQL.toLocalDateTime(ps.getTimestamp(%d));%n", k);
         }
         @Override
         public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
@@ -255,7 +255,7 @@ public enum SqlEnum {
         if (name().endsWith("Std") || isPlainClass) {
             ipw.printf("%s o =  rs.get%s(%d);%n", primitive, jdbc, k);
         } else {
-            ipw.printf("{ %s it=rs.get%s(%d); %1$s o=rs.wasNull() ? null : it; }%n", wrapper, jdbc, k);
+            ipw.printf("%1$s o; { %1$s it=rs.get%2$s(%3$d); o=rs.wasNull() ? null : it; }%n", wrapper, jdbc, k);
 //            cc.add("io.github.epi155.esql.runtime.ESQL");
 //            ipw.printf("%s o = ESQL.box(rs.get%s(%d), rs.wasNull());%n", wrapper, jdbc, k);
         }
@@ -279,16 +279,16 @@ public enum SqlEnum {
     }
     public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
         if (name().endsWith("Std") || isPlainClass) {
-            ipw.printf("%s o =  ps.get%s(%d);%n", primitive, jdbc, k);
+            ipw.printf("return ps.get%s(%d);%n", jdbc, k);
         } else {
-            ipw.printf("{ %s it=ps.get%s(%d); %1$s o=ps.wasNull() ? null : it; }%n", wrapper, jdbc, k);
+            ipw.printf("{ %s it=ps.get%s(%d); return ps.wasNull() ? null : it; }%n", wrapper, jdbc, k);
         }
     }
     public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
         if (name().endsWith("Std") || isPlainClass) {
             ipw.printf("o.set%s(ps.get%s(%d));%n", cName, jdbc, k);
         } else {
-            ipw.printf("{ %s it=ps.get%s(%d); set%s(ps.wasNull() ? null : it); }%n", wrapper, jdbc, k, cName);
+            ipw.printf("{ %s it=ps.get%s(%d); o.set%s(ps.wasNull() ? null : it); }%n", wrapper, jdbc, k, cName);
         }
     }
     public Collection<String> requires() {

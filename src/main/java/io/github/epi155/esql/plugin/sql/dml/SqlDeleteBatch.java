@@ -13,30 +13,23 @@ import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-@Setter
-public class SqlDeleteBatch extends SqlAction {
+public class SqlDeleteBatch extends SqlAction implements ApiDelete {
+    private final DelegateDelete delegateDelete;
     @Getter
+    @Setter
     private ComAreaStd input;
+    @Setter
     private int batchSize = 1024;
 
-    private static final String tmpl =
-            "^DELETE FROM (.*)$";
-    private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
+    SqlDeleteBatch() {
+        super();
+        this.delegateDelete = new DelegateDelete(this);
+    }
+
     @Override
     public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
-        String nText = Tools.oneLine(getExecSql());
-        Matcher m = regx.matcher(nText);
-        if (m.find()) {
-            String sTables = m.group(1);
-            String oText = "DELETE FROM " + sTables;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
-            return new JdbcStatement(iStmt.getText(), iStmt.getMap(), Map.of());
-        } else {
-            throw new MojoExecutionException("Invalid query format: "+ getExecSql());
-        }
+        return delegateDelete.proceed(fields);
     }
 
     @Override

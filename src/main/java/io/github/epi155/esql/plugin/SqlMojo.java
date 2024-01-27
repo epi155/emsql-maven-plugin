@@ -186,7 +186,7 @@ public void makeDirectory(@NotNull File base, @Nullable String packg) throws Moj
     }
     private static void mkdir(String tmp) throws MojoExecutionException {
         val f = new File(tmp);
-        if ((!f.exists()) && (!f.mkdir()))
+        if (!f.exists() && !f.mkdir())
             throw new MojoExecutionException("Cannot create directory <" + tmp + ">");
     }
 
