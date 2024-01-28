@@ -3,7 +3,7 @@
 
 The SelectOptional template is designed for the situation where the selection must return one or no elements, the presence of multiple elements throws a SqlException
 
-### 4.1.2.a. Standard use
+### Standard use
 
 Template example
 
@@ -56,7 +56,7 @@ Example of client code:
 
 where Xuser classe implements FindUserAnyRS interface.
 
-4.1.2.b. Delegate output
+### Delegate output
 
 ~~~yaml
   - methodName: findUserAny
@@ -112,3 +112,7 @@ Example of client code:
             // user and born are set
         }
 ~~~
+
+### Delegate input
+
+TODO

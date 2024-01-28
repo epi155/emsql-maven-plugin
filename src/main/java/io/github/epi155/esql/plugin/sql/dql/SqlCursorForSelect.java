@@ -11,8 +11,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
 
-public class SqlCursorForSelect extends SqlAction implements ApiSelect {
-    private final DelegateSelect delegateSelect;
+public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
+    private final DelegateSelectFields delegateSelectFields;
     @Getter
     @Setter
     private ComAreaStd input;
@@ -26,11 +26,11 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelect {
 
     SqlCursorForSelect() {
         super();
-        this.delegateSelect = new DelegateSelect(this);
+        this.delegateSelectFields = new DelegateSelectFields(this);
     }
     @Override
     public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
-        return delegateSelect.sql(fields);
+        return delegateSelectFields.sql(fields);
     }
 
     @Override

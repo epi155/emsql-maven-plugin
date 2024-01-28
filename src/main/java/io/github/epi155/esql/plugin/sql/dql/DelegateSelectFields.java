@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DelegateSelect {
-    private final ApiSelect api;
+public class DelegateSelectFields {
+    private final ApiSelectFields api;
 
-    public DelegateSelect(ApiSelect api) {
+    public DelegateSelectFields(ApiSelectFields api) {
         this.api = api;
     }
     private static final String tmpl =

@@ -3,7 +3,7 @@
 
 The SelectSingle template is designed for the situation where the selection needs to return a single element, no elements, or multiple elements throw a SqlException
 
-### 4.1.1.a. Standard use
+### Standard use
 
 Template example
 
@@ -69,7 +69,7 @@ Example of client code:
 
 where `Xuser` classe implements `FindUserRS` interface.
 
-### 4.1.1.b. Delegate output
+### Delegate output
 
 ~~~yaml
   - methodName: findUser
@@ -128,7 +128,7 @@ Example of client code:
 The use of output delegation is more laborious than a normal DTO interface, the advantage is that it is possible to set fields on different objects
 
 
-### 4.1.1.c. Delegate input
+### Delegate input
 
 ~~~yaml
   - methodName: findUserId

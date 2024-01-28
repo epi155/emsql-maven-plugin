@@ -33,22 +33,6 @@ public class TdSqlEnum extends TypeDescription {
                 case "SHORT?":
                 case "SMALLINT?":
                     return SqlEnum.ShortNil;
-                case "VARCHAR":
-                    return SqlEnum.VarCharStd;
-                case "VARCHAR?":
-                    return SqlEnum.VarCharNil;
-                case "CHAR":
-                    return SqlEnum.CharStd;
-                case "CHAR?":
-                    return SqlEnum.CharNil;
-                case "DATE":
-                    return SqlEnum.DateStd;
-                case "DATE?":
-                    return SqlEnum.DateNil;
-                case "TIMESTAMP":
-                    return SqlEnum.TimestampStd;
-                case "TIMESTAMP?":
-                    return SqlEnum.TimestampNil;
                 case "BIGINT":
                 case "BIGINTEGER":
                 case "LONG":
@@ -58,12 +42,48 @@ public class TdSqlEnum extends TypeDescription {
                 case "BIGINTEGER?":
                 case "LONG?":
                     return SqlEnum.LongNil;
+                case "DOUBLE":
+                    return SqlEnum.DoubleStd;
+                case "DOUBLE?":
+                    return SqlEnum.DoubleNil;
+                case "FLOAT":
+                    return SqlEnum.FloatStd;
+                case "FLOAT?":
+                    return SqlEnum.FloatNil;
+
                 case "NUMERIC":
                 case "NUMBER":
                     return SqlEnum.NumericStd;
                 case "NUMERIC?":
                 case "NUMBER?":
                     return SqlEnum.NumericNil;
+                case "DECIMAL":
+                    return SqlEnum.NumericStd;
+                case "DECIMAL?":
+                    return SqlEnum.NumericNil;
+
+                case "VARCHAR":
+                    return SqlEnum.VarCharStd;
+                case "VARCHAR?":
+                    return SqlEnum.VarCharNil;
+                case "CHAR":
+                    return SqlEnum.CharStd;
+                case "CHAR?":
+                    return SqlEnum.CharNil;
+
+                case "DATE":
+                    return SqlEnum.DateStd;
+                case "DATE?":
+                    return SqlEnum.DateNil;
+                case "TIMESTAMP":
+                    return SqlEnum.TimestampStd;
+                case "TIMESTAMP?":
+                    return SqlEnum.TimestampNil;
+                case "TIME":
+                    return SqlEnum.TimeStd;
+                case "TIME?":
+                    return SqlEnum.TimeNil;
+
                 case "LOCALDATE":
                     return SqlEnum.LocalDateStd;
                 case "LOCALDATE?":
@@ -72,6 +92,10 @@ public class TdSqlEnum extends TypeDescription {
                     return SqlEnum.LocalDateTimeStd;
                 case "LOCALDATETIME?":
                     return SqlEnum.LocalDateTimeNil;
+                case "LOCALTIME":
+                    return SqlEnum.LocalTimeStd;
+                case "LOCALTIME?":
+                    return SqlEnum.LocalTimeNil;
                 default:
                     return null;
             }

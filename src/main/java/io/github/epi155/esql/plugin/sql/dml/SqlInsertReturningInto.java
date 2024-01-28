@@ -8,6 +8,8 @@ import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
+import io.github.epi155.esql.plugin.sql.dql.ApiSelectSignature;
+import io.github.epi155.esql.plugin.sql.dql.DelegateSelectSignature;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -17,10 +19,17 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Setter @Getter
-public class SqlInsertReturningInto extends SqlAction {
+public class SqlInsertReturningInto extends SqlAction implements ApiSelectSignature {
+    private final DelegateSelectSignature delegateSelectSignature;
+    @Setter @Getter
     private ComAreaStd input;
+    @Setter @Getter
     private ComAreaStd output;
+
+    SqlInsertReturningInto() {
+        super();
+        this.delegateSelectSignature = new DelegateSelectSignature(this);
+    }
 
     private static final String tmpl =
             "^INSERT INTO (\\w+) [(](.*)[)] VALUES [(](.*)[)] RETURNING (.*) INTO (.*)$";
@@ -54,39 +63,28 @@ public class SqlInsertReturningInto extends SqlAction {
 
     @Override
     public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        Map<Integer, SqlParam> iMap = jdbc.getIMap();
-        Map<Integer, SqlParam> oMap = jdbc.getOMap();
-        int iSize = iMap.size();
-        int oSize = oMap.size();
-        if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
-        String cName = Tools.capitalize(name);
-        docBegin(ipw);
-        docInput(ipw, iMap);
-        docOutput(ipw, oMap);
-        docEnd(ipw);
+        delegateSelectSignature.signature(ipw, jdbc, name);
 
-        ipw.printf("public static ");
-        declareGenerics(ipw, cName, iSize, oSize);
-        if (oSize == 1) {
+        if (jdbc.getOutSize() == 1) {
             // oMap.get(1) may be NULL, the output parameter is NOT the first one
-            oMap.forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getPrimitive(), name));
+            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getPrimitive(), name));
         } else {
             ipw.putf("O %s(%n", name);
         }
 
         ipw.printf("        Connection c");
-        declareInput(ipw, iMap, cName);
-        declareOutput(ipw, oSize, cc);
+        declareInput(ipw, jdbc.getIMap(), Tools.capitalize(name));
+        declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();
         ipw.printf("try (CallableStatement ps = c.prepareCall(Q_%s)) {%n", kPrg);
         ipw.more();
-        setInput(ipw, iMap);
-        registerOut(ipw, oMap);
+        setInput(ipw, jdbc.getIMap());
+        registerOut(ipw, jdbc.getOMap());
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
-        debugAction(ipw, kPrg, iMap, cc);
+        debugAction(ipw, kPrg, jdbc.getIMap(), cc);
         ipw.printf("ps.execute();%n");
-        getOutput(ipw, oMap, cc);
-        if (oSize>1)
+        getOutput(ipw, jdbc.getOMap(), cc);
+        if (jdbc.getOutSize()>1)
             ipw.printf("return o;%n");
         ipw.ends();
         ipw.ends();

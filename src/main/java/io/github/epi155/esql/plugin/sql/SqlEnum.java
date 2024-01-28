@@ -15,6 +15,10 @@ public enum SqlEnum {
     IntegerNil("Int", "INTEGER", "Integer"),
     LongStd("Long", "BIGINT", "long", "Long"),
     LongNil("Long", "BIGINT", "Long"),
+    DoubleStd("Double", "DOUBLE", "double", "Double"),
+    DoubleNil("Double", "DOUBLE", "Double"),
+    FloatStd("Float", "FLOAT", "float", "Float"),
+    FloatNil("Float", "FLOAT", "Float"),
     VarCharStd("String", "VARCHAR"),
     VarCharNil("String", "VARCHAR"),
     CharStd("String", "CHAR"),
@@ -23,6 +27,8 @@ public enum SqlEnum {
     DateNil("Date", "DATE"),
     TimestampStd("Timestamp", "TIMESTAMP"),
     TimestampNil("Timestamp", "TIMESTAMP"),
+    TimeStd("Time", "TIME"),
+    TimeNil("Time", "TIME"),
     NumericStd("BigDecimal", "NUMERIC") {
         @Override
         public Collection<String> requires() {
@@ -30,6 +36,20 @@ public enum SqlEnum {
         }
     },
     NumericNil("BigDecimal", "NUMERIC") {
+        @Override
+        public Collection<String> requires() {
+            return NumericStd.requires();
+        }
+    },
+    @Deprecated
+    DecimalStd("BigDecimal", "DECIMAL") {
+        @Override
+        public Collection<String> requires() {
+            return Set.of("java.math.BigDecimal");
+        }
+    },
+    @Deprecated
+    DecimalNil("BigDecimal", "DECIMAL") {
         @Override
         public Collection<String> requires() {
             return NumericStd.requires();
@@ -195,6 +215,87 @@ public enum SqlEnum {
         @Override
         public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
             ipw.printf("ESQL.set(o, \"%s\", ESQL.toLocalDateTime(rs.getTimestamp(%d)));%n", name, k);
+        }
+    },
+    LocalTimeStd("Time", "TIME", "LocalTime") {
+        @Override
+        public void psSet(IndentPrintWriter ipw, int k, String source) {
+            ipw.printf("ps.setTime(%d, Time.valueOf(%s));%n", k, source);
+        }
+        @Override
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            ipw.printf("%s(rs.getTime(%d).toLocalTime());%n", target, k);
+        }
+        @Override
+        public void setValue(IndentPrintWriter ipw, int k, String name) {
+            ipw.printf("ps.setTime(%d, Time.valueOf(%s));%n", k, name);
+        }
+        @Override
+        public void rsGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
+            ipw.printf("LocalTime o = rs.getTime(%d).toLocalTime();%n", k);
+        }
+        @Override
+        public Collection<String> requires() {
+            return Set.of("java.time.LocalTime");
+        }
+        @Override
+        public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
+            ipw.printf("ESQL.set(o, \"%s\", rs.getTime(%d).toLocalTime());%n", name, k);
+        }
+        @Override
+        public void psPush(IndentPrintWriter ipw, int k, String name) {
+            ipw.printf("ps.setTime(%d, Time.valueOf(ESQL.get(i, \"%s\", LocalTime.class)));%n", k, name);
+        }
+        @Override
+        public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
+            ipw.printf("return ps.getTime(%d).toLocalTime();%n", k);
+        }
+        @Override
+        public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+            ipw.printf("o.set%s(ps.getTime(%d).toLocalTime());%n", cName, k);
+        }
+    },
+    LocalTimeNil("Time", "TIME", "LocalTime") {
+        @Override
+        public void psSet(IndentPrintWriter ipw, int k, String so) {
+            ipw.printf("{ LocalTime it = %s; if (it==null) ps.setNull(%2$d, Types.TIME); else ps.setTime(%2$d, Time.valueOf(it)); }%n", so, k);
+        }
+        @Override
+        public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
+            cc.add("io.github.epi155.esql.runtime.ESQL");
+            ipw.printf("%s(ESQL.toLocalTime(rs.getTime(%d)));%n", target, k);
+        }
+        @Override
+        public void setValue(IndentPrintWriter ipw, int k, String name) {
+            ipw.printf("if (%s == null) {%n", name);
+            ipw.more();
+            ipw.printf("ps.setNull(%d, Types.TIME);%n", k);
+            ipw.orElse();
+            ipw.printf("ps.setTime(%d, Time.valueOf(%s));%n", k, name);
+            ipw.ends();
+        }
+        @Override
+        public void rsGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
+            cc.add("io.github.epi155.esql.runtime.ESQL");
+            ipw.printf("LocalTime o = ESQL.toLocalTime(rs.getTime(%d));%n", k);
+        }
+        @Override
+        public void psPush(IndentPrintWriter ipw, int k, String name) {
+            ipw.printf("{ LocalTime it = ESQL.get(i, \"%s\", LocalTime.class); if (it==null) ps.setNull(%2$d, Types.TIME); else ps.setTime(%2$d, Time.valueOf(it)); };%n", name, k);
+        }
+        @Override
+        public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
+            cc.add("io.github.epi155.esql.runtime.ESQL");
+            ipw.printf("return ESQL.toLocalTime(ps.getTime(%d));%n", k);
+        }
+        @Override
+        public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+            cc.add("io.github.epi155.esql.runtime.ESQL");
+            ipw.printf("o.set%s(ESQL.toLocalTime(ps.getTime(%d)));%n", cName, k);
+        }
+        @Override
+        public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
+            ipw.printf("ESQL.set(o, \"%s\", ESQL.toLocalTime(rs.getTime(%d)));%n", name, k);
         }
     };
     private final String jdbc;

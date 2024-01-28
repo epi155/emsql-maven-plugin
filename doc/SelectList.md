@@ -3,7 +3,7 @@
 
 The SelectList template is designed for the situation where the selection must return a list of objects, or even none. it is advisable that the list is not excessively large
 
-### 4.1.3.a. Standard use
+### Standard use
 
 Template example
 
@@ -59,7 +59,7 @@ Example of client code:
 
 For this type of template it makes no sense to define output delegation rules.
 
-### 4.1.3.c. Delegate input
+### Delegate input
 
 ~~~yaml
   - methodName: findUsers

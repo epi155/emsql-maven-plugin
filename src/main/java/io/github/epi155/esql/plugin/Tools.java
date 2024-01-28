@@ -157,7 +157,6 @@ public class Tools {
     }
 
     public static JdbcStatement replacePlaceholder(String text, Map<String, SqlEnum> iFields, Map<String, SqlEnum> oFields) {
-        log.debug("Query: {}", text);
         int ixCol = text.indexOf(':');
         if (ixCol<0) {
             // there are no parameters
@@ -216,7 +215,6 @@ public class Tools {
     }
     @NotNull
     public static Map<Integer, SqlParam> mapPlaceholder(String text, Map<String, SqlEnum> fields) {
-        log.debug("Query: {}", text);
         int ixCol = text.indexOf(':');
         if (ixCol<0) {
             // there are no parameters

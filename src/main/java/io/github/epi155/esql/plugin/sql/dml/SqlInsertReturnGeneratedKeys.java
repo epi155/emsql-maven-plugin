@@ -5,6 +5,8 @@ import io.github.epi155.esql.plugin.sql.JdbcStatement;
 import io.github.epi155.esql.plugin.sql.SqlAction;
 import io.github.epi155.esql.plugin.sql.SqlEnum;
 import io.github.epi155.esql.plugin.sql.SqlParam;
+import io.github.epi155.esql.plugin.sql.dql.ApiSelectSignature;
+import io.github.epi155.esql.plugin.sql.dql.DelegateSelectSignature;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -15,11 +17,19 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Setter
-@Getter
-public class SqlInsertReturnGeneratedKeys extends SqlAction {
+public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelectSignature {
+    private final DelegateSelectSignature delegateSelectSignature;
+    @Setter
+    @Getter
     private ComAreaStd input;
+    @Setter
+    @Getter
     private ComAreaDef output;
+
+    SqlInsertReturnGeneratedKeys() {
+        super();
+        this.delegateSelectSignature = new DelegateSelectSignature(this);
+    }
 
     private static final String tmpl =
             "^INSERT INTO (\\w+) [(](.*)[)] VALUES [(](.*)[)]$";
@@ -48,42 +58,29 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction {
     @Override
     public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
         cc.add("java.util.Optional");
+        delegateSelectSignature.signature(ipw, jdbc, name);
 
-        Map<Integer, SqlParam> iMap = jdbc.getIMap();
-        Map<Integer, SqlParam> oMap = jdbc.getOMap();
-        int iSize = iMap.size();
-        int oSize = oMap.size();
-        if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
-        String cName = Tools.capitalize(name);
-        docBegin(ipw);
-        docInput(ipw, iMap);
-        docOutput(ipw, oMap);
-        docEnd(ipw);
-
-        ipw.printf("public static ");
-        declareGenerics(ipw, cName, iSize, oSize);
-        if (oSize == 1) {
-            String oType = oMap.get(1).getType().getWrapper();
-            ipw.putf("Optional<%s> %s(%n", oType, name);
+        if (jdbc.getOutSize() == 1) {
+            jdbc.getOMap().forEach((k,v) -> ipw.putf("Optional<%s> %s(%n", v.getType().getWrapper(), name));
         } else {
             ipw.putf("Optional<O> %s(%n", name);
         }
 
         ipw.printf("        Connection c");
-        declareInput(ipw, iMap, cName);
-        declareOutput(ipw, oSize, cc);
+        declareInput(ipw, jdbc.getIMap(), Tools.capitalize(name));
+        declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s, Statement.RETURN_GENERATED_KEYS)) {%n", kPrg);
         ipw.more();
-        setInput(ipw, iMap);
+        setInput(ipw, jdbc.getIMap());
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
-        debugAction(ipw, kPrg, iMap, cc);
+        debugAction(ipw, kPrg, jdbc.getIMap(), cc);
         ipw.printf("ps.executeUpdate();%n");
         ipw.printf("ResultSet rs = ps.getGeneratedKeys();%n");
         ipw.printf("if (rs.next()) {%n");
         ipw.more();
         ipw.printf("if (rs.getMetaData().getColumnType(1) == Types.ROWID) throw new IllegalArgumentException(\"Unsupported operation\");%n");
-        fetch(ipw, oMap, cc);
+        fetch(ipw, jdbc.getOMap(), cc);
         ipw.printf("return Optional.of(o);%n");
         ipw.ends();
         ipw.printf("return Optional.empty();%n");

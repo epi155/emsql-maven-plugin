@@ -1,66 +1,156 @@
 ## 4. Configuration YAML details
 
+The configuration file starts with the definition of the package name and the class name
+
 ~~~yaml
-packageName:  # String
-className:    # String
+packageName: com.example    # String
+className: DaoFoo           # String
+...
+~~~
+
+follows the declaration of the input and output fields which will then be used in the methods
+
+~~~yaml
+...
 declare:      # input/output fields
   fieldName1: fieldTYpe     # Map<String, SqlEnum> NOT NULL field
   fieldName2: fieldTYpe?    # Map<String, SqlEnum> NULLABLE field
-methods:      # List<SqlMethod>
+  ...
+...
+~~~
+
+`fieldName` are case-sensitive, `fieldType` are case-insensitive, the question
+mark after the data type indicates that the field is nullable in the database
+(kotlin style).
+
+The currently managed field types are shown in the following table:
+
+| Field Type|JDBC Type|java type|
+|-----------|---------|---------|
+|BOOL<br>BOOLEAN    | BOOLEAN | boolean |
+|BOOL?<br>BOOLEAN?  | BOOLEAN | Boolean |
+|SHORT<br>SMALLINT  |SMALLINT | short   |
+|SHORT?<br>SMALLINT?|SMALLINT | Short   |
+|INT<br>INTEGER     | INTEGER | int     |
+|INT?<br>INTEGER?   | INTEGER | Integer |
+|BIGINT<br>BIGINTEGER<br>LONG    | BIGINT | long
+|BIGINT?<br>BIGINTEGER?<br>LONG? | BIGINT | Long
+|DOUBLE | DOUBLE | double |
+|DOUBLE?| DOUBLE | Double |
+|FLOAT  | FLOAT  | float  |
+|FLOAT? | FLOAT  | Float  |
+|NUMERIC<br>NUMBER  | NUMERIC | BigDecimal |
+|NUMERIC?<br>NUMBER?| NUMERIC | BigDecimal |
+|VARCHAR       | VARCHAR   | String        |
+|VARCHAR?      | VARCHAR   | String        |
+|CHAR          | CHAR      | String        |
+|CHAR?         | CHAR      | String        |
+|DATE          | DATE      | Date          |
+|DATE?         | DATE      | Date          |
+|TIMESTAMP     | TIMESTAMP | Timestamp     |
+|TIMESTAMP?    | TIMESTAMP | Timestamp     |
+|TIME          | TIME      | Time          |
+|TIME?         | TIME      | Time          |
+|LOCALDATE     | DATE      | LocalDate     |
+|LOCALDATE?    | DATE      | LocalDate     |
+|LOCALDATETIME | TIMESTAMP | LocalDateTime |
+|LOCALDATETIME?| TIMESTAMP | LocalDateTime |
+|LOCALTIME     | TIME      | LocalTime     |
+|LOCALTIME?    | TIME      | LocalTime     |
+
+The list of fields is not used to create a single common class for all methods, but is consulted, for each method, to create dedicated interfaces (with getters for the input values, and with setters for the values of output).
+
+If up to 3 parameters are required in input, these are passed directly as method arguments; if more than 3 parameters are required, a wrapper interface is created.
+
+Similarly, if only 1 value is returned in the output, it is returned directly from the method, otherwise a wrapper interface is created.
+
+After the declaration of the fields, the list of methods with their parameters follows
+
+~~~yaml
+...
+methods:
+  - methodName: selectFoo   # String
+    perform: !SelectSingle  # SqlAction
+      ...
+~~~
+
+Naturally `methodName` is the name of the method, `perform` is one of the models developed to manage possible accesses to the database.
+
+For model details refer to:
+
+4.1) Details (DQL)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1) SelectSingle](SelectSingle.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2) SelectOptional](SelectOptional.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3) SelectList](SelectList.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1.4) CursorForSelect](CursorForSelect.md)<br/>
+4.2) Details (DML)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.1) Insert](#53)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) Update](#55)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.3) Delete](#51)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.4) InsertBatch](#54)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.5) UpdateBatch](#56)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.6) DeleteBatch](#52)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.7) InsertReturnKeys](#57)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.8) InsertReturnInto](#58)<br/>
+
+all models have the parameters in common: `timeout` (optional) the time, in seconds, to wait for the query to be executed and `execSql` the query to execute:
+
+~~~yaml
+    ...
+    perform: !SelectSingle
+      timeout: 5          # (seconds) optional, default null (system default)
+      ...
+      execSql: |
+        select current_date into :today
+        from dual
+~~~
+
+each model has its own dedicated set of parameters.
+
+### Reflect Input/Output values
+
+In general the `reflecŧ` flag is present in the input and output parameters
+
+~~~yaml
   - methodName:   # String
     perform:      # SqlAction
-      timeout:        # Integer (seconds)
       input:
         reflect:        # boolean
-        delegate:       # boolean
       output:
         reflect:        # boolean
+~~~
+
+If the reflect flag is activated, DTO interfaces are not generated. Input and
+output class fields are handled using java reflection.
+In this way it is also possible to access structured objects (`:foo.bar` becomes
+`getFoo().getBar()` or `getFoo().setBar()` depending on whether it is an input or
+output); in the case of output parameters, intermediate nodes are also created
+if they are null; in the case of input parameters the nodes are traversed in
+safe-call mode, as in kotlin `foo?.bar`, if `getFoo()` returns `null`,
+it does not attempt to call `getBar()` causing a NullPointer, but returns `null` as a value
+
+Although reflect reduces the code you need to write, it should be handled with care.
+A first contraindication is that any errors only appear during code execution,
+obviously accessing the fields indirectly with java reflecion is less
+efficient (slower) than accessing them directly,
+
+There are no examples using reflect in the template examples.
+The code is identical to the standard one with generics that do not extend any interfaces.
+
+### Delegate Input/Output values
+
+In general the `delegate` flag is present in the input and output parameters
+
+~~~yaml
+  - methodName:   # String
+    perform:      # SqlAction
+      input:
+        delegate:       # boolean
+      output:
         delegate:       # boolean
 ~~~
 
-`fieldName` are case-sensitive, `fieldType` are case-insensitive, the question 
-mark after the data type indicates that the field is nullable in the database 
-(kotlin style).
+If the delegate flag is enabled, DTO interfaces with direct getters and setters are replaced with DTO classes with references to getter and setter methods. The corresponding builder is also created together with the DTO classes to simplify the setting of the values references
 
-In the default configuration the plugin, in addition to the DAO that executes 
-the query, generates the input interface with getters and the output interface 
-with setters.
+The concept of delegated parameter is a bit convoluted, in the details of the various models there is an example of the use of delegated parameters in input and output.
 
-If the input values are up to 3 they are passed directly as arguments to the 
-created DAO method. The input interface is not created.
-
-If a single value is returned in the output, the value is returned directly, 
-otherwise the output interface is created.
-
-A first limitation of DTO interfaces is that they have a flat structure.
-if the output of the query is the fields of class A, I can have the fields of 
-the class set for free if I can set A implements DaoOutput, but if I can't add 
-the interface implementation, using DTO interfaces is not of much help. 
-A similar situation occurs for the input class.
-
-If the reflect flag is activated, DTO interfaces are not generated. Input and 
-output class fields are handled using java reflection.
-In this way it is also possible to access structured objects (:foo.bar becomes 
-getFoo().getBar() or getFoo().setBar() depending on whether it is an input or 
-output), in the case of output parameters, intermediate nodes are also created 
-if they are null.
-
-Although reflect reduces the code you need to write, it is not recommended.
-A first contraindication is that any errors only appear during code execution, 
-obviously accessing the fields indirectly with java reflecion is less 
-efficient (slower) than accessing them directly,
-
-The delegate flag replaces the creation of DTO interfaces with direct getters 
-and setters, with DTO classes with indirect getters and setters.
-
-The getters of the delegated DAO class do not return the field values, but the 
-pointers (method references) of the getters to call to retrieve the field values.
-The setters of the generated DAO class do not contain the values of the fields, 
-but pointers (method references) to the setters to use to set the fields.
-
-In addition to the delegated DTO class, a builder is generated to facilitate 
-setting the getter and setter pointers
-
-Of course it makes no sense to use a delegated DAO class when the output is a 
-list of objects, the value taken from the resultSet is always put on the same 
-object

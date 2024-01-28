@@ -1,5 +1,5 @@
 package io.github.epi155.esql.plugin.sql.dql;
 
-public interface ApiSelect {
+public interface ApiSelectFields {
     String getExecSql();
 }
