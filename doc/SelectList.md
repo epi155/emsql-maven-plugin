@@ -41,7 +41,7 @@ Template example
 
 Generated DAO method signature (body omitted):
 
-~~~yaml
+~~~java
     public static <O extends FindUsersRS> List<O> findUsers(
             Connection c,
             String birthPlace,

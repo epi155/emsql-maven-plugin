@@ -40,7 +40,7 @@ Template example
 
 Generated DAO method signature (body omitted):
 
-~~~yaml
+~~~java
     public static <O extends FindUserAnyRS> Optional<O> findUserAny(
             Connection c,
             long idUser,
@@ -115,4 +115,40 @@ Example of client code:
 
 ### Delegate input
 
-TODO
+~~~yaml
+  - methodName: findUserId
+    perform: !SelectOptional
+      input:
+        delegate: yes
+      execSql: |
+        select
+          ID_USER
+        into
+          :idUser
+        from u01_user
+        where SURNAME     = :surname
+          and GIVEN_NAME  = :givenName
+          and BIRTH_DATE  = :birthDate
+          and BIRTH_PLACE = :birthPlace
+~~~
+
+Generated DAO method signature (body omitted):
+
+~~~java
+    public static <DI extends DelegateFindUserIdPS> Optional<Long> findUserId(
+            Connection c,
+            DI i)
+            throws SQLException ;
+~~~
+
+Example of client code:
+
+~~~java
+        val rule = DaoU01.DelegateFindUserIdPS.builder()
+                .surname(user::getSurname)
+                .givenName(user::getGivenName)
+                .birthDate(born::getBirthDate)
+                .birthPlace(born::getBirthPlace)
+                .build();
+        Optional<Long> userId = DaoU01.findUserId(c, rule);
+~~~
