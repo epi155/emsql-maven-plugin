@@ -122,22 +122,19 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
     private void writeFunctional(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
+        int iSize = iMap.size();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
-        String cName = Tools.capitalize(name);
         docBegin(ipw);
         docInput(ipw, iMap);
         docOutputUse(ipw, oMap);
         docEnd(ipw);
-        if (oSize > 1) {
-            if (output!=null && output.isDelegate()) {
-                ipw.printf("public static <DO extends Delegate%s"+RESPONSE+"> void loop%1$s(%n", cName);
-            } else {
-                ipw.printf("public static <O extends %s"+RESPONSE+"> void loop%1$s(%n", cName);
-            }
-        } else {
-            ipw.printf("public static void loop%s(%n", oMap.get(1).getType().getWrapper(), cName);
-        }
+        String cName = Tools.capitalize(name);
+
+        ipw.printf("public static ");
+        declareGenerics(ipw, cName, iSize, oSize);
+
+        ipw.putf("void loop%1$s(%n", cName);
         ipw.printf("        Connection c");
         declareInput(ipw, iMap, cName);
         declareOutputUse(ipw, oSize, oMap.get(1).getType().getWrapper(), cc);
