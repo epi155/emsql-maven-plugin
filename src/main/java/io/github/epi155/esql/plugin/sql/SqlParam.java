@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import static io.github.epi155.esql.plugin.Tools.getOf;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -15,7 +17,7 @@ public class SqlParam {
     private final SqlEnum type;
 
     public void setParameter(IndentPrintWriter ipw, int k) {
-        String source = String.format("i.get%s()", Tools.capitalize(name));
+        String source = String.format("i.%s%s()", getOf(this), Tools.capitalize(name));
         type.psSet(ipw, k, source);
     }
     public void setDelegateParameter(IndentPrintWriter ipw, int k) {

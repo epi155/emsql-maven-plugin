@@ -284,4 +284,8 @@ public class Tools {
         private final String text;
         private final Map<Integer, SqlParam> map;
     }
+
+    public static String getOf(SqlParam parm) {
+        return (parm.getType() == SqlEnum.BooleanStd) ? "is" : "get";
+    }
 }

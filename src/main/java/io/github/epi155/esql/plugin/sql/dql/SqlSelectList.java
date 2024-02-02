@@ -45,7 +45,7 @@ public class SqlSelectList extends SqlAction implements ApiSelectFields, ApiSele
             ipw.putf("List<O> %s(%n", name);
         }
 
-        ipw.printf("        Connection c");
+        ipw.printf("        final Connection c");
         declareInput(ipw, jdbc.getIMap(), Tools.capitalize(name));
         declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();

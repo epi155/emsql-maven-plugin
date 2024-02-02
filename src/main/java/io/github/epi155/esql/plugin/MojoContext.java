@@ -11,4 +11,5 @@ public class MojoContext {
     public final String artifact;
     public final String version;
     public final boolean debug;
+    public final boolean java7;
 }

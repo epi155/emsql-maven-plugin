@@ -72,7 +72,7 @@ public class SqlInsertReturningInto extends SqlAction implements ApiSelectSignat
             ipw.putf("O %s(%n", name);
         }
 
-        ipw.printf("        Connection c");
+        ipw.printf("        final Connection c");
         declareInput(ipw, jdbc.getIMap(), Tools.capitalize(name));
         declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();

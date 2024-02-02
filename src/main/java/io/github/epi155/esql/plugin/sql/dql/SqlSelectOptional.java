@@ -38,16 +38,15 @@ public class SqlSelectOptional extends SqlAction
     @Override
     public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
         cc.add("io.github.epi155.esql.runtime.ESqlCode");
-        cc.add("java.util.Optional");
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (jdbc.getOutSize() == 1) {
-            jdbc.getOMap().forEach((k,v) -> ipw.putf("Optional<%s> %s(%n", v.getType().getWrapper(), name));
+            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s<%s> %s(%n", cc.optional(), v.getType().getWrapper(), name));
         } else {
             if (output != null && output.isDelegate()) {
                 ipw.putf("boolean %s(%n", name);
             } else {
-                ipw.putf("Optional<O> %s(%n", name);
+                ipw.putf("%s<O> %s(%n", cc.optional(), name);
             }
         }
 
@@ -56,14 +55,14 @@ public class SqlSelectOptional extends SqlAction
         if (output != null && output.isDelegate() && jdbc.getOutSize() > 1) {
             ipw.printf("return true;%n");
         } else {
-            ipw.printf("return Optional.of(o);%n");
+            ipw.printf("return %s.of(o);%n", cc.optional());
         }
         ipw.ends();
         ipw.orElse();
         if (output != null && output.isDelegate() && jdbc.getOutSize() > 1) {
             ipw.printf("return false;%n");
         } else {
-            ipw.printf("return Optional.empty();%n");
+            ipw.printf("return %s.empty();%n", cc.optional());
         }
         ipw.ends();
         ipw.ends();

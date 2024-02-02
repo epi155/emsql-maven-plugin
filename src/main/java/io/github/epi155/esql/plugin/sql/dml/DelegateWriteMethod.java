@@ -27,7 +27,7 @@ public class DelegateWriteMethod {
         api.declareGenerics(ipw, cName, iSize, 1);
         ipw.putf("int %s(%n", name);
 
-        ipw.printf("        Connection c");
+        ipw.printf("        final Connection c");
         api.declareInput(ipw, iMap, cName);
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");

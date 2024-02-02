@@ -57,16 +57,15 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelect
 
     @Override
     public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        cc.add("java.util.Optional");
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (jdbc.getOutSize() == 1) {
-            jdbc.getOMap().forEach((k,v) -> ipw.putf("Optional<%s> %s(%n", v.getType().getWrapper(), name));
+            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s<%s> %s(%n", cc.optional(), v.getType().getWrapper(), name));
         } else {
-            ipw.putf("Optional<O> %s(%n", name);
+            ipw.putf("%s<O> %s(%n", cc.optional(), name);
         }
 
-        ipw.printf("        Connection c");
+        ipw.printf("        final Connection c");
         declareInput(ipw, jdbc.getIMap(), Tools.capitalize(name));
         declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();
@@ -81,9 +80,9 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelect
         ipw.more();
         ipw.printf("if (rs.getMetaData().getColumnType(1) == Types.ROWID) throw new IllegalArgumentException(\"Unsupported operation\");%n");
         fetch(ipw, jdbc.getOMap(), cc);
-        ipw.printf("return Optional.of(o);%n");
+        ipw.printf("return %s.of(o);%n", cc.optional());
         ipw.ends();
-        ipw.printf("return Optional.empty();%n");
+        ipw.printf("return %s.empty();%n", cc.optional());
         ipw.ends();
         ipw.ends();
     }

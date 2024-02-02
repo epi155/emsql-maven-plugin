@@ -13,7 +13,7 @@ public class DelegateSelectSimple {
     }
 
     public void fetch(IndentPrintWriter ipw, JdbcStatement jdbc, String name, String kPrg, ClassContext cc) {
-        ipw.printf("        Connection c");
+        ipw.printf("        final Connection c");
         api.declareInput(ipw, jdbc.getIMap(), Tools.capitalize(name));
         api.declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();

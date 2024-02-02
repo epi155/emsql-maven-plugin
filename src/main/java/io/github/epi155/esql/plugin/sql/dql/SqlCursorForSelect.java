@@ -70,14 +70,14 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
             }
         }
 
-        ipw.printf("        Connection c");
+        ipw.printf("        final Connection c");
         declareInput(ipw, iMap, cName);
         declareOutput(ipw, oSize, cc);
         ipw.more();
         if (output!=null && output.isDelegate()) {
             ipw.printf("return new ESqlDelegateCursor() {%n");
         } else {
-            ipw.printf("return new ESqlCursor<>() {%n");
+            ipw.printf("return new ESqlCursor<O>() {%n");
         }
         ipw.more();
         ipw.printf("private final ResultSet rs;%n");
@@ -135,7 +135,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         declareGenerics(ipw, cName, iSize, oSize);
 
         ipw.putf("void loop%1$s(%n", cName);
-        ipw.printf("        Connection c");
+        ipw.printf("        final Connection c");
         declareInput(ipw, iMap, cName);
         declareOutputUse(ipw, oSize, oMap.get(1).getType().getWrapper(), cc);
         ipw.more();

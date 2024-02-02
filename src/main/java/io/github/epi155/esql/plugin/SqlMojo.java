@@ -61,6 +61,11 @@ public class SqlMojo extends AbstractMojo {
     @Setter
     private Boolean debugCode;
 
+    @Parameter(defaultValue = "false",
+            property = "maven.esql.java7", required = true)
+    @Setter
+    private boolean java7;
+
     @Parameter(defaultValue = "${project}", readonly = true)
     @Setter
     private MavenProject project;
@@ -138,6 +143,7 @@ public class SqlMojo extends AbstractMojo {
                 .artifact(plugin.getArtifactId())
                 .version(plugin.getVersion())
                 .debug(debugCode)
+                .java7(java7)
                 .build();
 
         for (val module : modules) {
