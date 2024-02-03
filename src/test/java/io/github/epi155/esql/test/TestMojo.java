@@ -28,7 +28,7 @@ class TestMojo {
         });
         mojo.setDebugCode(true);
         mojo.setJava7(true);
-        mojo.setSettingsDirectory(new File("src/test/resources"));
+        mojo.setConfigDirectory(new File("src/test/resources"));
         mojo.setModules(new String[]{
                 "daoBool.yaml",
                 "daoShort.yaml",

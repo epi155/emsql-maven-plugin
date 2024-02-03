@@ -377,7 +377,8 @@ public abstract class SqlAction {
             int iSize = iMap.size();
             ipw.printf("if (log.isDebugEnabled()) {%n");
             ipw.more();
-            ipw.printf("ESqlTrace.showQuery(Q_%s, () -> {%n", kPrg);
+            ipw.printf("ESqlTrace.showQuery(Q_%s, ", kPrg);
+            cc.traceParameterBegin(ipw);
             ipw.more();
             ipw.printf("Object[] parms =  new Object[]{%n");
             ipw.more();
@@ -401,7 +402,7 @@ public abstract class SqlAction {
             ipw.less();
             ipw.printf("};%n");
             ipw.printf("return parms;%n");
-            ipw.less();
+            cc.traceParameterEnds(ipw);
             ipw.printf("});%n");
             ipw.ends();
         }

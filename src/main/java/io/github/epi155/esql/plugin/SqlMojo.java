@@ -43,21 +43,21 @@ import java.util.logging.Logger;
 @Slf4j
 public class SqlMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/esql",
-            property = "maven.esql.generateDirectory", required = true)
+            property = "maven.esql.generate-directory", required = true)
     @Setter
     private File generateDirectory;
 
     @Parameter(defaultValue = "${project.build.resources[0].directory}",
-            property = "maven.esql.settingsDirectory", required = true)
+            property = "maven.esql.config-directory", required = true)
     @Setter
-    private File settingsDirectory;
+    private File configDirectory;
 
     @Parameter(required = true)
     @Setter
     private String[] modules;
 
     @Parameter(defaultValue = "true",
-            property = "maven.esql.debugCode", required = true)
+            property = "maven.esql.debug-code", required = true)
     @Setter
     private Boolean debugCode;
 
@@ -77,7 +77,7 @@ public class SqlMojo extends AbstractMojo {
      * of this Maven project.
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(defaultValue = "true", property = "maven.esql.addCompileSourceRoot")
+    @Parameter(defaultValue = "true", property = "maven.esql.add-compile-source-root")
     @Setter
     private boolean addCompileSourceRoot = true;
 
@@ -86,7 +86,7 @@ public class SqlMojo extends AbstractMojo {
      * this Maven project. Default value is false.
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(defaultValue = "false", property = "maven.esql.addTestCompileSourceRoot")
+    @Parameter(defaultValue = "false", property = "maven.esql.add-test-compile-source-root")
     @Setter
     private boolean addTestCompileSourceRoot = false;
     private final Set<String> classLogbook = new HashSet<>();
@@ -148,7 +148,7 @@ public class SqlMojo extends AbstractMojo {
 
         for (val module : modules) {
             log.info("Loading API from {}", module);
-            File apiFile = new File(settingsDirectory, module);
+            File apiFile = new File(configDirectory, module);
             if (!apiFile.exists()) {
                 log.warn("Setting {} does not exist, ignored.", module);
                 continue;

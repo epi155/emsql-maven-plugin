@@ -1,6 +1,7 @@
 package io.github.epi155.esql.plugin;
 
 import io.github.epi155.esql.plugin.sql.SqlEnum;
+import io.github.epi155.esql.runtime.ESupplier;
 import lombok.Getter;
 
 import java.io.PrintWriter;
@@ -65,4 +66,21 @@ public class ClassContext {
         importSet.addAll(requires);
     }
 
+    public void traceParameterEnds(IndentPrintWriter ipw) {
+        if (java7) {
+            ipw.ends();
+        }
+        ipw.less();
+    }
+
+    public void traceParameterBegin(IndentPrintWriter ipw) {
+        if (java7) {
+            ipw.putf("new ESupplier<Object[]>() {%n");
+            ipw.more();
+            ipw.printf("@Override%n");
+            ipw.printf("public Object[] get() {%n");
+        } else {
+            ipw.putf("() -> {%n");
+        }
+    }
 }
