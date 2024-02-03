@@ -13,6 +13,7 @@ Template example
         reflect: false    # optional, default false
         delegate: false   # optional, default false
       timeout: 5          # (seconds) optional, default null (system default)
+      batchSize: 1024     # optional, default 1024, threshold for execute
       execSql: |
         insert into u01_user (
           SURNAME,

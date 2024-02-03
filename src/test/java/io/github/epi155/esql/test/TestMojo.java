@@ -23,7 +23,7 @@ class TestMojo {
         mojo.setGenerateDirectory(new File("target/generated-test-sources/esql"));
         mojo.setPlugin(new PluginDescriptor() {
             public String getGroupId() { return "io.github.epi155"; }
-            public String getArtifactId() { return "esql-maven-plugin"; }
+            public String getArtifactId() { return "emsql-maven-plugin"; }
             public String getVersion() { return "TEST"; }
         });
         mojo.setDebugCode(true);
@@ -59,7 +59,7 @@ class TestMojo {
         mojo.setProject(project);
 
         mojo.setAddCompileSourceRoot(false);
-        mojo.setAddTestCompileSourceRoot(true);
+        mojo.setAddTestCompileSourceRoot(false);
 
         Assertions.assertDoesNotThrow(mojo::execute);
     }

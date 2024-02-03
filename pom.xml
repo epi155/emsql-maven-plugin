@@ -6,13 +6,22 @@
 
     <groupId>io.github.epi155</groupId>
     <artifactId>emsql-maven-plugin</artifactId>
-    <version>0.1.M1-SNAPSHOT</version>
+    <version>0.1-A1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
+    <name>JDBC DAO code generator</name>
 
     <description>Generate DAO classes with JDBC code and DTO interfaces from YAML configuration files</description>
     <url>https://github.com/epi155/emsql-maven-plugin</url>
 	<inceptionYear>2024</inceptionYear>
-	
+
+    <!-- mvn release:clean -->
+    <!-- mvn release:prepare -->
+    <!-- git checkout ${tag} -->
+    <!-- mvn deploy -->
+    <!-- git checkout main -->
+    <!-- mvn dependency:tree -->
+    <!-- mvn versions:display-dependency-updates -->
+
     <developers>
         <developer>
             <name>Enrico Pistolesi</name>
@@ -28,6 +37,8 @@
 
     <scm>
         <url>https://github.com/epi155/emsql-maven-plugin</url>
+        <connection>scm:git:git://github.com/epi155/emsql-maven-plugin.git</connection>
+        <developerConnection>scm:git:https://github.com/epi155/emsql-maven-plugin.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -59,7 +70,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.10.2</version>
+            <version>3.11.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -95,13 +106,6 @@
             <artifactId>logback-classic</artifactId>
             <version>1.4.14</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.epi155</groupId>
-            <artifactId>emsql-runtime</artifactId>
-            <version>0.1.M1-SNAPSHOT</version>
-            <scope>provided</scope>
-            <optional>true</optional>
         </dependency>
 
     </dependencies>
@@ -262,10 +266,19 @@
                         <ignoreVersions>
                             <ignoreVersion>
                                 <type>regex</type>
-                                <version>.+-(alpha|beta)(-\d+)?</version>
+                                <version>.+-(alpha|beta)(-?\d+)?</version>
                             </ignoreVersion>
                         </ignoreVersions>
                     </ruleSet>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <tagNameFormat>@{version}</tagNameFormat>
+                    <pushChanges>false</pushChanges>
                 </configuration>
             </plugin>
 

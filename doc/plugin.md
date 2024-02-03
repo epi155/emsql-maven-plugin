@@ -1,5 +1,34 @@
 ## 3. Plugin parameters details
 
+Plugin with all parameters with default values:
+
+~~~xml
+<plugin>
+    <groupId>io.github.epi155</groupId>
+    <artifactId>emsql-maven-plugin</artifactId>
+    <version>x.y.z</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+                <generateDirectory>target/generated-sources/emsql</generateDirectory>
+                <configDirectory>src/main/resources</configDirectory>
+                <modules>
+                    <module>...</module>
+                </modules>
+                <debugCode>true</debugCode>
+                <java7>false</java7>
+                <addCompileSourceRoot>true</addCompileSourceRoot>
+                <addTestCompileSourceRoot>false</addTestCompileSourceRoot>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+~~~
+
 Parameters
 
 `generateDirectory` or property `maven.emsql.generated-directory`
