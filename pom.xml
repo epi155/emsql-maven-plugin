@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.epi155</groupId>
-    <artifactId>esql-maven-plugin</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <artifactId>emsql-maven-plugin</artifactId>
+    <version>0.1.M1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <description>Generate DAO classes with JDBC code and DTO interfaces from YAML configuration files</description>
-    <url>https://github.com/epi155/esql-maven-plugin</url>
+    <url>https://github.com/epi155/emsql-maven-plugin</url>
 	<inceptionYear>2024</inceptionYear>
 	
     <developers>
@@ -27,7 +27,7 @@
   </licenses>
 
     <scm>
-        <url>https://github.com/epi155/esql-maven-plugin</url>
+        <url>https://github.com/epi155/emsql-maven-plugin</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -98,8 +98,8 @@
         </dependency>
         <dependency>
             <groupId>io.github.epi155</groupId>
-            <artifactId>esql-runtime</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <artifactId>emsql-runtime</artifactId>
+            <version>0.1.M1-SNAPSHOT</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

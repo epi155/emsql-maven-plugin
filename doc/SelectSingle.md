@@ -8,7 +8,7 @@ The SelectSingle template is designed for the situation where the selection need
 Template example
 
 ~~~yaml
-packageName: com.example.esql
+packageName: com.example.emsql
 className: DaoU01
 declare:
   idUser: BigInt

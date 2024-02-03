@@ -1,4 +1,4 @@
-packageName: com.example.esql
+packageName: com.example.emsql
 className: DaoDouble
 declare:
   idDouble: long

@@ -1,4 +1,4 @@
-# esql-maven-plugin
+# emsql-maven-plugin
 Generate DAO classes with JDBC code and DTO interfaces from YAML configuration files
 
 ## <a id="1">1. Introduction</a>
@@ -12,8 +12,8 @@ Configuration plugin example:
 ~~~xml
 <plugin>
     <groupId>io.github.epi155</groupId>
-    <artifactId>esql-maven-plugin</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <artifactId>emsql-maven-plugin</artifactId>
+    <version>x.y.z</version>
     <executions>
         <execution>
             <goals>
@@ -21,7 +21,7 @@ Configuration plugin example:
             </goals>
             <configuration>
                 <modules>
-                    <module>DaoC03Prodotto.yaml</module>
+                    <module>dao.yaml</module>
                 </modules>
             </configuration>
         </execution>
@@ -32,7 +32,7 @@ Configuration plugin example:
 Configuration file example:
 
 ~~~yaml
-packageName: com.example.esql
+packageName: com.example.dao
 className: DaoUser
 declare:
   idUser: int
@@ -97,8 +97,8 @@ Generated code requires dependencies
 ~~~xml
         <dependency>
             <groupId>io.github.epi155</groupId>
-            <artifactId>esql-runtime</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <artifactId>emsql-runtime</artifactId>
+            <version>x.y.z</version>
         </dependency>
 ~~~
 

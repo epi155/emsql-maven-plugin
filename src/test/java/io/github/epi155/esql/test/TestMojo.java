@@ -1,6 +1,6 @@
 package io.github.epi155.esql.test;
 
-import io.github.epi155.esql.plugin.SqlMojo;
+import io.github.epi155.emsql.plugin.SqlMojo;
 import lombok.SneakyThrows;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
