@@ -30,6 +30,6 @@ public class DelegateSelectSimple {
         api.fetch(ipw, jdbc.getOMap(), cc);
         ipw.printf("if (rs.next()) {%n");
         ipw.more();
-        ipw.printf("throw ESqlCode.N811.getInstance();%n");
+        ipw.printf("throw SqlCode.N811.getInstance();%n");
     }
 }

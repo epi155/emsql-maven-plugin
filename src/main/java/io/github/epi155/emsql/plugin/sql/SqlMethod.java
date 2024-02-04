@@ -34,7 +34,7 @@ public class SqlMethod {
         ComAttribute ia = perform.getInput();
         ComAttribute oa = perform.getOutput();
         if (ia != null && ia.isReflect() || oa != null && oa.isReflect()) {
-            cc.add("io.github.epi155.emsql.runtime.ESQL");
+            cc.add("io.github.epi155.emsql.runtime.EmSQL");
         }
 
         jdbc.getIMap().values().forEach(it -> cc.addAll(it.getType().requires()));

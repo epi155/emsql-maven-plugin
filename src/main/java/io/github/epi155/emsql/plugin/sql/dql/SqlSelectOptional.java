@@ -37,7 +37,7 @@ public class SqlSelectOptional extends SqlAction
 
     @Override
     public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        cc.add("io.github.epi155.emsql.runtime.ESqlCode");
+        cc.add("io.github.epi155.emsql.runtime.SqlCode");
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (jdbc.getOutSize() == 1) {

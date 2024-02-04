@@ -35,19 +35,19 @@ public class SqlInsertBatch extends SqlAction implements ApiInsert {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         int iSize = iMap.size();
         if (1<iSize && iSize<=IMAX) {
-            cc.add("io.github.epi155.emsql.runtime.ESqlInsertBatch"+iSize);
+            cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch"+iSize);
         } else {
-            cc.add("io.github.epi155.emsql.runtime.ESqlInsertBatch");
+            cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch");
         }
         String cName = Tools.capitalize(name);
         docBegin(ipw);
         docInput(ipw, iMap);
         docEnd(ipw);
-        declareNewInstance(ipw, "ESqlInsertBatch", iMap, cName);
+        declareNewInstance(ipw, "SqlInsertBatch", iMap, cName);
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
-        declareReturnNew(ipw, "ESqlInsertBatch", iMap, batchSize);
+        declareReturnNew(ipw, cc, "SqlInsertBatch", iMap, batchSize);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyInsert(%n");

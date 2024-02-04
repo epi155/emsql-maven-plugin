@@ -37,19 +37,19 @@ public class SqlDeleteBatch extends SqlAction implements ApiDelete {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         int iSize = iMap.size();
         if (1<iSize && iSize<=IMAX) {
-            cc.add("io.github.epi155.emsql.runtime.ESqlDeleteBatch"+iSize);
+            cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch"+iSize);
         } else {
-            cc.add("io.github.epi155.emsql.runtime.ESqlDeleteBatch");
+            cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch");
         }
         String cName = Tools.capitalize(name);
         docBegin(ipw);
         docInput(ipw, iMap);
         docEnd(ipw);
-        declareNewInstance(ipw, "ESqlDeleteBatch", iMap, cName);
+        declareNewInstance(ipw, "SqlDeleteBatch", iMap, cName);
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
-        declareReturnNew(ipw, "ESqlDeleteBatch", iMap, batchSize);
+        declareReturnNew(ipw, cc, "SqlDeleteBatch", iMap, batchSize);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyDelete(%n");

@@ -59,14 +59,14 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         declareGenerics(ipw, cName, iSize, oSize);
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getWrapper();
-            ipw.putf("ESqlCursor<%s> open%s(%n", oType, cName);
+            ipw.putf("SqlCursor<%s> open%s(%n", oType, cName);
         } else {
             if (output!=null && output.isDelegate()) {
-                cc.add("io.github.epi155.emsql.runtime.ESqlDelegateCursor");
-                ipw.putf("ESqlDelegateCursor open%s(%n", cName);
+                cc.add("io.github.epi155.emsql.runtime.SqlDelegateCursor");
+                ipw.putf("SqlDelegateCursor open%s(%n", cName);
             } else {
-                cc.add("io.github.epi155.emsql.runtime.ESqlCursor");
-                ipw.putf("ESqlCursor<O> open%s(%n", cName);
+                cc.add("io.github.epi155.emsql.runtime.SqlCursor");
+                ipw.putf("SqlCursor<O> open%s(%n", cName);
             }
         }
 
@@ -75,9 +75,9 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         declareOutput(ipw, oSize, cc);
         ipw.more();
         if (output!=null && output.isDelegate()) {
-            ipw.printf("return new ESqlDelegateCursor() {%n");
+            ipw.printf("return new SqlDelegateCursor() {%n");
         } else {
-            ipw.printf("return new ESqlCursor<O>() {%n");
+            ipw.printf("return new SqlCursor<O>() {%n");
         }
         ipw.more();
         ipw.printf("private final ResultSet rs;%n");

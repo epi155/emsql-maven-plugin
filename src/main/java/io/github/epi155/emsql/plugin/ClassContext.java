@@ -1,6 +1,7 @@
 package io.github.epi155.emsql.plugin;
 
 import io.github.epi155.emsql.plugin.sql.SqlEnum;
+import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.Getter;
 
 import java.io.PrintWriter;
@@ -8,6 +9,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import static io.github.epi155.emsql.plugin.sql.SqlAction.IMAX;
 
 public class ClassContext {
     @Getter
@@ -23,7 +27,7 @@ public class ClassContext {
         this.fields = declare;
         importSet.add("java.sql.*");
         if (debug) {
-            importSet.add("io.github.epi155.emsql.runtime.ESqlTrace");
+            importSet.add("io.github.epi155.emsql.runtime.SqlTrace");
         }
     }
     public String supplier() {
@@ -74,12 +78,60 @@ public class ClassContext {
 
     public void traceParameterBegin(IndentPrintWriter ipw) {
         if (java7) {
+            importSet.add("io.github.epi155.emsql.runtime.ESupplier");
             ipw.putf("new ESupplier<Object[]>() {%n");
             ipw.more();
             ipw.printf("@Override%n");
             ipw.printf("public Object[] get() {%n");
         } else {
             ipw.putf("() -> {%n");
+        }
+    }
+
+    public void delegateResponseFields(IndentPrintWriter ipw, Collection<SqlParam> sp) {
+        if (java7) {
+            importSet.add("io.github.epi155.emsql.runtime.EmSQL");
+            sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? EmSQL.<%s>getDummyConsumer() : %1$s;%n", p.getName(), p.getType().getWrapper()));
+        } else {
+            sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? it -> {} : %1$s;%n", p.getName()));
+        }
+    }
+
+    public void delegateRequestFields(IndentPrintWriter ipw, Collection<SqlParam> sp) {
+        if (java7) {
+            importSet.add("io.github.epi155.emsql.runtime.EmSQL");
+            sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? EmSQL.<%s>getDummySupplier() : %1$s;%n", p.getName(), p.getType().getWrapper()));
+        } else {
+            sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? () -> null : %1$s;%n", p.getName()));
+        }
+    }
+
+    public void anonymousGenerics(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap, ComAttribute input) {
+        int iSize = iMap.size();
+        if (java7) {
+            if (iSize == 0) {
+                ipw.putf("<Void>");
+            } else if (iSize == 1) {
+                ipw.putf("<%s>", iMap.get(1).getType().getWrapper());
+            } else if (iSize <= IMAX) {
+                ipw.putf("%d<%s>", iSize, iMap.values().stream().map(it -> it.getType().getWrapper()).collect(Collectors.joining(", ")));
+            } else {
+                if (input != null && input.isDelegate()) {
+                    ipw.putf("<DI>");
+                } else {
+                    ipw.putf("<I>");
+                }
+            }
+        } else {
+            if (iSize == 0) {
+                ipw.putf("<Void>");
+            } else if (iSize == 1) {
+                ipw.putf("<>");
+            } else if (iSize <= IMAX) {
+                ipw.putf("%d<>", iSize);
+            } else {
+                ipw.putf("<>");
+            }
         }
     }
 }

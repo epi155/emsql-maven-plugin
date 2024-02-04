@@ -20,7 +20,7 @@ import static io.github.epi155.emsql.plugin.Tools.getOf;
 @Getter
 @NoArgsConstructor
 public abstract class SqlAction {
-    protected static final int IMAX = 3;
+    public static final int IMAX = 3;
     protected static final String REQUEST = "PS";
     protected static final String RESPONSE = "RS";
     private String execSql;
@@ -65,27 +65,18 @@ public abstract class SqlAction {
             ipw.putf("%d<%s>", iSize, iMap.values().stream().map(it -> it.getType().getWrapper()).collect(Collectors.joining(", ")));
         } else {
             if (getInput() != null && getInput().isDelegate()) {
-                ipw.putf("<DI>", cName);
+                ipw.putf("<DI>");
             } else {
-                ipw.putf("<I>", cName);
+                ipw.putf("<I>");
             }
         }
         ipw.putf(" new%s(%n", cName);
         ipw.printf("        final Connection c)%n", cName);
         ipw.printf("        throws SQLException {%n");
     }
-    public void declareReturnNew(IndentPrintWriter ipw, String eSqlObject, Map<Integer, SqlParam> iMap, int batchSize) {
-        int iSize = iMap.size();
+    public void declareReturnNew(IndentPrintWriter ipw, ClassContext cc, String eSqlObject, Map<Integer, SqlParam> iMap, int batchSize) {
         ipw.printf("return new %s", eSqlObject);
-        if (iSize == 0) {
-            ipw.putf("<Void>");
-        } else if (iSize == 1) {
-            ipw.putf("<>");
-        } else if (iSize <= IMAX) {
-            ipw.putf("%d<>", iSize);
-        } else {
-            ipw.putf("<>");
-        }
+        cc.anonymousGenerics(ipw, iMap, getInput());
         ipw.putf("(ps, %d) {%n", batchSize);
     }
 
@@ -216,7 +207,7 @@ public abstract class SqlAction {
             ipw.printf("public Delegate%s"+REQUEST+" build() {%n", cMethodName);
             ipw.more();
             ipw.printf("Delegate%s"+REQUEST+" result = new Delegate%1$s"+REQUEST+"();%n", cMethodName);
-            sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? () -> null : %1$s;%n", p.getName()));
+            cc.delegateRequestFields(ipw, sp);
             ipw.printf("return  result;%n");
             ipw.ends();
             sp.forEach(p -> ipw.printf("public Builder%s"+REQUEST+" %s(%s<%s> %2$s) { this.%2$s = %2$s; return this; }%n",
@@ -255,7 +246,7 @@ public abstract class SqlAction {
             ipw.printf("public Delegate%s"+RESPONSE+" build() {%n", cMethodName);
             ipw.more();
             ipw.printf("Delegate%s"+RESPONSE+" result = new Delegate%1$s"+RESPONSE+"();%n", cMethodName);
-            sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? it -> {} : %1$s;%n", p.getName()));
+            cc.delegateResponseFields(ipw, sp);
             ipw.printf("return  result;%n");
             ipw.ends();
             sp.forEach(p -> ipw.printf("public Builder%s"+RESPONSE+" %s(%s<%s> %2$s) { this.%2$s = %2$s; return this; }%n",
@@ -377,7 +368,7 @@ public abstract class SqlAction {
             int iSize = iMap.size();
             ipw.printf("if (log.isDebugEnabled()) {%n");
             ipw.more();
-            ipw.printf("ESqlTrace.showQuery(Q_%s, ", kPrg);
+            ipw.printf("SqlTrace.showQuery(Q_%s, ", kPrg);
             cc.traceParameterBegin(ipw);
             ipw.more();
             ipw.printf("Object[] parms =  new Object[]{%n");
@@ -390,7 +381,7 @@ public abstract class SqlAction {
                 boolean isDelegate = getInput() != null && getInput().isDelegate();
                 if (isReflect) {
                     iMap.forEach((k,v) ->
-                            ipw.printf("ESQL.get(i, \"%s\", %s.class)%s%n", v.getName(), v.getType().getWrapper(), k<iSize?",":""));
+                            ipw.printf("EmSQL.get(i, \"%s\", %s.class)%s%n", v.getName(), v.getType().getWrapper(), k<iSize?",":""));
                 } else if (isDelegate) {
                     iMap.forEach((k,v) ->
                             ipw.printf("i.%s.get()%s%n", v.getName(), k<iSize?",":""));

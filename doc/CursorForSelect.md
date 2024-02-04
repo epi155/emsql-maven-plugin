@@ -43,7 +43,7 @@ Template example
 Generated DAO method signature (body omitted):
 
 ~~~java
-    public static <O extends FindUsersRS> ESqlCursor<O> openFindUsers(
+    public static <O extends FindUsersRS> SqlCursor<O> openFindUsers(
             Connection c,
             String birthState,
             LocalDate dtMin,
@@ -56,7 +56,7 @@ The returned object allows you to loop through the list similar to an iterator.
 Example of client code:
 
 ~~~java
-        try(ESqlCursor<XUser> crs = DaoU01.openFindUsers(c, "Washington", LocalDate.of(1980, 1, 1), LocalDate.of(1985, 12, 31), XUser::new)) {
+        try(SqlCursor<XUser> crs = DaoU01.openFindUsers(c, "Washington", LocalDate.of(1980, 1, 1), LocalDate.of(1985, 12, 31), XUser::new)) {
             while (crs.hasNext()) {
                 XUser user = crs.fetchNext();
                 // consume user ...
@@ -151,7 +151,7 @@ Template example
 Generated DAO method signature (body omitted):
 
 ~~~java
-    public static <DO extends DelegateFindUsersRS> ESqlDelegateCursor openFindUsers(
+    public static <DO extends DelegateFindUsersRS> SqlDelegateCursor openFindUsers(
             Connection c,
             String birthState,
             LocalDate dtMin,
@@ -271,7 +271,7 @@ Template example
 Generated DAO method signature (body omitted):
 
 ~~~java
-    public static <DI extends DelegateFindUsersPS,O extends FindUsersRS> ESqlCursor<O> openFindUsers(
+    public static <DI extends DelegateFindUsersPS,O extends FindUsersRS> SqlCursor<O> openFindUsers(
             Connection c,
             DI i,
             Supplier<O> so)

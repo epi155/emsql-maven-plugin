@@ -37,19 +37,19 @@ public class SqlUpdateBatch extends SqlAction implements ApiUpdate {
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         int iSize = iMap.size();
         if (1<iSize && iSize<=IMAX) {
-            cc.add("io.github.epi155.emsql.runtime.ESqlUpdateBatch"+iSize);
+            cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch"+iSize);
         } else {
-            cc.add("io.github.epi155.emsql.runtime.ESqlUpdateBatch");
+            cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch");
         }
         String cName = Tools.capitalize(name);
         docBegin(ipw);
         docInput(ipw, iMap);
         docEnd(ipw);
-        declareNewInstance(ipw, "ESqlUpdateBatch", iMap, cName);
+        declareNewInstance(ipw, "SqlUpdateBatch", iMap, cName);
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
-        declareReturnNew(ipw, "ESqlUpdateBatch", iMap, batchSize);
+        declareReturnNew(ipw, cc, "SqlUpdateBatch", iMap, batchSize);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyUpdate(%n");
