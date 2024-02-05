@@ -48,7 +48,7 @@ Example of client code:
         int nmInsert = DaoU01.insertUser(c,  user);
 ~~~
 
-### <a target="delegate">Delegate input</a>
+### <a name="delegate">Delegate input</a>
 
 ~~~yaml
   - methodName: insertUser

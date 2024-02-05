@@ -39,5 +39,5 @@ Example of client code:
 
 ### Delegate input:
 
-see [Insert](insert.md#delegate)
+see [Insert](insert.md#delegate-input)
 
