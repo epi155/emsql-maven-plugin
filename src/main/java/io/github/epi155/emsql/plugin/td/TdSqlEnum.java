@@ -10,6 +10,7 @@ public class TdSqlEnum extends TypeDescription {
         super(SqlEnum.class);
     }
 
+    @Override
     public Object newInstance(Node node) {
         if (node instanceof ScalarNode) {
             ScalarNode sNode = (ScalarNode) node;

@@ -315,7 +315,7 @@ public abstract class SqlAction {
         boolean inpIsDelegate = ia != null && ia.isDelegate();
         boolean outIsReflect = oa != null && oa.isReflect();
         boolean outIsDelegate = oa != null && oa.isDelegate();
-        if (oSize == 1) {
+        if (oSize <= 1) {
             if (iSize > IMAX) {
                 if (inpIsReflect) {
                     ipw.putf("<I> ");
@@ -373,21 +373,22 @@ public abstract class SqlAction {
             ipw.more();
             ipw.printf("Object[] parms =  new Object[]{%n");
             ipw.more();
+            val eol = new Eol(iSize);
             if ( iSize <= IMAX) {
                 iMap.forEach((k,v) ->
-                        ipw.printf("%s%s%n", v.getName(), k<iSize?",":""));
+                        ipw.printf("%s%s%n", v.getName(), eol.nl()));
             } else {
                 boolean isReflect = getInput() != null && getInput().isReflect();
                 boolean isDelegate = getInput() != null && getInput().isDelegate();
                 if (isReflect) {
                     iMap.forEach((k,v) ->
-                            ipw.printf("EmSQL.get(i, \"%s\", %s.class)%s%n", v.getName(), v.getType().getWrapper(), k<iSize?",":""));
+                            ipw.printf("EmSQL.get(i, \"%s\", %s.class)%s%n", v.getName(), v.getType().getWrapper(), eol.nl()));
                 } else if (isDelegate) {
                     iMap.forEach((k,v) ->
-                            ipw.printf("i.%s.get()%s%n", v.getName(), k<iSize?",":""));
+                            ipw.printf("i.%s.get()%s%n", v.getName(), eol.nl()));
                 } else {
                     iMap.forEach((k,v) ->
-                            ipw.printf("i.%s%s()%s%n", getOf(v), capitalize(v.getName()), k<iSize?",":""));
+                            ipw.printf("i.%s%s()%s%n", getOf(v), capitalize(v.getName()), eol.nl()));
                 }
             }
             ipw.less();
@@ -399,4 +400,15 @@ public abstract class SqlAction {
         }
     }
 
+    private static class Eol {
+        private int count;
+
+        public Eol(int size) {
+            this.count = size;
+        }
+
+        public String nl() {
+            return --count > 0 ? "," : "";
+        }
+    }
 }

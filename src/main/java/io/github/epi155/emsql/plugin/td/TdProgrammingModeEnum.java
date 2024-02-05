@@ -10,6 +10,7 @@ public class TdProgrammingModeEnum extends TypeDescription {
         super(ProgrammingModeEnum.class);
     }
 
+    @Override
     public Object newInstance(Node node) {
         if (node instanceof ScalarNode) {
             ScalarNode sNode = (ScalarNode) node;

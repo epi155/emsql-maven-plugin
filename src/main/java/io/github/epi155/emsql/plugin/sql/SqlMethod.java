@@ -6,6 +6,7 @@ import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.Tools;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.text.DecimalFormat;
@@ -22,7 +23,7 @@ public class SqlMethod {
         JdbcStatement jdbc = perform.sql(cc.getFields());
         String sQuery = jdbc.getText();
         String kPrg = NF.format(km);
-        ipw.printf("private static final String Q_%s = \"%s\";%n", kPrg, sQuery);
+        ipw.printf("private static final String Q_%s = \"%s\";%n", kPrg, StringEscapeUtils.escapeJava(sQuery));
         /*-------------------------------------------------*/
         perform.writeMethod(ipw, methodName, jdbc, kPrg, cc);
         /*-------------------------------------------------*/

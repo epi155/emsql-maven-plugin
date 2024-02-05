@@ -4,6 +4,8 @@ import io.github.epi155.emsql.plugin.sql.SqlApi;
 import io.github.epi155.emsql.plugin.td.TdProgrammingModeEnum;
 import io.github.epi155.emsql.plugin.td.TdSqlEnum;
 import io.github.epi155.emsql.plugin.td.dml.*;
+import io.github.epi155.emsql.plugin.td.dpl.TdCallProcedure;
+import io.github.epi155.emsql.plugin.td.dpl.TdInlineProcedure;
 import io.github.epi155.emsql.plugin.td.dql.TdCursorForSelect;
 import io.github.epi155.emsql.plugin.td.dql.TdSelectList;
 import io.github.epi155.emsql.plugin.td.dql.TdSelectOptional;
@@ -109,7 +111,9 @@ public class SqlMojo extends AbstractMojo {
         c1.addTypeDescription(new TdUpdateBatch());
         c1.addTypeDescription(new TdInsertBatch());
         c1.addTypeDescription(new TdInsertReturnGeneratedKeys());
-        c1.addTypeDescription(new TdInsertReturningInto());
+        c1.addTypeDescription(new TdInsertReturningInto()); // to be removed
+        c1.addTypeDescription(new TdCallProcedure());
+        c1.addTypeDescription(new TdInlineProcedure());
 //        c1.addTypeDescription(new TdCursorForUpdate());   // da rivedere
 
         Yaml apiYaml = new Yaml(c1);

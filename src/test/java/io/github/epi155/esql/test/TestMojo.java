@@ -16,21 +16,8 @@ import java.nio.file.Path;
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @Order(1)
 class TestMojo {
-
-    @Test
-    void generateTest() {
-        SqlMojo mojo = new SqlMojo();
-        mojo.setGenerateDirectory(new File("target/generated-test-sources/esql"));
-        mojo.setPlugin(new PluginDescriptor() {
-            public String getGroupId() { return "io.github.epi155"; }
-            public String getArtifactId() { return "emsql-maven-plugin"; }
-            public String getVersion() { return "TEST"; }
-        });
-        mojo.setDebugCode(true);
-        mojo.setJava7(true);
-        mojo.setConfigDirectory(new File("src/test/resources"));
-        mojo.setModules(new String[]{
-                "daoBool.yaml",
+    private static final String[] MODULES = {
+        "daoBool.yaml",
                 "daoShort.yaml",
                 "daoInt.yaml",
                 "daoLong.yaml",
@@ -51,7 +38,22 @@ class TestMojo {
                 "daoDelete.yaml",
                 "daoUpdate.yaml",
                 "daoSelect.yaml",
+                "daoProc.yaml",
+    };
+
+    @Test
+    void generateTest7() {
+        SqlMojo mojo = new SqlMojo();
+        mojo.setGenerateDirectory(new File("target/generated-test-sources/esql7"));
+        mojo.setPlugin(new PluginDescriptor() {
+            public String getGroupId() { return "io.github.epi155"; }
+            public String getArtifactId() { return "emsql-maven-plugin"; }
+            public String getVersion() { return "TEST"; }
         });
+        mojo.setDebugCode(true);
+        mojo.setJava7(true);
+        mojo.setConfigDirectory(new File("src/test/resources"));
+        mojo.setModules(MODULES);
 
 
         File pomFile = new File("pom.xml");
@@ -63,7 +65,32 @@ class TestMojo {
 
         Assertions.assertDoesNotThrow(mojo::execute);
     }
-    
+
+    @Test
+    void generateTest8() {
+        SqlMojo mojo = new SqlMojo();
+        mojo.setGenerateDirectory(new File("target/generated-test-sources/esql8"));
+        mojo.setPlugin(new PluginDescriptor() {
+            public String getGroupId() { return "io.github.epi155"; }
+            public String getArtifactId() { return "emsql-maven-plugin"; }
+            public String getVersion() { return "TEST"; }
+        });
+        mojo.setDebugCode(true);
+        mojo.setJava7(false);
+        mojo.setConfigDirectory(new File("src/test/resources"));
+        mojo.setModules(MODULES);
+
+
+        File pomFile = new File("pom.xml");
+        MavenProject project = getProject(pomFile.toPath());
+        mojo.setProject(project);
+
+        mojo.setAddCompileSourceRoot(false);
+        mojo.setAddTestCompileSourceRoot(false);
+
+        Assertions.assertDoesNotThrow(mojo::execute);
+    }
+
     @SneakyThrows
     MavenProject getProject(Path pomPath) {
         MavenXpp3Reader reader = new MavenXpp3Reader();

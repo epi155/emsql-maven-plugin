@@ -340,9 +340,6 @@ public enum SqlEnum {
             ipw.printf("%s(rs.get%s(%d));%n", target, jdbc, k);
         } else {
             ipw.printf("{ %s it=rs.get%s(%d); %s(rs.wasNull() ? null : it); }%n", wrapper, jdbc, k, target);
-//
-//            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-//            ipw.printf("%s(EmSQL.box(rs.get%s(%d), rs.wasNull()));%n", target, jdbc, k);
         }
     }
     public void setValue(IndentPrintWriter ipw, int k, String name) {
@@ -357,8 +354,6 @@ public enum SqlEnum {
             ipw.printf("%s o =  rs.get%s(%d);%n", primitive, jdbc, k);
         } else {
             ipw.printf("%1$s o; { %1$s it=rs.get%2$s(%3$d); o=rs.wasNull() ? null : it; }%n", wrapper, jdbc, k);
-//            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-//            ipw.printf("%s o = EmSQL.box(rs.get%s(%d), rs.wasNull());%n", wrapper, jdbc, k);
         }
     }
     public  void psPush(IndentPrintWriter ipw, int k, String name) {

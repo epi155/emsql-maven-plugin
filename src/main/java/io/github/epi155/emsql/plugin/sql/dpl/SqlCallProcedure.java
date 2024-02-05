@@ -1,15 +1,11 @@
-package io.github.epi155.emsql.plugin.sql.dml;
+package io.github.epi155.emsql.plugin.sql.dpl;
 
-import io.github.epi155.emsql.plugin.ClassContext;
-import io.github.epi155.emsql.plugin.ComAreaStd;
-import io.github.epi155.emsql.plugin.IndentPrintWriter;
-import io.github.epi155.emsql.plugin.Tools;
+import io.github.epi155.emsql.plugin.*;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
 import io.github.epi155.emsql.plugin.sql.SqlEnum;
-import io.github.epi155.emsql.plugin.sql.SqlParam;
 import io.github.epi155.emsql.plugin.sql.dql.ApiSelectSignature;
-import io.github.epi155.emsql.plugin.sql.dql.DelegateSelectSignature;
+import io.github.epi155.emsql.plugin.sql.dql.DelegateCallSignature;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -19,53 +15,50 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SqlInsertReturningInto extends SqlAction implements ApiSelectSignature {
-    private final DelegateSelectSignature delegateSelectSignature;
-    @Setter @Getter
+public class SqlCallProcedure extends SqlAction implements ApiSelectSignature {
+    @Setter
+    @Getter
     private ComAreaStd input;
     @Setter @Getter
-    private ComAreaStd output;
-
-    SqlInsertReturningInto() {
+    private ComAreaDef output;
+    private final DelegateCallSignature delegateSelectSignature;
+    protected SqlCallProcedure() {
         super();
-        this.delegateSelectSignature = new DelegateSelectSignature(this);
+        this.delegateSelectSignature = new DelegateCallSignature(this);
     }
 
     private static final String tmpl =
-            "^INSERT INTO (\\w+) \\((.*)\\) VALUES \\((.*)\\) RETURNING (.*) INTO (.*)$";
+            "^CALL (\\w+)\\((.*)\\)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
+
+
     @Override
     public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
-            String sTable = m.group(1);
-            String iCols  = m.group(2).trim();
-            String iParms = m.group(3).trim();
-            String oCols  = m.group(4).trim();
-            String sInto = m.group(5).trim();
-            String oText = "BEGIN INSERT INTO "+sTable+" ( "+iCols+" ) VALUES ( "+iParms+" ) RETURNING "+oCols + " INTO " + sInto + " ; END;";
-            Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);
             Map<String,SqlEnum> inpFields = new HashMap<>();
             Map<String,SqlEnum> outFields = new HashMap<>();
-            oMap.forEach((k,v) -> outFields.put(v.getName(), v.getType()));
             fields.forEach((k,v) -> {
-                if (! outFields.containsKey(k)) {
+                if (output!=null && output.getFields().contains(k)) {
+                    outFields.put(k, v);
+                } else {
                     inpFields.put(k,v);
                 }
             });
-            return Tools.replacePlaceholder(oText, inpFields, outFields);
+            return Tools.replacePlaceholder(nText, inpFields, outFields);
 
         } else {
             throw new MojoExecutionException("Invalid query format: "+ getExecSql());
         }
     }
 
-    @Override
     public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
         delegateSelectSignature.signature(ipw, jdbc, name);
 
-        if (jdbc.getOutSize() == 1) {
+        if (jdbc.getOutSize() == 0) {
+            ipw.putf("void %s(%n", name);
+        } else if (jdbc.getOutSize() == 1) {
             // oMap.get(1) may be NULL, the output parameter is NOT the first one
             jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getPrimitive(), name));
         } else {
@@ -89,5 +82,4 @@ public class SqlInsertReturningInto extends SqlAction implements ApiSelectSignat
         ipw.ends();
         ipw.ends();
     }
-
 }

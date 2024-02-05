@@ -32,7 +32,7 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelect
     }
 
     private static final String tmpl =
-            "^INSERT INTO (\\w+) [(](.*)[)] VALUES [(](.*)[)]$";
+            "^INSERT INTO (\\w+) \\((.*)\\) VALUES \\((.*)\\)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
     public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
@@ -46,8 +46,8 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelect
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
             Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
             int k=0;
-            for(val e: output.getFields().entrySet()) {
-                oMap.put(++k, new SqlParam(e.getKey(), e.getValue()));
+            for(val e: output.getFields()) {
+                oMap.put(++k, new SqlParam(e, fields.get(e)));
             }
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {

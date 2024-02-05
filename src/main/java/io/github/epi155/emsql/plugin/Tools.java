@@ -23,38 +23,6 @@ public class Tools {
 
         void push(String parm);
     }
-//    public static List<String> camelToSnake(String[] as) {
-//        List<String> result = new ArrayList<>(as.length);
-//        for(val s: as) {
-//            result.add(camelToSnake(s));
-//        }
-//        return result;
-//    }
-//
-//    public static String camelToSnake(@NotNull String s) {
-//        char[] ac = s.toCharArray();
-//        StringBuilder sb = new StringBuilder();
-//        if (! Character.isLowerCase(ac[0]))
-//            throw new IllegalArgumentException("Invalid camel field name");
-//        boolean wasUpper = false;
-//        boolean wasDigit = false;
-//        for (val c: ac) {
-//            boolean isUpper = Character.isUpperCase(c);
-//            boolean isDigit = Character.isDigit(c);
-//            if (isUpper && !wasUpper) {
-//                sb.append("_");
-//                sb.append(Character.toLowerCase(c));
-//            } else if (isDigit && !wasDigit) {
-//                sb.append("_");
-//                sb.append(c);
-//            } else {
-//                sb.append(c);
-//            }
-//            wasUpper = isUpper;
-//            wasDigit = isDigit;
-//        }
-//        return sb.toString();
-//    }
 
     public static String oneLine(@NotNull String text) {
         StringBuilder sb = new StringBuilder();
@@ -89,13 +57,14 @@ public class Tools {
     private static boolean isBreak(char c) {
         return c=='\n' || c=='\r';
     }
+    private static final char[] BREAK_PARMS = {' ', ',',')',';','\n'};
     public static SqlStatement replacePlaceholder(String text, Map<String, SqlEnum> fields) {
         int ixCol = text.indexOf(':');
         if (ixCol<0) {
             // there are no parameters
             return new SqlStatement(text, Map.of());
         }
-        int ixEnd = indexOf(text, ixCol + 1, ' ', ',');
+        int ixEnd = indexOf(text, ixCol + 1);
         if (ixEnd<0) {
             // only one parameter at end-of-text (no space)
             String parm = text.substring(ixCol + 1);
@@ -140,7 +109,7 @@ public class Tools {
                 sb.append(text.substring(ixOld));
                 return store.close(sb.toString());
             }
-            ixEnd = indexOf(text, ixCol + 1, ' ', ',');
+            ixEnd = indexOf(text, ixCol + 1);
             if (ixEnd<0) {
                 // parameter at end-of-text (no space)
                 parm = text.substring(ixCol + 1);
@@ -162,7 +131,7 @@ public class Tools {
             // there are no parameters
             return new JdbcStatement(text, Map.of(), Map.of());
         }
-        int ixEnd = indexOf(text, ixCol + 1, ' ', ',');
+        int ixEnd = indexOf(text, ixCol + 1);
         if (ixEnd<0) {
             // only one parameter at end-of-text (no space)
             String parm = text.substring(ixCol + 1);
@@ -220,8 +189,7 @@ public class Tools {
             // there are no parameters
             return Map.of();
         }
-//        int ixEnd = text.indexOf(' ', ixCol + 1);
-        int ixEnd = indexOf(text, ixCol + 1, ' ', ',');
+        int ixEnd = indexOf(text, ixCol + 1);
         if (ixEnd<0) {
             // only one parameter at end-of-text (no space)
             String parm = text.substring(ixCol + 1);
@@ -243,14 +211,14 @@ public class Tools {
                 // there are no more parameters
                 return map;
             }
-            ixEnd = indexOf(text, ixCol + 1, ' ', ',');
+            ixEnd = indexOf(text, ixCol + 1);
             if (ixEnd<0) {
                 // parameter at end-of-text (no space)
                 parm = text.substring(ixCol + 1);
                 type = fields.get(parm);
                 if (type==null)
                     throw new IllegalArgumentException("Invalid SQL parameter "+parm );
-                map.put(k++, new SqlParam(parm, type));
+                map.put(k, new SqlParam(parm, type));
                 return map;
             }
             parm = text.substring(ixCol + 1, ixEnd);
@@ -263,9 +231,9 @@ public class Tools {
         return Map.of();
     }
 
-    private static int indexOf(String text, int i, char ...cs) {
+    private static int indexOf(String text, int i) {
         int k = -1;
-        for(val c: cs) {
+        for(val c: BREAK_PARMS) {
             int ix = text.indexOf(c, i);
             if (ix >= 0 && (k<0 || ix<k)) {
                 k = ix;

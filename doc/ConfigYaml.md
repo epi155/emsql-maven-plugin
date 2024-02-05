@@ -78,20 +78,25 @@ Naturally `methodName` is the name of the method, `perform` is one of the models
 
 For model details refer to:
 
-4.1) Details (DQL)<br/>
+4.1) Query<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1.1) SelectSingle](SelectSingle.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1.2) SelectOptional](SelectOptional.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1.3) SelectList](SelectList.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1.4) CursorForSelect](CursorForSelect.md)<br/>
-4.2) Details (DML)<br/>
+4.2) Manipulation<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.1) Insert](insert.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) Update](#55)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) Update](update.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.3) Delete](delete.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.4) InsertBatch](insertBatch.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.5) UpdateBatch](#56)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.5) UpdateBatch](updateBatch.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.6) DeleteBatch](deleteBatch.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.7) InsertReturnKeys](#57)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.8) InsertReturnInto](#58)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.7) InsertReturnKeys](insertKey.md)<br/>
+4.3) Procedure<br/>
+<!-- &nbsp;&nbsp;&nbsp;&nbsp;[4.2.8) InsertReturnInto](#58)<br/> -->
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.1) CallProcedure](#58)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) InlineProcedure](#58)<br/>
+
+
 
 all models have the parameters in common: `timeout` (optional) the time, in seconds, to wait for the query to be executed and `execSql` the query to execute:
 

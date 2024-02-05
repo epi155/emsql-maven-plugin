@@ -1,30 +1,31 @@
-## 4.2.3. Delete
+## 4.2.2. Update
 
-The Delete template is designed to remove one or more elements from the table.
+The Update template is designed to modify one or more elements from the table.
 
 ### Standard use
 
 Template example
 
 ~~~yaml
-  - methodName: deleteUser
-    perform: !Delete
+  - methodName: updateUser
+    perform: !Update
       input:              # optional
         reflect: false    # optional, default false
         delegate: false   # optional, default false
       timeout: 5          # (seconds) optional, default null (system default)
       execSql: |
-        delete from u01_user
-        where SURNAME     = :surname
-          and GIVEN_NAME  = :givenName
-          and BIRTH_DATE  = :birthDate
-          and BIRTH_PLACE = :birthPlace
+        update u01_user
+        set SURNAME     = :surname
+          , GIVEN_NAME  = :givenName
+          , BIRTH_DATE  = :birthDate
+          , BIRTH_PLACE = :birthPlace
+        where ID_USER = :idUser
 ~~~
 
 Generated DAO method signature (body omitted):
 
 ~~~java
-    public static <I extends DeleteUserPS> int deleteUser(
+    public static <I extends UpdateUserPS> int updateUser(
             final Connection c,
             final I i)
             throws SQLException ;
@@ -33,9 +34,10 @@ Generated DAO method signature (body omitted):
 Example of client code:
 
 ~~~java
-        int nmDelete = DaoU01.deleteUser(c, user);
+        int nmUpdate = DaoU01.updateUser(c,  user);
 ~~~
 
-### Delegate input
+### Delegate input:
 
 see [Insert](insert.md#delegate)
+

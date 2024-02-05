@@ -15,7 +15,7 @@ Template example
       timeout: 5          # (seconds) optional, default null (system default)
       batchSize: 1024     # optional, default 1024, threshold for execute
       execSql: |
-        delete from u01_user (
+        delete from u01_user
         where SURNAME     = :surname
           and GIVEN_NAME  = :givenName
           and BIRTH_DATE  = :birthDate

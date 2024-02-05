@@ -16,7 +16,7 @@ public class DelegateInsert {
         this.api = api;
     }
     private static final String tmpl =
-            "^INSERT INTO (\\w+) [(](.*)[)] VALUES [(](.*)[)]$";
+            "^INSERT INTO (\\w+) \\((.*)\\) VALUES [(](.*)[)]$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
 
     public JdbcStatement proceed(Map<String, SqlEnum> fields) throws MojoExecutionException {
