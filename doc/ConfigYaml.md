@@ -84,12 +84,12 @@ For model details refer to:
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1.3) SelectList](SelectList.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1.4) CursorForSelect](CursorForSelect.md)<br/>
 4.2) Details (DML)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.1) Insert](#53)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.1) Insert](insert.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) Update](#55)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.3) Delete](#51)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.4) InsertBatch](#54)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.3) Delete](delete.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.4) InsertBatch](insertBatch.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.5) UpdateBatch](#56)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.6) DeleteBatch](#52)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.6) DeleteBatch](deleteBatch.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.7) InsertReturnKeys](#57)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.8) InsertReturnInto](#58)<br/>
 
