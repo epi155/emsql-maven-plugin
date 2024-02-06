@@ -1,39 +1,10 @@
 package io.github.epi155.emsql.plugin.sql.dql;
 
 import io.github.epi155.emsql.plugin.ClassContext;
-import io.github.epi155.emsql.plugin.ComAreaStd;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
-import io.github.epi155.emsql.plugin.sql.SqlAction;
-import io.github.epi155.emsql.plugin.sql.SqlEnum;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.maven.plugin.MojoExecutionException;
 
-import java.util.Map;
-
-public class SqlSelectOptional extends SqlAction
-        implements ApiSelectFields, ApiSelectSignature, ApiSelectSimple {
-    private final DelegateSelectFields delegateSelectFields;
-    private final DelegateSelectSignature delegateSelectSignature;
-    private final DelegateSelectSimple delegateSelectSimple;
-    @Getter
-    @Setter
-    private ComAreaStd input;
-    @Getter
-    @Setter
-    private ComAreaStd output;
-
-    SqlSelectOptional() {
-        super();
-        this.delegateSelectFields = new DelegateSelectFields(this);
-        this.delegateSelectSignature = new DelegateSelectSignature(this);
-        this.delegateSelectSimple = new DelegateSelectSimple(this);
-    }
-    @Override
-    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
-        return delegateSelectFields.sql(fields);
-    }
+public class SqlSelectOptional extends SqlSelectSingle {
 
     @Override
     public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {

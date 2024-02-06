@@ -100,8 +100,8 @@ public enum SqlEnum {
         }
         @Override
         public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("%s(EmSQL.toLocalDate(rs.getDate(%d)));%n", target, k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("%s(J8Time.toLocalDate(rs.getDate(%d)));%n", target, k);
         }
         @Override
         public void setValue(IndentPrintWriter ipw, int k, String name) {
@@ -114,8 +114,8 @@ public enum SqlEnum {
         }
         @Override
         public void rsGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("LocalDate o = EmSQL.toLocalDate(rs.getDate(%d));%n", k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("LocalDate o = J8Time.toLocalDate(rs.getDate(%d));%n", k);
         }
         @Override
         public void psPush(IndentPrintWriter ipw, int k, String name) {
@@ -123,17 +123,17 @@ public enum SqlEnum {
         }
         @Override
         public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("return EmSQL.toLocalDate(ps.getDate(%d));%n", k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("return J8Time.toLocalDate(ps.getDate(%d));%n", k);
         }
         @Override
         public void psGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("o.%s(EmSQL.toLocalDate(ps.getDate(%d)));%n", setter, k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("o.%s(J8Time.toLocalDate(ps.getDate(%d)));%n", setter, k);
         }
         @Override
         public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
-            ipw.printf("EmSQL.set(o, \"%s\", EmSQL.toLocalDate(rs.getDate(%d)));%n", name, k);
+            ipw.printf("EmSQL.set(o, \"%s\", J8Time.toLocalDate(rs.getDate(%d)));%n", name, k);
         }
     },
     LocalDateTimeStd("Timestamp", "TIMESTAMP", "LocalDateTime") {
@@ -181,8 +181,8 @@ public enum SqlEnum {
         }
         @Override
         public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("%s(EmSQL.toLocalDateTime(rs.getTimestamp(%d)));%n", target, k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("%s(J8Time.toLocalDateTime(rs.getTimestamp(%d)));%n", target, k);
         }
         @Override
         public void setValue(IndentPrintWriter ipw, int k, String name) {
@@ -195,8 +195,8 @@ public enum SqlEnum {
         }
         @Override
         public void rsGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("LocalDateTime o = EmSQL.toLocalDateTime(rs.getTimestamp(%d));%n", k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("LocalDateTime o = J8Time.toLocalDateTime(rs.getTimestamp(%d));%n", k);
         }
         @Override
         public void psPush(IndentPrintWriter ipw, int k, String name) {
@@ -204,17 +204,17 @@ public enum SqlEnum {
         }
         @Override
         public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("return EmSQL.toLocalDateTime(ps.getTimestamp(%d));%n", k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("return J8Time.toLocalDateTime(ps.getTimestamp(%d));%n", k);
         }
         @Override
         public void psGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("o.%s(EmSQL.toLocalDateTime(ps.getTimestamp(%d)));%n", setter, k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("o.%s(J8Time.toLocalDateTime(ps.getTimestamp(%d)));%n", setter, k);
         }
         @Override
         public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
-            ipw.printf("EmSQL.set(o, \"%s\", EmSQL.toLocalDateTime(rs.getTimestamp(%d)));%n", name, k);
+            ipw.printf("EmSQL.set(o, \"%s\", J8Time.toLocalDateTime(rs.getTimestamp(%d)));%n", name, k);
         }
     },
     LocalTimeStd("Time", "TIME", "LocalTime") {
@@ -262,8 +262,8 @@ public enum SqlEnum {
         }
         @Override
         public void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("%s(EmSQL.toLocalTime(rs.getTime(%d)));%n", target, k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("%s(J8Time.toLocalTime(rs.getTime(%d)));%n", target, k);
         }
         @Override
         public void setValue(IndentPrintWriter ipw, int k, String name) {
@@ -276,8 +276,8 @@ public enum SqlEnum {
         }
         @Override
         public void rsGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("LocalTime o = EmSQL.toLocalTime(rs.getTime(%d));%n", k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("LocalTime o = J8Time.toLocalTime(rs.getTime(%d));%n", k);
         }
         @Override
         public void psPush(IndentPrintWriter ipw, int k, String name) {
@@ -285,17 +285,17 @@ public enum SqlEnum {
         }
         @Override
         public void psGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("return EmSQL.toLocalTime(ps.getTime(%d));%n", k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("return J8Time.toLocalTime(ps.getTime(%d));%n", k);
         }
         @Override
         public void psGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
-            cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("o.%s(EmSQL.toLocalTime(ps.getTime(%d)));%n", setter, k);
+            cc.add("io.github.epi155.emsql.runtime.J8Time");
+            ipw.printf("o.%s(J8Time.toLocalTime(ps.getTime(%d)));%n", setter, k);
         }
         @Override
         public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
-            ipw.printf("EmSQL.set(o, \"%s\", EmSQL.toLocalTime(rs.getTime(%d)));%n", name, k);
+            ipw.printf("EmSQL.set(o, \"%s\", J8Time.toLocalTime(rs.getTime(%d)));%n", name, k);
         }
     };
     private final String jdbc;

@@ -276,4 +276,11 @@ public class Tools {
         return "get" + capitalize(ante) + "()." + setterOf(post);
     }
 
+    public static String normalizeName(String name) {
+        int kDot = name.lastIndexOf('.');
+        if (kDot<0)
+            return name;
+        return name.substring(kDot+1);
+    }
+
 }

@@ -14,15 +14,15 @@ import java.util.Map;
 
 public class SqlSelectSingle extends SqlAction
         implements ApiSelectFields, ApiSelectSignature, ApiSelectSimple {
-    private final DelegateSelectFields delegateSelectFields;
-    private final DelegateSelectSignature delegateSelectSignature;
-    private final DelegateSelectSimple delegateSelectSimple;
+    protected final DelegateSelectFields delegateSelectFields;
+    protected final DelegateSelectSignature delegateSelectSignature;
+    protected final DelegateSelectSimple delegateSelectSimple;
     @Getter
     @Setter
     private ComAreaStd input;
     @Getter
     @Setter
-    private ComAreaStd output;
+    protected ComAreaStd output;
 
     SqlSelectSingle() {
         super();

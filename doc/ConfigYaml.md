@@ -64,6 +64,8 @@ If up to 3 parameters are required in input, these are passed directly as method
 
 Similarly, if only 1 value is returned in the output, it is returned directly from the method, otherwise a wrapper interface is created.
 
+If the field names are structured, i.e. contain the dot character, nested DAO interfaces will be generated.
+
 After the declaration of the fields, the list of methods with their parameters follows
 
 ~~~yaml
