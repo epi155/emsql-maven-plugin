@@ -17,6 +17,7 @@ import java.nio.file.Path;
 @Order(1)
 class TestMojo {
     private static final String[] MODULES = {
+            "daoNest.yaml",
         "daoBool.yaml",
                 "daoShort.yaml",
                 "daoInt.yaml",
@@ -38,7 +39,7 @@ class TestMojo {
                 "daoDelete.yaml",
                 "daoUpdate.yaml",
                 "daoSelect.yaml",
-                "daoProc.yaml",
+            "daoProc.yaml",
     };
 
     @Test

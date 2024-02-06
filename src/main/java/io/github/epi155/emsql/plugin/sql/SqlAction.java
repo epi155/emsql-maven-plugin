@@ -9,12 +9,10 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.github.epi155.emsql.plugin.Tools.capitalize;
-import static io.github.epi155.emsql.plugin.Tools.getOf;
+import static io.github.epi155.emsql.plugin.Tools.*;
 
 @Setter
 @Getter
@@ -185,49 +183,85 @@ public abstract class SqlAction {
         oMap.forEach((k,s) -> s.registerOutParms(ipw, k));
     }
 
-    public void writeRequest(IndentPrintWriter ipw, String cMethodName, ClassContext cc, Collection<SqlParam> sp) {
+    public void writeRequest(IndentPrintWriter ipw, String cMethodName, ClassContext cc, Collection<SqlParam> sp) throws MojoExecutionException {
         if (sp.size()<=IMAX) return;
         if (getInput() != null && getInput().isReflect()) return;
         if (getInput() != null && getInput().isDelegate()) {
-            ipw.printf("public static class Delegate%s"+REQUEST+" {%n", cMethodName);
+            List<String> badNames = sp.stream().map(SqlParam::getName).filter(it -> it.contains(".")).collect(Collectors.toList());
+            if (!badNames.isEmpty()) {
+                throw new MojoExecutionException("Invalid names for delegate fields: " + String.join(",", badNames));
+            }
+        }
+        writeRequestInterface(ipw, cMethodName, cc, sp);
+    }
+
+    private void writeRequestInterface(IndentPrintWriter ipw, String methodName, ClassContext cc, Collection<SqlParam> sp) {
+        if (getInput() != null && getInput().isDelegate()) {
+            ipw.printf("public static class Delegate%s"+REQUEST+" {%n", methodName);
             ipw.more();
-            ipw.printf("private Delegate%s"+REQUEST+"() {}%n", cMethodName);
+            ipw.printf("private Delegate%s"+REQUEST+"() {}%n", methodName);
             sp.forEach(p -> {
                 String claz = p.getType().getWrapper();
                 ipw.printf("protected %s<%s> %s;%n", cc.supplier(), claz, p.getName());
             });
-            ipw.printf("public static Builder%s"+REQUEST+" builder() { return new Builder%1$s"+REQUEST+"(); }%n", cMethodName);
-            ipw.printf("public static class Builder%s"+REQUEST+" {%n", cMethodName);
+            ipw.printf("public static Builder%s"+REQUEST+" builder() { return new Builder%1$s"+REQUEST+"(); }%n", methodName);
+            ipw.printf("public static class Builder%s"+REQUEST+" {%n", methodName);
             ipw.more();
-            ipw.printf("private Builder%s"+REQUEST+"() {}%n", cMethodName);
+            ipw.printf("private Builder%s"+REQUEST+"() {}%n", methodName);
             sp.forEach(p -> {
                 String claz = p.getType().getWrapper();
                 ipw.printf("private %s<%s> %s;%n", cc.supplier(), claz, p.getName());
             });
-            ipw.printf("public Delegate%s"+REQUEST+" build() {%n", cMethodName);
+            ipw.printf("public Delegate%s"+REQUEST+" build() {%n", methodName);
             ipw.more();
-            ipw.printf("Delegate%s"+REQUEST+" result = new Delegate%1$s"+REQUEST+"();%n", cMethodName);
+            ipw.printf("Delegate%s"+REQUEST+" result = new Delegate%1$s"+REQUEST+"();%n", methodName);
             cc.delegateRequestFields(ipw, sp);
             ipw.printf("return  result;%n");
             ipw.ends();
             sp.forEach(p -> ipw.printf("public Builder%s"+REQUEST+" %s(%s<%s> %2$s) { this.%2$s = %2$s; return this; }%n",
-                    cMethodName, p.getName(), cc.supplier(), p.getType().getWrapper()));
+                    methodName, p.getName(), cc.supplier(), p.getType().getWrapper()));
             ipw.ends();
         } else {
-            ipw.printf("public interface %s"+REQUEST+" {%n", cMethodName);
+            ipw.printf("public interface %s"+REQUEST+" {%n", methodName);
             ipw.more();
-            sp.forEach(p -> {
-                String cName = capitalize(p.getName());
-                String claz = p.getType().getPrimitive();
-                ipw.printf("%s %s%s();%n", claz, getOf(p), cName);
+            Map<String, List<SqlParam>> next = new LinkedHashMap<>();
+            for(val p: sp) {
+                String name = p.getName();
+                int kDot = name.indexOf('.');
+                if (kDot < 0) {
+                    String cName = capitalize(name);
+                    String claz = p.getType().getPrimitive();
+                    ipw.printf("%s %s%s();%n", claz, getOf(p), cName);
+                } else {
+                    String ante = name.substring(0, kDot);
+                    String post = name.substring(kDot + 1);
+                    List<SqlParam> flds = next.computeIfAbsent(ante, k -> new ArrayList<>());
+                    flds.add(new SqlParam(post, p.getType()));
+                }
+            }
+            next.keySet().forEach(name -> {
+                String cName = capitalize(name);
+                String claz = cName+REQUEST;
+                ipw.printf("%s get%s();%n", claz, cName);
             });
+            next.forEach((n,np) -> writeRequestInterface(ipw, capitalize(n), cc, np));
         }
         ipw.ends();
     }
 
-    public void writeResponse(IndentPrintWriter ipw, String cMethodName, ClassContext cc, Collection<SqlParam> sp) {
+    public void writeResponse(IndentPrintWriter ipw, String cMethodName, ClassContext cc, Collection<SqlParam> sp) throws MojoExecutionException {
         if (sp.size()<=1) return;
         if (getOutput()!=null && getOutput().isReflect()) return;
+        if (getOutput()!=null && getOutput().isDelegate()) {
+            List<String> badNames = sp.stream().map(SqlParam::getName).filter(it -> it.contains(".")).collect(Collectors.toList());
+            if (!badNames.isEmpty()) {
+                throw new MojoExecutionException("Invalid names for delegate fields: " + String.join(",", badNames));
+            }
+        }
+        writeResponseInterface(ipw, cMethodName, cc, sp);
+    }
+
+    private void writeResponseInterface(IndentPrintWriter ipw, String cMethodName, ClassContext cc, Collection<SqlParam> sp) {
         if (getOutput()!=null && getOutput().isDelegate()) {
             ipw.printf("public static class Delegate%s"+RESPONSE+" {%n", cMethodName);
             ipw.more();
@@ -256,14 +290,32 @@ public abstract class SqlAction {
         } else {
             ipw.printf("public interface %s"+RESPONSE+" {%n", cMethodName);
             ipw.more();
-            sp.forEach(p -> {
-                String cName = capitalize(p.getName());
-                String claz = p.getType().getPrimitive();
-                ipw.printf("void set%s(%s s);%n", cName, claz);
+            Map<String, List<SqlParam>> next = new LinkedHashMap<>();
+            for(val p: sp) {
+                String name = p.getName();
+                int kDot = name.indexOf('.');
+                if (kDot < 0) {
+                    String cName = capitalize(p.getName());
+                    String claz = p.getType().getPrimitive();
+                    ipw.printf("void set%s(%s s);%n", cName, claz);
+                } else {
+                    String ante = name.substring(0, kDot);
+                    String post = name.substring(kDot + 1);
+                    List<SqlParam> flds = next.computeIfAbsent(ante, k -> new ArrayList<>());
+                    flds.add(new SqlParam(post, p.getType()));
+                }
+            }
+            next.keySet().forEach(name -> {
+                String cName = capitalize(name);
+                String claz = cName+RESPONSE;
+                ipw.printf("%s get%s();%n", claz, cName);
             });
+            next.forEach((n,np) -> writeResponseInterface(ipw, capitalize(n), cc, np));
+
         }
         ipw.ends();
     }
+
     public void docBegin(IndentPrintWriter ipw) {
         ipw.printf("/**%n");
         ipw.printf(" * Template %s%n", this.getClass().getSimpleName());
@@ -388,7 +440,7 @@ public abstract class SqlAction {
                             ipw.printf("i.%s.get()%s%n", v.getName(), eol.nl()));
                 } else {
                     iMap.forEach((k,v) ->
-                            ipw.printf("i.%s%s()%s%n", getOf(v), capitalize(v.getName()), eol.nl()));
+                            ipw.printf("i.%s()%s%n", getterOf(v), eol.nl()));
                 }
             }
             ipw.less();

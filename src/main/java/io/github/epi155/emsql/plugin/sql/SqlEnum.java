@@ -89,8 +89,8 @@ public enum SqlEnum {
             ipw.printf("return ps.getDate(%d).toLocalDate();%n", k);
         }
         @Override
-        public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(ps.getDate(%d).toLocalDate());%n", cName, k);
+        public void psGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
+            ipw.printf("o.%s(ps.getDate(%d).toLocalDate());%n", setter, k);
         }
     },
     LocalDateNil("Date", "DATE", "LocalDate") {
@@ -127,9 +127,9 @@ public enum SqlEnum {
             ipw.printf("return EmSQL.toLocalDate(ps.getDate(%d));%n", k);
         }
         @Override
-        public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+        public void psGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
             cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("o.set%s(EmSQL.toLocalDate(ps.getDate(%d)));%n", cName, k);
+            ipw.printf("o.%s(EmSQL.toLocalDate(ps.getDate(%d)));%n", setter, k);
         }
         @Override
         public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
@@ -170,8 +170,8 @@ public enum SqlEnum {
             ipw.printf("return ps.getTimestamp(%d).toLocalDateTime();%n", k);
         }
         @Override
-        public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(ps.getTimestamp(%d).toLocalDateTime());%n", cName, k);
+        public void psGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
+            ipw.printf("o.%s(ps.getTimestamp(%d).toLocalDateTime());%n", setter, k);
         }
     },
     LocalDateTimeNil("Timestamp", "TIMESTAMP", "LocalDateTime") {
@@ -208,9 +208,9 @@ public enum SqlEnum {
             ipw.printf("return EmSQL.toLocalDateTime(ps.getTimestamp(%d));%n", k);
         }
         @Override
-        public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+        public void psGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
             cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("o.set%s(EmSQL.toLocalDateTime(ps.getTimestamp(%d)));%n", cName, k);
+            ipw.printf("o.%s(EmSQL.toLocalDateTime(ps.getTimestamp(%d)));%n", setter, k);
         }
         @Override
         public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
@@ -251,8 +251,8 @@ public enum SqlEnum {
             ipw.printf("return ps.getTime(%d).toLocalTime();%n", k);
         }
         @Override
-        public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
-            ipw.printf("o.set%s(ps.getTime(%d).toLocalTime());%n", cName, k);
+        public void psGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
+            ipw.printf("o.%s(ps.getTime(%d).toLocalTime());%n", setter, k);
         }
     },
     LocalTimeNil("Time", "TIME", "LocalTime") {
@@ -289,9 +289,9 @@ public enum SqlEnum {
             ipw.printf("return EmSQL.toLocalTime(ps.getTime(%d));%n", k);
         }
         @Override
-        public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+        public void psGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
             cc.add("io.github.epi155.emsql.runtime.EmSQL");
-            ipw.printf("o.set%s(EmSQL.toLocalTime(ps.getTime(%d)));%n", cName, k);
+            ipw.printf("o.%s(EmSQL.toLocalTime(ps.getTime(%d)));%n", setter, k);
         }
         @Override
         public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
@@ -380,11 +380,11 @@ public enum SqlEnum {
             ipw.printf("{ %s it=ps.get%s(%d); return ps.wasNull() ? null : it; }%n", wrapper, jdbc, k);
         }
     }
-    public void psGet(IndentPrintWriter ipw, int k, String cName, ClassContext cc) {
+    public void psGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
         if (name().endsWith("Std") || isPlainClass) {
-            ipw.printf("o.set%s(ps.get%s(%d));%n", cName, jdbc, k);
+            ipw.printf("o.%s(ps.get%s(%d));%n", setter, jdbc, k);
         } else {
-            ipw.printf("{ %s it=ps.get%s(%d); o.set%s(ps.wasNull() ? null : it); }%n", wrapper, jdbc, k, cName);
+            ipw.printf("{ %s it=ps.get%s(%d); o.%s(ps.wasNull() ? null : it); }%n", wrapper, jdbc, k, setter);
         }
     }
     public Collection<String> requires() {

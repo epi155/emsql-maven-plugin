@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import static io.github.epi155.emsql.plugin.Tools.getOf;
+import static io.github.epi155.emsql.plugin.Tools.*;
 
 @Setter
 @Getter
@@ -17,7 +17,7 @@ public class SqlParam {
     private final SqlEnum type;
 
     public void setParameter(IndentPrintWriter ipw, int k) {
-        String source = String.format("i.%s%s()", getOf(this), Tools.capitalize(name));
+        String source = String.format("i.%s()", getterOf(this));
         type.psSet(ipw, k, source);
     }
     public void setDelegateParameter(IndentPrintWriter ipw, int k) {
@@ -32,7 +32,7 @@ public class SqlParam {
     }
 
     public void fetchParameter(IndentPrintWriter ipw, int k, ClassContext cc) {
-        String target = String.format("o.set%s", Tools.capitalize(name));
+        String target = String.format("o.%s", Tools.setterOf(name));
         type.rsGet(ipw, k, target, cc);
     }
     public void fetchDelegateParameter(IndentPrintWriter ipw, int k, ClassContext cc) {
@@ -56,7 +56,6 @@ public class SqlParam {
     }
 
     public void getParameter(IndentPrintWriter ipw, int k, ClassContext cc) {
-        String cName = Tools.capitalize(name);
-        type.psGet(ipw, k, cName, cc);
+        type.psGet(ipw, k, setterOf(name), cc);
     }
 }

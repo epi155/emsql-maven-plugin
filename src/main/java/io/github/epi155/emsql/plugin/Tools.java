@@ -256,4 +256,24 @@ public class Tools {
     public static String getOf(SqlParam parm) {
         return (parm.getType() == SqlEnum.BooleanStd) ? "is" : "get";
     }
+    public static String getterOf(SqlParam parm) {
+        String name = parm.getName();
+        int kDot = name.indexOf('.');
+        if (kDot < 0) {
+            return ((parm.getType() == SqlEnum.BooleanStd) ? "is" : "get") + capitalize(name);
+        }
+        String ante = name.substring(0, kDot);
+        String post = name.substring(kDot+1);
+        return "get" + capitalize(ante) + "()." + getterOf(new SqlParam(post, parm.getType()));
+    }
+    public static String setterOf(String name) {
+        int kDot = name.indexOf('.');
+        if (kDot < 0) {
+            return "set" + capitalize(name);
+        }
+        String ante = name.substring(0, kDot);
+        String post = name.substring(kDot+1);
+        return "get" + capitalize(ante) + "()." + setterOf(post);
+    }
+
 }

@@ -111,7 +111,6 @@ public class SqlMojo extends AbstractMojo {
         c1.addTypeDescription(new TdUpdateBatch());
         c1.addTypeDescription(new TdInsertBatch());
         c1.addTypeDescription(new TdInsertReturnGeneratedKeys());
-        c1.addTypeDescription(new TdInsertReturningInto()); // to be removed
         c1.addTypeDescription(new TdCallProcedure());
         c1.addTypeDescription(new TdInlineProcedure());
 //        c1.addTypeDescription(new TdCursorForUpdate());   // da rivedere
