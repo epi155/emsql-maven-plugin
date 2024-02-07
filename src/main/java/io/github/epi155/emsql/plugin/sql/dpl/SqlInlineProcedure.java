@@ -14,7 +14,10 @@ public class SqlInlineProcedure extends SqlCallProcedure {
     public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
         String nText = getExecSql();
         String uText = nText.toUpperCase();
-        if (!uText.contains("BEGIN") || !uText.contains("END")) {
+        int k0 = uText.indexOf("DECLARE");
+        int k1 = uText.indexOf("BEGIN");
+        int k2 = uText.indexOf("END");
+        if (!(k1>=0 && k2>k1 && (k0<0 || k0<k1))) {
             throw new MojoExecutionException("Invalid query format: "+ getExecSql());
         }
         Map<String,SqlEnum> inpFields = new HashMap<>();

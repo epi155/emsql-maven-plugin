@@ -2,24 +2,22 @@ package io.github.epi155.emsql.plugin.sql.dml;
 
 import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
-import io.github.epi155.emsql.plugin.sql.SqlParam;
-
-import java.util.Map;
+import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 
 public interface ApiWriteMethod {
     void docBegin(IndentPrintWriter ipw);
 
-    void docInput(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap);
+    void docInput(IndentPrintWriter ipw, JdbcStatement jdbc);
 
     void docEnd(IndentPrintWriter ipw);
 
     void declareGenerics(IndentPrintWriter ipw, String cName, int iSize, int i);
 
-    void declareInput(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap, String cName);
+    void declareInput(IndentPrintWriter ipw, JdbcStatement jdbc);
 
-    void setInput(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap);
+    void setInput(IndentPrintWriter ipw, JdbcStatement jdbc);
 
     Integer getTimeout();
 
-    void debugAction(IndentPrintWriter ipw, String kPrg, Map<Integer, SqlParam> iMap, ClassContext cc);
+    void debugAction(IndentPrintWriter ipw, String kPrg, JdbcStatement jdbc, ClassContext cc);
 }

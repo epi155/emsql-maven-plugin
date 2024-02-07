@@ -14,11 +14,11 @@ public class DelegateCallSignature {
     public void signature(IndentPrintWriter ipw, JdbcStatement jdbc, String name) {
         String cName = Tools.capitalize(name);
         api.docBegin(ipw);
-        api.docInput(ipw, jdbc.getIMap());
+        api.docInput(ipw, jdbc);
         api.docOutput(ipw, jdbc.getOMap());
         api.docEnd(ipw);
 
         ipw.printf("public static ");
-        api.declareGenerics(ipw, cName, jdbc.getInpSize(), jdbc.getOutSize());
+        api.declareGenerics(ipw, cName, jdbc.getNameSize(), jdbc.getOutSize());
     }
 }

@@ -66,15 +66,15 @@ public class SqlCallProcedure extends SqlAction implements ApiSelectSignature {
         }
 
         ipw.printf("        final Connection c");
-        declareInput(ipw, jdbc.getIMap(), Tools.capitalize(name));
+        declareInput(ipw, jdbc);
         declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();
         ipw.printf("try (CallableStatement ps = c.prepareCall(Q_%s)) {%n", kPrg);
         ipw.more();
-        setInput(ipw, jdbc.getIMap());
+        setInput(ipw, jdbc);
         registerOut(ipw, jdbc.getOMap());
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
-        debugAction(ipw, kPrg, jdbc.getIMap(), cc);
+        debugAction(ipw, kPrg, jdbc, cc);
         ipw.printf("ps.execute();%n");
         getOutput(ipw, jdbc.getOMap(), cc);
         if (jdbc.getOutSize()>1)

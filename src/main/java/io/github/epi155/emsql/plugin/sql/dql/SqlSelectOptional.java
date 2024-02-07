@@ -3,11 +3,12 @@ package io.github.epi155.emsql.plugin.sql.dql;
 import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
+import org.jetbrains.annotations.NotNull;
 
 public class SqlSelectOptional extends SqlSelectSingle {
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, @NotNull ClassContext cc) {
         cc.add("io.github.epi155.emsql.runtime.SqlCode");
         delegateSelectSignature.signature(ipw, jdbc, name);
 
@@ -21,7 +22,7 @@ public class SqlSelectOptional extends SqlSelectSingle {
             }
         }
 
-        delegateSelectSimple.fetch(ipw, jdbc, name, kPrg, cc);
+        delegateSelectSimple.fetch(ipw, jdbc, kPrg, cc);
         ipw.orElse();
         if (output != null && output.isDelegate() && jdbc.getOutSize() > 1) {
             ipw.printf("return true;%n");

@@ -7,7 +7,6 @@ import io.github.epi155.emsql.plugin.Tools;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
 import io.github.epi155.emsql.plugin.sql.SqlEnum;
-import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,30 +31,29 @@ public class SqlInsertBatch extends SqlAction implements ApiInsert {
     }
     @Override
     public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        Map<Integer, SqlParam> iMap = jdbc.getIMap();
-        int iSize = iMap.size();
-        if (1<iSize && iSize<=IMAX) {
-            cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch"+iSize);
+        int nSize = jdbc.getNameSize();
+        if (1<nSize && nSize<=IMAX) {
+            cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch"+nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch");
         }
         String cName = Tools.capitalize(name);
         docBegin(ipw);
-        docInput(ipw, iMap);
+        docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, "SqlInsertBatch", iMap, cName);
+        declareNewInstance(ipw, "SqlInsertBatch", jdbc, cName);
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
-        declareReturnNew(ipw, cc, "SqlInsertBatch", iMap, batchSize);
+        declareReturnNew(ipw, cc, "SqlInsertBatch", jdbc, batchSize);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyInsert(%n");
-        declareInputBatch(ipw, iMap);
+        declareInputBatch(ipw, jdbc);
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
-        setInput(ipw, iMap);
+        setInput(ipw, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
         ipw.less();

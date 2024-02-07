@@ -15,11 +15,11 @@ public class DelegateSelectSignature {
         if (jdbc.getOutSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
         api.docBegin(ipw);
-        api.docInput(ipw, jdbc.getIMap());
+        api.docInput(ipw, jdbc);
         api.docOutput(ipw, jdbc.getOMap());
         api.docEnd(ipw);
 
         ipw.printf("public static ");
-        api.declareGenerics(ipw, cName, jdbc.getInpSize(), jdbc.getOutSize());
+        api.declareGenerics(ipw, cName, jdbc.getNameSize(), jdbc.getOutSize());
     }
 }

@@ -50,7 +50,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
-        docInput(ipw, iMap);
+        docInput(ipw, jdbc);
         docOutput(ipw, oMap);
         docEnd(ipw);
         String cName = Tools.capitalize(name);
@@ -71,7 +71,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         }
 
         ipw.printf("        final Connection c");
-        declareInput(ipw, iMap, cName);
+        declareInput(ipw, jdbc);
         declareOutput(ipw, oSize, cc);
         ipw.more();
         if (output!=null && output.isDelegate()) {
@@ -85,10 +85,10 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         ipw.printf("{%n");
         ipw.more();
         ipw.printf("this.ps = c.prepareStatement(Q_%s);%n", kPrg);
-        setInput(ipw, iMap);
+        setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
-        debugAction(ipw, kPrg, iMap, cc);
+        debugAction(ipw, kPrg, jdbc, cc);
         ipw.printf("this.rs = ps.executeQuery();%n");
         ipw.ends();
         ipw.printf("@Override%n");
@@ -126,7 +126,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
-        docInput(ipw, iMap);
+        docInput(ipw, jdbc);
         docOutputUse(ipw, oMap);
         docEnd(ipw);
         String cName = Tools.capitalize(name);
@@ -136,12 +136,12 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
 
         ipw.putf("void loop%1$s(%n", cName);
         ipw.printf("        final Connection c");
-        declareInput(ipw, iMap, cName);
+        declareInput(ipw, jdbc);
         declareOutputUse(ipw, oSize, oMap.get(1).getType().getWrapper(), cc);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         ipw.more();
-        setInput(ipw, iMap);
+        setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");

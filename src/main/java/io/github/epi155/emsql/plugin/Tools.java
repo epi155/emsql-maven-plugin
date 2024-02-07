@@ -253,8 +253,8 @@ public class Tools {
         private final Map<Integer, SqlParam> map;
     }
 
-    public static String getOf(SqlParam parm) {
-        return (parm.getType() == SqlEnum.BooleanStd) ? "is" : "get";
+    public static String getOf(SqlEnum parmType) {
+        return (parmType == SqlEnum.BooleanStd) ? "is" : "get";
     }
     public static String getterOf(SqlParam parm) {
         String name = parm.getName();

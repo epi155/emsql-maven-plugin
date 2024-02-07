@@ -6,12 +6,14 @@ import io.github.epi155.emsql.plugin.Tools;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import static io.github.epi155.emsql.plugin.Tools.*;
 
 @Setter
 @Getter
 @AllArgsConstructor
+@ToString
 public class SqlParam {
     private final String name;
     private final SqlEnum type;

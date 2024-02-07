@@ -7,10 +7,10 @@ import io.github.epi155.emsql.plugin.Tools;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
 import io.github.epi155.emsql.plugin.sql.SqlEnum;
-import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -33,31 +33,30 @@ public class SqlDeleteBatch extends SqlAction implements ApiDelete {
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        Map<Integer, SqlParam> iMap = jdbc.getIMap();
-        int iSize = iMap.size();
-        if (1<iSize && iSize<=IMAX) {
-            cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch"+iSize);
+    public void writeMethod(IndentPrintWriter ipw, String name, @NotNull JdbcStatement jdbc, String kPrg, ClassContext cc) {
+        int nSize = jdbc.getNameSize();
+        if (1<nSize && nSize<=IMAX) {
+            cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch"+nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch");
         }
         String cName = Tools.capitalize(name);
         docBegin(ipw);
-        docInput(ipw, iMap);
+        docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, "SqlDeleteBatch", iMap, cName);
+        declareNewInstance(ipw, "SqlDeleteBatch", jdbc, cName);
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
-        declareReturnNew(ipw, cc, "SqlDeleteBatch", iMap, batchSize);
+        declareReturnNew(ipw, cc, "SqlDeleteBatch", jdbc, batchSize);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyDelete(%n");
-        declareInputBatch(ipw, iMap);
+        declareInputBatch(ipw, jdbc);
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
-        setInput(ipw, iMap);
+        setInput(ipw, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
         ipw.less();

@@ -9,6 +9,7 @@ import io.github.epi155.emsql.plugin.sql.SqlEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class SqlSelectSingle extends SqlAction
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, @NotNull ClassContext cc) {
         cc.add("io.github.epi155.emsql.runtime.SqlCode");
         delegateSelectSignature.signature(ipw, jdbc, name);
 
@@ -50,7 +51,7 @@ public class SqlSelectSingle extends SqlAction
             }
         }
 
-        delegateSelectSimple.fetch(ipw, jdbc, name, kPrg, cc);
+        delegateSelectSimple.fetch(ipw, jdbc, kPrg, cc);
         if (jdbc.getOutSize()==1 || output==null || !output.isDelegate()) {
             ipw.orElse();
             ipw.printf("return o;%n");

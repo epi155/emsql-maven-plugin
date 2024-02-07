@@ -20,7 +20,7 @@ public class DelegateWriteMethod {
         int iSize = iMap.size();
         String cName = Tools.capitalize(name);
         api.docBegin(ipw);
-        api.docInput(ipw, iMap);
+        api.docInput(ipw, jdbc);
         api.docEnd(ipw);
 
         ipw.printf("public static ");
@@ -28,15 +28,15 @@ public class DelegateWriteMethod {
         ipw.putf("int %s(%n", name);
 
         ipw.printf("        final Connection c");
-        api.declareInput(ipw, iMap, cName);
+        api.declareInput(ipw, jdbc);
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         ipw.more();
-        api.setInput(ipw, iMap);
+        api.setInput(ipw, jdbc);
         if (api.getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", api.getTimeout());
-        api.debugAction(ipw, kPrg, iMap, cc);
+        api.debugAction(ipw, kPrg, jdbc, cc);
         ipw.printf("return ps.executeUpdate();%n");
         ipw.ends();
         ipw.ends();

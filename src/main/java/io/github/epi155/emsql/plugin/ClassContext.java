@@ -1,5 +1,6 @@
 package io.github.epi155.emsql.plugin;
 
+import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlEnum;
 import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.Getter;
@@ -97,24 +98,24 @@ public class ClassContext {
         }
     }
 
-    public void delegateRequestFields(IndentPrintWriter ipw, Collection<SqlParam> sp) {
+    public void delegateRequestFields(IndentPrintWriter ipw, Map<String, SqlEnum> sp) {
         if (java7) {
             importSet.add("io.github.epi155.emsql.runtime.EmSQL");
-            sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? EmSQL.<%s>getDummySupplier() : %1$s;%n", p.getName(), p.getType().getWrapper()));
+            sp.forEach((name, type) -> ipw.printf("result.%s = %1$s==null ? EmSQL.<%s>getDummySupplier() : %1$s;%n", name, type.getWrapper()));
         } else {
-            sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? () -> null : %1$s;%n", p.getName()));
+            sp.forEach((name, type) -> ipw.printf("result.%s = %1$s==null ? () -> null : %1$s;%n", name));
         }
     }
 
-    public void anonymousGenerics(IndentPrintWriter ipw, Map<Integer, SqlParam> iMap, ComAttribute input) {
-        int iSize = iMap.size();
+    public void anonymousGenerics(IndentPrintWriter ipw, JdbcStatement jdbc, ComAttribute input) {
+        int nSize = jdbc.getNameSize();
         if (java7) {
-            if (iSize == 0) {
+            if (nSize == 0) {
                 ipw.putf("<Void>");
-            } else if (iSize == 1) {
-                ipw.putf("<%s>", iMap.get(1).getType().getWrapper());
-            } else if (iSize <= IMAX) {
-                ipw.putf("%d<%s>", iSize, iMap.values().stream().map(it -> it.getType().getWrapper()).collect(Collectors.joining(", ")));
+            } else if (nSize == 1) {
+                jdbc.getNMap().forEach((name, type) -> ipw.putf("<%s>", type.getWrapper()));    // once
+            } else if (nSize <= IMAX) {
+                ipw.putf("%d<%s>", nSize, jdbc.getNMap().values().stream().map(SqlEnum::getWrapper).collect(Collectors.joining(", ")));
             } else {
                 if (input != null && input.isDelegate()) {
                     ipw.putf("<DI>");
@@ -123,12 +124,12 @@ public class ClassContext {
                 }
             }
         } else {
-            if (iSize == 0) {
+            if (nSize == 0) {
                 ipw.putf("<Void>");
-            } else if (iSize == 1) {
+            } else if (nSize == 1) {
                 ipw.putf("<>");
-            } else if (iSize <= IMAX) {
-                ipw.putf("%d<>", iSize);
+            } else if (nSize <= IMAX) {
+                ipw.putf("%d<>", nSize);
             } else {
                 ipw.putf("<>");
             }
