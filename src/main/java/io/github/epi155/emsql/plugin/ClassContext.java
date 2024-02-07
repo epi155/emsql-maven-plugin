@@ -135,4 +135,18 @@ public class ClassContext {
             }
         }
     }
+
+    public void declareTuner(IndentPrintWriter ipw) {
+        ipw.commaLn();
+        importSet.add("io.github.epi155.emsql.runtime.SqlStmtSetter");
+        importSet.add("io.github.epi155.emsql.runtime.SqlStmtSetImpl");
+        if (java7) {
+            importSet.add("io.github.epi155.emsql.runtime.EConsumer");
+            ipw.printf("        final EConsumer<SqlStmtSetter> u");
+        } else {
+            importSet.add("java.util.function.Consumer");
+            ipw.printf("        final Consumer<SqlStmtSetter> u");
+        }
+
+    }
 }

@@ -25,6 +25,7 @@ public abstract class SqlAction {
     protected static final String RESPONSE = "RS";
     private String execSql;
     /** seconds */ private Integer timeout;
+    private boolean tune;
     protected abstract ComAttribute getInput();
     protected ComAttribute getOutput() { return null; }
 
@@ -32,7 +33,10 @@ public abstract class SqlAction {
 
     public abstract void writeMethod(IndentPrintWriter pw, String methodName, JdbcStatement jdbc, String kPrg, ClassContext cc);
 
-    public void declareInput(IndentPrintWriter ipw, @NotNull JdbcStatement jdbc) {
+    public void declareInput(IndentPrintWriter ipw, @NotNull JdbcStatement jdbc, ClassContext cc) {
+        if (tune) {
+            cc.declareTuner(ipw);
+        }
         int nSize = jdbc.getNameSize();
         if (1<=nSize && nSize<=IMAX) {
             jdbc.getNMap().forEach((name, type) -> {
@@ -321,6 +325,8 @@ public abstract class SqlAction {
         ipw.printf(" * </pre>%n");
         ipw.printf(" *%n");
         ipw.printf(" * @param c connection%n");
+        if (tune)
+            ipw.printf(" * @param u query hints setting%n");
     }
     public void docInput(IndentPrintWriter ipw, JdbcStatement jdbc) {
         int nSize = jdbc.getNameSize();
@@ -443,6 +449,11 @@ public abstract class SqlAction {
             ipw.printf("});%n");
             ipw.ends();
         }
+    }
+
+    public void setQueryHints(IndentPrintWriter ipw) {
+        if (timeout != null) ipw.printf("ps.setQueryTimeout(%d);%n", timeout);
+        if (tune) ipw.printf("u.accept(new SqlStmtSetImpl(ps));%n");
     }
 
     private static class Eol {

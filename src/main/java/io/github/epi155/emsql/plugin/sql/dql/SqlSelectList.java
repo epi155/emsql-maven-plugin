@@ -46,14 +46,14 @@ public class SqlSelectList extends SqlAction implements ApiSelectFields, ApiSele
         }
 
         ipw.printf("        final Connection c");
-        declareInput(ipw, jdbc);
+        declareInput(ipw, jdbc, cc);
         declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         ipw.more();
         setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
-        if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
+        setQueryHints(ipw);
         debugAction(ipw, kPrg, jdbc, cc);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();

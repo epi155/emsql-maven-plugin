@@ -2,13 +2,13 @@ package io.github.epi155.emsql.plugin.sql;
 
 import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
-import io.github.epi155.emsql.plugin.Tools;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import static io.github.epi155.emsql.plugin.Tools.*;
+import static io.github.epi155.emsql.plugin.Tools.getterOf;
+import static io.github.epi155.emsql.plugin.Tools.setterOf;
 
 @Setter
 @Getter
@@ -34,7 +34,7 @@ public class SqlParam {
     }
 
     public void fetchParameter(IndentPrintWriter ipw, int k, ClassContext cc) {
-        String target = String.format("o.%s", Tools.setterOf(name));
+        String target = String.format("o.%s", setterOf(name));
         type.rsGet(ipw, k, target, cc);
     }
     public void fetchDelegateParameter(IndentPrintWriter ipw, int k, ClassContext cc) {

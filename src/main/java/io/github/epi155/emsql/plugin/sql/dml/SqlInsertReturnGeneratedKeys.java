@@ -66,13 +66,13 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelect
         }
 
         ipw.printf("        final Connection c");
-        declareInput(ipw, jdbc);
+        declareInput(ipw, jdbc, cc);
         declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s, Statement.RETURN_GENERATED_KEYS)) {%n", kPrg);
         ipw.more();
         setInput(ipw, jdbc);
-        if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
+        setQueryHints(ipw);
         debugAction(ipw, kPrg, jdbc, cc);
         ipw.printf("ps.executeUpdate();%n");
         ipw.printf("ResultSet rs = ps.getGeneratedKeys();%n");

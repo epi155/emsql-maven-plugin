@@ -71,7 +71,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         }
 
         ipw.printf("        final Connection c");
-        declareInput(ipw, jdbc);
+        declareInput(ipw, jdbc, cc);
         declareOutput(ipw, oSize, cc);
         ipw.more();
         if (output!=null && output.isDelegate()) {
@@ -87,7 +87,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         ipw.printf("this.ps = c.prepareStatement(Q_%s);%n", kPrg);
         setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
-        if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
+        setQueryHints(ipw);
         debugAction(ipw, kPrg, jdbc, cc);
         ipw.printf("this.rs = ps.executeQuery();%n");
         ipw.ends();
@@ -136,14 +136,14 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
 
         ipw.putf("void loop%1$s(%n", cName);
         ipw.printf("        final Connection c");
-        declareInput(ipw, jdbc);
+        declareInput(ipw, jdbc, cc);
         declareOutputUse(ipw, oSize, oMap.get(1).getType().getWrapper(), cc);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         ipw.more();
         setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
-        if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
+        setQueryHints(ipw);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
         ipw.printf("while (rs.next()) {%n");

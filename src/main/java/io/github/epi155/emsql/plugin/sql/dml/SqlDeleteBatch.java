@@ -47,7 +47,7 @@ public class SqlDeleteBatch extends SqlAction implements ApiDelete {
         declareNewInstance(ipw, "SqlDeleteBatch", jdbc, cName);
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
-        if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
+        setQueryHints(ipw);
         declareReturnNew(ipw, cc, "SqlDeleteBatch", jdbc, batchSize);
         ipw.more();
         ipw.printf("@Override%n");

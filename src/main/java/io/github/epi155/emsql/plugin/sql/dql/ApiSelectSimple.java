@@ -9,11 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public interface ApiSelectSimple {
-    void declareInput(IndentPrintWriter ipw, @NotNull JdbcStatement jdbc);
+    void declareInput(IndentPrintWriter ipw, @NotNull JdbcStatement jdbc, ClassContext cc);
 
     void setInput(IndentPrintWriter ipw, JdbcStatement jdbc);
 
-    Integer getTimeout();
+    void setQueryHints(IndentPrintWriter ipw);
 
     void debugAction(IndentPrintWriter ipw, String kPrg, JdbcStatement jdbc, ClassContext cc);
 

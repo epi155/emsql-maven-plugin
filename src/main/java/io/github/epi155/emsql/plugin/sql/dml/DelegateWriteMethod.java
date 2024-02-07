@@ -28,14 +28,14 @@ public class DelegateWriteMethod {
         ipw.putf("int %s(%n", name);
 
         ipw.printf("        final Connection c");
-        api.declareInput(ipw, jdbc);
+        api.declareInput(ipw, jdbc, cc);
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         ipw.more();
         api.setInput(ipw, jdbc);
-        if (api.getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", api.getTimeout());
+        api.setQueryHints(ipw);
         api.debugAction(ipw, kPrg, jdbc, cc);
         ipw.printf("return ps.executeUpdate();%n");
         ipw.ends();

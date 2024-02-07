@@ -14,14 +14,15 @@ public class DelegateSelectSimple {
 
     public void fetch(@NotNull IndentPrintWriter ipw, JdbcStatement jdbc, String kPrg, ClassContext cc) {
         ipw.printf("        final Connection c");
-        api.declareInput(ipw, jdbc);
+        api.declareInput(ipw, jdbc, cc);
         api.declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         ipw.more();
         api.setInput(ipw, jdbc);
         ipw.printf("ps.setFetchSize(2);%n");
-        if (api.getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", api.getTimeout());
+        ipw.printf("ps.setMaxRows(2);%n");
+        api.setQueryHints(ipw);
         api.debugAction(ipw, kPrg, jdbc, cc);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();

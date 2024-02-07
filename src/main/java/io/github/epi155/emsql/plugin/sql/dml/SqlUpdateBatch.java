@@ -46,7 +46,7 @@ public class SqlUpdateBatch extends SqlAction implements ApiUpdate {
         declareNewInstance(ipw, "SqlUpdateBatch", jdbc, cName);
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
-        if (getTimeout() != null) ipw.printf("ps.setQueryTimeout(%d);%n", getTimeout());
+        setQueryHints(ipw);
         declareReturnNew(ipw, cc, "SqlUpdateBatch", jdbc, batchSize);
         ipw.more();
         ipw.printf("@Override%n");
