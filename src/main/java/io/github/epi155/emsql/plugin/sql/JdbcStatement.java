@@ -37,7 +37,8 @@ public class JdbcStatement implements JdbcMap {
     }
 
     private static Map<String, SqlEnum> normalize(Map<Integer, SqlParam> iMap) {
-        Map<String, SqlEnum> zroMap = iMap.values().stream().collect(Collectors.toMap(SqlParam::getName, SqlParam::getType, (a, b) -> a));
+        Map<String, SqlEnum> zroMap = new LinkedHashMap<>();
+        iMap.forEach((k, p) -> zroMap.putIfAbsent(p.getName(), p.getType()));
         int size = zroMap.size();
         if (size==0 || size>IMAX)
             return zroMap;

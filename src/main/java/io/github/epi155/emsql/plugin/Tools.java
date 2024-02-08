@@ -80,6 +80,8 @@ public class Tools {
             private int k=1;
 
             public void push(String parm) {
+                if (parm.isEmpty())
+                    return;
                 SqlEnum type = fields.get(parm);
                 if (type==null) {
                        throw new InvalidSqlParameter(parm, fields);
@@ -161,6 +163,8 @@ public class Tools {
             private int k=1;
 
             public void push(String parm) {
+                if (parm.isEmpty())
+                    return;
                 SqlEnum type = iFields.get(parm);
                 if (type==null) {
                     type = oFields.get(parm);

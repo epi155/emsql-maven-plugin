@@ -94,8 +94,8 @@ For model details refer to:
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.6) DeleteBatch](deleteBatch.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.7) InsertReturnKeys](insertKey.md)<br/>
 4.3) Procedure<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.3.1) CallProcedure](#58)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) InlineProcedure](#58)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.1) CallProcedure](callProc.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) InlineProcedure](inlineProc.md)<br/>
 
 
 
