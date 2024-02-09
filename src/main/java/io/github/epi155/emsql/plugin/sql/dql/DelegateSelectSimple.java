@@ -3,7 +3,10 @@ package io.github.epi155.emsql.plugin.sql.dql;
 import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
+import io.github.epi155.emsql.plugin.sql.SqlParam;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public class DelegateSelectSimple {
     private final ApiSelectSimple api;
@@ -17,9 +20,15 @@ public class DelegateSelectSimple {
         api.declareInput(ipw, jdbc, cc);
         api.declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();
-        ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
+        Map<Integer, SqlParam> notScalar = api.notScalar(jdbc.getIMap());
+        if (notScalar.isEmpty()) {
+            ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
+        } else {
+            api.expandIn(ipw, notScalar, kPrg, jdbc.getNameSize(), cc);
+            ipw.printf("try (PreparedStatement ps = c.prepareStatement(query)) {%n");
+        }
         ipw.more();
-        api.setInput(ipw, jdbc);
+        api.setInput(ipw, jdbc, cc);
         ipw.printf("ps.setFetchSize(2);%n");
         ipw.printf("ps.setMaxRows(2);%n");
         api.setQueryHints(ipw);

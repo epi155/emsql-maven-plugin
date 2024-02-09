@@ -25,7 +25,7 @@ public class SqlApi {
     private String packageName;
     @Getter
     private String className;
-    private Map<String, SqlEnum> declare = new LinkedHashMap<>();
+    private Map<String, SqlKind> declare = new LinkedHashMap<>();
     private List<SqlMethod> methods;
 
     private static final String DOT_JAVA = ".java";

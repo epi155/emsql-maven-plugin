@@ -3,7 +3,7 @@ package io.github.epi155.emsql.plugin.sql.dml;
 import io.github.epi155.emsql.plugin.*;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
-import io.github.epi155.emsql.plugin.sql.SqlEnum;
+import io.github.epi155.emsql.plugin.sql.SqlKind;
 import io.github.epi155.emsql.plugin.sql.SqlParam;
 import io.github.epi155.emsql.plugin.sql.dql.ApiSelectSignature;
 import io.github.epi155.emsql.plugin.sql.dql.DelegateSelectSignature;
@@ -35,7 +35,7 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelect
             "^INSERT INTO (\\w+) \\((.*)\\) VALUES \\((.*)\\)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
-    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlKind> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
@@ -71,7 +71,7 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelect
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s, Statement.RETURN_GENERATED_KEYS)) {%n", kPrg);
         ipw.more();
-        setInput(ipw, jdbc);
+        setInput(ipw, jdbc, cc);
         setQueryHints(ipw);
         debugAction(ipw, kPrg, jdbc, cc);
         ipw.printf("ps.executeUpdate();%n");

@@ -32,9 +32,15 @@ public class DelegateWriteMethod {
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
-        ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
+        Map<Integer, SqlParam> notScalar = api.notScalar(jdbc.getIMap());
+        if (notScalar.isEmpty()) {
+            ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
+        } else {
+            api.expandIn(ipw, notScalar, kPrg, jdbc.getNameSize(), cc);
+            ipw.printf("try (PreparedStatement ps = c.prepareStatement(query)) {%n");
+        }
         ipw.more();
-        api.setInput(ipw, jdbc);
+        api.setInput(ipw, jdbc, cc);
         api.setQueryHints(ipw);
         api.debugAction(ipw, kPrg, jdbc, cc);
         ipw.printf("return ps.executeUpdate();%n");

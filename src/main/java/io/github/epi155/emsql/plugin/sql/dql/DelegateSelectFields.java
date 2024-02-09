@@ -2,7 +2,7 @@ package io.github.epi155.emsql.plugin.sql.dql;
 
 import io.github.epi155.emsql.plugin.Tools;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
-import io.github.epi155.emsql.plugin.sql.SqlEnum;
+import io.github.epi155.emsql.plugin.sql.SqlKind;
 import io.github.epi155.emsql.plugin.sql.SqlParam;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ public class DelegateSelectFields {
             "^SELECT (.*) (INTO (.*)) FROM (.*)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
 
-    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlKind> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(api.getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {

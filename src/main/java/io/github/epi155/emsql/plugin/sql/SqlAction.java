@@ -29,7 +29,7 @@ public abstract class SqlAction {
     protected abstract ComAttribute getInput();
     protected ComAttribute getOutput() { return null; }
 
-    public abstract JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException;
+    public abstract JdbcStatement sql(Map<String, SqlKind> fields) throws MojoExecutionException;
 
     public abstract void writeMethod(IndentPrintWriter pw, String methodName, JdbcStatement jdbc, String kPrg, ClassContext cc);
 
@@ -52,7 +52,7 @@ public abstract class SqlAction {
             }
         }
     }
-    public void declareNewInstance(IndentPrintWriter ipw, String eSqlObject, JdbcStatement jdbc, String cName) {
+    public void declareNewInstance(@NotNull IndentPrintWriter ipw, String eSqlObject, @NotNull JdbcStatement jdbc, String cName) {
         int nSize = jdbc.getNameSize();
         ipw.printf("public static ");
         declareGenerics(ipw, cName, nSize, 1);
@@ -62,7 +62,7 @@ public abstract class SqlAction {
         } else if (nSize == 1) {
             jdbc.getNMap().forEach((name,type) -> ipw.putf("<%s>", type.getWrapper())); // once
         } else if (nSize <= IMAX) {
-            ipw.putf("%d<%s>", nSize, jdbc.getNMap().values().stream().map(SqlEnum::getWrapper).collect(Collectors.joining(", ")));
+            ipw.putf("%d<%s>", nSize, jdbc.getNMap().values().stream().map(SqlKind::getWrapper).collect(Collectors.joining(", ")));
         } else {
             if (getInput() != null && getInput().isDelegate()) {
                 ipw.putf("<DI>");
@@ -74,13 +74,13 @@ public abstract class SqlAction {
         ipw.printf("        final Connection c)%n", cName);
         ipw.printf("        throws SQLException {%n");
     }
-    public void declareReturnNew(IndentPrintWriter ipw, ClassContext cc, String eSqlObject, JdbcStatement jdbc, int batchSize) {
+    public void declareReturnNew(@NotNull IndentPrintWriter ipw, @NotNull ClassContext cc, String eSqlObject, JdbcStatement jdbc, int batchSize) {
         ipw.printf("return new %s", eSqlObject);
         cc.anonymousGenerics(ipw, jdbc, getInput());
         ipw.putf("(ps, %d) {%n", batchSize);
     }
 
-    public void declareInputBatch(IndentPrintWriter ipw, JdbcStatement jdbc) {
+    public void declareInputBatch(IndentPrintWriter ipw, @NotNull JdbcStatement jdbc) {
         int nSize = jdbc.getNameSize();
         if (nSize == 0) {
             ipw.printf("        Void nil");     // any use case ??
@@ -113,7 +113,7 @@ public abstract class SqlAction {
         ipw.printf("        throws SQLException {%n");
     }
 
-    public void declareOutputUse(IndentPrintWriter ipw, int oSize, String type, ClassContext cc) {
+    public void declareOutputUse(@NotNull IndentPrintWriter ipw, int oSize, String type, ClassContext cc) {
         boolean isDelegate = getOutput()!=null && getOutput().isDelegate();
         ipw.commaLn();
         if (oSize > 1) {
@@ -133,7 +133,7 @@ public abstract class SqlAction {
         }
         ipw.printf("        throws SQLException {%n");
     }
-    public void fetch(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, ClassContext cc) {
+    public void fetch(IndentPrintWriter ipw, @NotNull Map<Integer, SqlParam> oMap, ClassContext cc) {
         if (oMap.size() > 1) {
             if (getOutput()!=null && getOutput().isReflect()) {
                 ipw.printf("O o = so.get();%n");
@@ -148,7 +148,7 @@ public abstract class SqlAction {
             oMap.forEach((k,v) -> v.fetchValue(ipw, k, cc));
         }
     }
-    public void getOutput(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap, ClassContext cc) {
+    public void getOutput(IndentPrintWriter ipw, @NotNull Map<Integer, SqlParam> oMap, ClassContext cc) {
         if (oMap.size() > 1) {
             ipw.printf("O o = so.get();%n");
 //            if (reflect) {
@@ -161,28 +161,29 @@ public abstract class SqlAction {
         }
     }
 
-    public void setInput(IndentPrintWriter ipw, JdbcStatement jdbc) {
+    public void setInput(@NotNull IndentPrintWriter ipw, @NotNull JdbcStatement jdbc, ClassContext cc) {
+        ipw.printf("int ki=0;%n");
         int nSize = jdbc.getNameSize();
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
         if (1<=nSize && nSize<= IMAX) {
-            iMap.forEach((k,s) -> s.setValue(ipw, k));
+            iMap.forEach((k,s) -> s.setValue(ipw, cc));
         } else {
             boolean isReflect = getInput() != null && getInput().isReflect();
             boolean isDelegate = getInput() != null && getInput().isDelegate();
             if (isReflect) {
-                iMap.forEach((k, s) -> s.pushParameter(ipw, k));
+                iMap.forEach((k, s) -> s.pushParameter(ipw, cc));
             } else if (isDelegate) {
-                iMap.forEach((k, s) -> s.setDelegateParameter(ipw, k));
+                iMap.forEach((k, s) -> s.setDelegateParameter(ipw, cc));
             } else {
-                iMap.forEach((k, s) -> s.setParameter(ipw, k));
+                iMap.forEach((k, s) -> s.setParameter(ipw, cc));
             }
         }
     }
-    public void registerOut(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {
+    public void registerOut(IndentPrintWriter ipw, @NotNull Map<Integer, SqlParam> oMap) {
         oMap.forEach((k,s) -> s.registerOutParms(ipw, k));
     }
 
-    public void writeRequest(IndentPrintWriter ipw, String cMethodName, ClassContext cc, Map<String, SqlEnum> sp) throws MojoExecutionException {
+    public void writeRequest(IndentPrintWriter ipw, String cMethodName, ClassContext cc, @NotNull Map<String, SqlKind> sp) throws MojoExecutionException {
         if (sp.size()<=IMAX) return;
         if (getInput() != null && getInput().isReflect()) return;
         if (getInput() != null && getInput().isDelegate()) {
@@ -194,7 +195,7 @@ public abstract class SqlAction {
         writeRequestInterface(ipw, cMethodName, cc, sp);
     }
 
-    private void writeRequestInterface(IndentPrintWriter ipw, String methodName, ClassContext cc, Map<String, SqlEnum> sp) {
+    private void writeRequestInterface(IndentPrintWriter ipw, String methodName, ClassContext cc, Map<String, SqlKind> sp) {
         if (getInput() != null && getInput().isDelegate()) {
             ipw.printf("public static class Delegate%s"+REQUEST+" {%n", methodName);
             ipw.more();
@@ -223,7 +224,7 @@ public abstract class SqlAction {
         } else {
             ipw.printf("public interface %s"+REQUEST+" {%n", methodName);
             ipw.more();
-            Map<String, Map<String, SqlEnum>> next = new LinkedHashMap<>();
+            Map<String, Map<String, SqlKind>> next = new LinkedHashMap<>();
             sp.forEach((name, type) -> {
                 int kDot = name.indexOf('.');
                 if (kDot < 0) {
@@ -233,7 +234,7 @@ public abstract class SqlAction {
                 } else {
                     String ante = name.substring(0, kDot);
                     String post = name.substring(kDot + 1);
-                    Map<String, SqlEnum> flds = next.computeIfAbsent(ante, k -> new HashMap<>());
+                    Map<String, SqlKind> flds = next.computeIfAbsent(ante, k -> new HashMap<>());
                     flds.put(post, type);
                 }
             });
@@ -247,7 +248,7 @@ public abstract class SqlAction {
         ipw.ends();
     }
 
-    public void writeResponse(IndentPrintWriter ipw, String cMethodName, ClassContext cc, Collection<SqlParam> sp) throws MojoExecutionException {
+    public void writeResponse(IndentPrintWriter ipw, String cMethodName, ClassContext cc, @NotNull Collection<SqlParam> sp) throws MojoExecutionException {
         if (sp.size()<=1) return;
         if (getOutput()!=null && getOutput().isReflect()) return;
         if (getOutput()!=null && getOutput().isDelegate()) {
@@ -314,7 +315,7 @@ public abstract class SqlAction {
         ipw.ends();
     }
 
-    public void docBegin(IndentPrintWriter ipw) {
+    public void docBegin(@NotNull IndentPrintWriter ipw) {
         ipw.printf("/**%n");
         ipw.printf(" * Template %s%n", this.getClass().getSimpleName());
         ipw.printf(" * <pre>%n");
@@ -328,7 +329,7 @@ public abstract class SqlAction {
         if (tune)
             ipw.printf(" * @param u query hints setting%n");
     }
-    public void docInput(IndentPrintWriter ipw, JdbcStatement jdbc) {
+    public void docInput(IndentPrintWriter ipw, @NotNull JdbcStatement jdbc) {
         int nSize = jdbc.getNameSize();
         if (1<=nSize && nSize<=IMAX) {
             AtomicInteger count = new AtomicInteger();
@@ -341,20 +342,20 @@ public abstract class SqlAction {
             }
         }
     }
-    public void docOutput(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {
+    public void docOutput(IndentPrintWriter ipw, @NotNull Map<Integer, SqlParam> oMap) {
         if (oMap.size() > 1) {
             ipw.printf(" * @param so output constructor%n");
         }
     }
 
-    public void docOutputUse(IndentPrintWriter ipw, Map<Integer, SqlParam> oMap) {
+    public void docOutputUse(IndentPrintWriter ipw, @NotNull Map<Integer, SqlParam> oMap) {
         if (oMap.size() > 1) {
             ipw.printf(" * @param so output constructor%n");
         }
         ipw.printf(" * @param co output consumer%n");
     }
 
-    public void docEnd(IndentPrintWriter ipw) {
+    public void docEnd(@NotNull IndentPrintWriter ipw) {
         ipw.printf(" * @throws SQLException SQL error%n");
         ipw.printf(" */%n");
     }
@@ -413,7 +414,7 @@ public abstract class SqlAction {
             }
         }
     }
-    public void debugAction(IndentPrintWriter ipw, String kPrg, JdbcStatement jdbcStatement, ClassContext cc) {
+    public void debugAction(IndentPrintWriter ipw, String kPrg, JdbcStatement jdbcStatement, @NotNull ClassContext cc) {
         if (cc.isDebug()) {
             int nSize = jdbcStatement.getNameSize();
             ipw.printf("if (log.isDebugEnabled()) {%n");
@@ -466,5 +467,35 @@ public abstract class SqlAction {
         public String nl() {
             return --count > 0 ? "," : "";
         }
+    }
+
+    public Map<Integer, SqlParam> notScalar(@NotNull Map<Integer, SqlParam> parameters) {
+        Map<Integer, SqlParam> notScalar = new LinkedHashMap<>();
+        parameters.forEach((k,v) -> {
+            if (!v.getType().isScalar()) {
+                notScalar.put(k,v);
+            }
+        });
+        return notScalar;
+    }
+    public void expandIn(@NotNull IndentPrintWriter ipw, @NotNull Map<Integer, SqlParam> notScalar, String kPrg, int nSize, @NotNull ClassContext cc) {
+        cc.add(ClassContext.RUNTIME_EMSQL);
+        ipw.printf("final String query = EmSQL.expandQueryParameters(Q_%s%n", kPrg);
+        ipw.more();
+        if (nSize<=IMAX) {
+            notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, %s.size(), %d)%n", k, v.getName(), v.getType().columns()));
+        } else {
+            ComAttribute input = getInput();
+            if (input!=null && input.isReflect()) {
+                cc.add("java.util.List");
+                notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, EmSQL.get(i, \"%s\", List.class).size(), %d)%n", v.getName(), v.getType().columns()));
+            } else if (input!=null && input.isDelegate()) {
+                notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s.get().size(), %d)%n", k, v.getName(), v.getType().columns()));
+            } else {
+                notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s().size(), %d)%n", k, getterOf(v), v.getType().columns()));
+            }
+        }
+        ipw.less();
+        ipw.printf(");%n", kPrg);
     }
 }

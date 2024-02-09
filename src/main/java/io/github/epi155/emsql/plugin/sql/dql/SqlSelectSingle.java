@@ -5,7 +5,7 @@ import io.github.epi155.emsql.plugin.ComAreaStd;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
-import io.github.epi155.emsql.plugin.sql.SqlEnum;
+import io.github.epi155.emsql.plugin.sql.SqlKind;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,7 +32,7 @@ public class SqlSelectSingle extends SqlAction
         this.delegateSelectSimple = new DelegateSelectSimple(this);
     }
     @Override
-    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlKind> fields) throws MojoExecutionException {
         return delegateSelectFields.sql(fields);
     }
 

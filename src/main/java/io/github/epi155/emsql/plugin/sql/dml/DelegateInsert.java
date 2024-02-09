@@ -2,7 +2,7 @@ package io.github.epi155.emsql.plugin.sql.dml;
 
 import io.github.epi155.emsql.plugin.Tools;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
-import io.github.epi155.emsql.plugin.sql.SqlEnum;
+import io.github.epi155.emsql.plugin.sql.SqlKind;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
@@ -19,7 +19,7 @@ public class DelegateInsert {
             "^INSERT INTO (\\w+) \\((.*)\\) VALUES [(](.*)[)]$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
 
-    public JdbcStatement proceed(Map<String, SqlEnum> fields) throws MojoExecutionException {
+    public JdbcStatement proceed(Map<String, SqlKind> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(api.getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {

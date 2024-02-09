@@ -1,7 +1,7 @@
 package io.github.epi155.emsql.plugin;
 
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
-import io.github.epi155.emsql.plugin.sql.SqlEnum;
+import io.github.epi155.emsql.plugin.sql.SqlKind;
 import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.Getter;
 
@@ -15,25 +15,31 @@ import java.util.stream.Collectors;
 import static io.github.epi155.emsql.plugin.sql.SqlAction.IMAX;
 
 public class ClassContext {
+    public static final String RUNTIME_EMSQL = "io.github.epi155.emsql.runtime.EmSQL";
+    public static final String RUNTIME_J8TIME = "io.github.epi155.emsql.runtime.J8Time";
+    public static final String RUNTIME_TRACE = "io.github.epi155.emsql.runtime.SqlTrace";
+    public static final String RUNTIME_SUPPLIER = "io.github.epi155.emsql.runtime.ESupplier";
+    public static final String RUNTIME_CONSUMER = "io.github.epi155.emsql.runtime.EConsumer";
+    public static final String RUNTIME_OPTIONAL = "io.github.epi155.emsql.runtime.EOptional";
     @Getter
     private final boolean debug;
     private final SortedSet<String> importSet = new TreeSet<>();
     @Getter
-    private final Map<String, SqlEnum> fields;
+    private final Map<String, SqlKind> fields;
     private final boolean java7;
 
-    public ClassContext(MojoContext cx, Map<String, SqlEnum> declare) {
+    public ClassContext(MojoContext cx, Map<String, SqlKind> declare) {
         this.debug = cx.debug;
         this.java7 = cx.java7;
         this.fields = declare;
         importSet.add("java.sql.*");
         if (debug) {
-            importSet.add("io.github.epi155.emsql.runtime.SqlTrace");
+            importSet.add(RUNTIME_TRACE);
         }
     }
     public String supplier() {
         if (java7) {
-            importSet.add("io.github.epi155.emsql.runtime.ESupplier");
+            importSet.add(RUNTIME_SUPPLIER);
             return "ESupplier";
         } else{
             importSet.add("java.util.function.Supplier");
@@ -42,7 +48,7 @@ public class ClassContext {
     }
     public String consumer() {
         if (java7) {
-            importSet.add("io.github.epi155.emsql.runtime.EConsumer");
+            importSet.add(RUNTIME_CONSUMER);
             return "EConsumer";
         } else {
             importSet.add("java.util.function.Consumer");
@@ -51,7 +57,7 @@ public class ClassContext {
     }
     public String optional() {
         if (java7) {
-            importSet.add("io.github.epi155.emsql.runtime.EOptional");
+            importSet.add(RUNTIME_OPTIONAL);
             return "EOptional";
         } else {
             importSet.add("java.util.Optional");
@@ -79,7 +85,7 @@ public class ClassContext {
 
     public void traceParameterBegin(IndentPrintWriter ipw) {
         if (java7) {
-            importSet.add("io.github.epi155.emsql.runtime.ESupplier");
+            importSet.add(RUNTIME_SUPPLIER);
             ipw.putf("new ESupplier<Object[]>() {%n");
             ipw.more();
             ipw.printf("@Override%n");
@@ -91,16 +97,16 @@ public class ClassContext {
 
     public void delegateResponseFields(IndentPrintWriter ipw, Collection<SqlParam> sp) {
         if (java7) {
-            importSet.add("io.github.epi155.emsql.runtime.EmSQL");
+            importSet.add(RUNTIME_EMSQL);
             sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? EmSQL.<%s>getDummyConsumer() : %1$s;%n", p.getName(), p.getType().getWrapper()));
         } else {
             sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? it -> {} : %1$s;%n", p.getName()));
         }
     }
 
-    public void delegateRequestFields(IndentPrintWriter ipw, Map<String, SqlEnum> sp) {
+    public void delegateRequestFields(IndentPrintWriter ipw, Map<String, SqlKind> sp) {
         if (java7) {
-            importSet.add("io.github.epi155.emsql.runtime.EmSQL");
+            importSet.add(RUNTIME_EMSQL);
             sp.forEach((name, type) -> ipw.printf("result.%s = %1$s==null ? EmSQL.<%s>getDummySupplier() : %1$s;%n", name, type.getWrapper()));
         } else {
             sp.forEach((name, type) -> ipw.printf("result.%s = %1$s==null ? () -> null : %1$s;%n", name));
@@ -115,7 +121,7 @@ public class ClassContext {
             } else if (nSize == 1) {
                 jdbc.getNMap().forEach((name, type) -> ipw.putf("<%s>", type.getWrapper()));    // once
             } else if (nSize <= IMAX) {
-                ipw.putf("%d<%s>", nSize, jdbc.getNMap().values().stream().map(SqlEnum::getWrapper).collect(Collectors.joining(", ")));
+                ipw.putf("%d<%s>", nSize, jdbc.getNMap().values().stream().map(SqlKind::getWrapper).collect(Collectors.joining(", ")));
             } else {
                 if (input != null && input.isDelegate()) {
                     ipw.putf("<DI>");

@@ -1,9 +1,13 @@
 package io.github.epi155.emsql.plugin.sql.dql;
 
-import io.github.epi155.emsql.plugin.*;
+import io.github.epi155.emsql.plugin.ClassContext;
+import io.github.epi155.emsql.plugin.ComAreaLst;
+import io.github.epi155.emsql.plugin.ComAreaStd;
+import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
-import io.github.epi155.emsql.plugin.sql.SqlEnum;
+import io.github.epi155.emsql.plugin.sql.SqlKind;
+import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -29,7 +33,7 @@ public class SqlSelectList extends SqlAction implements ApiSelectFields, ApiSele
     }
 
     @Override
-    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlKind> fields) throws MojoExecutionException {
         return delegateSelectFields.sql(fields);
     }
 
@@ -49,9 +53,15 @@ public class SqlSelectList extends SqlAction implements ApiSelectFields, ApiSele
         declareInput(ipw, jdbc, cc);
         declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();
-        ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
+        Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
+        if (notScalar.isEmpty()) {
+            ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
+        } else {
+            expandIn(ipw, notScalar, kPrg, jdbc.getNameSize(), cc);
+            ipw.printf("try (PreparedStatement ps = c.prepareStatement(query)) {%n");
+        }
         ipw.more();
-        setInput(ipw, jdbc);
+        setInput(ipw, jdbc, cc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
         debugAction(ipw, kPrg, jdbc, cc);

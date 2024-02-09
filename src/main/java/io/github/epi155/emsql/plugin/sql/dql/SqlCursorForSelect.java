@@ -3,7 +3,7 @@ package io.github.epi155.emsql.plugin.sql.dql;
 import io.github.epi155.emsql.plugin.*;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
-import io.github.epi155.emsql.plugin.sql.SqlEnum;
+import io.github.epi155.emsql.plugin.sql.SqlKind;
 import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +29,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         this.delegateSelectFields = new DelegateSelectFields(this);
     }
     @Override
-    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlKind> fields) throws MojoExecutionException {
         return delegateSelectFields.sql(fields);
     }
 
@@ -74,6 +74,10 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         declareInput(ipw, jdbc, cc);
         declareOutput(ipw, oSize, cc);
         ipw.more();
+        Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
+        if (! notScalar.isEmpty()) {
+            expandIn(ipw, notScalar, kPrg, jdbc.getNameSize(), cc);
+        }
         if (output!=null && output.isDelegate()) {
             ipw.printf("return new SqlDelegateCursor() {%n");
         } else {
@@ -84,8 +88,12 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         ipw.printf("private final PreparedStatement ps;%n");
         ipw.printf("{%n");
         ipw.more();
-        ipw.printf("this.ps = c.prepareStatement(Q_%s);%n", kPrg);
-        setInput(ipw, jdbc);
+        if(notScalar.isEmpty()) {
+            ipw.printf("this.ps = c.prepareStatement(Q_%s);%n", kPrg);
+        } else {
+            ipw.printf("this.ps = c.prepareStatement(query);%n");
+        }
+        setInput(ipw, jdbc, cc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
         debugAction(ipw, kPrg, jdbc, cc);
@@ -139,9 +147,15 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         declareInput(ipw, jdbc, cc);
         declareOutputUse(ipw, oSize, oMap.get(1).getType().getWrapper(), cc);
         ipw.more();
-        ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
+        Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
+        if (notScalar.isEmpty()) {
+            ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
+        } else {
+            expandIn(ipw, notScalar, kPrg, jdbc.getNameSize(), cc);
+            ipw.printf("try (PreparedStatement ps = c.prepareStatement(query)) {%n");
+        }
         ipw.more();
-        setInput(ipw, jdbc);
+        setInput(ipw, jdbc, cc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");

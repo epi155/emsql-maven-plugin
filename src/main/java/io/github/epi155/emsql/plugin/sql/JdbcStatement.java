@@ -16,13 +16,12 @@ public class JdbcStatement implements JdbcMap {
     private final String text;
     private final Map<Integer, SqlParam> iMap;
     private final Map<Integer, SqlParam> oMap;
-    private final Map<String, SqlEnum> nMap;
+    private final Map<String, SqlKind> nMap;
 
     public JdbcStatement(String text, Map<Integer, SqlParam> iMap, Map<Integer, SqlParam> oMap) {
         this.text = text;
         this.oMap = oMap;
         this.nMap = normalize(iMap);
-//        this.nMap = normalize(iMap.values().stream().collect(Collectors.toMap(SqlParam::getName, SqlParam::getType, (a, b) -> a)));
         this.iMap = iMap;
     }
     public int getOutSize() {
@@ -36,13 +35,13 @@ public class JdbcStatement implements JdbcMap {
         return nMap.size();
     }
 
-    private static Map<String, SqlEnum> normalize(Map<Integer, SqlParam> iMap) {
-        Map<String, SqlEnum> zroMap = new LinkedHashMap<>();
+    private static Map<String, SqlKind> normalize(Map<Integer, SqlParam> iMap) {
+        Map<String, SqlKind> zroMap = new LinkedHashMap<>();
         iMap.forEach((k, p) -> zroMap.putIfAbsent(p.getName(), p.getType()));
         int size = zroMap.size();
         if (size==0 || size>IMAX)
             return zroMap;
-        Map<String, SqlEnum> oneMap = new LinkedHashMap<>();
+        Map<String, SqlKind> oneMap = new LinkedHashMap<>();
         zroMap.forEach((name,type) -> {
             String nName = Tools.normalizeName(name);
             if (! nName.equals(name)) {

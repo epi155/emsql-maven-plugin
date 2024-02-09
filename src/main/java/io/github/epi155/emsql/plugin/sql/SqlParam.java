@@ -16,21 +16,21 @@ import static io.github.epi155.emsql.plugin.Tools.setterOf;
 @ToString
 public class SqlParam {
     private final String name;
-    private final SqlEnum type;
+    private final SqlKind type;
 
-    public void setParameter(IndentPrintWriter ipw, int k) {
+    public void setParameter(IndentPrintWriter ipw, ClassContext cc) {
         String source = String.format("i.%s()", getterOf(this));
-        type.psSet(ipw, k, source);
+        type.psSet(ipw, source, cc);
     }
-    public void setDelegateParameter(IndentPrintWriter ipw, int k) {
+    public void setDelegateParameter(IndentPrintWriter ipw, ClassContext cc) {
         String source = String.format("i.%s.get()", name);
-        type.psSet(ipw, k, source);
+        type.psSet(ipw, source, cc);
     }
-    public void pushParameter(IndentPrintWriter ipw, int k) {
-        type.psPush(ipw, k, name);
+    public void pushParameter(IndentPrintWriter ipw, ClassContext cc) {
+        type.psPush(ipw, name, cc);
     }
-    public void setValue(IndentPrintWriter ipw, int k) {
-        type.setValue(ipw, k, name);
+    public void setValue(IndentPrintWriter ipw, ClassContext cc) {
+        type.psSet(ipw, name, cc);
     }
 
     public void fetchParameter(IndentPrintWriter ipw, int k, ClassContext cc) {
@@ -54,10 +54,10 @@ public class SqlParam {
     }
 
     public void getValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-        type.psGetValue(ipw, k, cc);
+        type.csGetValue(ipw, k, cc);
     }
 
     public void getParameter(IndentPrintWriter ipw, int k, ClassContext cc) {
-        type.psGet(ipw, k, setterOf(name), cc);
+        type.csGet(ipw, k, setterOf(name), cc);
     }
 }

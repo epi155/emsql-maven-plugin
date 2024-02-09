@@ -2,6 +2,7 @@ package io.github.epi155.emsql.plugin;
 
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlEnum;
+import io.github.epi155.emsql.plugin.sql.SqlKind;
 import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class Tools {
         T close(String text);
 
         void push(String parm);
+        default String getPlaceholder() { return "?"; }
     }
 
     public static String oneLine(@NotNull String text) {
@@ -58,7 +60,7 @@ public class Tools {
         return c=='\n' || c=='\r';
     }
     private static final char[] BREAK_PARMS = {' ', ',',')',';','\n'};
-    public static SqlStatement replacePlaceholder(String text, Map<String, SqlEnum> fields) {
+    public static SqlStatement replacePlaceholder(String text, Map<String, SqlKind> fields) {
         int ixCol = text.indexOf(':');
         if (ixCol<0) {
             // there are no parameters
@@ -68,24 +70,35 @@ public class Tools {
         if (ixEnd<0) {
             // only one parameter at end-of-text (no space)
             String parm = text.substring(ixCol + 1);
-            SqlEnum type = fields.get(parm);
+            SqlKind type = fields.get(parm);
             if (type==null)
                 throw new InvalidSqlParameter(parm, fields);
-            return new SqlStatement(text.substring(0, ixCol)+"?", Map.of(1, new SqlParam(parm, type)));
+            if (type.isScalar()){
+                return new SqlStatement(text.substring(0, ixCol)+"?", Map.of(1, new SqlParam(parm, type)));
+            } else {
+                return new SqlStatement(text.substring(0, ixCol)+"[#1]", Map.of(1, new SqlParam(parm, type)));
+            }
         }
         String parm = text.substring(ixCol + 1, ixEnd);
 
         class MapStore implements ApiStore<SqlStatement> {
             private final Map<Integer, SqlParam> iMap = new LinkedHashMap<>();
             private int k=1;
+            @Getter
+            private String placeholder;
 
             public void push(String parm) {
                 if (parm.isEmpty())
                     return;
-                SqlEnum type = fields.get(parm);
+                SqlKind type = fields.get(parm);
                 if (type==null) {
                        throw new InvalidSqlParameter(parm, fields);
                 } else {
+                    if (type.isScalar()) {
+                        this.placeholder = "?";
+                    } else {
+                        this.placeholder = "[#"+k+"]";
+                    }
                     iMap.put(k++, new SqlParam(parm, type));
                 }
             }
@@ -102,7 +115,7 @@ public class Tools {
     private static <R> R deepScan(String text, int ixCol, int ixEnd, ApiStore<R> store) {
         String parm;
         val sb = new StringBuilder();
-        sb.append(text, 0, ixCol).append('?');
+        sb.append(text, 0, ixCol).append(store.getPlaceholder());
         while(ixEnd<text.length()) {
             int ixOld = ixEnd;
             ixCol = text.indexOf(':', ixEnd);
@@ -116,18 +129,18 @@ public class Tools {
                 // parameter at end-of-text (no space)
                 parm = text.substring(ixCol + 1);
                 store.push(parm);
-                sb.append(text, ixOld, ixCol).append('?');
+                sb.append(text, ixOld, ixCol).append(store.getPlaceholder());
                 return store.close(sb.toString());
             }
             parm = text.substring(ixCol + 1, ixEnd);
             store.push(parm);
-            sb.append(text, ixOld, ixCol).append('?');
+            sb.append(text, ixOld, ixCol).append(store.getPlaceholder());
         }
 
         return null;    // dead exit point
     }
 
-    public static JdbcStatement replacePlaceholder(String text, Map<String, SqlEnum> iFields, Map<String, SqlEnum> oFields) {
+    public static JdbcStatement replacePlaceholder(String text, Map<String, SqlKind> iFields, Map<String, SqlKind> oFields) {
         int ixCol = text.indexOf(':');
         if (ixCol<0) {
             // there are no parameters
@@ -137,7 +150,7 @@ public class Tools {
         if (ixEnd<0) {
             // only one parameter at end-of-text (no space)
             String parm = text.substring(ixCol + 1);
-            SqlEnum type = iFields.get(parm);
+            SqlKind type = iFields.get(parm);
             if (type==null) {
                 type = oFields.get(parm);
                 if (type == null) {
@@ -165,7 +178,7 @@ public class Tools {
             public void push(String parm) {
                 if (parm.isEmpty())
                     return;
-                SqlEnum type = iFields.get(parm);
+                SqlKind type = iFields.get(parm);
                 if (type==null) {
                     type = oFields.get(parm);
                     if (type==null) {
@@ -187,7 +200,7 @@ public class Tools {
         return deepScan(text, ixCol, ixEnd, store);
     }
     @NotNull
-    public static Map<Integer, SqlParam> mapPlaceholder(String text, Map<String, SqlEnum> fields) {
+    public static Map<Integer, SqlParam> mapPlaceholder(String text, Map<String, SqlKind> fields) {
         int ixCol = text.indexOf(':');
         if (ixCol<0) {
             // there are no parameters
@@ -197,13 +210,13 @@ public class Tools {
         if (ixEnd<0) {
             // only one parameter at end-of-text (no space)
             String parm = text.substring(ixCol + 1);
-            SqlEnum type = fields.get(parm);
+            SqlKind type = fields.get(parm);
             if (type==null)
                 throw new IllegalArgumentException("Invalid SQL parameter "+parm );
             return Map.of(1, new SqlParam(parm, type));
         }
         String parm = text.substring(ixCol + 1, ixEnd);
-        SqlEnum type = fields.get(parm);
+        SqlKind type = fields.get(parm);
         if (type==null)
             throw new IllegalArgumentException("Invalid SQL parameter "+parm );
         val map = new LinkedHashMap<Integer, SqlParam>();
@@ -257,7 +270,7 @@ public class Tools {
         private final Map<Integer, SqlParam> map;
     }
 
-    public static String getOf(SqlEnum parmType) {
+    public static String getOf(SqlKind parmType) {
         return (parmType == SqlEnum.BooleanStd) ? "is" : "get";
     }
     public static String getterOf(SqlParam parm) {

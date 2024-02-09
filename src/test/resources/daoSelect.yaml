@@ -11,6 +11,8 @@ declare:
   bool13: Bool
   bool14: Bool
   nmCount: int
+  commonName: varchar
+  states: (char)
 methods:
   - methodName: select01
     perform: !SelectSingle
@@ -111,3 +113,13 @@ methods:
         and   bool02 = :bool02
         and   bool03 = :bool03
         and   bool13 = :bool13
+
+  - methodName: select06
+    perform: !SelectList
+      execSql: |
+        select
+          common_name
+        into
+          :commonName
+        from tbcrt
+        where state in ( :states )

@@ -3,7 +3,7 @@ package io.github.epi155.emsql.plugin.sql.dpl;
 import io.github.epi155.emsql.plugin.*;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
-import io.github.epi155.emsql.plugin.sql.SqlEnum;
+import io.github.epi155.emsql.plugin.sql.SqlKind;
 import io.github.epi155.emsql.plugin.sql.dql.ApiSelectSignature;
 import io.github.epi155.emsql.plugin.sql.dql.DelegateCallSignature;
 import lombok.Getter;
@@ -33,12 +33,12 @@ public class SqlCallProcedure extends SqlAction implements ApiSelectSignature {
 
 
     @Override
-    public JdbcStatement sql(Map<String, SqlEnum> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlKind> fields) throws MojoExecutionException {
         String nText = Tools.oneLine(getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
-            Map<String,SqlEnum> inpFields = new HashMap<>();
-            Map<String,SqlEnum> outFields = new HashMap<>();
+            Map<String,SqlKind> inpFields = new HashMap<>();
+            Map<String,SqlKind> outFields = new HashMap<>();
             fields.forEach((k,v) -> {
                 if (output!=null && output.getFields().contains(k)) {
                     outFields.put(k, v);
@@ -71,7 +71,7 @@ public class SqlCallProcedure extends SqlAction implements ApiSelectSignature {
         ipw.more();
         ipw.printf("try (CallableStatement ps = c.prepareCall(Q_%s)) {%n", kPrg);
         ipw.more();
-        setInput(ipw, jdbc);
+        setInput(ipw, jdbc, cc);
         registerOut(ipw, jdbc.getOMap());
         setQueryHints(ipw);
         debugAction(ipw, kPrg, jdbc, cc);
