@@ -4,20 +4,37 @@ import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 public interface SqlKind {
     void psSet(IndentPrintWriter ipw, String source, ClassContext cc);
     void psPush(IndentPrintWriter ipw, String name, ClassContext cc);
+    String getPrimitive();
+    default String getWrapper() { return getPrimitive(); }
+    default String getContainer() { return getWrapper(); }
+    default boolean isScalar() { return true; }
+    default boolean isNullable() { return false; }
+
+    default Collection<String> requires() { return Set.of(); }
+    /*
+     * methods for obtaining output values,
+     * not usable for extended data types,
+     * overridden for standard data types
+     */
     default void rsGetValue(IndentPrintWriter ipw, int k, ClassContext cc) { throw new IllegalStateException(); }
     default void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) { throw new IllegalStateException(); }
     default void rsPull(IndentPrintWriter ipw, Integer k, String name) { throw new IllegalStateException(); }
     default void registerOut(IndentPrintWriter ipw, int k) { throw new IllegalStateException(); }
     default void csGetValue(IndentPrintWriter ipw, int k, ClassContext cc) { throw new IllegalStateException(); }
     default void csGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) { throw new IllegalStateException(); }
-    default Collection<String> requires() { return Set.of(); }
-    default String getPrimitive() { throw new IllegalStateException(); }
-    default String getWrapper() { throw new IllegalStateException(); }
-    default boolean isScalar() { return true; }
+    /*
+     * methods for extended data type,
+     * not usable for standard data type,
+     * overridden for extended data type
+     */
     default int columns() { throw new IllegalStateException(); }
+    default void setName(String s, int id) { throw new IllegalStateException(); }
+    default Map<String, SqlKind> toMap() { throw new IllegalStateException(); }
+    default String getGeneric() { throw new IllegalStateException(); }
 }

@@ -1,18 +1,18 @@
 package io.github.epi155.emsql.plugin;
 
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
+import io.github.epi155.emsql.plugin.sql.SqlAction;
 import io.github.epi155.emsql.plugin.sql.SqlKind;
 import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.Getter;
 
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static io.github.epi155.emsql.plugin.Tools.capitalize;
 import static io.github.epi155.emsql.plugin.sql.SqlAction.IMAX;
+import static io.github.epi155.emsql.plugin.sql.SqlAction.REQUEST;
 
 public class ClassContext {
     public static final String RUNTIME_EMSQL = "io.github.epi155.emsql.runtime.EmSQL";
@@ -27,6 +27,7 @@ public class ClassContext {
     @Getter
     private final Map<String, SqlKind> fields;
     private final boolean java7;
+    private final static Map<String, SqlKind> inFields = new LinkedHashMap<>();
 
     public ClassContext(MojoContext cx, Map<String, SqlKind> declare) {
         this.debug = cx.debug;
@@ -154,5 +155,23 @@ public class ClassContext {
             ipw.printf("        final Consumer<SqlStmtSetter> u");
         }
 
+    }
+
+    public void put(String key, SqlKind kind) {
+        inFields.putIfAbsent(key, kind);
+    }
+
+    public void flush(IndentPrintWriter ipw) {
+        inFields.forEach((name, kind) -> {
+            if (kind.columns()>1) {
+                writeInFieldInterface(ipw, capitalize(name), kind.toMap());
+            }
+        });
+    }
+    private void writeInFieldInterface(IndentPrintWriter ipw, String hiName, Map<String, SqlKind> map) {
+        ipw.printf("public interface %s"+REQUEST+" {%n", hiName);
+        Map<String, Map<String, SqlKind>> next = SqlAction.throughGetter(ipw, map);
+        next.forEach((n,np) -> writeInFieldInterface(ipw, capitalize(n), np));
+        ipw.ends();
     }
 }

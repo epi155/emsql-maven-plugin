@@ -17,6 +17,8 @@ import java.nio.file.Path;
 @Order(1)
 class TestMojo {
     private static final String[] MODULES = {
+            "daoList2.yaml",
+            "daoList.yaml",
             "daoNest.yaml",
         "daoBool.yaml",
                 "daoShort.yaml",

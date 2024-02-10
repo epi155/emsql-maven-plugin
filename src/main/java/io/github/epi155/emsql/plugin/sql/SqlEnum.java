@@ -316,7 +316,7 @@ public enum SqlEnum implements SqlKind {
         this.isPlainClass = true;
     }
     public void psSet(IndentPrintWriter ipw, String source, ClassContext cc) {
-        if (name().endsWith("Std")) {
+        if (!isNullable()) {
             ipw.printf("ps.set%s(++ki, %s);%n", jdbc, source);
         } else {
             cc.add(ClassContext.RUNTIME_EMSQL);
@@ -324,7 +324,7 @@ public enum SqlEnum implements SqlKind {
         }
     }
     public  void rsGet(IndentPrintWriter ipw, int k, String target, ClassContext cc) {
-        if (name().endsWith("Std") || isPlainClass) {
+        if (!isNullable() || isPlainClass) {
             ipw.printf("%s(rs.get%s(%d));%n", target, jdbc, k);
         } else {
             cc.add(ClassContext.RUNTIME_EMSQL);
@@ -332,21 +332,21 @@ public enum SqlEnum implements SqlKind {
         }
     }
     public void rsGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-        if (name().endsWith("Std") || isPlainClass) {
+        if (!isNullable() || isPlainClass) {
             ipw.printf("%s o =  rs.get%s(%d);%n", primitive, jdbc, k);
         } else {
             ipw.printf("%1$s o = EmSQL.get%2$s(rs,%3$d);%n", wrapper, jdbc, k);
         }
     }
     public  void psPush(IndentPrintWriter ipw, String name, ClassContext cc) {
-        if (name().endsWith("Std")) {
+        if (!isNullable()) {
             ipw.printf("ps.set%s(++ki, EmSQL.get(i, \"%s\", %s.class));%n", jdbc, name, wrapper);
         } else {
             ipw.printf("EmSQL.set%s(ps, ++ki, EmSQL.get(i, \"%s\", %s.class));%n", jdbc, name, wrapper);
         }
     }
     public void rsPull(IndentPrintWriter ipw, Integer k, String name) {
-        if (name().endsWith("Std") || isPlainClass) {
+        if (!isNullable() || isPlainClass) {
             ipw.printf("EmSQL.set(o, \"%s\", rs.get%s(%d));%n", name, jdbc, k);
         } else {
             ipw.printf("EmSQL.set(o, \"%s\", EmSQL.get%s(rs,%d));%n", name, jdbc, k);
@@ -356,7 +356,7 @@ public enum SqlEnum implements SqlKind {
         ipw.printf("ps.registerOutParameter(%d, Types.%s);%n", k, sql);
     }
     public void csGetValue(IndentPrintWriter ipw, int k, ClassContext cc) {
-        if (name().endsWith("Std") || isPlainClass) {
+        if (!isNullable() || isPlainClass) {
             ipw.printf("return ps.get%s(%d);%n", jdbc, k);
         } else {
             cc.add(ClassContext.RUNTIME_EMSQL);
@@ -364,11 +364,15 @@ public enum SqlEnum implements SqlKind {
         }
     }
     public void csGet(IndentPrintWriter ipw, int k, String setter, ClassContext cc) {
-        if (name().endsWith("Std") || isPlainClass) {
+        if (!isNullable() || isPlainClass) {
             ipw.printf("o.%s(ps.get%s(%d));%n", setter, jdbc, k);
         } else {
             cc.add(ClassContext.RUNTIME_EMSQL);
             ipw.printf("o.%s(EmSQL.get%s(ps, %d));%n", setter, jdbc, k);
         }
+    }
+    @Override
+    public boolean isNullable() {
+        return name().endsWith("Nil");
     }
 }

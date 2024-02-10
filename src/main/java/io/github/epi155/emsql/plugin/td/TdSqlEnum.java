@@ -1,7 +1,10 @@
 package io.github.epi155.emsql.plugin.td;
 
+import io.github.epi155.emsql.plugin.MapContext;
+import io.github.epi155.emsql.plugin.SqlMojo;
 import io.github.epi155.emsql.plugin.sql.SqlEnum;
 import io.github.epi155.emsql.plugin.sql.SqlKind;
+import io.github.epi155.emsql.plugin.sql.SqlParam;
 import io.github.epi155.emsql.plugin.xtype.SqlVector;
 import lombok.val;
 import org.yaml.snakeyaml.TypeDescription;
@@ -88,28 +91,31 @@ public class TdSqlEnum extends TypeDescription {
     public Object newInstance(Node node) {
         if (node instanceof ScalarNode) {
             ScalarNode sNode = (ScalarNode) node;
-            String value = sNode.getValue().toUpperCase();
-            SqlKind kind = sqlMap.get(value);
+            String value = sNode.getValue();
+            SqlKind kind = sqlMap.get(value.toUpperCase());
             if (kind!=null) {
                 return kind;
             }
             if (value.startsWith("(") && value.endsWith(")")) {
                 value = value.substring(1, value.length()-1);
-                val types = value.split(",");
-                List<SqlKind> list = new ArrayList<>();
-                for(String type: types) {
-                    type = type.toUpperCase().trim();
-                    if (type.endsWith("?"))
-                        throw new IllegalArgumentException("Nullable type invalid for list fields <"+value+">");
-                    kind = sqlMap.get(type);
+                val names = value.split(",");
+                List<SqlParam> list = new ArrayList<>();
+                MapContext mapContext = SqlMojo.mapContext.get();
+                for(String name: names) {
+                    name = name.trim();
+                    kind = mapContext.get(name);
                     if (kind == null)
-                        throw new IllegalArgumentException("Unknown SQL type <"+type+"!"+value+">");
-                    list.add(kind);
+                        throw new IllegalArgumentException("Undefined field <"+name+">");
+                    if (kind.isNullable())
+                        throw new IllegalArgumentException("Nullable field <"+value+">");
+                    if (!kind.isScalar())
+                        throw new IllegalArgumentException("Not scalar field <"+value+">");
+                    list.add(new SqlParam(name, kind));
                 }
                 if (list.isEmpty())
                     throw new IllegalArgumentException("Invalid for list fields <"+value+">");
-                SqlKind[] kinds = list.toArray(new SqlKind[0]);
-                return new SqlVector(kinds);
+                SqlParam[] params = list.toArray(new SqlParam[0]);
+                return new SqlVector(params);
             }
             throw new IllegalArgumentException("Unknown SQL type <"+value+">");
         }

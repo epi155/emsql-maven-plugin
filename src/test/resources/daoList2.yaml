@@ -1,0 +1,21 @@
+packageName: com.example.emsql
+className: DaoList2
+declare:
+  idPratica: long
+  abi: int
+  ibrKey: long
+  keys: (abi, ibrKey)
+  circ: int
+  dtMin: date
+  dtMax: date
+methods:
+  - methodName: select
+    perform: !SelectList
+      execSql: |
+        select
+          id_pratica
+        into
+          :idPratica
+        from p01
+        where (abi, ibr_key) = ( :keys )
+

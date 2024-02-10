@@ -31,6 +31,7 @@ public class SqlMethod {
         String cName = Tools.capitalize(methodName);
         perform.writeRequest(ipw, cName, cc, jdbc.getNMap());
         perform.writeResponse(ipw, cName, cc, jdbc.getOMap().values());
+        jdbc.flush(cc);
 
         ComAttribute ia = perform.getInput();
         ComAttribute oa = perform.getOutput();

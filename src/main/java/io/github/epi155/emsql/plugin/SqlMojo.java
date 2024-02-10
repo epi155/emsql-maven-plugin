@@ -22,7 +22,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -93,11 +92,14 @@ public class SqlMojo extends AbstractMojo {
     private boolean addTestCompileSourceRoot = false;
     private final Set<String> classLogbook = new HashSet<>();
 
+    public static ThreadLocal<MapContext> mapContext = new ThreadLocal<>();
+
     @Override
     public void execute() throws MojoExecutionException {
         Logger.getLogger("org.yaml.snakeyaml.introspector").setLevel(Level.SEVERE);
 
-        Constructor c1 = new Constructor(SqlApi.class, new LoaderOptions());
+//        Constructor c1 = new Constructor(SqlApi.class, new LoaderOptions());
+        Constructor c1 = new MyConstructor(mapContext);
         c1.addTypeDescription(new TdSqlEnum());
         c1.addTypeDescription(new TdProgrammingModeEnum());
         c1.addTypeDescription(new TdSelectOptional());

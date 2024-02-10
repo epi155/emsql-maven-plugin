@@ -24,7 +24,7 @@ public class DelegateWriteMethod {
         api.docEnd(ipw);
 
         ipw.printf("public static ");
-        api.declareGenerics(ipw, cName, iSize, 1);
+        api.declareGenerics(ipw, cName, iSize, 1, jdbc.getTKeys());
         ipw.putf("int %s(%n", name);
 
         ipw.printf("        final Connection c");

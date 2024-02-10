@@ -56,7 +56,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         String cName = Tools.capitalize(name);
 
         ipw.printf("public static ");
-        declareGenerics(ipw, cName, iSize, oSize);
+        declareGenerics(ipw, cName, iSize, oSize, jdbc.getTKeys());
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getWrapper();
             ipw.putf("SqlCursor<%s> open%s(%n", oType, cName);
@@ -140,20 +140,14 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         String cName = Tools.capitalize(name);
 
         ipw.printf("public static ");
-        declareGenerics(ipw, cName, iSize, oSize);
+        declareGenerics(ipw, cName, iSize, oSize, jdbc.getTKeys());
 
         ipw.putf("void loop%1$s(%n", cName);
         ipw.printf("        final Connection c");
         declareInput(ipw, jdbc, cc);
         declareOutputUse(ipw, oSize, oMap.get(1).getType().getWrapper(), cc);
         ipw.more();
-        Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
-        if (notScalar.isEmpty()) {
-            ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
-        } else {
-            expandIn(ipw, notScalar, kPrg, jdbc.getNameSize(), cc);
-            ipw.printf("try (PreparedStatement ps = c.prepareStatement(query)) {%n");
-        }
+        openQuery(ipw, jdbc, kPrg, cc);
         ipw.more();
         setInput(ipw, jdbc, cc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);

@@ -4,6 +4,7 @@ import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlParam;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ApiSelectSignature {
@@ -15,5 +16,5 @@ public interface ApiSelectSignature {
 
     void docEnd(IndentPrintWriter ipw);
 
-    void declareGenerics(IndentPrintWriter ipw, String cName, int nSize, int oSize);
+    void declareGenerics(IndentPrintWriter ipw, String cName, int nSize, int oSize, List<String> in);
 }

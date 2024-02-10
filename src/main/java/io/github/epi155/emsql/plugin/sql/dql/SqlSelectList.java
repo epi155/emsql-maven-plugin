@@ -7,7 +7,6 @@ import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
 import io.github.epi155.emsql.plugin.sql.SqlKind;
-import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -53,13 +52,7 @@ public class SqlSelectList extends SqlAction implements ApiSelectFields, ApiSele
         declareInput(ipw, jdbc, cc);
         declareOutput(ipw, jdbc.getOutSize(), cc);
         ipw.more();
-        Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
-        if (notScalar.isEmpty()) {
-            ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
-        } else {
-            expandIn(ipw, notScalar, kPrg, jdbc.getNameSize(), cc);
-            ipw.printf("try (PreparedStatement ps = c.prepareStatement(query)) {%n");
-        }
+        openQuery(ipw, jdbc, kPrg, cc);
         ipw.more();
         setInput(ipw, jdbc, cc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);

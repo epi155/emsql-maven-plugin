@@ -56,6 +56,7 @@ public class SqlApi {
                     basket.add(methodName);
                 }
             }
+            cc.flush(ipw);
             ipw.ends(); // close class
 
             cc.writeImport(pw);

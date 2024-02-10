@@ -12,7 +12,8 @@ declare:
   bool14: Bool
   nmCount: int
   commonName: varchar
-  states: (char)
+  state: char
+  states: (state)
 methods:
   - methodName: select01
     perform: !SelectSingle

@@ -20,6 +20,6 @@ public class DelegateSelectSignature {
         api.docEnd(ipw);
 
         ipw.printf("public static ");
-        api.declareGenerics(ipw, cName, jdbc.getNameSize(), jdbc.getOutSize());
+        api.declareGenerics(ipw, cName, jdbc.getNameSize(), jdbc.getOutSize(), jdbc.getTKeys());
     }
 }
