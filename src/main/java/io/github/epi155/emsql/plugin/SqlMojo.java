@@ -92,7 +92,7 @@ public class SqlMojo extends AbstractMojo {
     private boolean addTestCompileSourceRoot = false;
     private final Set<String> classLogbook = new HashSet<>();
 
-    public static ThreadLocal<MapContext> mapContext = new ThreadLocal<>();
+    public static final ThreadLocal<MapContext> mapContext = new ThreadLocal<>();
 
     @Override
     public void execute() throws MojoExecutionException {

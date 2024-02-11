@@ -1,6 +1,9 @@
 package io.github.epi155.emsql.plugin.sql.dql;
 
-import io.github.epi155.emsql.plugin.*;
+import io.github.epi155.emsql.plugin.ComAreaStd;
+import io.github.epi155.emsql.plugin.IndentPrintWriter;
+import io.github.epi155.emsql.plugin.ProgrammingModeEnum;
+import io.github.epi155.emsql.plugin.Tools;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
 import io.github.epi155.emsql.plugin.sql.SqlKind;
@@ -10,6 +13,9 @@ import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
+
+import static io.github.epi155.emsql.plugin.Tools.cc;
+import static io.github.epi155.emsql.plugin.Tools.mc;
 
 public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
     private final DelegateSelectFields delegateSelectFields;
@@ -34,19 +40,17 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
 
         if (mode == ProgrammingModeEnum.Functional) {
-            writeFunctional(ipw, name, jdbc, kPrg, cc);
+            writeFunctional(ipw, name, jdbc, kPrg);
         } else {
-            writeImperative(ipw, name, jdbc, kPrg, cc);
+            writeImperative(ipw, name, jdbc, kPrg);
         }
     }
 
-    private void writeImperative(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        Map<Integer, SqlParam> iMap = jdbc.getIMap();
+    private void writeImperative(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
-        int iSize = iMap.size();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
@@ -56,7 +60,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         String cName = Tools.capitalize(name);
 
         ipw.printf("public static ");
-        declareGenerics(ipw, cName, iSize, oSize, jdbc.getTKeys());
+        declareGenerics(ipw, cName, jdbc.getTKeys());
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getWrapper();
             ipw.putf("SqlCursor<%s> open%s(%n", oType, cName);
@@ -71,12 +75,12 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         }
 
         ipw.printf("        final Connection c");
-        declareInput(ipw, jdbc, cc);
-        declareOutput(ipw, oSize, cc);
+        declareInput(ipw, jdbc);
+        declareOutput(ipw);
         ipw.more();
         Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
         if (! notScalar.isEmpty()) {
-            expandIn(ipw, notScalar, kPrg, jdbc.getNameSize(), cc);
+            expandIn(ipw, notScalar, kPrg);
         }
         if (output!=null && output.isDelegate()) {
             ipw.printf("return new SqlDelegateCursor() {%n");
@@ -93,10 +97,10 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         } else {
             ipw.printf("this.ps = c.prepareStatement(query);%n");
         }
-        setInput(ipw, jdbc, cc);
+        setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
-        debugAction(ipw, kPrg, jdbc, cc);
+        debugAction(ipw, kPrg, jdbc);
         ipw.printf("this.rs = ps.executeQuery();%n");
         ipw.ends();
         ipw.printf("@Override%n");
@@ -105,14 +109,14 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         ipw.printf("return rs.next();%n");
         ipw.ends();
         ipw.printf("@Override%n");
-        if (output!=null && output.isDelegate()) {
+        if (mc.isOutoutDelegate()) {
             ipw.printf("public void fetchNext() throws SQLException {%n");
         } else {
             ipw.printf("public O fetchNext() throws SQLException {%n");
         }
         ipw.more();
-        fetch(ipw, oMap, cc);
-        if (output==null || !output.isDelegate())
+        fetch(ipw, oMap);
+        if (!mc.isOutoutDelegate())
             ipw.printf("return o;%n");
         ipw.ends();
         ipw.printf("@Override%n");
@@ -127,10 +131,8 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
     }
 
 
-    private void writeFunctional(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        Map<Integer, SqlParam> iMap = jdbc.getIMap();
+    private void writeFunctional(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
-        int iSize = iMap.size();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
@@ -140,24 +142,24 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         String cName = Tools.capitalize(name);
 
         ipw.printf("public static ");
-        declareGenerics(ipw, cName, iSize, oSize, jdbc.getTKeys());
+        declareGenerics(ipw, cName, jdbc.getTKeys());
 
         ipw.putf("void loop%1$s(%n", cName);
         ipw.printf("        final Connection c");
-        declareInput(ipw, jdbc, cc);
-        declareOutputUse(ipw, oSize, oMap.get(1).getType().getWrapper(), cc);
+        declareInput(ipw, jdbc);
+        declareOutputUse(ipw, oMap.get(1).getType().getWrapper());
         ipw.more();
-        openQuery(ipw, jdbc, kPrg, cc);
+        openQuery(ipw, jdbc, kPrg);
         ipw.more();
-        setInput(ipw, jdbc, cc);
+        setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
         ipw.printf("while (rs.next()) {%n");
         ipw.more();
-        fetch(ipw, oMap, cc);
-        if (output!=null && output.isDelegate()) {
+        fetch(ipw, oMap);
+        if (mc.isOutoutDelegate()) {
             ipw.printf("co.run();%n");
         } else {
             ipw.printf("co.accept(o);%n");

@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.plugin.sql.dql;
 
-import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.ComAreaStd;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
@@ -9,9 +8,11 @@ import io.github.epi155.emsql.plugin.sql.SqlKind;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+
+import static io.github.epi155.emsql.plugin.Tools.cc;
+import static io.github.epi155.emsql.plugin.Tools.mc;
 
 public class SqlSelectSingle extends SqlAction
         implements ApiSelectFields, ApiSelectSignature, ApiSelectSimple {
@@ -37,11 +38,11 @@ public class SqlSelectSingle extends SqlAction
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, @NotNull ClassContext cc) {
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
         cc.add("io.github.epi155.emsql.runtime.SqlCode");
         delegateSelectSignature.signature(ipw, jdbc, name);
 
-        if (jdbc.getOutSize() == 1) {
+        if (mc.oSize() == 1) {
             jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getPrimitive(), name));
         } else {
             if (output!=null && output.isDelegate()) {
@@ -51,8 +52,8 @@ public class SqlSelectSingle extends SqlAction
             }
         }
 
-        delegateSelectSimple.fetch(ipw, jdbc, kPrg, cc);
-        if (jdbc.getOutSize()==1 || output==null || !output.isDelegate()) {
+        delegateSelectSimple.fetch(ipw, jdbc, kPrg);
+        if (mc.oSize()==1 || !mc.isOutoutDelegate()) {
             ipw.orElse();
             ipw.printf("return o;%n");
         }

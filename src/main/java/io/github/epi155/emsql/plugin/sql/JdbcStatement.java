@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.plugin.sql;
 
-import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.Tools;
 import lombok.Getter;
 import lombok.val;
@@ -8,6 +7,8 @@ import lombok.val;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static io.github.epi155.emsql.plugin.Tools.cc;
+import static io.github.epi155.emsql.plugin.Tools.mc;
 import static io.github.epi155.emsql.plugin.sql.SqlAction.IMAX;
 
 @Getter
@@ -24,6 +25,9 @@ public class JdbcStatement implements JdbcMap {
         this.nMap = normalize(iMap);
         this.iMap = iMap;
         this.tKeys = filterNotScalar(nMap);
+        mc.oSize(oMap.size());
+        mc.iSize(iMap.size());
+        mc.nSize(nMap.size());
     }
 
     private List<String> filterNotScalar(Map<String, SqlKind> nMap) {
@@ -33,22 +37,11 @@ public class JdbcStatement implements JdbcMap {
             SqlKind kind = e.getValue();
             if (! kind.isScalar() && kind.columns()>1) {
                 String name = e.getKey();
-                kind.setName(name, ++k);
+                kind.setId(++k);
                 in.add(name);
             }
         }
         return in;
-    }
-
-    public int getOutSize() {
-        return oMap.size();
-    }
-
-    public int getInpSize() {
-        return iMap.size();
-    }
-    public int getNameSize() {
-        return nMap.size();
     }
 
     private static Map<String, SqlKind> normalize(Map<Integer, SqlParam> iMap) {
@@ -79,7 +72,8 @@ public class JdbcStatement implements JdbcMap {
         throw new IllegalArgumentException("Input argument collision: "+String.join(",", zroMap.keySet()));
     }
 
-    public void flush(ClassContext cc) {
+    public void flush() {
+        if (mc.isInputReflect()) return;
         tKeys.forEach(key -> cc.put(key, nMap.get(key)));
     }
 }

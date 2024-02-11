@@ -13,8 +13,8 @@ follows the declaration of the input and output fields which will then be used i
 ~~~yaml
 ...
 declare:      # input/output fields
-  fieldName1: fieldTYpe     # Map<String, SqlEnum> NOT NULL field
-  fieldName2: fieldTYpe?    # Map<String, SqlEnum> NULLABLE field
+  fieldName1: fieldTYpe     # Map<String, SqlKind> NOT NULL field
+  fieldName2: fieldTYpe?    # Map<String, SqlKind> NULLABLE field
   ...
 ...
 ~~~

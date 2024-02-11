@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.plugin.sql.dml;
 
-import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.ComAreaStd;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
@@ -31,7 +30,7 @@ public class SqlInsert extends SqlAction implements ApiWriteMethod, ApiInsert {
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        delegateWriteMethod.proceed(ipw, name, jdbc, kPrg, cc);
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
+        delegateWriteMethod.proceed(ipw, name, jdbc, kPrg);
     }
 }

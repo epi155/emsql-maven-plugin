@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.plugin.sql.dml;
 
-import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.ComAreaStd;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.Tools;
@@ -12,6 +11,9 @@ import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
+
+import static io.github.epi155.emsql.plugin.Tools.cc;
+import static io.github.epi155.emsql.plugin.Tools.mc;
 
 public class SqlUpdateBatch extends SqlAction implements ApiUpdate {
     private final DelegateUpdate delegateUpdate;
@@ -32,8 +34,8 @@ public class SqlUpdateBatch extends SqlAction implements ApiUpdate {
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        int nSize = jdbc.getNameSize();
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
+        int nSize = mc.nSize();
         if (1<nSize && nSize<=IMAX) {
             cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch"+nSize);
         } else {
@@ -47,7 +49,7 @@ public class SqlUpdateBatch extends SqlAction implements ApiUpdate {
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareReturnNew(ipw, cc, "SqlUpdateBatch", jdbc, batchSize);
+        declareReturnNew(ipw, "SqlUpdateBatch", jdbc, batchSize);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyUpdate(%n");
@@ -55,7 +57,7 @@ public class SqlUpdateBatch extends SqlAction implements ApiUpdate {
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
-        setInput(ipw, jdbc, cc);
+        setInput(ipw, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
         ipw.less();

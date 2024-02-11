@@ -1,6 +1,9 @@
 package io.github.epi155.emsql.plugin.sql.dpl;
 
-import io.github.epi155.emsql.plugin.*;
+import io.github.epi155.emsql.plugin.ComAreaDef;
+import io.github.epi155.emsql.plugin.ComAreaStd;
+import io.github.epi155.emsql.plugin.IndentPrintWriter;
+import io.github.epi155.emsql.plugin.Tools;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
 import io.github.epi155.emsql.plugin.sql.SqlKind;
@@ -14,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static io.github.epi155.emsql.plugin.Tools.mc;
 
 public class SqlCallProcedure extends SqlAction implements ApiSelectSignature {
     @Setter
@@ -53,12 +58,12 @@ public class SqlCallProcedure extends SqlAction implements ApiSelectSignature {
         }
     }
 
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
         delegateSelectSignature.signature(ipw, jdbc, name);
 
-        if (jdbc.getOutSize() == 0) {
+        if (mc.oSize() == 0) {
             ipw.putf("void %s(%n", name);
-        } else if (jdbc.getOutSize() == 1) {
+        } else if (mc.oSize() == 1) {
             // oMap.get(1) may be NULL, the output parameter is NOT the first one
             jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getPrimitive(), name));
         } else {
@@ -66,18 +71,18 @@ public class SqlCallProcedure extends SqlAction implements ApiSelectSignature {
         }
 
         ipw.printf("        final Connection c");
-        declareInput(ipw, jdbc, cc);
-        declareOutput(ipw, jdbc.getOutSize(), cc);
+        declareInput(ipw, jdbc);
+        declareOutput(ipw);
         ipw.more();
         ipw.printf("try (CallableStatement ps = c.prepareCall(Q_%s)) {%n", kPrg);
         ipw.more();
-        setInput(ipw, jdbc, cc);
+        setInput(ipw, jdbc);
         registerOut(ipw, jdbc.getOMap());
         setQueryHints(ipw);
-        debugAction(ipw, kPrg, jdbc, cc);
+        debugAction(ipw, kPrg, jdbc);
         ipw.printf("ps.execute();%n");
-        getOutput(ipw, jdbc.getOMap(), cc);
-        if (jdbc.getOutSize()>1)
+        getOutput(ipw, jdbc.getOMap());
+        if (mc.oSize()>1)
             ipw.printf("return o;%n");
         ipw.ends();
         ipw.ends();

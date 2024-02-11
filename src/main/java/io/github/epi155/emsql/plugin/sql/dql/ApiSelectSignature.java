@@ -16,5 +16,5 @@ public interface ApiSelectSignature {
 
     void docEnd(IndentPrintWriter ipw);
 
-    void declareGenerics(IndentPrintWriter ipw, String cName, int nSize, int oSize, List<String> in);
+    void declareGenerics(IndentPrintWriter ipw, String cName, List<String> in);
 }

@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.github.epi155.emsql.plugin.Tools.capitalize;
+import static io.github.epi155.emsql.plugin.Tools.mc;
 import static io.github.epi155.emsql.plugin.sql.SqlAction.IMAX;
 import static io.github.epi155.emsql.plugin.sql.SqlAction.REQUEST;
 
@@ -27,7 +28,7 @@ public class ClassContext {
     @Getter
     private final Map<String, SqlKind> fields;
     private final boolean java7;
-    private final static Map<String, SqlKind> inFields = new LinkedHashMap<>();
+    private final Map<String, SqlKind> inFields = new LinkedHashMap<>();
 
     public ClassContext(MojoContext cx, Map<String, SqlKind> declare) {
         this.debug = cx.debug;
@@ -115,7 +116,7 @@ public class ClassContext {
     }
 
     public void anonymousGenerics(IndentPrintWriter ipw, JdbcStatement jdbc, ComAttribute input) {
-        int nSize = jdbc.getNameSize();
+        int nSize = mc.nSize();
         if (java7) {
             if (nSize == 0) {
                 ipw.putf("<Void>");

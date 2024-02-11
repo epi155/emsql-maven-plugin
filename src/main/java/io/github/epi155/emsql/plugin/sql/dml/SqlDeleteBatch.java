@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.plugin.sql.dml;
 
-import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.ComAreaStd;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.Tools;
@@ -13,6 +12,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+
+import static io.github.epi155.emsql.plugin.Tools.cc;
+import static io.github.epi155.emsql.plugin.Tools.mc;
 
 public class SqlDeleteBatch extends SqlAction implements ApiDelete {
     private final DelegateDelete delegateDelete;
@@ -33,8 +35,8 @@ public class SqlDeleteBatch extends SqlAction implements ApiDelete {
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, @NotNull JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        int nSize = jdbc.getNameSize();
+    public void writeMethod(IndentPrintWriter ipw, String name, @NotNull JdbcStatement jdbc, String kPrg) {
+        int nSize = mc.nSize();
         if (1<nSize && nSize<=IMAX) {
             cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch"+nSize);
         } else {
@@ -48,7 +50,7 @@ public class SqlDeleteBatch extends SqlAction implements ApiDelete {
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareReturnNew(ipw, cc, "SqlDeleteBatch", jdbc, batchSize);
+        declareReturnNew(ipw, "SqlDeleteBatch", jdbc, batchSize);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyDelete(%n");
@@ -56,7 +58,7 @@ public class SqlDeleteBatch extends SqlAction implements ApiDelete {
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
-        setInput(ipw, jdbc, cc);
+        setInput(ipw, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
         ipw.less();

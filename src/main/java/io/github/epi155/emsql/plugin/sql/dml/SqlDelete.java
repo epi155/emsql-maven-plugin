@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.plugin.sql.dml;
 
-import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.ComAreaStd;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
@@ -29,8 +28,8 @@ public class SqlDelete extends SqlAction implements ApiWriteMethod, ApiDelete {
     public JdbcStatement sql(Map<String, SqlKind> fields) throws MojoExecutionException {
         return delegateDelete.proceed(fields);
     }
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        delegateWriteMethod.proceed(ipw, name, jdbc, kPrg, cc);
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
+        delegateWriteMethod.proceed(ipw, name, jdbc, kPrg);
     }
 
 }

@@ -1,8 +1,8 @@
 package io.github.epi155.emsql.plugin.sql;
 
-import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.ComAttribute;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
+import io.github.epi155.emsql.plugin.MethodContext;
 import io.github.epi155.emsql.plugin.Tools;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,26 +12,29 @@ import org.apache.maven.plugin.MojoExecutionException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import static io.github.epi155.emsql.plugin.Tools.cc;
+
 @Setter
+@Getter
 public class SqlMethod {
-    @Getter
     private String methodName;
     private SqlAction perform;
 
     private static final NumberFormat NF = new DecimalFormat("0000");
-    public void writeQuery(IndentPrintWriter ipw, int km, ClassContext cc) throws MojoExecutionException {
+    public void writeQuery(IndentPrintWriter ipw, int km) throws MojoExecutionException {
+        Tools.mc = new MethodContext(this);
         JdbcStatement jdbc = perform.sql(cc.getFields());
         String sQuery = jdbc.getText();
         String kPrg = NF.format(km);
         ipw.printf("private static final String Q_%s = \"%s\";%n", kPrg, StringEscapeUtils.escapeJava(sQuery));
         /*-------------------------------------------------*/
-        perform.writeMethod(ipw, methodName, jdbc, kPrg, cc);
+        perform.writeMethod(ipw, methodName, jdbc, kPrg);
         /*-------------------------------------------------*/
 
         String cName = Tools.capitalize(methodName);
-        perform.writeRequest(ipw, cName, cc, jdbc.getNMap());
-        perform.writeResponse(ipw, cName, cc, jdbc.getOMap().values());
-        jdbc.flush(cc);
+        perform.writeRequest(ipw, cName, jdbc.getNMap());
+        perform.writeResponse(ipw, cName, jdbc.getOMap().values());
+        jdbc.flush();
 
         ComAttribute ia = perform.getInput();
         ComAttribute oa = perform.getOutput();

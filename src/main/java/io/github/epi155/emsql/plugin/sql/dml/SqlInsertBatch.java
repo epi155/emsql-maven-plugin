@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.plugin.sql.dml;
 
-import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.ComAreaStd;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.Tools;
@@ -12,6 +11,9 @@ import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
+
+import static io.github.epi155.emsql.plugin.Tools.cc;
+import static io.github.epi155.emsql.plugin.Tools.mc;
 
 public class SqlInsertBatch extends SqlAction implements ApiInsert {
     private final DelegateInsert delegateInsert;
@@ -30,8 +32,8 @@ public class SqlInsertBatch extends SqlAction implements ApiInsert {
         return delegateInsert.proceed(fields);
     }
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
-        int nSize = jdbc.getNameSize();
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
+        int nSize = mc.nSize();
         if (1<nSize && nSize<=IMAX) {
             cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch"+nSize);
         } else {
@@ -45,7 +47,7 @@ public class SqlInsertBatch extends SqlAction implements ApiInsert {
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareReturnNew(ipw, cc, "SqlInsertBatch", jdbc, batchSize);
+        declareReturnNew(ipw, "SqlInsertBatch", jdbc, batchSize);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyInsert(%n");
@@ -53,7 +55,7 @@ public class SqlInsertBatch extends SqlAction implements ApiInsert {
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
-        setInput(ipw, jdbc, cc);
+        setInput(ipw, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
         ipw.less();

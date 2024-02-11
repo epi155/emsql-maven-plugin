@@ -1,6 +1,9 @@
 package io.github.epi155.emsql.plugin.sql.dml;
 
-import io.github.epi155.emsql.plugin.*;
+import io.github.epi155.emsql.plugin.ComAreaDef;
+import io.github.epi155.emsql.plugin.ComAreaStd;
+import io.github.epi155.emsql.plugin.IndentPrintWriter;
+import io.github.epi155.emsql.plugin.Tools;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 import io.github.epi155.emsql.plugin.sql.SqlAction;
 import io.github.epi155.emsql.plugin.sql.SqlKind;
@@ -16,6 +19,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static io.github.epi155.emsql.plugin.Tools.cc;
+import static io.github.epi155.emsql.plugin.Tools.mc;
 
 public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelectSignature {
     private final DelegateSelectSignature delegateSelectSignature;
@@ -56,30 +62,30 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelect
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
         delegateSelectSignature.signature(ipw, jdbc, name);
 
-        if (jdbc.getOutSize() == 1) {
+        if (mc.oSize() == 1) {
             jdbc.getOMap().forEach((k,v) -> ipw.putf("%s<%s> %s(%n", cc.optional(), v.getType().getWrapper(), name));
         } else {
             ipw.putf("%s<O> %s(%n", cc.optional(), name);
         }
 
         ipw.printf("        final Connection c");
-        declareInput(ipw, jdbc, cc);
-        declareOutput(ipw, jdbc.getOutSize(), cc);
+        declareInput(ipw, jdbc);
+        declareOutput(ipw);
         ipw.more();
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s, Statement.RETURN_GENERATED_KEYS)) {%n", kPrg);
         ipw.more();
-        setInput(ipw, jdbc, cc);
+        setInput(ipw, jdbc);
         setQueryHints(ipw);
-        debugAction(ipw, kPrg, jdbc, cc);
+        debugAction(ipw, kPrg, jdbc);
         ipw.printf("ps.executeUpdate();%n");
         ipw.printf("ResultSet rs = ps.getGeneratedKeys();%n");
         ipw.printf("if (rs.next()) {%n");
         ipw.more();
         ipw.printf("if (rs.getMetaData().getColumnType(1) == Types.ROWID) throw new IllegalArgumentException(\"Unsupported operation\");%n");
-        fetch(ipw, jdbc.getOMap(), cc);
+        fetch(ipw, jdbc.getOMap());
         ipw.printf("return %s.of(o);%n", cc.optional());
         ipw.ends();
         ipw.printf("return %s.empty();%n", cc.optional());

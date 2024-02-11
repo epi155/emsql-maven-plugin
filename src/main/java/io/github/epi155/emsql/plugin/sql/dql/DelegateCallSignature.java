@@ -19,6 +19,6 @@ public class DelegateCallSignature {
         api.docEnd(ipw);
 
         ipw.printf("public static ");
-        api.declareGenerics(ipw, cName, jdbc.getNameSize(), jdbc.getOutSize(), jdbc.getTKeys());
+        api.declareGenerics(ipw, cName, jdbc.getTKeys());
     }
 }

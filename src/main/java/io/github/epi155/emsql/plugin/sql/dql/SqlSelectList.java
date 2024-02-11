@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.plugin.sql.dql;
 
-import io.github.epi155.emsql.plugin.ClassContext;
 import io.github.epi155.emsql.plugin.ComAreaLst;
 import io.github.epi155.emsql.plugin.ComAreaStd;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
@@ -12,6 +11,9 @@ import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
+
+import static io.github.epi155.emsql.plugin.Tools.cc;
+import static io.github.epi155.emsql.plugin.Tools.mc;
 
 public class SqlSelectList extends SqlAction implements ApiSelectFields, ApiSelectSignature {
     private final DelegateSelectFields delegateSelectFields;
@@ -37,30 +39,30 @@ public class SqlSelectList extends SqlAction implements ApiSelectFields, ApiSele
     }
 
     @Override
-    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg, ClassContext cc) {
+    public void writeMethod(IndentPrintWriter ipw, String name, JdbcStatement jdbc, String kPrg) {
         cc.add("java.util.List");
         cc.add("java.util.ArrayList");
         delegateSelectSignature.signature(ipw, jdbc, name);
 
-        if (jdbc.getOutSize() == 1) {
+        if (mc.oSize() == 1) {
             jdbc.getOMap().forEach((k,v) -> ipw.putf("List<%s> %s(%n", v.getType().getWrapper(), name));
         } else {
             ipw.putf("List<O> %s(%n", name);
         }
 
         ipw.printf("        final Connection c");
-        declareInput(ipw, jdbc, cc);
-        declareOutput(ipw, jdbc.getOutSize(), cc);
+        declareInput(ipw, jdbc);
+        declareOutput(ipw);
         ipw.more();
-        openQuery(ipw, jdbc, kPrg, cc);
+        openQuery(ipw, jdbc, kPrg);
         ipw.more();
-        setInput(ipw, jdbc, cc);
+        setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
-        debugAction(ipw, kPrg, jdbc, cc);
+        debugAction(ipw, kPrg, jdbc);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
-        if (jdbc.getOutSize() == 1) {
+        if (mc.oSize() == 1) {
             jdbc.getOMap().forEach((k,v) ->
                     ipw.printf("List<%s> list = new ArrayList<>();%n", v.getType().getWrapper()));
         } else {
@@ -68,7 +70,7 @@ public class SqlSelectList extends SqlAction implements ApiSelectFields, ApiSele
         }
         ipw.printf("while (rs.next()) {%n");
         ipw.more();
-        fetch(ipw, jdbc.getOMap(), cc);
+        fetch(ipw, jdbc.getOMap());
         ipw.printf("list.add(o);%n");
         ipw.ends();
         ipw.printf("return list;%n");

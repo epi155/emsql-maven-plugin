@@ -16,6 +16,7 @@ import java.util.Map;
 
 @Slf4j
 public class Tools {
+
     private Tools() {}
 
     interface ApiStore<T> {
@@ -25,6 +26,8 @@ public class Tools {
         void push(String parm);
         default String getPlaceholder() { return "?"; }
     }
+    public static volatile MethodContext mc;
+    public static volatile ClassContext cc;
 
     public static String oneLine(@NotNull String text) {
         StringBuilder sb = new StringBuilder();

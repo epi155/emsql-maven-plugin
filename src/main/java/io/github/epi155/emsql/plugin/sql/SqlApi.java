@@ -18,6 +18,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static io.github.epi155.emsql.plugin.Tools.cc;
+
 @Setter
 @Slf4j
 public class SqlApi {
@@ -32,7 +34,7 @@ public class SqlApi {
 
     public void create(MojoContext cx) throws FileNotFoundException, MojoExecutionException {
         log.info("Creating {} ...", className);
-        ClassContext cc = new ClassContext(cx, declare);
+        cc = new ClassContext(cx, declare);
         File srcMainJava = new File(cx.sourceDirectory);
         File pkgFolder = new File(srcMainJava, packageName.replace('.', File.separatorChar));
         File clsFile = new File(pkgFolder, className+DOT_JAVA);
@@ -51,7 +53,7 @@ public class SqlApi {
                 } else {
                     ipw.println();
                     /*------------------------------------*/
-                    writeMethod(ipw, method, ++kMethod, cc);
+                    writeMethod(ipw, method, ++kMethod);
                     /*------------------------------------*/
                     basket.add(methodName);
                 }
@@ -68,8 +70,8 @@ public class SqlApi {
 
     }
 
-    private void writeMethod(IndentPrintWriter ipw, SqlMethod method, int km, ClassContext cc) throws MojoExecutionException {
-        method.writeQuery(ipw, km, cc);
+    private void writeMethod(IndentPrintWriter ipw, SqlMethod method, int km) throws MojoExecutionException {
+        method.writeQuery(ipw, km);
     }
 
 

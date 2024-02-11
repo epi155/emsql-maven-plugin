@@ -4,6 +4,8 @@ import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.Tools;
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
 
+import static io.github.epi155.emsql.plugin.Tools.mc;
+
 public class DelegateSelectSignature {
     private final ApiSelectSignature api;
 
@@ -12,7 +14,7 @@ public class DelegateSelectSignature {
     }
 
     public void signature(IndentPrintWriter ipw, JdbcStatement jdbc, String name) {
-        if (jdbc.getOutSize() < 1) throw new IllegalStateException("Invalid output parameter number");
+        if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
         api.docBegin(ipw);
         api.docInput(ipw, jdbc);
@@ -20,6 +22,6 @@ public class DelegateSelectSignature {
         api.docEnd(ipw);
 
         ipw.printf("public static ");
-        api.declareGenerics(ipw, cName, jdbc.getNameSize(), jdbc.getOutSize(), jdbc.getTKeys());
+        api.declareGenerics(ipw, cName, jdbc.getTKeys());
     }
 }
