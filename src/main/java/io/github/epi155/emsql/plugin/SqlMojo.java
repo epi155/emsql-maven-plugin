@@ -166,6 +166,8 @@ public class SqlMojo extends AbstractMojo {
                 /*----------------*/
             }
         }
+        log.info("Total classes ...: {}", cx.getNmClasses());
+        log.info("Total methods ...: {}", cx.getNmMethods());
     }
 
     private void generateApi(MojoContext cx, SqlApi api) throws MojoExecutionException, FileNotFoundException {

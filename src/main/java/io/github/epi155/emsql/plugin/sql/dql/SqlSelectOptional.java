@@ -16,7 +16,7 @@ public class SqlSelectOptional extends SqlSelectSingle {
         if (mc.oSize() == 1) {
             jdbc.getOMap().forEach((k,v) -> ipw.putf("%s<%s> %s(%n", cc.optional(), v.getType().getWrapper(), name));
         } else {
-            if (output != null && output.isDelegate()) {
+            if (mc.isOutoutDelegate()) {
                 ipw.putf("boolean %s(%n", name);
             } else {
                 ipw.putf("%s<O> %s(%n", cc.optional(), name);

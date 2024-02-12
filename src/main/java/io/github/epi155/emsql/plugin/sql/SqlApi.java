@@ -56,6 +56,7 @@ public class SqlApi {
                     writeMethod(ipw, method, ++kMethod);
                     /*------------------------------------*/
                     basket.add(methodName);
+                    cx.incMethods();
                 }
             }
             cc.flush(ipw);
@@ -67,7 +68,7 @@ public class SqlApi {
             pw.print(swCls);
         }
         log.info("Created.");
-
+        cx.incClasses();
     }
 
     private void writeMethod(IndentPrintWriter ipw, SqlMethod method, int km) throws MojoExecutionException {

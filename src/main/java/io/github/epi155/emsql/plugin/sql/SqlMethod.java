@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.plugin.sql;
 
-import io.github.epi155.emsql.plugin.ComAttribute;
 import io.github.epi155.emsql.plugin.IndentPrintWriter;
 import io.github.epi155.emsql.plugin.MethodContext;
 import io.github.epi155.emsql.plugin.Tools;
@@ -13,6 +12,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import static io.github.epi155.emsql.plugin.Tools.cc;
+import static io.github.epi155.emsql.plugin.Tools.mc;
 
 @Setter
 @Getter
@@ -22,7 +22,7 @@ public class SqlMethod {
 
     private static final NumberFormat NF = new DecimalFormat("0000");
     public void writeQuery(IndentPrintWriter ipw, int km) throws MojoExecutionException {
-        Tools.mc = new MethodContext(this);
+        mc = new MethodContext(this);
         JdbcStatement jdbc = perform.sql(cc.getFields());
         String sQuery = jdbc.getText();
         String kPrg = NF.format(km);
@@ -36,9 +36,7 @@ public class SqlMethod {
         perform.writeResponse(ipw, cName, jdbc.getOMap().values());
         jdbc.flush();
 
-        ComAttribute ia = perform.getInput();
-        ComAttribute oa = perform.getOutput();
-        if (ia != null && ia.isReflect() || oa != null && oa.isReflect()) {
+        if (mc.isInputReflect() || mc.isOutoutReflect()) {
             cc.add("io.github.epi155.emsql.runtime.EmSQL");
         }
 

@@ -1,19 +1,16 @@
 package io.github.epi155.emsql.plugin;
 
 import io.github.epi155.emsql.plugin.sql.JdbcStatement;
-import io.github.epi155.emsql.plugin.sql.SqlAction;
 import io.github.epi155.emsql.plugin.sql.SqlKind;
 import io.github.epi155.emsql.plugin.sql.SqlParam;
 import lombok.Getter;
 
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static io.github.epi155.emsql.plugin.Tools.capitalize;
 import static io.github.epi155.emsql.plugin.Tools.mc;
-import static io.github.epi155.emsql.plugin.sql.SqlAction.IMAX;
-import static io.github.epi155.emsql.plugin.sql.SqlAction.REQUEST;
+import static io.github.epi155.emsql.plugin.sql.SqlAction.*;
 
 public class ClassContext {
     public static final String RUNTIME_EMSQL = "io.github.epi155.emsql.runtime.EmSQL";
@@ -115,25 +112,13 @@ public class ClassContext {
         }
     }
 
-    public void anonymousGenerics(IndentPrintWriter ipw, JdbcStatement jdbc, ComAttribute input) {
-        int nSize = mc.nSize();
+    public void anonymousGenerics(IndentPrintWriter ipw, JdbcStatement jdbc) {
         if (java7) {
-            if (nSize == 0) {
-                ipw.putf("<Void>");
-            } else if (nSize == 1) {
-                jdbc.getNMap().forEach((name, type) -> ipw.putf("<%s>", type.getWrapper()));    // once
-            } else if (nSize <= IMAX) {
-                ipw.putf("%d<%s>", nSize, jdbc.getNMap().values().stream().map(SqlKind::getWrapper).collect(Collectors.joining(", ")));
-            } else {
-                if (input != null && input.isDelegate()) {
-                    ipw.putf("<DI>");
-                } else {
-                    ipw.putf("<I>");
-                }
-            }
+            plainGenericsNew(ipw, jdbc);
         } else {
+            int nSize = mc.nSize();
             if (nSize == 0) {
-                ipw.putf("<Void>");
+                ipw.putf("<Void>"); // why not "<>" ?
             } else if (nSize == 1) {
                 ipw.putf("<>");
             } else if (nSize <= IMAX) {
@@ -171,7 +156,7 @@ public class ClassContext {
     }
     private void writeInFieldInterface(IndentPrintWriter ipw, String hiName, Map<String, SqlKind> map) {
         ipw.printf("public interface %s"+REQUEST+" {%n", hiName);
-        Map<String, Map<String, SqlKind>> next = SqlAction.throughGetter(ipw, map);
+        Map<String, Map<String, SqlKind>> next = throughGetter(ipw, map);
         next.forEach((n,np) -> writeInFieldInterface(ipw, capitalize(n), np));
         ipw.ends();
     }

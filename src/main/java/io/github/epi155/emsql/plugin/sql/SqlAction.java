@@ -50,7 +50,7 @@ public abstract class SqlAction {
             });
         } else if (nSize>IMAX){
             ipw.commaLn();
-            if (getInput() != null && getInput().isDelegate()) {
+            if (mc.isInputDelegate()) {
                 ipw.printf("        final DI i");
             } else {
                 ipw.printf("        final I i");
@@ -58,10 +58,17 @@ public abstract class SqlAction {
         }
     }
     public void declareNewInstance(@NotNull IndentPrintWriter ipw, String eSqlObject, @NotNull JdbcStatement jdbc, String cName) {
-        int nSize = mc.nSize();
         ipw.printf("public static ");
         declareGenerics(ipw, cName, jdbc.getTKeys());
         ipw.putf("%s", eSqlObject);
+        plainGenericsNew(ipw, jdbc);
+        ipw.putf(" new%s(%n", cName);
+        ipw.printf("        final Connection c)%n", cName);
+        ipw.printf("        throws SQLException {%n");
+    }
+
+    public static void plainGenericsNew(IndentPrintWriter ipw, JdbcStatement jdbc) {
+        int nSize = mc.nSize();
         if (nSize == 0) {
             ipw.putf("<Void>");
         } else if (nSize == 1) {
@@ -69,19 +76,17 @@ public abstract class SqlAction {
         } else if (nSize <= IMAX) {
             ipw.putf("%d<%s>", nSize, jdbc.getNMap().values().stream().map(SqlKind::getWrapper).collect(Collectors.joining(", ")));
         } else {
-            if (getInput() != null && getInput().isDelegate()) {
+            if (mc.isInputDelegate()) {
                 ipw.putf("<DI>");
             } else {
                 ipw.putf("<I>");
             }
         }
-        ipw.putf(" new%s(%n", cName);
-        ipw.printf("        final Connection c)%n", cName);
-        ipw.printf("        throws SQLException {%n");
     }
+
     public void declareReturnNew(@NotNull IndentPrintWriter ipw, String eSqlObject, JdbcStatement jdbc, int batchSize) {
         ipw.printf("return new %s", eSqlObject);
-        cc.anonymousGenerics(ipw, jdbc, getInput());
+        cc.anonymousGenerics(ipw, jdbc);
         ipw.putf("(ps, %d) {%n", batchSize);
     }
 
@@ -96,7 +101,7 @@ public abstract class SqlAction {
                 if (k.incrementAndGet() < nSize) ipw.commaLn();
             });
         } else {
-            if (getInput() != null && getInput().isDelegate()) {
+            if (mc.isInputDelegate()) {
                 ipw.printf("        DI i");
             } else {
                 ipw.printf("        I i");
@@ -138,10 +143,10 @@ public abstract class SqlAction {
     }
     public void fetch(IndentPrintWriter ipw, @NotNull Map<Integer, SqlParam> oMap) {
         if (oMap.size() > 1) {
-            if (getOutput()!=null && getOutput().isReflect()) {
+            if (mc.isOutoutReflect()) {
                 ipw.printf("O o = so.get();%n");
                 oMap.forEach((k,s) -> s.pullParameter(ipw, k));
-            } else if (getOutput()!=null && getOutput().isDelegate()){
+            } else if (mc.isOutoutDelegate()){
                 oMap.forEach((k,s) -> s.fetchDelegateParameter(ipw, k));
             } else {
                 ipw.printf("O o = so.get();%n");
@@ -194,8 +199,8 @@ public abstract class SqlAction {
 
     public void writeRequest(IndentPrintWriter ipw, String cMethodName, @NotNull Map<String, SqlKind> sp) throws MojoExecutionException {
         if (sp.size()<=IMAX) return;
-        if (getInput() != null && getInput().isReflect()) return;
-        if (getInput() != null && getInput().isDelegate()) {
+        if (mc.isInputReflect()) return;
+        if (mc.isInputDelegate()) {
             List<String> badNames = sp.keySet().stream().filter(it -> it.contains(".")).collect(Collectors.toList());
             if (!badNames.isEmpty()) {
                 throw new MojoExecutionException("Invalid names for delegate fields: " + String.join(",", badNames));
@@ -278,8 +283,8 @@ public abstract class SqlAction {
 
     public void writeResponse(IndentPrintWriter ipw, String cMethodName, @NotNull Collection<SqlParam> sp) throws MojoExecutionException {
         if (sp.size()<=1) return;
-        if (getOutput()!=null && getOutput().isReflect()) return;
-        if (getOutput()!=null && getOutput().isDelegate()) {
+        if (mc.isOutoutReflect()) return;
+        if (mc.isOutoutDelegate()) {
             List<String> badNames = sp.stream().map(SqlParam::getName).filter(it -> it.contains(".")).collect(Collectors.toList());
             if (!badNames.isEmpty()) {
                 throw new MojoExecutionException("Invalid names for delegate fields: " + String.join(",", badNames));
@@ -289,7 +294,7 @@ public abstract class SqlAction {
     }
 
     private void writeResponseInterface(IndentPrintWriter ipw, String cMethodName, Collection<SqlParam> sp) {
-        if (getOutput()!=null && getOutput().isDelegate()) {
+        if (mc.isOutoutDelegate()) {
             ipw.printf("public static class Delegate%s"+RESPONSE+" {%n", cMethodName);
             ipw.more();
             sp.forEach(p -> {
@@ -363,7 +368,7 @@ public abstract class SqlAction {
             AtomicInteger count = new AtomicInteger();
             jdbc.getNMap().forEach((name, type) -> ipw.printf(" * @param %s :%1$s (parameter #%d)%n", name, count.incrementAndGet()));
         } else if (nSize>IMAX) {
-            if (getInput() != null && getInput().isDelegate()) {
+            if (mc.isInputDelegate()) {
                 ipw.printf(" * @param i input parameter delegate%n");
             } else {
                 ipw.printf(" * @param i input parameter wrapper%n");
@@ -501,12 +506,10 @@ public abstract class SqlAction {
                         ipw.printf("%s%s%n", v.getName(), eol.nl()));
             } else {
                 Map<Integer, SqlParam> iMap = jdbcStatement.getIMap();
-                boolean isReflect = getInput() != null && getInput().isReflect();
-                boolean isDelegate = getInput() != null && getInput().isDelegate();
-                if (isReflect) {
+                if (mc.isInputReflect()) {
                     iMap.forEach((k,v) ->
                             ipw.printf("EmSQL.get(i, \"%s\", %s.class)%s%n", v.getName(), v.getType().getContainer(), eol.nl()));
-                } else if (isDelegate) {
+                } else if (mc.isInputDelegate()) {
                     iMap.forEach((k,v) ->
                             ipw.printf("i.%s.get()%s%n", v.getName(), eol.nl()));
                 } else {
@@ -556,11 +559,10 @@ public abstract class SqlAction {
         if (mc.nSize()<=IMAX) {
             notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, %s.size(), %d)%n", k, v.getName(), v.getType().columns()));
         } else {
-            ComAttribute input = getInput();
-            if (input!=null && input.isReflect()) {
+            if (mc.isInputReflect()) {
                 cc.add("java.util.List");
                 notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, EmSQL.get(i, \"%s\", List.class).size(), %d)%n", k, v.getName(), v.getType().columns()));
-            } else if (input!=null && input.isDelegate()) {
+            } else if (mc.isInputDelegate()) {
                 notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s.get().size(), %d)%n", k, v.getName(), v.getType().columns()));
             } else {
                 notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s().size(), %d)%n", k, getterOf(v), v.getType().columns()));

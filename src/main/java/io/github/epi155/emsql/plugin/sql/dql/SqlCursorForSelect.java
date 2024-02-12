@@ -65,7 +65,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
             String oType = oMap.get(1).getType().getWrapper();
             ipw.putf("SqlCursor<%s> open%s(%n", oType, cName);
         } else {
-            if (output!=null && output.isDelegate()) {
+            if (mc.isOutoutDelegate()) {
                 cc.add("io.github.epi155.emsql.runtime.SqlDelegateCursor");
                 ipw.putf("SqlDelegateCursor open%s(%n", cName);
             } else {
@@ -82,7 +82,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         if (! notScalar.isEmpty()) {
             expandIn(ipw, notScalar, kPrg);
         }
-        if (output!=null && output.isDelegate()) {
+        if (mc.isOutoutDelegate()) {
             ipw.printf("return new SqlDelegateCursor() {%n");
         } else {
             ipw.printf("return new SqlCursor<O>() {%n");
