@@ -85,7 +85,11 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         if (mc.isOutoutDelegate()) {
             ipw.printf("return new SqlDelegateCursor() {%n");
         } else {
-            ipw.printf("return new SqlCursor<O>() {%n");
+            if (oSize==1) {
+                ipw.printf("return new SqlCursor<%s>() {%n",oMap.get(1).getType().getWrapper());
+            } else {
+                ipw.printf("return new SqlCursor<O>() {%n");
+            }
         }
         ipw.more();
         ipw.printf("private final ResultSet rs;%n");
@@ -112,7 +116,11 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         if (mc.isOutoutDelegate()) {
             ipw.printf("public void fetchNext() throws SQLException {%n");
         } else {
-            ipw.printf("public O fetchNext() throws SQLException {%n");
+            if (oSize==1) {
+                ipw.printf("public %s fetchNext() throws SQLException {%n", oMap.get(1).getType().getWrapper());
+            } else {
+                ipw.printf("public O fetchNext() throws SQLException {%n");
+            }
         }
         ipw.more();
         fetch(ipw, oMap);

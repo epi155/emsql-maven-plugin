@@ -213,7 +213,7 @@ public abstract class SqlAction {
         if (mc.isInputDelegate()) {
             ipw.printf("public static class Delegate%s"+REQUEST, methodName);
             writeRequestGenerics(ipw,sp);
-            ipw.printf(" {%n");
+            ipw.putf(" {%n");
             ipw.more();
             ipw.printf("private Delegate%s"+REQUEST+"() {}%n", methodName);
             sp.forEach((name, type) -> {
@@ -223,7 +223,7 @@ public abstract class SqlAction {
             ipw.printf("public static Builder%s"+REQUEST+" builder() { return new Builder%1$s"+REQUEST+"(); }%n", methodName);
             ipw.printf("public static class Builder%s"+REQUEST, methodName);
             writeRequestGenerics(ipw,sp);
-            ipw.printf(" {%n", methodName);
+            ipw.putf(" {%n", methodName);
             ipw.more();
             ipw.printf("private Builder%s"+REQUEST+"() {}%n", methodName);
             sp.forEach((name, type) -> {
@@ -242,7 +242,7 @@ public abstract class SqlAction {
         } else {
             ipw.printf("public interface %s" + REQUEST, methodName);
             writeRequestGenerics(ipw, sp);
-            ipw.printf(" {%n");
+            ipw.putf(" {%n");
             Map<String, Map<String, SqlKind>> next = throughGetter(ipw, sp);
             next.forEach((n, np) -> writeRequestInterface(ipw, capitalize(n), np));
         }
@@ -425,28 +425,39 @@ public abstract class SqlAction {
                 ipw.putf("> ");
             } else {
                 if (mc.isInputReflect()) {
+                    ipw.putf("<I");
+                    if(!inFlds.isEmpty())
+                        for(int k=1; k<=inFlds.size(); k++) {
+                            ipw.putf(",L%d",k);
+                        }
                     if (mc.isOutoutReflect()) {
-                        ipw.putf("<I,O> ");
+                        ipw.putf(",O> ");
                     } else if (mc.isOutoutDelegate()) {
-                        ipw.putf("<I,DO extends Delegate%1$s" + RESPONSE + "> ", cName);
+                        ipw.putf(",DO extends Delegate%1$s" + RESPONSE + "> ", cName);
                     } else {
-                        ipw.putf("<I,O extends %1$s" + RESPONSE + "> ", cName);
+                        ipw.putf(",O extends %1$s" + RESPONSE + "> ", cName);
                     }
                 } else if (mc.isInputDelegate()) {
+                    ipw.putf("<DI extends Delegate%1$s"+REQUEST, cName);
+                    if(!inFlds.isEmpty())
+                        genericInner(ipw, inFlds);
                     if (mc.isOutoutReflect()) {
-                        ipw.putf("<DI extends Delegate%1$s"+REQUEST+",O> ", cName);
+                        ipw.putf(",O> ");
                     } else if (mc.isOutoutDelegate()) {
-                        ipw.putf("<DI extends Delegate%1$s"+REQUEST+",DO extends Delegate%1$s" + RESPONSE + "> ", cName);
+                        ipw.putf(",DO extends Delegate%1$s" + RESPONSE + "> ", cName);
                     } else {
-                        ipw.putf("<DI extends Delegate%1$s"+REQUEST+",O extends %1$s" + RESPONSE + "> ", cName);
+                        ipw.putf(",O extends %1$s" + RESPONSE + "> ", cName);
                     }
                 } else {
+                    ipw.putf("<I extends %1$s"+REQUEST, cName);
+                    if(!inFlds.isEmpty())
+                        genericInner(ipw, inFlds);
                     if (mc.isOutoutReflect()) {
-                        ipw.putf("<I extends %1$s"+REQUEST+",O> ", cName);
+                        ipw.putf(",O> ");
                     } else if (mc.isOutoutDelegate()) {
-                        ipw.putf("<I extends %1$s"+REQUEST+",DO extends Delegate%1$s" + RESPONSE + "> ", cName);
+                        ipw.putf(",DO extends Delegate%1$s" + RESPONSE + "> ", cName);
                     } else {
-                        ipw.putf("<I extends %1$s"+REQUEST+",O extends %1$s" + RESPONSE + "> ", cName);
+                        ipw.putf(",O extends %1$s" + RESPONSE + "> ", cName);
                     }
                 }
             }
@@ -467,7 +478,7 @@ public abstract class SqlAction {
             ipw.putf(">");
             int k=0;
             for (val fld: flds) {
-                ipw.putf(", L%d extends %s%s", ++k, capitalize(fld), REQUEST);
+                ipw.putf(",L%d extends %s%s", ++k, capitalize(fld), REQUEST);
             }
         }
     }
