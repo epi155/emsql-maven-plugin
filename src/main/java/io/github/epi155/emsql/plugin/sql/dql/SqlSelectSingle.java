@@ -45,7 +45,7 @@ public class SqlSelectSingle extends SqlAction
         if (mc.oSize() == 1) {
             jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getPrimitive(), name));
         } else {
-            if (mc.isOutoutDelegate()) {
+            if (mc.isOutputDelegate()) {
                 ipw.putf("void %s(%n", name);
             } else {
                 ipw.putf("O %s(%n", name);
@@ -53,7 +53,7 @@ public class SqlSelectSingle extends SqlAction
         }
 
         delegateSelectSimple.fetch(ipw, jdbc, kPrg);
-        if (mc.oSize()==1 || !mc.isOutoutDelegate()) {
+        if (mc.oSize()==1 || !mc.isOutputDelegate()) {
             ipw.orElse();
             ipw.printf("return o;%n");
         }

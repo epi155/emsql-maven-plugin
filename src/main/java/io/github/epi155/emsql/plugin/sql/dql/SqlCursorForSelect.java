@@ -63,9 +63,10 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         declareGenerics(ipw, cName, jdbc.getTKeys());
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getWrapper();
+            cc.add("io.github.epi155.emsql.runtime.SqlCursor");
             ipw.putf("SqlCursor<%s> open%s(%n", oType, cName);
         } else {
-            if (mc.isOutoutDelegate()) {
+            if (mc.isOutputDelegate()) {
                 cc.add("io.github.epi155.emsql.runtime.SqlDelegateCursor");
                 ipw.putf("SqlDelegateCursor open%s(%n", cName);
             } else {
@@ -82,7 +83,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         if (! notScalar.isEmpty()) {
             expandIn(ipw, notScalar, kPrg);
         }
-        if (mc.isOutoutDelegate()) {
+        if (mc.isOutputDelegate()) {
             ipw.printf("return new SqlDelegateCursor() {%n");
         } else {
             if (oSize==1) {
@@ -113,7 +114,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         ipw.printf("return rs.next();%n");
         ipw.ends();
         ipw.printf("@Override%n");
-        if (mc.isOutoutDelegate()) {
+        if (mc.isOutputDelegate()) {
             ipw.printf("public void fetchNext() throws SQLException {%n");
         } else {
             if (oSize==1) {
@@ -124,7 +125,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         }
         ipw.more();
         fetch(ipw, oMap);
-        if (!mc.isOutoutDelegate())
+        if (!mc.isOutputDelegate())
             ipw.printf("return o;%n");
         ipw.ends();
         ipw.printf("@Override%n");
@@ -167,7 +168,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields {
         ipw.printf("while (rs.next()) {%n");
         ipw.more();
         fetch(ipw, oMap);
-        if (mc.isOutoutDelegate()) {
+        if (mc.isOutputDelegate()) {
             ipw.printf("co.run();%n");
         } else {
             ipw.printf("co.accept(o);%n");

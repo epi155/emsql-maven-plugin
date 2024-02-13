@@ -43,8 +43,14 @@ class TestMojo {
                 "daoSelect.yaml",
             "daoProc.yaml",
             "ooSelect.yaml",
+            "odSelect.yaml",
+            "orSelect.yaml",
             "doSelect.yaml",
+            "ddSelect.yaml",
+            "drSelect.yaml",
             "roSelect.yaml",
+            "rdSelect.yaml",
+            "rrSelect.yaml",
     };
 
     @Test

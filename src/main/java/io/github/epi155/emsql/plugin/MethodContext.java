@@ -11,9 +11,9 @@ public class MethodContext {
     private final String name;
     private final boolean inputReflect;
     private final boolean inputDelegate;
-    private final boolean outoutReflect;
-    private final boolean outoutDelegate;
-    @Setter @Accessors(fluent = true)
+    private boolean outputReflect;
+    private boolean outputDelegate;
+    @Accessors(fluent = true)
     private Integer oSize;
     @Setter @Accessors(fluent = true)
     private Integer iSize;
@@ -27,7 +27,17 @@ public class MethodContext {
         val outout = perform.getOutput();
         this.inputReflect = input!=null && input.isReflect();
         this.inputDelegate = input!=null && input.isDelegate();
-        this.outoutReflect = outout!=null && outout.isReflect();
-        this.outoutDelegate = outout!=null && outout.isDelegate();
+        this.outputReflect = outout!=null && outout.isReflect();
+        this.outputDelegate = outout!=null && outout.isDelegate();
+    }
+
+    public void oSize(int size) {
+        if (oSize == null) {
+            oSize = size;
+            if (size<2) {
+                outputDelegate = false;
+                outputReflect = false;
+            }
+        }
     }
 }

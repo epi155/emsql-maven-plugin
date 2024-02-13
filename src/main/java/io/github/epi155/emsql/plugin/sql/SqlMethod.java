@@ -36,7 +36,7 @@ public class SqlMethod {
         perform.writeResponse(ipw, cName, jdbc.getOMap().values());
         jdbc.flush();
 
-        if (mc.isInputReflect() || mc.isOutoutReflect()) {
+        if (mc.isInputReflect() || mc.isOutputReflect()) {
             cc.add("io.github.epi155.emsql.runtime.EmSQL");
         }
 
