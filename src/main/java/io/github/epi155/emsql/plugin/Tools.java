@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -76,12 +77,13 @@ public class Tools {
             SqlKind type = fields.get(parm);
             if (type==null)
                 throw new InvalidSqlParameter(parm, fields);
+            Map<Integer, SqlParam> map = new HashMap<>();
+            map.put(1, new SqlParam(parm, type));   // mutable map required
             if (type.isScalar()){
-                return new SqlStatement(text.substring(0, ixCol)+"?", Map.of(1, new SqlParam(parm, type)));
+                return new SqlStatement(text.substring(0, ixCol)+"?", map);
             } else {
-                return new SqlStatement(text.substring(0, ixCol)+"[#1]", Map.of(1, new SqlParam(parm, type)));
-            }
-        }
+                return new SqlStatement(text.substring(0, ixCol)+"[#1]", map);
+            }        }
         String parm = text.substring(ixCol + 1, ixEnd);
 
         class MapStore implements ApiStore<SqlStatement> {
