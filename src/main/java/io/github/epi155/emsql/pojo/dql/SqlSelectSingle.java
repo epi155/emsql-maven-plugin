@@ -1,18 +1,21 @@
 package io.github.epi155.emsql.pojo.dql;
 
 import io.github.epi155.emsql.api.*;
-import io.github.epi155.emsql.pojo.JdbcStatement;
-import io.github.epi155.emsql.pojo.SqlAction;
+import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.dql.ApiSelectFields;
+import io.github.epi155.emsql.commons.dql.ApiSelectSignature;
+import io.github.epi155.emsql.commons.dql.ApiSelectSimple;
+import io.github.epi155.emsql.commons.dql.DelegateSelectFields;
+import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
 
-import static io.github.epi155.emsql.pojo.Tools.cc;
-import static io.github.epi155.emsql.pojo.Tools.mc;
+import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlSelectSingle extends SqlAction
+public class SqlSelectSingle extends PojoAction
         implements ApiSelectFields, ApiSelectSignature, ApiSelectSimple, SelectSingleModel {
     protected final DelegateSelectFields delegateSelectFields;
     protected final DelegateSelectSignature delegateSelectSignature;
@@ -31,7 +34,7 @@ public class SqlSelectSingle extends SqlAction
         this.delegateSelectSimple = new DelegateSelectSimple(this);
     }
     @Override
-    public JdbcStatement sql(Map<String, SqlDataType> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateSelectFields.sql(fields);
     }
 

@@ -1,12 +1,12 @@
 package io.github.epi155.emsql.plugin;
 
 import io.github.epi155.emsql.api.CodeFactory;
+import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.MethodModel;
 import io.github.epi155.emsql.api.TypeModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,7 +31,7 @@ public class DaoClassConfig {
 
     private static final String DOT_JAVA = ".java";
 
-    public void create(MojoContext pc, CodeFactory factory) throws FileNotFoundException, MojoExecutionException {
+    public void create(MojoContext pc, CodeFactory factory) throws FileNotFoundException, InvalidQueryException {
         log.info("Creating {} ...", className);
         File srcMainJava = new File(pc.sourceDirectory);
         File pkgFolder = new File(srcMainJava, packageName.replace('.', File.separatorChar));
@@ -42,7 +42,8 @@ public class DaoClassConfig {
             StringWriter swCls = new StringWriter();
             IndentPrintWriter ipw = new IndentPrintWriter(4, swCls);
 
-            factory.createClass(ipw, className, methods, declare);
+            factory.createClass(ipw, className, methods, declare)
+                    .accept(pw);
 
             pw.print(swCls);
         }

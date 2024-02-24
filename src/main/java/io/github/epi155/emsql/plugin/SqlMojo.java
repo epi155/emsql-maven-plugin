@@ -1,7 +1,7 @@
 package io.github.epi155.emsql.plugin;
 
 import io.github.epi155.emsql.api.CodeFactory;
-import io.github.epi155.emsql.api.CodeProvider;
+import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.plugin.td.*;
 import io.github.epi155.emsql.plugin.td.dml.*;
 import io.github.epi155.emsql.plugin.td.dpl.TdCallProcedure;
@@ -63,6 +63,11 @@ public class SqlMojo extends AbstractMojo {
     @Setter
     private Boolean debugCode;
 
+    @Parameter(defaultValue = "POJO",
+            property = "maven.emsql.provider", required = true)
+    @Setter
+    private ProviderEnum provider;
+
     @Parameter(defaultValue = "false",
             property = "maven.emsql.java7", required = true)
     @Setter
@@ -71,7 +76,8 @@ public class SqlMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     @Setter
     private MavenProject project;
-    @Parameter(defaultValue = "${plugin}", readonly = true, required = true) @Setter
+    @Parameter(defaultValue = "${plugin}", readonly = true, required = true)
+    @Setter
     protected org.apache.maven.plugin.descriptor.PluginDescriptor plugin;
 
     /**
@@ -93,13 +99,12 @@ public class SqlMojo extends AbstractMojo {
     private boolean addTestCompileSourceRoot = false;
     private final Set<String> classLogbook = new HashSet<>();
 
-    public static final ThreadLocal<MapContext> mapContext = new ThreadLocal<>();
+    public static final ThreadLocal<MapContextImpl> mapContext = new ThreadLocal<>();
 
     @Override
     public void execute() throws MojoExecutionException {
         Logger.getLogger("org.yaml.snakeyaml.introspector").setLevel(Level.SEVERE);
 
-        CodeProvider provider = ProviderEnum.POJO;
         CodeFactory factory = provider.getInstance();
 
 //        Constructor c1 = new Constructor(SqlApi.class, new LoaderOptions());
@@ -149,7 +154,7 @@ public class SqlMojo extends AbstractMojo {
         }
     }
 
-    private void loadSqlApi(CodeFactory factory, Yaml yaml) throws IOException, MojoExecutionException {
+    private void loadSqlApi(CodeFactory factory, Yaml yaml) throws IOException, MojoExecutionException, InvalidQueryException {
         val pc = MojoContext.builder()
                 .sourceDirectory(generateDirectory.getPath())
                 .group(plugin.getGroupId())
@@ -178,7 +183,7 @@ public class SqlMojo extends AbstractMojo {
         log.info("Total methods ...: {}", pc.getNmMethods());
     }
 
-    private void generateApi(MojoContext pc, CodeFactory factory, DaoClassConfig api) throws MojoExecutionException, FileNotFoundException {
+    private void generateApi(MojoContext pc, CodeFactory factory, DaoClassConfig api) throws MojoExecutionException, FileNotFoundException, InvalidQueryException {
         val classFullName = api.getPackageName()+"."+api.getClassName();
         if (! classLogbook.add(classFullName)) {
             throw new MojoExecutionException("Class <" + classFullName + "> duplicated");

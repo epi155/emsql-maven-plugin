@@ -1,9 +1,5 @@
 package io.github.epi155.emsql.api;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
-import java.util.Map;
-
 public interface PerformModel {
     String getExecSql();
     Integer getTimeout();
@@ -16,5 +12,5 @@ public interface PerformModel {
     default OutputModel getOutput() { return null; }
 
 
-    void writeCode(PrintModel ipw, Map<String, SqlDataType> fields, String kPrg) throws MojoExecutionException ;
+    void writeCode(PrintModel ipw, String kPrg) throws InvalidQueryException ;
 }

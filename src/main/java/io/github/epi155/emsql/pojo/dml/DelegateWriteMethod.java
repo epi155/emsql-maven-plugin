@@ -1,9 +1,10 @@
 package io.github.epi155.emsql.pojo.dml;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.pojo.JdbcStatement;
-import io.github.epi155.emsql.pojo.SqlParam;
-import io.github.epi155.emsql.pojo.Tools;
+import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dml.ApiWriteMethod;
 
 import java.util.Map;
 

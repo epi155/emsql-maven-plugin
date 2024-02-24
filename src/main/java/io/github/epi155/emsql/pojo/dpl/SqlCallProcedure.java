@@ -1,23 +1,21 @@
 package io.github.epi155.emsql.pojo.dpl;
 
 import io.github.epi155.emsql.api.*;
-import io.github.epi155.emsql.pojo.JdbcStatement;
-import io.github.epi155.emsql.pojo.SqlAction;
-import io.github.epi155.emsql.pojo.Tools;
-import io.github.epi155.emsql.pojo.dql.ApiSelectSignature;
-import io.github.epi155.emsql.pojo.dql.DelegateCallSignature;
+import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dql.ApiSelectSignature;
+import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static io.github.epi155.emsql.pojo.Tools.mc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlCallProcedure extends SqlAction implements ApiSelectSignature, CallProcedureModel {
+public class SqlCallProcedure extends PojoAction implements ApiSelectSignature, CallProcedureModel {
     @Setter
     @Getter
     private InputModel input;
@@ -35,7 +33,7 @@ public class SqlCallProcedure extends SqlAction implements ApiSelectSignature, C
 
 
     @Override
-    public JdbcStatement sql(Map<String, SqlDataType> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         String nText = Tools.oneLine(getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
@@ -51,7 +49,7 @@ public class SqlCallProcedure extends SqlAction implements ApiSelectSignature, C
             return Tools.replacePlaceholder(nText, inpFields, outFields);
 
         } else {
-            throw new MojoExecutionException("Invalid query format: "+ getExecSql());
+            throw new InvalidQueryException("Invalid query format: "+ getExecSql());
         }
     }
 

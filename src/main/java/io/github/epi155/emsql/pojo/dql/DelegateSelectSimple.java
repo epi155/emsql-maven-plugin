@@ -1,8 +1,9 @@
 package io.github.epi155.emsql.pojo.dql;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.pojo.JdbcStatement;
-import io.github.epi155.emsql.pojo.SqlParam;
+import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.dql.ApiSelectSimple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

@@ -11,6 +11,7 @@ public class IndentPrintWriter implements PrintModel {
     private final PrintWriter pw;
     private final String tab;
     private int indent = 0;
+    private boolean firstComma;
 
     public IndentPrintWriter(int step, Writer writer) {
         this.tab = CharBuffer.allocate(step).toString().replace('\u0000', ' ');
@@ -68,8 +69,17 @@ public class IndentPrintWriter implements PrintModel {
     }
 
     @Override
+    public void commaReset() {
+        this.firstComma = true;
+    }
+
+    @Override
     public void commaLn() {
-        pw.println(",");
+        if (firstComma) {
+            firstComma = false;
+        } else {
+            pw.println(",");
+        }
     }
 
     @Override

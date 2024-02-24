@@ -1,20 +1,21 @@
 package io.github.epi155.emsql.pojo.dql;
 
 import io.github.epi155.emsql.api.*;
-import io.github.epi155.emsql.pojo.JdbcStatement;
-import io.github.epi155.emsql.pojo.SqlAction;
-import io.github.epi155.emsql.pojo.SqlParam;
-import io.github.epi155.emsql.pojo.Tools;
+import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dql.ApiSelectFields;
+import io.github.epi155.emsql.commons.dql.DelegateSelectFields;
+import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
 
-import static io.github.epi155.emsql.pojo.Tools.cc;
-import static io.github.epi155.emsql.pojo.Tools.mc;
+import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlCursorForSelect extends SqlAction implements ApiSelectFields, CursorForSelectModel {
+public class SqlCursorForSelect extends PojoAction implements ApiSelectFields, CursorForSelectModel {
     private final DelegateSelectFields delegateSelectFields;
     @Getter
     @Setter
@@ -32,7 +33,7 @@ public class SqlCursorForSelect extends SqlAction implements ApiSelectFields, Cu
         this.delegateSelectFields = new DelegateSelectFields(this);
     }
     @Override
-    public JdbcStatement sql(Map<String, SqlDataType> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateSelectFields.sql(fields);
     }
 

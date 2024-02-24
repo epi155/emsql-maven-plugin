@@ -1,23 +1,20 @@
 package io.github.epi155.emsql.pojo.dml;
 
-import io.github.epi155.emsql.api.DeleteBatchModel;
-import io.github.epi155.emsql.api.InputModel;
-import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
-import io.github.epi155.emsql.pojo.JdbcStatement;
-import io.github.epi155.emsql.pojo.SqlAction;
-import io.github.epi155.emsql.pojo.Tools;
+import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dml.ApiDelete;
+import io.github.epi155.emsql.commons.dml.DelegateDelete;
+import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static io.github.epi155.emsql.pojo.Tools.cc;
-import static io.github.epi155.emsql.pojo.Tools.mc;
+import static io.github.epi155.emsql.commons.Contexts.*;
 
-public class SqlDeleteBatch extends SqlAction implements ApiDelete, DeleteBatchModel {
+public class SqlDeleteBatch extends PojoAction implements ApiDelete, DeleteBatchModel {
     private final DelegateDelete delegateDelete;
     @Getter
     @Setter
@@ -31,7 +28,7 @@ public class SqlDeleteBatch extends SqlAction implements ApiDelete, DeleteBatchM
     }
 
     @Override
-    public JdbcStatement sql(Map<String, SqlDataType> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateDelete.proceed(fields);
     }
 

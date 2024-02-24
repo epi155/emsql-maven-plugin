@@ -18,4 +18,6 @@ public interface PrintModel {
     void commaLn();
 
     void closeParenthesisLn();
+
+    void commaReset();
 }

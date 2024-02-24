@@ -1,22 +1,19 @@
 package io.github.epi155.emsql.pojo.dml;
 
-import io.github.epi155.emsql.api.InputModel;
-import io.github.epi155.emsql.api.InsertBatchModel;
-import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
-import io.github.epi155.emsql.pojo.JdbcStatement;
-import io.github.epi155.emsql.pojo.SqlAction;
-import io.github.epi155.emsql.pojo.Tools;
+import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dml.ApiInsert;
+import io.github.epi155.emsql.commons.dml.DelegateInsert;
+import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
 
-import static io.github.epi155.emsql.pojo.Tools.cc;
-import static io.github.epi155.emsql.pojo.Tools.mc;
+import static io.github.epi155.emsql.commons.Contexts.*;
 
-public class SqlInsertBatch extends SqlAction implements ApiInsert, InsertBatchModel {
+public class SqlInsertBatch extends PojoAction implements ApiInsert, InsertBatchModel {
     private final DelegateInsert delegateInsert;
     @Setter
     @Getter
@@ -29,7 +26,7 @@ public class SqlInsertBatch extends SqlAction implements ApiInsert, InsertBatchM
         this.delegateInsert = new DelegateInsert(this);
     }
     @Override
-    public JdbcStatement sql(Map<String, SqlDataType> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateInsert.proceed(fields);
     }
     @Override

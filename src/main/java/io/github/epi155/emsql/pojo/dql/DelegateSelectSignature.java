@@ -1,10 +1,11 @@
 package io.github.epi155.emsql.pojo.dql;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.pojo.JdbcStatement;
-import io.github.epi155.emsql.pojo.Tools;
+import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dql.ApiSelectSignature;
 
-import static io.github.epi155.emsql.pojo.Tools.mc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
 public class DelegateSelectSignature {
     private final ApiSelectSignature api;

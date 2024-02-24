@@ -1,26 +1,25 @@
 package io.github.epi155.emsql.pojo.dml;
 
 import io.github.epi155.emsql.api.*;
-import io.github.epi155.emsql.pojo.JdbcStatement;
-import io.github.epi155.emsql.pojo.SqlAction;
-import io.github.epi155.emsql.pojo.SqlParam;
-import io.github.epi155.emsql.pojo.Tools;
-import io.github.epi155.emsql.pojo.dql.ApiSelectSignature;
+import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dql.ApiSelectSignature;
+import io.github.epi155.emsql.pojo.PojoAction;
 import io.github.epi155.emsql.pojo.dql.DelegateSelectSignature;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static io.github.epi155.emsql.pojo.Tools.cc;
-import static io.github.epi155.emsql.pojo.Tools.mc;
+import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelectSignature, InsertReturnGeneratedKeysModel {
+public class SqlInsertReturnGeneratedKeys extends PojoAction implements ApiSelectSignature, InsertReturnGeneratedKeysModel {
     private final DelegateSelectSignature delegateSelectSignature;
     @Setter
     @Getter
@@ -38,7 +37,7 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelect
             "^INSERT INTO (\\w+) \\((.*)\\) VALUES \\((.*)\\)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
-    public JdbcStatement sql(Map<String, SqlDataType> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         String nText = Tools.oneLine(getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
@@ -54,7 +53,7 @@ public class SqlInsertReturnGeneratedKeys extends SqlAction implements ApiSelect
             }
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {
-            throw new MojoExecutionException("Invalid query format: "+ getExecSql());
+            throw new InvalidQueryException("Invalid query format: "+ getExecSql());
         }
     }
 

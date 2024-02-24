@@ -1,10 +1,9 @@
 package io.github.epi155.emsql.api;
 
-import io.github.epi155.emsql.plugin.MapContext;
-import org.apache.maven.plugin.MojoExecutionException;
-
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public interface CodeFactory {
     MethodModel newMethodModel();
@@ -27,7 +26,7 @@ public interface CodeFactory {
     CallProcedureModel newCallProcedureModel();
     InlineProcedureModel newInlineProcedureModel();
 
-    void createClass(PrintModel pw, String className, List<MethodModel> methods, Map<String, TypeModel> declare) throws MojoExecutionException;
+    Consumer<PrintWriter> createClass(PrintModel pw, String className, List<MethodModel> methods, Map<String, TypeModel> declare) throws InvalidQueryException;
 
     TypeModel getInstance(String value, MapContext mapContext);
 

@@ -1,22 +1,19 @@
 package io.github.epi155.emsql.pojo.dml;
 
-import io.github.epi155.emsql.api.InputModel;
-import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
-import io.github.epi155.emsql.api.UpdateBatchModel;
-import io.github.epi155.emsql.pojo.JdbcStatement;
-import io.github.epi155.emsql.pojo.SqlAction;
-import io.github.epi155.emsql.pojo.Tools;
+import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dml.ApiUpdate;
+import io.github.epi155.emsql.commons.dml.DelegateUpdate;
+import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.Map;
 
-import static io.github.epi155.emsql.pojo.Tools.cc;
-import static io.github.epi155.emsql.pojo.Tools.mc;
+import static io.github.epi155.emsql.commons.Contexts.*;
 
-public class SqlUpdateBatch extends SqlAction implements ApiUpdate, UpdateBatchModel {
+public class SqlUpdateBatch extends PojoAction implements ApiUpdate, UpdateBatchModel {
     private final DelegateUpdate delegateUpdate;
     @Getter
     @Setter
@@ -30,7 +27,7 @@ public class SqlUpdateBatch extends SqlAction implements ApiUpdate, UpdateBatchM
     }
 
     @Override
-    public JdbcStatement sql(Map<String, SqlDataType> fields) throws MojoExecutionException {
+    public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateUpdate.proceed(fields);
     }
 

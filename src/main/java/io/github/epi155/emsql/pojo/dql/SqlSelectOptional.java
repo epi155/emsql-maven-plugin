@@ -2,10 +2,10 @@ package io.github.epi155.emsql.pojo.dql;
 
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SelectOptionalModel;
-import io.github.epi155.emsql.pojo.JdbcStatement;
+import io.github.epi155.emsql.commons.JdbcStatement;
 
-import static io.github.epi155.emsql.pojo.Tools.cc;
-import static io.github.epi155.emsql.pojo.Tools.mc;
+import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
 public class SqlSelectOptional extends SqlSelectSingle implements SelectOptionalModel {
 

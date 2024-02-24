@@ -1,6 +1,7 @@
 package io.github.epi155.esql.test;
 
 import io.github.epi155.emsql.plugin.SqlMojo;
+import io.github.epi155.emsql.provider.ProviderEnum;
 import lombok.SneakyThrows;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -66,6 +67,7 @@ class TestMojo {
         mojo.setJava7(true);
         mojo.setConfigDirectory(new File("src/test/resources"));
         mojo.setModules(MODULES);
+        mojo.setProvider(ProviderEnum.POJO);
 
 
         File pomFile = new File("pom.xml");
@@ -91,6 +93,7 @@ class TestMojo {
         mojo.setJava7(false);
         mojo.setConfigDirectory(new File("src/test/resources"));
         mojo.setModules(MODULES);
+        mojo.setProvider(ProviderEnum.SPRING);
 
 
         File pomFile = new File("pom.xml");
