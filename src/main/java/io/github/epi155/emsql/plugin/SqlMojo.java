@@ -1,8 +1,8 @@
 package io.github.epi155.emsql.plugin;
 
-import io.github.epi155.emsql.plugin.sql.SqlApi;
-import io.github.epi155.emsql.plugin.td.TdProgrammingModeEnum;
-import io.github.epi155.emsql.plugin.td.TdSqlEnum;
+import io.github.epi155.emsql.api.CodeFactory;
+import io.github.epi155.emsql.api.CodeProvider;
+import io.github.epi155.emsql.plugin.td.*;
 import io.github.epi155.emsql.plugin.td.dml.*;
 import io.github.epi155.emsql.plugin.td.dpl.TdCallProcedure;
 import io.github.epi155.emsql.plugin.td.dpl.TdInlineProcedure;
@@ -10,6 +10,7 @@ import io.github.epi155.emsql.plugin.td.dql.TdCursorForSelect;
 import io.github.epi155.emsql.plugin.td.dql.TdSelectList;
 import io.github.epi155.emsql.plugin.td.dql.TdSelectOptional;
 import io.github.epi155.emsql.plugin.td.dql.TdSelectSingle;
+import io.github.epi155.emsql.provider.ProviderEnum;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -98,30 +99,37 @@ public class SqlMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         Logger.getLogger("org.yaml.snakeyaml.introspector").setLevel(Level.SEVERE);
 
+        CodeProvider provider = ProviderEnum.POJO;
+        CodeFactory factory = provider.getInstance();
+
 //        Constructor c1 = new Constructor(SqlApi.class, new LoaderOptions());
         Constructor c1 = new MyConstructor(mapContext);
-        c1.addTypeDescription(new TdSqlEnum());
         c1.addTypeDescription(new TdProgrammingModeEnum());
-        c1.addTypeDescription(new TdSelectOptional());
-        c1.addTypeDescription(new TdSelectSingle());
-        c1.addTypeDescription(new TdSelectList());
-        c1.addTypeDescription(new TdCursorForSelect());
-        c1.addTypeDescription(new TdDelete());
-        c1.addTypeDescription(new TdUpdate());
-        c1.addTypeDescription(new TdInsert());
-        c1.addTypeDescription(new TdDeleteBatch());
-        c1.addTypeDescription(new TdUpdateBatch());
-        c1.addTypeDescription(new TdInsertBatch());
-        c1.addTypeDescription(new TdInsertReturnGeneratedKeys());
-        c1.addTypeDescription(new TdCallProcedure());
-        c1.addTypeDescription(new TdInlineProcedure());
+        c1.addTypeDescription(new TdType(factory));
+        c1.addTypeDescription(new TdMethod(factory));
+        c1.addTypeDescription(new TdInput(factory));
+        c1.addTypeDescription(new TdOutput(factory));
+        c1.addTypeDescription(new TdOutFields(factory));
+        c1.addTypeDescription(new TdSelectOptional(factory));
+        c1.addTypeDescription(new TdSelectSingle(factory));
+        c1.addTypeDescription(new TdSelectList(factory));
+        c1.addTypeDescription(new TdCursorForSelect(factory));
+        c1.addTypeDescription(new TdDelete(factory));
+        c1.addTypeDescription(new TdUpdate(factory));
+        c1.addTypeDescription(new TdInsert(factory));
+        c1.addTypeDescription(new TdDeleteBatch(factory));
+        c1.addTypeDescription(new TdUpdateBatch(factory));
+        c1.addTypeDescription(new TdInsertBatch(factory));
+        c1.addTypeDescription(new TdInsertReturnGeneratedKeys(factory));
+        c1.addTypeDescription(new TdCallProcedure(factory));
+        c1.addTypeDescription(new TdInlineProcedure(factory));
 //        c1.addTypeDescription(new TdCursorForUpdate());   // da rivedere
 
         Yaml apiYaml = new Yaml(c1);
 
         try {
             /*-----------------*/
-            loadSqlApi(apiYaml);
+            loadSqlApi(factory, apiYaml);
             /*-----------------*/
             setupMavenPaths(generateDirectory);
 
@@ -141,8 +149,8 @@ public class SqlMojo extends AbstractMojo {
         }
     }
 
-    private void loadSqlApi(Yaml yaml) throws IOException, MojoExecutionException {
-        val cx = MojoContext.builder()
+    private void loadSqlApi(CodeFactory factory, Yaml yaml) throws IOException, MojoExecutionException {
+        val pc = MojoContext.builder()
                 .sourceDirectory(generateDirectory.getPath())
                 .group(plugin.getGroupId())
                 .artifact(plugin.getArtifactId())
@@ -159,25 +167,25 @@ public class SqlMojo extends AbstractMojo {
                 continue;
             }
             try (InputStream inputStream = Files.newInputStream(apiFile.toPath())) {
-                SqlApi api = yaml.load(inputStream);
+                DaoClassConfig api = yaml.load(inputStream);
                 makeDirectory(generateDirectory, api.getPackageName());
                 /*----------------*/
-                generateApi(cx, api);
+                generateApi(pc, factory, api);
                 /*----------------*/
             }
         }
-        log.info("Total classes ...: {}", cx.getNmClasses());
-        log.info("Total methods ...: {}", cx.getNmMethods());
+        log.info("Total classes ...: {}", pc.getNmClasses());
+        log.info("Total methods ...: {}", pc.getNmMethods());
     }
 
-    private void generateApi(MojoContext cx, SqlApi api) throws MojoExecutionException, FileNotFoundException {
+    private void generateApi(MojoContext pc, CodeFactory factory, DaoClassConfig api) throws MojoExecutionException, FileNotFoundException {
         val classFullName = api.getPackageName()+"."+api.getClassName();
         if (! classLogbook.add(classFullName)) {
             throw new MojoExecutionException("Class <" + classFullName + "> duplicated");
         }
-        /*-----------*/
-        api.create(cx);
-        /*-----------*/
+        /*--------------------*/
+        api.create(pc, factory);
+        /*--------------------*/
     }
 
 public void makeDirectory(@NotNull File base, @Nullable String packg) throws MojoExecutionException {

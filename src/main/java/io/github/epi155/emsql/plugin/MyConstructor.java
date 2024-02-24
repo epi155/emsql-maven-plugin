@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.plugin;
 
-import io.github.epi155.emsql.plugin.sql.SqlApi;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.MappingNode;
@@ -11,7 +10,7 @@ public class MyConstructor extends Constructor {
     private final ThreadLocal<MapContext> mapContext;
 
     public MyConstructor(ThreadLocal<MapContext> mapContext) {
-        super(SqlApi.class, new LoaderOptions());
+        super(DaoClassConfig.class, new LoaderOptions());
         this.mapContext = mapContext;
     }
 

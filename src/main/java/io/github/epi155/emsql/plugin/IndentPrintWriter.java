@@ -1,10 +1,12 @@
 package io.github.epi155.emsql.plugin;
 
+import io.github.epi155.emsql.api.PrintModel;
+
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.CharBuffer;
 
-public class IndentPrintWriter {
+public class IndentPrintWriter implements PrintModel {
     private static final String ELSE = "} else {";
     private final PrintWriter pw;
     private final String tab;
@@ -15,11 +17,13 @@ public class IndentPrintWriter {
         this.pw = new PrintWriter(writer);
     }
 
-    public void printf(String format, Object...objects) {
+    @Override
+    public void printf(String format, Object... objects) {
         indent();
         pw.printf(format, objects);
     }
-    public void putf(String format, Object...objects) {
+    @Override
+    public void putf(String format, Object... objects) {
         pw.printf(format, objects);
     }
 
@@ -29,17 +33,21 @@ public class IndentPrintWriter {
         }
     }
 
+    @Override
     public void more() {
         indent++;
     }
 
+    @Override
     public void println() {
         pw.println();
     }
 
+    @Override
     public void less() {
         if (indent>0) indent--;
     }
+    @Override
     public void ends() {
         if (indent>0) {
             indent--;
@@ -47,6 +55,7 @@ public class IndentPrintWriter {
             pw.println("}");
         }
     }
+    @Override
     public void orElse() {
         if (indent>0) {
             indent--;
@@ -58,10 +67,12 @@ public class IndentPrintWriter {
         }
     }
 
+    @Override
     public void commaLn() {
         pw.println(",");
     }
 
+    @Override
     public void closeParenthesisLn() {
         pw.println(")");
     }

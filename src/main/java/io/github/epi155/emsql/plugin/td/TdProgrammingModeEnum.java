@@ -1,6 +1,6 @@
 package io.github.epi155.emsql.plugin.td;
 
-import io.github.epi155.emsql.plugin.ProgrammingModeEnum;
+import io.github.epi155.emsql.api.ProgrammingModeEnum;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;

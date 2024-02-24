@@ -1,6 +1,6 @@
 package io.github.epi155.emsql.plugin;
 
-import io.github.epi155.emsql.plugin.sql.SqlKind;
+import io.github.epi155.emsql.api.TypeModel;
 
 import java.util.Map;
 
@@ -11,10 +11,10 @@ public class MapContext {
         this.mapping = mapping;
     }
 
-    public SqlKind get(String name) {
+    public TypeModel get(String name) {
         Object kind = mapping.get(name);
-        if (kind instanceof SqlKind)
-            return (SqlKind) kind;
+        if (kind instanceof TypeModel)
+            return (TypeModel) kind;
         return null;
     }
 }
