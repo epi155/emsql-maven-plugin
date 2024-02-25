@@ -68,7 +68,7 @@ The corresponding SPRING code is obtained by replacing the static class with its
 POJO client code as an example
 
 ~~~java
-	XUser user = DaoU01.findUser(c, 1, XUser::new);
+    XUser user = DaoU01.findUser(c, 1, XUser::new);
 ~~~
 
 in the SPRING version it becomes
@@ -76,5 +76,5 @@ in the SPRING version it becomes
 ~~~java
     @Autowired DaoU01 daoU01;
     ...
-	XUser user = daoU01.findUser(1, XUser::new);
+    XUser user = daoU01.findUser(1, XUser::new);
 ~~~
