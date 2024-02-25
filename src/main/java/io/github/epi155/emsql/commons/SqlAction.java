@@ -108,14 +108,14 @@ public abstract class SqlAction {
         } else if (1<=nSize && nSize<= IMAX) {
             AtomicInteger k = new AtomicInteger();
             jdbc.getNMap().forEach((name,type) -> {
-                ipw.printf("        %s %s", type.getWrapper(), name);
+                ipw.printf("        final %s %s", type.getWrapper(), name);
                 if (k.incrementAndGet() < nSize) ipw.commaLn();
             });
         } else {
             if (mc.isInputDelegate()) {
-                ipw.printf("        DI i");
+                ipw.printf("        final DI i");
             } else {
-                ipw.printf("        I i");
+                ipw.printf("        final I i");
             }
         }
     }

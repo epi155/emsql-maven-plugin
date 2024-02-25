@@ -56,6 +56,7 @@ public class SqlInsertBatch extends SpringAction implements ApiInsert, InsertBat
         ipw.printf("        throws SQLException {%n");
         ipw.more();
         setInput(ipw, jdbc);
+        debugAction(ipw, kPrg, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
         ipw.less();

@@ -57,6 +57,7 @@ public class SqlDeleteBatch extends PojoAction implements ApiDelete, DeleteBatch
         ipw.printf("        throws SQLException {%n");
         ipw.more();
         setInput(ipw, jdbc);
+        debugAction(ipw, kPrg, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
         ipw.less();

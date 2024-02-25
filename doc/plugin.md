@@ -23,6 +23,7 @@ Plugin with all parameters with default values:
                 <java7>false</java7>
                 <addCompileSourceRoot>true</addCompileSourceRoot>
                 <addTestCompileSourceRoot>false</addTestCompileSourceRoot>
+                <provider>POJO</provider>
             </configuration>
         </execution>
     </executions>
@@ -54,3 +55,26 @@ is `${project.build.resources[0].directory}`, ie **`src/main/resources`**
 `addTestCompileSourceRoot` or property `maven.emsql.add-test-compile-source-root`
 : If set to true, adds target directory as a test compile source root of this Maven project. Default value is **false**.
 
+`provider` or property `maven.emsql.provider`
+: Indicates the java code generation module.
+The default value (**POJO**) generates utility classes with static methods that require the connection as a parameter.
+The alternative value (SPRING) generates spring-bean classes with instance methods that do not require connection as a parameter.
+The connection is retrieved from the spring context. Transactions are also managed via spring.
+Of course in this case some spring libraries are required for compilation.
+If using springboot `spring-boot-starter-data-jdbc` is required, if simply using springframework `spring-jdbc` (and `spring-context`) is required.
+In the following documentation only code examples generated with the POJO module will be shown.
+The corresponding SPRING code is obtained by replacing the static class with its instance and removing the connection parameter.
+
+POJO client code as an example
+
+~~~java
+	XUser user = DaoU01.findUser(c, 1, XUser::new);
+~~~
+
+in the SPRING version it becomes
+
+~~~java
+    @Autowired DaoU01 daoU01;
+    ...
+	XUser user = daoU01.findUser(1, XUser::new);
+~~~

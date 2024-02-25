@@ -59,7 +59,7 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
 
         cc.add("org.springframework.transaction.annotation.Transactional");
         cc.add("org.springframework.transaction.annotation.Propagation");
-        ipw.printf("@Transactional(readonly=true, propagation=Propagation.MANDATORY)%n");
+        ipw.printf("@Transactional(readOnly=true, propagation=Propagation.MANDATORY)%n");
         ipw.printf("public ");
         declareGenerics(ipw, cName, jdbc.getTKeys());
         if (oSize == 1) {
@@ -154,7 +154,7 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         String cName = Tools.capitalize(name);
 
         cc.add("org.springframework.transaction.annotation.Transactional");
-        ipw.printf("@Transactional(readonly=true)%n");
+        ipw.printf("@Transactional(readOnly=true)%n");
         ipw.printf("public ");
         declareGenerics(ipw, cName, jdbc.getTKeys());
 
