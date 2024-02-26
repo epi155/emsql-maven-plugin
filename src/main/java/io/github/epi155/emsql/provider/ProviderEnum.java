@@ -6,16 +6,17 @@ import io.github.epi155.emsql.pojo.PojoFactory;
 import io.github.epi155.emsql.spring.SpringFactory;
 
 public enum ProviderEnum implements CodeProvider {
-    POJO{
+    POJO {
         @Override
         public CodeFactory getInstance() {
             return new PojoFactory();
         }
     },
-    SPRING{
+    SPRING {
         @Override
         public CodeFactory getInstance() {
             return new SpringFactory();
         }
     },
 }
+

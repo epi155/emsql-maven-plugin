@@ -1,6 +1,7 @@
 package io.github.epi155.emsql.plugin;
 
 import io.github.epi155.emsql.api.CodeFactory;
+import io.github.epi155.emsql.api.CodeProvider;
 import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.plugin.td.*;
 import io.github.epi155.emsql.plugin.td.dml.*;
@@ -31,11 +32,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.nio.file.ProviderNotFoundException;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Mojo(name = "generate",
         defaultPhase = LifecyclePhase.GENERATE_SOURCES,
@@ -63,10 +64,12 @@ public class SqlMojo extends AbstractMojo {
     @Setter
     private Boolean debugCode;
 
-    @Parameter(defaultValue = "POJO",
-            property = "maven.emsql.provider", required = true)
+    /**
+     * Set codeGenerator provider. Available values are: <b>Pojo</b>, <b>Spring</b> (case insensitive)
+     */
+    @Parameter(property = "maven.emsql.provider")
     @Setter
-    private ProviderEnum provider;
+    private String provider;
 
     @Parameter(defaultValue = "false",
             property = "maven.emsql.java7", required = true)
@@ -105,7 +108,8 @@ public class SqlMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         Logger.getLogger("org.yaml.snakeyaml.introspector").setLevel(Level.SEVERE);
 
-        CodeFactory factory = provider.getInstance();
+        CodeProvider codeProvider = getProvider();
+        CodeFactory factory = codeProvider.getInstance();
 
 //        Constructor c1 = new Constructor(SqlApi.class, new LoaderOptions());
         Constructor c1 = new MyConstructor(mapContext);
@@ -143,6 +147,18 @@ public class SqlMojo extends AbstractMojo {
             log.error(e.toString());
             throw new MojoExecutionException("Failed to execute plugin", e);
         }
+    }
+
+    private CodeProvider getProvider() {
+        if (provider == null)
+            return ProviderEnum.POJO;
+        if (provider.equalsIgnoreCase(ProviderEnum.POJO.name()))
+            return ProviderEnum.POJO;
+        if (provider.equalsIgnoreCase(ProviderEnum.SPRING.name()))
+            return ProviderEnum.SPRING;
+        throw new ProviderNotFoundException("Provider "+provider+" not found. Available providers: "+
+                Arrays.stream(ProviderEnum.values()).map(Enum::name).collect(Collectors.joining(","))
+        );
     }
 
     private void setupMavenPaths(File srcMain) {

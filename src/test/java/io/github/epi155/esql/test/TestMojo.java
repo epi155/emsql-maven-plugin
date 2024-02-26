@@ -67,7 +67,7 @@ class TestMojo {
         mojo.setJava7(true);
         mojo.setConfigDirectory(new File("src/test/resources"));
         mojo.setModules(MODULES);
-        mojo.setProvider(ProviderEnum.POJO);
+        mojo.setProvider(ProviderEnum.POJO.name());
 
 
         File pomFile = new File("pom.xml");
@@ -93,7 +93,7 @@ class TestMojo {
         mojo.setJava7(false);
         mojo.setConfigDirectory(new File("src/test/resources"));
         mojo.setModules(MODULES);
-        mojo.setProvider(ProviderEnum.SPRING);
+        mojo.setProvider(ProviderEnum.SPRING.name());
 
 
         File pomFile = new File("pom.xml");
