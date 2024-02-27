@@ -29,6 +29,8 @@ The currently managed field types are shown in the following table:
 |-----------|---------|---------|
 |BOOL<br>BOOLEAN    | BOOLEAN | boolean |
 |BOOL?<br>BOOLEAN?  | BOOLEAN | Boolean |
+|BYTE  |TINYINT | byte   |
+|BYTE? |TINYINT | Byte   |
 |SHORT<br>SMALLINT  |SMALLINT | short   |
 |SHORT?<br>SMALLINT?|SMALLINT | Short   |
 |INT<br>INTEGER     | INTEGER | int     |
@@ -51,6 +53,8 @@ The currently managed field types are shown in the following table:
 |TIMESTAMP?    | TIMESTAMP | Timestamp     |
 |TIME          | TIME      | Time          |
 |TIME?         | TIME      | Time          |
+|NUMBOOL       | TINYINT   | boolean       |
+|NUMBOOL?      | TINYINT   | Boolean       |
 |LOCALDATE     | DATE      | LocalDate     |
 |LOCALDATE?    | DATE      | LocalDate     |
 |LOCALDATETIME | TIMESTAMP | LocalDateTime |

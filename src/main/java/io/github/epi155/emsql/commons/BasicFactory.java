@@ -18,6 +18,12 @@ public abstract class BasicFactory implements CodeFactory {
             new AbstractMap.SimpleEntry<>("BOOL?", SqlEnum.BooleanNil),
             new AbstractMap.SimpleEntry<>("BOOLEAN?", SqlEnum.BooleanNil),
 
+            new AbstractMap.SimpleEntry<>("NUMBOOL", SqlEnum.NumBoolStd),
+            new AbstractMap.SimpleEntry<>("NUMBOOL?", SqlEnum.NumBoolNil),
+
+            new AbstractMap.SimpleEntry<>("BYTE", SqlEnum.ByteStd),
+            new AbstractMap.SimpleEntry<>("BYTE?", SqlEnum.ByteNil),
+
             new AbstractMap.SimpleEntry<>("SHORT", SqlEnum.ShortStd),
             new AbstractMap.SimpleEntry<>("SMALLINT", SqlEnum.ShortStd),
             new AbstractMap.SimpleEntry<>("SHORT?", SqlEnum.ShortNil),
@@ -35,7 +41,6 @@ public abstract class BasicFactory implements CodeFactory {
             new AbstractMap.SimpleEntry<>("BIGINT?", SqlEnum.LongNil),
             new AbstractMap.SimpleEntry<>("BIGINTEGER?", SqlEnum.LongNil),
             new AbstractMap.SimpleEntry<>("LONG?", SqlEnum.LongNil),
-            new AbstractMap.SimpleEntry<>("BIGSERIAL?", SqlEnum.LongNil),
 
             new AbstractMap.SimpleEntry<>("NUMERIC", SqlEnum.NumericStd),
             new AbstractMap.SimpleEntry<>("NUMBER", SqlEnum.NumericStd),
