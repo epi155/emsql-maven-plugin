@@ -153,6 +153,7 @@ public abstract class SqlAction {
         ipw.printf("        throws SQLException {%n");
     }
     public void fetch(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap) {
+        val eol = new Eol(mc.oSize());
         if (oMap.size() > 1) {
             if (mc.isOutputReflect()) {
                 ipw.printf("O o = so.get();%n");
@@ -163,8 +164,34 @@ public abstract class SqlAction {
                 ipw.printf("O o = so.get();%n");
                 oMap.forEach((k,s) -> s.fetchParameter(ipw, k));
             }
+            if (cc.isDebug()) {
+                ipw.printf("if (log.isTraceEnabled()) {%n");
+                ipw.more();
+                ipw.printf("SqlTrace.showResult(%n");
+                ipw.more();
+                oMap.forEach((k,v) -> {
+                    ipw.printf("new SqlArg(\"%s\", \"%s\", o%d)%s%n",
+                            v.getName(), v.getType().getPrimitive(), k, eol.nl());
+                });
+                ipw.less();
+                ipw.printf(");%n");
+                ipw.ends();
+            }
         } else {
             oMap.forEach((k,v) -> v.fetchValue(ipw, k));
+            if (cc.isDebug()) {
+                ipw.printf("if (log.isTraceEnabled()) {%n");
+                ipw.more();
+                ipw.printf("SqlTrace.showResult(%n");
+                ipw.more();
+                oMap.forEach((k,v) -> {
+                    ipw.printf("new SqlArg(\"%s\", \"%s\", o)%s%n",
+                            v.getName(), v.getType().getPrimitive(), eol.nl());
+                });
+                ipw.less();
+                ipw.printf(");%n");
+                ipw.ends();
+            }
         }
     }
     public void getOutput(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap) {
@@ -500,34 +527,38 @@ public abstract class SqlAction {
 
     public void debugAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
         if (cc.isDebug()) {
+            cc.add("io.github.epi155.emsql.runtime.SqlArg");
             int nSize = mc.nSize();
             ipw.printf("if (log.isDebugEnabled()) {%n");
             ipw.more();
             ipw.printf("SqlTrace.showQuery(Q_%s, ", kPrg);
             cc.traceParameterBegin(ipw);
             ipw.more();
-            ipw.printf("Object[] parms =  new Object[]{%n");
+            ipw.printf("SqlArg[] args =  new SqlArg[]{%n");
             ipw.more();
             val eol = new Eol(mc.iSize());
             if ( nSize <= IMAX) {
                 jdbcStatement.getIMap().forEach((k,v) ->
-                        ipw.printf("%s%s%n", v.getName(), eol.nl()));
+                        ipw.printf("new SqlArg(\"%1$s\", \"%2$s\", %1$s)%3$s%n", v.getName(), v.getType().getPrimitive(), eol.nl()));
             } else {
                 Map<Integer, SqlParam> iMap = jdbcStatement.getIMap();
                 if (mc.isInputReflect()) {
                     iMap.forEach((k,v) ->
-                            ipw.printf("EmSQL.get(i, \"%s\", %s.class)%s%n", v.getName(), v.getType().getContainer(), eol.nl()));
+                            ipw.printf("new SqlArg(\"%1$s\", \"%2$s\", EmSQL.get(i, \"%1$s\", %3$s.class))%4$s%n",
+                                    v.getName(), v.getType().getPrimitive(), v.getType().getContainer(), eol.nl()));
                 } else if (mc.isInputDelegate()) {
                     iMap.forEach((k,v) ->
-                            ipw.printf("i.%s.get()%s%n", v.getName(), eol.nl()));
+                            ipw.printf("new SqlArg(\"%1$s\", \"%2$s\", i.%1$s.get())%3$s%n",
+                                    v.getName(), v.getType().getPrimitive(), eol.nl()));
                 } else {
                     iMap.forEach((k,v) ->
-                            ipw.printf("i.%s()%s%n", getterOf(v), eol.nl()));
+                            ipw.printf("new SqlArg(\"%s\", \"%s\", i.%s())%s%n",
+                                    v.getName(), v.getType().getPrimitive(), getterOf(v), eol.nl()));
                 }
             }
             ipw.less();
             ipw.printf("};%n");
-            ipw.printf("return parms;%n");
+            ipw.printf("return args;%n");
             cc.traceParameterEnds(ipw);
             ipw.printf("});%n");
             ipw.ends();

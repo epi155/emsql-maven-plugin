@@ -161,6 +161,7 @@ public class SqlCursorForSelect extends PojoAction implements ApiSelectFields, C
         setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
+        debugAction(ipw, kPrg, jdbc);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
         ipw.printf("while (rs.next()) {%n");

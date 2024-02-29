@@ -22,8 +22,6 @@ public interface SqlDataType extends TypeModel {
      * overridden for standard data types
      */
     default void rsGetValue(PrintModel ipw, int k) { throw new IllegalStateException(); }
-    default void rsGet(PrintModel ipw, int k, String target) { throw new IllegalStateException(); }
-    default void rsPull(PrintModel ipw, Integer k, String name) { throw new IllegalStateException(); }
     default void registerOut(PrintModel ipw, int k) { throw new IllegalStateException(); }
     default void csGetValue(PrintModel ipw, int k) { throw new IllegalStateException(); }
     default void csGet(PrintModel ipw, int k, String setter) { throw new IllegalStateException(); }

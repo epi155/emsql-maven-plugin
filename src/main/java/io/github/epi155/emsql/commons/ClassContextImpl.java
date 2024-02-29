@@ -90,10 +90,10 @@ public class ClassContextImpl implements ClassContext {
     public void traceParameterBegin(PrintModel ipw) {
         if (java7) {
             importSet.add(RUNTIME_SUPPLIER);
-            ipw.putf("new ESupplier<Object[]>() {%n");
+            ipw.putf("new ESupplier<SqlArg[]>() {%n");
             ipw.more();
             ipw.printf("@Override%n");
-            ipw.printf("public Object[] get() {%n");
+            ipw.printf("public SqlArg[] get() {%n");
         } else {
             ipw.putf("() -> {%n");
         }
