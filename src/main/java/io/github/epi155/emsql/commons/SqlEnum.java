@@ -98,11 +98,7 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void csGetValue(PrintModel ipw, int k) {
-            ipw.printf("return ps.getByte(%d)==1;%n", k);
-        }
-        @Override
-        public void csGet(PrintModel ipw, int k, String setter) {
-            ipw.printf("o.%s(ps.getByte(%d)==1);%n", setter, k);
+            ipw.putf("ps.getByte(%d)==1", k);
         }
     },
     NumBoolNil("Boolean", "TINYINT", "Boolean"){
@@ -113,9 +109,7 @@ public enum SqlEnum implements SqlDataType {
         public void psSet(PrintModel ipw, String source) {
             ipw.printf("EmSQL.setNumBool(ps, ++ki, %s);%n", source);
         }
-        public  void rsGet(PrintModel ipw, int k, String target) {
-            ipw.printf("%s(EmSQL.getNumBool(rs,%d));%n", target, k);
-        }
+
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("EmSQL.getNumBool(rs,%d)", k);
         }
@@ -123,10 +117,7 @@ public enum SqlEnum implements SqlDataType {
             ipw.printf("EmSQL.setNumBool(ps, ++ki, EmSQL.get(%s, \"%s\", Boolean.class));%n", orig, name);
         }
         public void csGetValue(PrintModel ipw, int k) {
-            ipw.printf("return EmSQL.getNumBool(ps,%d)%n", k);
-        }
-        public void csGet(PrintModel ipw, int k, String setter) {
-            ipw.printf("o.%s(EmSQL.getNumBool(ps, %d));%n", setter, k);
+            ipw.putf("EmSQL.getNumBool(ps,%d)", k);
         }
     },
     LocalDateStd("Date", "DATE", "LocalDate") {
@@ -148,11 +139,7 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void csGetValue(PrintModel ipw, int k) {
-            ipw.printf("return ps.getDate(%d).toLocalDate();%n", k);
-        }
-        @Override
-        public void csGet(PrintModel ipw, int k, String setter) {
-            ipw.printf("o.%s(ps.getDate(%d).toLocalDate());%n", setter, k);
+            ipw.putf("ps.getDate(%d).toLocalDate()", k);
         }
     },
     LocalDateNil("Date", "DATE", "LocalDate") {
@@ -174,11 +161,7 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void csGetValue(PrintModel ipw, int k) {
-            ipw.printf("return J8Time.toLocalDate(ps.getDate(%d));%n", k);
-        }
-        @Override
-        public void csGet(PrintModel ipw, int k, String setter) {
-            ipw.printf("o.%s(J8Time.toLocalDate(ps.getDate(%d)));%n", setter, k);
+            ipw.putf("J8Time.toLocalDate(ps.getDate(%d))", k);
         }
     },
     LocalDateTimeStd("Timestamp", "TIMESTAMP", "LocalDateTime") {
@@ -200,11 +183,7 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void csGetValue(PrintModel ipw, int k) {
-            ipw.printf("return ps.getTimestamp(%d).toLocalDateTime();%n", k);
-        }
-        @Override
-        public void csGet(PrintModel ipw, int k, String setter) {
-            ipw.printf("o.%s(ps.getTimestamp(%d).toLocalDateTime());%n", setter, k);
+            ipw.putf("ps.getTimestamp(%d).toLocalDateTime()", k);
         }
     },
     LocalDateTimeNil("Timestamp", "TIMESTAMP", "LocalDateTime") {
@@ -226,11 +205,7 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void csGetValue(PrintModel ipw, int k) {
-            ipw.printf("return J8Time.toLocalDateTime(ps.getTimestamp(%d));%n", k);
-        }
-        @Override
-        public void csGet(PrintModel ipw, int k, String setter) {
-            ipw.printf("o.%s(J8Time.toLocalDateTime(ps.getTimestamp(%d)));%n", setter, k);
+            ipw.putf("J8Time.toLocalDateTime(ps.getTimestamp(%d))", k);
         }
     },
     LocalTimeStd("Time", "TIME", "LocalTime") {
@@ -252,11 +227,7 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void csGetValue(PrintModel ipw, int k) {
-            ipw.printf("return ps.getTime(%d).toLocalTime();%n", k);
-        }
-        @Override
-        public void csGet(PrintModel ipw, int k, String setter) {
-            ipw.printf("o.%s(ps.getTime(%d).toLocalTime());%n", setter, k);
+            ipw.putf("ps.getTime(%d).toLocalTime()", k);
         }
     },
     LocalTimeNil("Time", "TIME", "LocalTime") {
@@ -278,11 +249,7 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void csGetValue(PrintModel ipw, int k) {
-            ipw.printf("return J8Time.toLocalTime(ps.getTime(%d));%n", k);
-        }
-        @Override
-        public void csGet(PrintModel ipw, int k, String setter) {
-            ipw.printf("o.%s(J8Time.toLocalTime(ps.getTime(%d)));%n", setter, k);
+            ipw.putf("J8Time.toLocalTime(ps.getTime(%d))", k);
         }
     };
     private final String jdbc;
@@ -342,18 +309,10 @@ public enum SqlEnum implements SqlDataType {
     }
     public void csGetValue(PrintModel ipw, int k) {
         if (!isNullable() || isPlainClass) {
-            ipw.printf("return ps.get%s(%d);%n", jdbc, k);
+            ipw.putf("ps.get%s(%d)", jdbc, k);
         } else {
             cc.add(ClassContextImpl.RUNTIME_EMSQL);
-            ipw.printf("return EmSQL.get%s(ps,%d)%n", jdbc, k);
-        }
-    }
-    public void csGet(PrintModel ipw, int k, String setter) {
-        if (!isNullable() || isPlainClass) {
-            ipw.printf("o.%s(ps.get%s(%d));%n", setter, jdbc, k);
-        } else {
-            cc.add(ClassContextImpl.RUNTIME_EMSQL);
-            ipw.printf("o.%s(EmSQL.get%s(ps, %d));%n", setter, jdbc, k);
+            ipw.putf("EmSQL.get%s(ps,%d)", jdbc, k);
         }
     }
     @Override

@@ -50,7 +50,7 @@ public class SqlDeleteBatch extends SpringAction implements ApiDelete, DeleteBat
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareReturnNew(ipw, "SqlDeleteBatch", jdbc, batchSize);
+        declareReturnNew(ipw, "SqlDeleteBatch", jdbc, batchSize, kPrg);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyDelete(%n");

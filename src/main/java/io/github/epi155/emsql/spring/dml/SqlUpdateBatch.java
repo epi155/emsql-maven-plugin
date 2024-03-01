@@ -49,7 +49,7 @@ public class SqlUpdateBatch extends SpringAction implements ApiUpdate, UpdateBat
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareReturnNew(ipw, "SqlUpdateBatch", jdbc, batchSize);
+        declareReturnNew(ipw, "SqlUpdateBatch", jdbc, batchSize, kPrg);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyUpdate(%n");

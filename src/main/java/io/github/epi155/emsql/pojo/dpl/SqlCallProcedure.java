@@ -77,7 +77,7 @@ public class SqlCallProcedure extends PojoAction implements ApiSelectSignature, 
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("ps.execute();%n");
         getOutput(ipw, jdbc.getOMap());
-        if (mc.oSize()>1)
+        if (mc.oSize()>0)
             ipw.printf("return o;%n");
         ipw.ends();
         ipw.ends();

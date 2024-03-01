@@ -47,7 +47,7 @@ public class SqlInsertBatch extends SpringAction implements ApiInsert, InsertBat
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareReturnNew(ipw, "SqlInsertBatch", jdbc, batchSize);
+        declareReturnNew(ipw, "SqlInsertBatch", jdbc, batchSize, kPrg);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyInsert(%n");

@@ -47,7 +47,7 @@ public class SqlUpdateBatch extends PojoAction implements ApiUpdate, UpdateBatch
         ipw.more();
         ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareReturnNew(ipw, "SqlUpdateBatch", jdbc, batchSize);
+        declareReturnNew(ipw, "SqlUpdateBatch", jdbc, batchSize, kPrg);
         ipw.more();
         ipw.printf("@Override%n");
         ipw.printf("public void lazyUpdate(%n");

@@ -95,10 +95,10 @@ public abstract class SqlAction {
         }
     }
 
-    public void declareReturnNew(@NotNull PrintModel ipw, String eSqlObject, JdbcStatement jdbc, int batchSize) {
+    public void declareReturnNew(@NotNull PrintModel ipw, String eSqlObject, JdbcStatement jdbc, int batchSize, String kPrg) {
         ipw.printf("return new %s", eSqlObject);
         cc.anonymousGenerics(ipw, jdbc);
-        ipw.putf("(ps, %d) {%n", batchSize);
+        ipw.putf("(Q_%s, ps, %d) {%n", kPrg, batchSize);
     }
 
     public void declareInputBatch(PrintModel ipw, @NotNull JdbcStatement jdbc) {
@@ -195,15 +195,45 @@ public abstract class SqlAction {
         }
     }
     public void getOutput(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap) {
+        val eol = new Eol(mc.oSize());
         if (oMap.size() > 1) {
-            ipw.printf("O o = so.get();%n");
-//            if (reflect) {
-//                oMap.forEach((k,s) -> s.pullParameter(ipw, k, set));
-//            } else {
+            if (mc.isOutputReflect()) {
+                ipw.printf("O o = so.get();%n");
+                oMap.forEach((k,s) -> s.takeParameter(ipw, k));
+            } else if (mc.isOutputDelegate()){
+                oMap.forEach((k,s) -> s.getDelegateParameter(ipw, k));
+            } else {
+                ipw.printf("O o = so.get();%n");
                 oMap.forEach((k,s) -> s.getParameter(ipw, k));
-//            }
+            }
+            if (cc.isDebug()) {
+                ipw.printf("if (log.isTraceEnabled()) {%n");
+                ipw.more();
+                ipw.printf("SqlTrace.showResult(%n");
+                ipw.more();
+                oMap.forEach((k,v) -> {
+                    ipw.printf("new SqlArg(\"%s\", \"%s\", o%d)%s%n",
+                            v.getName(), v.getType().getPrimitive(), k, eol.nl());
+                });
+                ipw.less();
+                ipw.printf(");%n");
+                ipw.ends();
+            }
         } else {
             oMap.forEach((k,v) -> v.getValue(ipw, k)); // once
+            if (cc.isDebug()) {
+                ipw.printf("if (log.isTraceEnabled()) {%n");
+                ipw.more();
+                ipw.printf("SqlTrace.showResult(%n");
+                ipw.more();
+                oMap.forEach((k,v) -> {
+                    ipw.printf("new SqlArg(\"%s\", \"%s\", o)%s%n",
+                            v.getName(), v.getType().getPrimitive(), eol.nl());
+                });
+                ipw.less();
+                ipw.printf(");%n");
+                ipw.ends();
+            }
         }
     }
 
