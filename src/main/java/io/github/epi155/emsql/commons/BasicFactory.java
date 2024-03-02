@@ -70,6 +70,12 @@ public abstract class BasicFactory implements CodeFactory {
             new AbstractMap.SimpleEntry<>("TIME", SqlEnum.TimeStd),
             new AbstractMap.SimpleEntry<>("TIME?", SqlEnum.TimeNil),
 
+            new AbstractMap.SimpleEntry<>("BINARY", SqlEnum.BinaryStd),
+            new AbstractMap.SimpleEntry<>("BINARY?", SqlEnum.BinaryNil),
+
+            new AbstractMap.SimpleEntry<>("VARBINARY", SqlEnum.VarBinaryStd),
+            new AbstractMap.SimpleEntry<>("VARBINARY?", SqlEnum.VarBinaryNil),
+
             new AbstractMap.SimpleEntry<>("LOCALDATE", SqlEnum.LocalDateStd),
             new AbstractMap.SimpleEntry<>("LOCALDATE?", SqlEnum.LocalDateNil),
 

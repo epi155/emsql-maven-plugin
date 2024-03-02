@@ -82,6 +82,14 @@ public enum SqlEnum implements SqlDataType {
             return NumericStd.requires();
         }
     },
+    BinaryStd("Bytes", "BINARY", "byte[]"),
+    BinaryNil("Bytes", "BINARY", "byte[]") {
+        public void rsGetValue(PrintModel ipw, int k) { BinaryStd.rsGetValue(ipw, k); }
+    },
+    VarBinaryStd("Bytes", "VARBINARY", "byte[]"),
+    VarBinaryNil("Bytes", "VARBINARY", "byte[]") {
+        public void rsGetValue(PrintModel ipw, int k) { VarBinaryStd.rsGetValue(ipw, k); }
+    },
     NumBoolStd("Boolean", "TINYINT", "boolean", "Boolean") {
         public String getterPrefix() { return "is"; }
         @Override

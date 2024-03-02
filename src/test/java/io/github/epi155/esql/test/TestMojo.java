@@ -23,6 +23,8 @@ class TestMojo {
             "daoNest.yaml",
             "daoBool.yaml",
             "daoNBool.yaml",
+            "daoBin.yaml",
+            "daoVarBin.yaml",
             "daoByte.yaml",
                 "daoShort.yaml",
                 "daoInt.yaml",

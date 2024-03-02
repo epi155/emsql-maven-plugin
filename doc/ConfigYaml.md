@@ -27,40 +27,45 @@ The currently managed field types are shown in the following table:
 
 | Field Type|JDBC Type|java type|
 |-----------|---------|---------|
-|BOOL<br>BOOLEAN    | BOOLEAN | boolean |
-|BOOL?<br>BOOLEAN?  | BOOLEAN | Boolean |
-|BYTE  |TINYINT | byte   |
-|BYTE? |TINYINT | Byte   |
-|SHORT<br>SMALLINT  |SMALLINT | short   |
-|SHORT?<br>SMALLINT?|SMALLINT | Short   |
-|INT<br>INTEGER     | INTEGER | int     |
-|INT?<br>INTEGER?   | INTEGER | Integer |
-|BIGINT<br>BIGINTEGER<br>LONG    | BIGINT | long
-|BIGINT?<br>BIGINTEGER?<br>LONG? | BIGINT | Long
-|DOUBLE | DOUBLE | double |
-|DOUBLE?| DOUBLE | Double |
-|FLOAT  | FLOAT  | float  |
-|FLOAT? | FLOAT  | Float  |
-|NUMERIC<br>NUMBER  | NUMERIC | BigDecimal |
-|NUMERIC?<br>NUMBER?| NUMERIC | BigDecimal |
-|VARCHAR       | VARCHAR   | String        |
-|VARCHAR?      | VARCHAR   | String        |
-|CHAR          | CHAR      | String        |
-|CHAR?         | CHAR      | String        |
-|DATE          | DATE      | Date          |
-|DATE?         | DATE      | Date          |
-|TIMESTAMP     | TIMESTAMP | Timestamp     |
-|TIMESTAMP?    | TIMESTAMP | Timestamp     |
-|TIME          | TIME      | Time          |
-|TIME?         | TIME      | Time          |
-|NUMBOOL       | TINYINT   | boolean       |
-|NUMBOOL?      | TINYINT   | Boolean       |
+|BIGINT<br>BIGINTEGER<br>LONG    | BIGINT    | long       |
+|BIGINT?<br>BIGINTEGER?<br>LONG? | BIGINT    | Long       |
+|BINARY                          | BINARY    | byte[]     |
+|BINARY?                         | BINARY    | byte[]     |
+|BOOL<br>BOOLEAN                 | BOOLEAN   | boolean    |
+|BOOL?<br>BOOLEAN?               | BOOLEAN   | Boolean    |
+|BYTE                            |TINYINT    | byte       |
+|BYTE?                           |TINYINT    | Byte       |
+|CHAR                            | CHAR      | String     |
+|CHAR?                           | CHAR      | String     |
+|DATE                            | DATE      | Date       |
+|DATE?                           | DATE      | Date       |
+|DOUBLE                          | DOUBLE    | double     |
+|DOUBLE?                         | DOUBLE    | Double     |
+|FLOAT                           | FLOAT     | float      |
+|FLOAT?                          | FLOAT     | Float      |
+|INT<br>INTEGER                  | INTEGER   | int        |
+|INT?<br>INTEGER?                | INTEGER   | Integer    |
+|NUMERIC<br>NUMBER               | NUMERIC   | BigDecimal |
+|NUMERIC?<br>NUMBER?             | NUMERIC   | BigDecimal |
+|SHORT<br>SMALLINT               |SMALLINT   | short      |
+|SHORT?<br>SMALLINT?             |SMALLINT   | Short      |
+|TIMESTAMP                       | TIMESTAMP | Timestamp  |
+|TIMESTAMP?                      | TIMESTAMP | Timestamp  |
+|TIME                            | TIME      | Time       |
+|TIME?                           | TIME      | Time       |
+|VARBINARY                       | VARBINARY | byte[]     |
+|VARBINARY?                      | VARBINARY | byte[]     |
+|VARCHAR                         | VARCHAR   | String     |
+|VARCHAR?                        | VARCHAR   | String     |
+|--------------|-----------|---------------|
 |LOCALDATE     | DATE      | LocalDate     |
 |LOCALDATE?    | DATE      | LocalDate     |
 |LOCALDATETIME | TIMESTAMP | LocalDateTime |
 |LOCALDATETIME?| TIMESTAMP | LocalDateTime |
 |LOCALTIME     | TIME      | LocalTime     |
 |LOCALTIME?    | TIME      | LocalTime     |
+|NUMBOOL       | TINYINT   | boolean       |
+|NUMBOOL?      | TINYINT   | Boolean       |
 
 The list of fields is not used to create a single common class for all methods, but is consulted, for each method, to create dedicated interfaces (with getters for the input values, and with setters for the values of output).
 
