@@ -57,7 +57,6 @@ The currently managed field types are shown in the following table:
 |VARBINARY?                      | VARBINARY | byte[]     |
 |VARCHAR                         | VARCHAR   | String     |
 |VARCHAR?                        | VARCHAR   | String     |
-|--------------|-----------|---------------|
 |LOCALDATE     | DATE      | LocalDate     |
 |LOCALDATE?    | DATE      | LocalDate     |
 |LOCALDATETIME | TIMESTAMP | LocalDateTime |

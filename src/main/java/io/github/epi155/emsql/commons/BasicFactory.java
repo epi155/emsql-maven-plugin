@@ -12,83 +12,86 @@ import static io.github.epi155.emsql.commons.Contexts.cc;
 
 @Slf4j
 public abstract class BasicFactory implements CodeFactory {
-    private static final Map<String, SqlDataType> sqlMap = Map.ofEntries(
-            new AbstractMap.SimpleEntry<>("BOOL", SqlEnum.BooleanStd),
-            new AbstractMap.SimpleEntry<>("BOOLEAN", SqlEnum.BooleanStd),
-            new AbstractMap.SimpleEntry<>("BOOL?", SqlEnum.BooleanNil),
-            new AbstractMap.SimpleEntry<>("BOOLEAN?", SqlEnum.BooleanNil),
+    private static final Map<String, SqlDataType> sqlMap;
+    static {
+        Map<String, SqlDataType> map = new HashMap<>();
+        map.put("BOOL", SqlEnum.BooleanStd);
+        map.put("BOOLEAN", SqlEnum.BooleanStd);
+        map.put("BOOL?", SqlEnum.BooleanNil);
+        map.put("BOOLEAN?", SqlEnum.BooleanNil);
 
-            new AbstractMap.SimpleEntry<>("NUMBOOL", SqlEnum.NumBoolStd),
-            new AbstractMap.SimpleEntry<>("NUMBOOL?", SqlEnum.NumBoolNil),
+        map.put("NUMBOOL", SqlEnum.NumBoolStd);
+        map.put("NUMBOOL?", SqlEnum.NumBoolNil);
 
-            new AbstractMap.SimpleEntry<>("BYTE", SqlEnum.ByteStd),
-            new AbstractMap.SimpleEntry<>("BYTE?", SqlEnum.ByteNil),
+        map.put("BYTE", SqlEnum.ByteStd);
+        map.put("BYTE?", SqlEnum.ByteNil);
 
-            new AbstractMap.SimpleEntry<>("SHORT", SqlEnum.ShortStd),
-            new AbstractMap.SimpleEntry<>("SMALLINT", SqlEnum.ShortStd),
-            new AbstractMap.SimpleEntry<>("SHORT?", SqlEnum.ShortNil),
-            new AbstractMap.SimpleEntry<>("SMALLINT?", SqlEnum.ShortNil),
+        map.put("SHORT", SqlEnum.ShortStd);
+        map.put("SMALLINT", SqlEnum.ShortStd);
+        map.put("SHORT?", SqlEnum.ShortNil);
+        map.put("SMALLINT?", SqlEnum.ShortNil);
 
-            new AbstractMap.SimpleEntry<>("INT", SqlEnum.IntegerStd),
-            new AbstractMap.SimpleEntry<>("INTEGER", SqlEnum.IntegerStd),
-            new AbstractMap.SimpleEntry<>("INT?", SqlEnum.IntegerNil),
-            new AbstractMap.SimpleEntry<>("INTEGER?", SqlEnum.IntegerNil),
+        map.put("INT", SqlEnum.IntegerStd);
+        map.put("INTEGER", SqlEnum.IntegerStd);
+        map.put("INT?", SqlEnum.IntegerNil);
+        map.put("INTEGER?", SqlEnum.IntegerNil);
 
-            new AbstractMap.SimpleEntry<>("BIGINT", SqlEnum.LongStd),
-            new AbstractMap.SimpleEntry<>("BIGINTEGER", SqlEnum.LongStd),
-            new AbstractMap.SimpleEntry<>("LONG", SqlEnum.LongStd),
-            new AbstractMap.SimpleEntry<>("BIGSERIAL", SqlEnum.LongStd),
-            new AbstractMap.SimpleEntry<>("BIGINT?", SqlEnum.LongNil),
-            new AbstractMap.SimpleEntry<>("BIGINTEGER?", SqlEnum.LongNil),
-            new AbstractMap.SimpleEntry<>("LONG?", SqlEnum.LongNil),
+        map.put("BIGINT", SqlEnum.LongStd);
+        map.put("BIGINTEGER", SqlEnum.LongStd);
+        map.put("LONG", SqlEnum.LongStd);
+        map.put("BIGSERIAL", SqlEnum.LongStd);
+        map.put("BIGINT?", SqlEnum.LongNil);
+        map.put("BIGINTEGER?", SqlEnum.LongNil);
+        map.put("LONG?", SqlEnum.LongNil);
 
-            new AbstractMap.SimpleEntry<>("NUMERIC", SqlEnum.NumericStd),
-            new AbstractMap.SimpleEntry<>("NUMBER", SqlEnum.NumericStd),
-            new AbstractMap.SimpleEntry<>("DECIMAL", SqlEnum.NumericStd),
-            new AbstractMap.SimpleEntry<>("NUMERIC?", SqlEnum.NumericNil),
-            new AbstractMap.SimpleEntry<>("NUMBER?", SqlEnum.NumericNil),
-            new AbstractMap.SimpleEntry<>("DECIMAL?", SqlEnum.NumericNil),
+        map.put("NUMERIC", SqlEnum.NumericStd);
+        map.put("NUMBER", SqlEnum.NumericStd);
+        map.put("DECIMAL", SqlEnum.NumericStd);
+        map.put("NUMERIC?", SqlEnum.NumericNil);
+        map.put("NUMBER?", SqlEnum.NumericNil);
+        map.put("DECIMAL?", SqlEnum.NumericNil);
 
-            new AbstractMap.SimpleEntry<>("DOUBLE", SqlEnum.DoubleStd),
-            new AbstractMap.SimpleEntry<>("DOUBLE?", SqlEnum.DoubleNil),
+        map.put("DOUBLE", SqlEnum.DoubleStd);
+        map.put("DOUBLE?", SqlEnum.DoubleNil);
 
-            new AbstractMap.SimpleEntry<>("FLOAT", SqlEnum.FloatStd),
-            new AbstractMap.SimpleEntry<>("FLOAT?", SqlEnum.FloatNil),
+        map.put("FLOAT", SqlEnum.FloatStd);
+        map.put("FLOAT?", SqlEnum.FloatNil);
 
-            new AbstractMap.SimpleEntry<>("VARCHAR", SqlEnum.VarCharStd),
-            new AbstractMap.SimpleEntry<>("VARCHAR?", SqlEnum.VarCharNil),
+        map.put("VARCHAR", SqlEnum.VarCharStd);
+        map.put("VARCHAR?", SqlEnum.VarCharNil);
 
-            new AbstractMap.SimpleEntry<>("CHAR", SqlEnum.CharStd),
-            new AbstractMap.SimpleEntry<>("CHAR?", SqlEnum.CharNil),
+        map.put("CHAR", SqlEnum.CharStd);
+        map.put("CHAR?", SqlEnum.CharNil);
 
-            new AbstractMap.SimpleEntry<>("DATE", SqlEnum.DateStd),
-            new AbstractMap.SimpleEntry<>("DATE?", SqlEnum.DateNil),
+        map.put("DATE", SqlEnum.DateStd);
+        map.put("DATE?", SqlEnum.DateNil);
 
-            new AbstractMap.SimpleEntry<>("TIMESTAMP", SqlEnum.TimestampStd),
-            new AbstractMap.SimpleEntry<>("TIMESTAMP?", SqlEnum.TimestampNil),
+        map.put("TIMESTAMP", SqlEnum.TimestampStd);
+        map.put("TIMESTAMP?", SqlEnum.TimestampNil);
 
-            new AbstractMap.SimpleEntry<>("TIME", SqlEnum.TimeStd),
-            new AbstractMap.SimpleEntry<>("TIME?", SqlEnum.TimeNil),
+        map.put("TIME", SqlEnum.TimeStd);
+        map.put("TIME?", SqlEnum.TimeNil);
 
-            new AbstractMap.SimpleEntry<>("BINARY", SqlEnum.BinaryStd),
-            new AbstractMap.SimpleEntry<>("BINARY?", SqlEnum.BinaryNil),
+        map.put("BINARY", SqlEnum.BinaryStd);
+        map.put("BINARY?", SqlEnum.BinaryNil);
 
-            new AbstractMap.SimpleEntry<>("VARBINARY", SqlEnum.VarBinaryStd),
-            new AbstractMap.SimpleEntry<>("VARBINARY?", SqlEnum.VarBinaryNil),
+        map.put("VARBINARY", SqlEnum.VarBinaryStd);
+        map.put("VARBINARY?", SqlEnum.VarBinaryNil);
 
-            new AbstractMap.SimpleEntry<>("LOCALDATE", SqlEnum.LocalDateStd),
-            new AbstractMap.SimpleEntry<>("LOCALDATE?", SqlEnum.LocalDateNil),
+        map.put("LOCALDATE", SqlEnum.LocalDateStd);
+        map.put("LOCALDATE?", SqlEnum.LocalDateNil);
 
-            new AbstractMap.SimpleEntry<>("LOCALDATETIME", SqlEnum.LocalDateTimeStd),
-            new AbstractMap.SimpleEntry<>("LOCALDATETIME?", SqlEnum.LocalDateTimeNil),
+        map.put("LOCALDATETIME", SqlEnum.LocalDateTimeStd);
+        map.put("LOCALDATETIME?", SqlEnum.LocalDateTimeNil);
 
-            new AbstractMap.SimpleEntry<>("LOCALTIME", SqlEnum.LocalTimeStd),
-            new AbstractMap.SimpleEntry<>("LOCALTIME?", SqlEnum.LocalTimeNil)
+        map.put("LOCALTIME", SqlEnum.LocalTimeStd);
+        map.put("LOCALTIME?", SqlEnum.LocalTimeNil);
 
-            //---------------------------------------------------------
+        //---------------------------------------------------------
 //            new AbstractMap.SimpleEntry<>("(CHAR)", new SqlVector(SqlEnum.CharStd))
+        sqlMap = Collections.unmodifiableMap(map);
+    }
 
-    );
     @Override
     public MethodModel newMethodModel() {
         return new SqlMethod();
