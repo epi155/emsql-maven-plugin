@@ -3,12 +3,12 @@ package io.github.epi155.emsql.pojo.dpl;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
-import io.github.epi155.emsql.commons.dql.ApiSelectSignature;
+import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 
 public class DelegateCallSignature {
-    private final ApiSelectSignature api;
+    private final ApiDocSignature api;
 
-    public DelegateCallSignature(ApiSelectSignature api) {
+    public DelegateCallSignature(ApiDocSignature api) {
         this.api = api;
     }
 

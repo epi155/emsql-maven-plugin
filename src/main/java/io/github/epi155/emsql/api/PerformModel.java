@@ -8,8 +8,8 @@ public interface PerformModel {
     void setTimeout(Integer it);
     void setTune(boolean it);
 
-    default InputModel getInput() { return null; }
-    default OutputModel getOutput() { return null; }
+    InputModel getInput();
+    OutputModel getOutput();
 
 
     void writeCode(PrintModel ipw, String kPrg) throws InvalidQueryException ;

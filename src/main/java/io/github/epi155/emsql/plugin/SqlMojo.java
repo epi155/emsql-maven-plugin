@@ -5,7 +5,9 @@ import io.github.epi155.emsql.api.CodeProvider;
 import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.plugin.td.*;
 import io.github.epi155.emsql.plugin.td.dml.*;
+import io.github.epi155.emsql.plugin.td.dpl.TdCallBatch;
 import io.github.epi155.emsql.plugin.td.dpl.TdCallProcedure;
+import io.github.epi155.emsql.plugin.td.dpl.TdInlineBatch;
 import io.github.epi155.emsql.plugin.td.dpl.TdInlineProcedure;
 import io.github.epi155.emsql.plugin.td.dql.TdCursorForSelect;
 import io.github.epi155.emsql.plugin.td.dql.TdSelectList;
@@ -33,7 +35,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.ProviderNotFoundException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -132,14 +137,16 @@ public class SqlMojo extends AbstractMojo {
         c1.addTypeDescription(new TdInsertReturnGeneratedKeys(factory));
         c1.addTypeDescription(new TdCallProcedure(factory));
         c1.addTypeDescription(new TdInlineProcedure(factory));
+        c1.addTypeDescription(new TdCallBatch(factory));
+        c1.addTypeDescription(new TdInlineBatch(factory));
 //        c1.addTypeDescription(new TdCursorForUpdate());   // da rivedere
 
         Yaml apiYaml = new Yaml(c1);
 
         try {
-            /*-----------------*/
+            /*-------------------------*/
             loadSqlApi(factory, apiYaml);
-            /*-----------------*/
+            /*-------------------------*/
             setupMavenPaths(generateDirectory);
 
             log.info("Done.");
@@ -190,9 +197,9 @@ public class SqlMojo extends AbstractMojo {
             try (InputStream inputStream = Files.newInputStream(apiFile.toPath())) {
                 DaoClassConfig api = yaml.load(inputStream);
                 makeDirectory(generateDirectory, api.getPackageName());
-                /*----------------*/
+                /*--------------------------*/
                 generateApi(pc, factory, api);
-                /*----------------*/
+                /*--------------------------*/
             }
         }
         log.info("Total classes ...: {}", pc.getNmClasses());

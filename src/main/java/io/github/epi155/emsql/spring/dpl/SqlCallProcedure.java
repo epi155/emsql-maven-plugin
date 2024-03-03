@@ -3,7 +3,7 @@ package io.github.epi155.emsql.spring.dpl;
 import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
-import io.github.epi155.emsql.commons.dql.ApiSelectSignature;
+import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 import io.github.epi155.emsql.spring.SpringAction;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlCallProcedure extends SpringAction implements ApiSelectSignature, CallProcedureModel {
+public class SqlCallProcedure extends SpringAction implements ApiDocSignature, CallProcedureModel {
     @Setter
     @Getter
     private InputModel input;
@@ -74,8 +74,8 @@ public class SqlCallProcedure extends SpringAction implements ApiSelectSignature
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
         ipw.printf("try (CallableStatement ps = c.prepareCall(Q_%s)) {%n", kPrg);
         ipw.more();
-        setInput(ipw, jdbc);
-        registerOut(ipw, jdbc.getOMap());
+        setInputAbs(ipw, jdbc);
+        registerOutAbs(ipw, jdbc.getOMap());
         setQueryHints(ipw);
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("ps.execute();%n");

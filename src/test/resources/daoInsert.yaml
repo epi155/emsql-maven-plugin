@@ -106,6 +106,8 @@ methods:
         delegate: no
       output:
         delegate: no
+        fields:
+          - idBool
       execSql: |
         begin
         insert into tbool (

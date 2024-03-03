@@ -4,7 +4,7 @@ import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
 import io.github.epi155.emsql.commons.Tools;
-import io.github.epi155.emsql.commons.dql.ApiSelectSignature;
+import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 import io.github.epi155.emsql.spring.SpringAction;
 import io.github.epi155.emsql.spring.dql.DelegateSelectSignature;
 import lombok.Getter;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlInsertReturnGeneratedKeys extends SpringAction implements ApiSelectSignature, InsertReturnGeneratedKeysModel {
+public class SqlInsertReturnGeneratedKeys extends SpringAction implements ApiDocSignature, InsertReturnGeneratedKeysModel {
     private final DelegateSelectSignature delegateSelectSignature;
     @Setter
     @Getter

@@ -105,7 +105,9 @@ For model details refer to:
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.7) InsertReturnKeys](insertKey.md)<br/>
 4.3) Procedure<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.3.1) CallProcedure](callProc.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) InlineProcedure](inlineProc.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.2) InlineProcedure](inlineProc.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.3) CallBatch](callBatch.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.4) InlineBatch](inlineBatch.md)<br/>
 
 
 

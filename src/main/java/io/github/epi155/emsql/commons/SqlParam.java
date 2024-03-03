@@ -23,15 +23,29 @@ public class SqlParam {
         String source = String.format("i.%s()", getterOf(this));
         type.psSet(ipw, source);
     }
+    public void setParameter(PrintModel ipw, int k) {
+        String source = String.format("i.%s()", getterOf(this));
+        type.psSet(ipw, source, k);
+    }
     public void setDelegateParameter(PrintModel ipw) {
         String source = String.format("i.%s.get()", name);
         type.psSet(ipw, source);
     }
+    public void setDelegateParameter(PrintModel ipw, int k) {
+        String source = String.format("i.%s.get()", name);
+        type.psSet(ipw, source, k);
+    }
     public void pushParameter(PrintModel ipw) {
         type.psPush(ipw, name);
     }
+    public void pushParameter(PrintModel ipw, int k) {
+        type.psPush(ipw, name, k);
+    }
     public void setValue(PrintModel ipw) {
         type.psSet(ipw, name);
+    }
+    public void setValue(PrintModel ipw, int k) {
+        type.psSet(ipw, name, k);
     }
 
     public void fetchParameter(PrintModel ipw, int k) {

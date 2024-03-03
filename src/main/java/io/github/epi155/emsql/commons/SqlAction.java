@@ -261,7 +261,30 @@ public abstract class SqlAction {
             }
         }
     }
-    public void registerOut(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap) {
+    public void setInputAbs(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc) {
+        int nSize = mc.nSize();
+        Map<Integer, SqlParam> iMap = jdbc.getIMap();
+        if (1<=nSize && nSize<= IMAX) {
+            iMap.forEach((k,s) -> {
+                if (s.getType().isScalar() || s.getType().columns() <= 1) {
+                    s.setValue(ipw, k);
+                } else if (mc.isInputReflect()) {
+                    s.pushParameter(ipw, k);
+                } else {
+                    s.setValue(ipw, k);
+                }
+            });
+        } else {
+            if (mc.isInputReflect()) {
+                iMap.forEach((k, s) -> s.pushParameter(ipw, k));
+            } else if (mc.isInputDelegate()) {
+                iMap.forEach((k, s) -> s.setDelegateParameter(ipw, k));
+            } else {
+                iMap.forEach((k, s) -> s.setParameter(ipw, k));
+            }
+        }
+    }
+    public void registerOutAbs(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap) {
         oMap.forEach((k,s) -> s.registerOutParms(ipw, k));
     }
 

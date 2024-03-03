@@ -7,7 +7,7 @@ import io.github.epi155.emsql.commons.SqlParam;
 import java.util.List;
 import java.util.Map;
 
-public interface ApiSelectSignature {
+public interface ApiDocSignature {
     void docBegin(PrintModel ipw);
 
     void docInput(PrintModel ipw, JdbcStatement jdbc);

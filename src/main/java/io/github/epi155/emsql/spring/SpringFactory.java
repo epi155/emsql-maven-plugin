@@ -4,7 +4,9 @@ import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.BasicFactory;
 import io.github.epi155.emsql.commons.ClassContextImpl;
 import io.github.epi155.emsql.spring.dml.*;
+import io.github.epi155.emsql.spring.dpl.SqlCallBatch;
 import io.github.epi155.emsql.spring.dpl.SqlCallProcedure;
+import io.github.epi155.emsql.spring.dpl.SqlInlineBatch;
 import io.github.epi155.emsql.spring.dpl.SqlInlineProcedure;
 import io.github.epi155.emsql.spring.dql.SqlCursorForSelect;
 import io.github.epi155.emsql.spring.dql.SqlSelectList;
@@ -90,6 +92,16 @@ public class SpringFactory extends BasicFactory {
     @Override
     public void classContext(PluginContext pc, Map<String, TypeModel> declare) {
         cc = new ClassContextImpl(pc, declare);
+    }
+
+    @Override
+    public CallBatchModel newCallBatchModel() {
+        return new SqlCallBatch();
+    }
+
+    @Override
+    public InlineBatchModel newInlineBatchModel() {
+        return new SqlInlineBatch();
     }
 
     protected void classBegin(PrintModel pw, String className, boolean isDebug) {

@@ -13,7 +13,7 @@ Template example (oracle database)
   - methodName: addError
     perform: !InlineProcedure
       execSql: |
-        delclare 
+        declare
           id07 number;
         begin
           select p07q.nextval into id07 from dual;

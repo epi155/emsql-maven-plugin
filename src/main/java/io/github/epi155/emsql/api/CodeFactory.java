@@ -31,4 +31,8 @@ public interface CodeFactory {
     TypeModel getInstance(String value, MapContext mapContext);
 
     void classContext(PluginContext pc, Map<String, TypeModel> declare);
+
+    CallBatchModel newCallBatchModel();
+
+    InlineBatchModel newInlineBatchModel();
 }

@@ -3,7 +3,7 @@ package io.github.epi155.emsql.pojo.dpl;
 import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
-import io.github.epi155.emsql.commons.dql.ApiSelectSignature;
+import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,16 +15,16 @@ import java.util.regex.Pattern;
 
 import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlCallProcedure extends PojoAction implements ApiSelectSignature, CallProcedureModel {
+public class SqlCallProcedure extends PojoAction implements ApiDocSignature, CallProcedureModel {
     @Setter
     @Getter
     private InputModel input;
     @Setter @Getter
     private OutFieldsModel output;
-    private final DelegateCallSignature delegateSelectSignature;
+    private final DelegateCallSignature delegateCallSignature;
     public SqlCallProcedure() {
         super();
-        this.delegateSelectSignature = new DelegateCallSignature(this);
+        this.delegateCallSignature = new DelegateCallSignature(this);
     }
 
     private static final String tmpl =
@@ -54,7 +54,7 @@ public class SqlCallProcedure extends PojoAction implements ApiSelectSignature, 
     }
 
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
-        delegateSelectSignature.signature(ipw, jdbc, name);
+        delegateCallSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 0) {
             ipw.putf("void %s(%n", name);
@@ -71,8 +71,8 @@ public class SqlCallProcedure extends PojoAction implements ApiSelectSignature, 
         ipw.more();
         ipw.printf("try (CallableStatement ps = c.prepareCall(Q_%s)) {%n", kPrg);
         ipw.more();
-        setInput(ipw, jdbc);
-        registerOut(ipw, jdbc.getOMap());
+        setInputAbs(ipw, jdbc);
+        registerOutAbs(ipw, jdbc.getOMap());
         setQueryHints(ipw);
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("ps.execute();%n");

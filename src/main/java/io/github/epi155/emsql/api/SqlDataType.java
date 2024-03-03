@@ -5,9 +5,14 @@ import java.util.Set;
 
 public interface SqlDataType extends TypeModel {
     void psSet(PrintModel ipw, String source);
+    void psSet(PrintModel ipw, String source, int k);
     void xPsPush(PrintModel ipw, String orig, String name);
+    void xPsPush(PrintModel ipw, String orig, String name, int k);
     default void psPush(PrintModel ipw, String name) {
         xPsPush(ipw, "i", name);
+    }
+    default void psPush(PrintModel ipw, String name, int k) {
+        xPsPush(ipw, "i", name, k);
     }
 
     String getPrimitive();
@@ -22,8 +27,9 @@ public interface SqlDataType extends TypeModel {
      * overridden for standard data types
      */
     default void rsGetValue(PrintModel ipw, int k) { throw new IllegalStateException(); }
-    default void registerOut(PrintModel ipw, int k) { throw new IllegalStateException(); }
     default void csGetValue(PrintModel ipw, int k) { throw new IllegalStateException(); }
+    default void registerOut(PrintModel ipw) { throw new IllegalStateException(); }
+    default void registerOut(PrintModel ipw, int k) { throw new IllegalStateException(); }
     /*
      * methods for extended data type,
      * not usable for standard data type,

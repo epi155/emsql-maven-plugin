@@ -3,7 +3,7 @@ package io.github.epi155.emsql.pojo.dql;
 import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.dql.ApiSelectFields;
-import io.github.epi155.emsql.commons.dql.ApiSelectSignature;
+import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 import io.github.epi155.emsql.commons.dql.ApiSelectSimple;
 import io.github.epi155.emsql.commons.dql.DelegateSelectFields;
 import io.github.epi155.emsql.pojo.PojoAction;
@@ -16,7 +16,7 @@ import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Contexts.mc;
 
 public class SqlSelectSingle extends PojoAction
-        implements ApiSelectFields, ApiSelectSignature, ApiSelectSimple, SelectSingleModel {
+        implements ApiSelectFields, ApiDocSignature, ApiSelectSimple, SelectSingleModel {
     protected final DelegateSelectFields delegateSelectFields;
     protected final DelegateSelectSignature delegateSelectSignature;
     protected final DelegateSelectSimple delegateSelectSimple;

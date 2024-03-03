@@ -45,6 +45,11 @@ public class SqlVector implements SqlDataType {
     }
 
     @Override
+    public void psSet(PrintModel ipw, String source, int k) {
+        throw new IllegalStateException();
+    }
+
+    @Override
     public void xPsPush(PrintModel ipw, String orig, String name) {
         if (params.length==1) {
             ipw.printf("for (%1$s e%3$s: (List<%2$s>) EmSQL.get(%3$s, \"%4$s\", List.class)) {%n",
@@ -67,6 +72,11 @@ public class SqlVector implements SqlDataType {
             ipw.ends();
         }
 
+    }
+
+    @Override
+    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+        throw new IllegalStateException();
     }
 
     @Override

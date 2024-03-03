@@ -3,15 +3,15 @@ package io.github.epi155.emsql.spring.dql;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
-import io.github.epi155.emsql.commons.dql.ApiSelectSignature;
+import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Contexts.mc;
 
 public class DelegateSelectSignature {
-    private final ApiSelectSignature api;
+    private final ApiDocSignature api;
 
-    public DelegateSelectSignature(ApiSelectSignature api) {
+    public DelegateSelectSignature(ApiDocSignature api) {
         this.api = api;
     }
 
