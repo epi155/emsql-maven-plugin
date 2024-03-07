@@ -43,10 +43,9 @@ public class SqlInsertBatch extends PojoAction implements ApiInsert, InsertBatch
         docEnd(ipw);
         declareNewInstance(ipw, "SqlInsertBatch", jdbc, cName);
         ipw.more();
-        ipw.printf("PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
+        ipw.printf("final PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareReturnNew(ipw, "SqlInsertBatch", jdbc, batchSize, kPrg);
-        ipw.more();
+        declareInnerClass(ipw, cName, "SqlInsertBatch", jdbc, batchSize, kPrg);
         ipw.printf("@Override%n");
         ipw.printf("public void lazyInsert(%n");
         declareInputBatch(ipw, jdbc);
@@ -57,8 +56,8 @@ public class SqlInsertBatch extends PojoAction implements ApiInsert, InsertBatch
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
-        ipw.less();
-        ipw.printf("};%n");
+        ipw.ends();
+        ipw.printf("return new %s();%n", cName);
         ipw.ends();
     }
 }

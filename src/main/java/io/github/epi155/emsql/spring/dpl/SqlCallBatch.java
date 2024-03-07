@@ -28,10 +28,9 @@ public class SqlCallBatch extends SqlCallProcedure implements CallBatchModel {
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
-        ipw.printf("CallableStatement ps = c.prepareCall(Q_%s);%n", kPrg);
+        ipw.printf("final CallableStatement ps = c.prepareCall(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareReturnNew(ipw, "SqlCallBatch", jdbc, batchSize, kPrg);
-        ipw.more();
+        declareInnerClass(ipw, cName, "SqlCallBatch", jdbc, batchSize, kPrg);
         ipw.printf("@Override%n");
         ipw.printf("public void lazyCall(%n");
         declareInputBatch(ipw, jdbc);
@@ -42,8 +41,8 @@ public class SqlCallBatch extends SqlCallProcedure implements CallBatchModel {
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
-        ipw.less();
-        ipw.printf("};%n");
+        ipw.ends();
+        ipw.printf("return new %s();%n", cName);
         ipw.ends();
     }
 }

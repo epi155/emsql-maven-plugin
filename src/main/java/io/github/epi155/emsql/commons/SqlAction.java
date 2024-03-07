@@ -94,11 +94,22 @@ public abstract class SqlAction {
             }
         }
     }
+    public void declareInnerClass(
+            @NotNull PrintModel ipw,
+            String name,
+            String eSqlObject,
+            JdbcStatement jdbc,
+            int batchSize,
+            String kPrg) {
+        ipw.printf("class %s extends %s", name, eSqlObject);
+        plainGenericsNew(ipw, jdbc);
+        ipw.putf("{%n");
+        ipw.more();
+        ipw.printf("protected %s() {%n", name);
+        ipw.more();
+        ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
+        ipw.ends();
 
-    public void declareReturnNew(@NotNull PrintModel ipw, String eSqlObject, JdbcStatement jdbc, int batchSize, String kPrg) {
-        ipw.printf("return new %s", eSqlObject);
-        cc.anonymousGenerics(ipw, jdbc);
-        ipw.putf("(Q_%s, ps, %d) {%n", kPrg, batchSize);
     }
 
     public void declareInputBatch(PrintModel ipw, @NotNull JdbcStatement jdbc) {
@@ -169,10 +180,8 @@ public abstract class SqlAction {
                 ipw.more();
                 ipw.printf("SqlTrace.showResult(%n");
                 ipw.more();
-                oMap.forEach((k,v) -> {
-                    ipw.printf("new SqlArg(\"%s\", \"%s\", o%d)%s%n",
-                            v.getName(), v.getType().getPrimitive(), k, eol.nl());
-                });
+                oMap.forEach((k,v) -> ipw.printf("new SqlArg(\"%s\", \"%s\", o%d)%s%n",
+                        v.getName(), v.getType().getPrimitive(), k, eol.nl()));
                 ipw.less();
                 ipw.printf(");%n");
                 ipw.ends();
@@ -184,10 +193,8 @@ public abstract class SqlAction {
                 ipw.more();
                 ipw.printf("SqlTrace.showResult(%n");
                 ipw.more();
-                oMap.forEach((k,v) -> {
-                    ipw.printf("new SqlArg(\"%s\", \"%s\", o)%s%n",
-                            v.getName(), v.getType().getPrimitive(), eol.nl());
-                });
+                oMap.forEach((k,v) -> ipw.printf("new SqlArg(\"%s\", \"%s\", o)%s%n",
+                        v.getName(), v.getType().getPrimitive(), eol.nl()));
                 ipw.less();
                 ipw.printf(");%n");
                 ipw.ends();
@@ -211,10 +218,8 @@ public abstract class SqlAction {
                 ipw.more();
                 ipw.printf("SqlTrace.showResult(%n");
                 ipw.more();
-                oMap.forEach((k,v) -> {
-                    ipw.printf("new SqlArg(\"%s\", \"%s\", o%d)%s%n",
-                            v.getName(), v.getType().getPrimitive(), k, eol.nl());
-                });
+                oMap.forEach((k,v) -> ipw.printf("new SqlArg(\"%s\", \"%s\", o%d)%s%n",
+                        v.getName(), v.getType().getPrimitive(), k, eol.nl()));
                 ipw.less();
                 ipw.printf(");%n");
                 ipw.ends();
@@ -226,10 +231,8 @@ public abstract class SqlAction {
                 ipw.more();
                 ipw.printf("SqlTrace.showResult(%n");
                 ipw.more();
-                oMap.forEach((k,v) -> {
-                    ipw.printf("new SqlArg(\"%s\", \"%s\", o)%s%n",
-                            v.getName(), v.getType().getPrimitive(), eol.nl());
-                });
+                oMap.forEach((k,v) -> ipw.printf("new SqlArg(\"%s\", \"%s\", o)%s%n",
+                        v.getName(), v.getType().getPrimitive(), eol.nl()));
                 ipw.less();
                 ipw.printf(");%n");
                 ipw.ends();
