@@ -29,16 +29,16 @@ public class SqlDeleteBatch extends SpringAction implements ApiDelete, DeleteBat
 
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
-        return delegateDelete.proceed(fields);
+        return delegateDelete.proceed(fields, false);
     }
 
     @Override
     public void writeMethod(PrintModel ipw, String name, @NotNull JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
-        if (1<nSize && nSize<=IMAX) {
+        if (nSize<=IMAX) {
             cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch"+nSize);
         } else {
-            cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch");
+            cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch1");
         }
         String cName = Tools.capitalize(name);
         docBegin(ipw);
@@ -57,7 +57,7 @@ public class SqlDeleteBatch extends SpringAction implements ApiDelete, DeleteBat
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
-        setInput(ipw, jdbc);
+        setInputAbs(ipw, jdbc);
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();

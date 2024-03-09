@@ -19,13 +19,13 @@ public class DelegateDelete {
         this.api = api;
     }
 
-    public JdbcStatement proceed(Map<String, SqlDataType> fields) throws InvalidQueryException {
+    public JdbcStatement proceed(Map<String, SqlDataType> fields, boolean enableList) throws InvalidQueryException {
         String nText = Tools.oneLine(api.getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
             String sTables = m.group(1);
             String oText = "DELETE FROM " + sTables;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, enableList);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), Map.of());
         } else {
             throw new InvalidQueryException("Invalid query format: "+ api.getExecSql());

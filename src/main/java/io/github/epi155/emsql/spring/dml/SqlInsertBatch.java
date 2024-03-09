@@ -27,15 +27,15 @@ public class SqlInsertBatch extends SpringAction implements ApiInsert, InsertBat
     }
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
-        return delegateInsert.proceed(fields);
+        return delegateInsert.proceed(fields, false);
     }
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
-        if (1<nSize && nSize<=IMAX) {
+        if (nSize<=IMAX) {
             cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch"+nSize);
         } else {
-            cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch");
+            cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch1");
         }
         String cName = Tools.capitalize(name);
         docBegin(ipw);
@@ -54,7 +54,7 @@ public class SqlInsertBatch extends SpringAction implements ApiInsert, InsertBat
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
-        setInput(ipw, jdbc);
+        setInputAbs(ipw, jdbc);
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();

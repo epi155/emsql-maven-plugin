@@ -28,16 +28,16 @@ public class SqlUpdateBatch extends PojoAction implements ApiUpdate, UpdateBatch
 
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
-        return delegateUpdate.proceed(fields);
+        return delegateUpdate.proceed(fields, false);
     }
 
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
-        if (1<nSize && nSize<=IMAX) {
+        if (nSize<=IMAX) {
             cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch"+nSize);
         } else {
-            cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch");
+            cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch1");
         }
         String cName = Tools.capitalize(name);
         docBegin(ipw);
@@ -54,7 +54,7 @@ public class SqlUpdateBatch extends PojoAction implements ApiUpdate, UpdateBatch
         ipw.closeParenthesisLn();
         ipw.printf("        throws SQLException {%n");
         ipw.more();
-        setInput(ipw, jdbc);
+        setInputAbs(ipw, jdbc);
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();

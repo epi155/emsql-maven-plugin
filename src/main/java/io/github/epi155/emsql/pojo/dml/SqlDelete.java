@@ -26,7 +26,7 @@ public class SqlDelete extends PojoAction implements ApiWriteMethod, ApiDelete, 
     }
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
-        return delegateDelete.proceed(fields);
+        return delegateDelete.proceed(fields, true);
     }
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         delegateWriteMethod.proceed(ipw, name, jdbc, kPrg);

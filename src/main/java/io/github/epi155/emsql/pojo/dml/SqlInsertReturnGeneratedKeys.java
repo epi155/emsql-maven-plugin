@@ -45,7 +45,7 @@ public class SqlInsertReturnGeneratedKeys extends PojoAction implements ApiDocSi
             String sCols  = m.group(2).trim();
             String sParms = m.group(3).trim();
             String oText = "INSERT INTO "+sTable+" ( "+sCols+" ) VALUES ( "+sParms+" )";
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, true);
             Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
             int k=0;
             for(val e: output.getFields()) {

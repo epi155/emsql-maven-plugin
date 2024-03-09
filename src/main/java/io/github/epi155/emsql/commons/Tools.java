@@ -59,7 +59,7 @@ public class Tools {
         return c=='\n' || c=='\r';
     }
     private static final char[] BREAK_PARMS = {' ', ',',')',';','\n'};
-    public static SqlStatement replacePlaceholder(String text, Map<String, SqlDataType> fields) {
+    public static SqlStatement replacePlaceholder(String text, Map<String, SqlDataType> fields, boolean enableList) {
         int ixCol = text.indexOf(':');
         if (ixCol<0) {
             // there are no parameters
@@ -76,9 +76,12 @@ public class Tools {
             map.put(1, new SqlParam(parm, type));   // mutable map required
             if (type.isScalar()){
                 return new SqlStatement(text.substring(0, ixCol)+"?", map);
-            } else {
+            } else if (enableList) {
                 return new SqlStatement(text.substring(0, ixCol)+"[#1]", map);
-            }        }
+            } else {
+                throw new InvalidSqlParameter(parm);
+            }
+        }
         String parm = text.substring(ixCol + 1, ixEnd);
 
         class MapStore implements ApiStore<SqlStatement> {
@@ -96,8 +99,10 @@ public class Tools {
                 } else {
                     if (type.isScalar()) {
                         this.placeholder = "?";
-                    } else {
+                    } else if (enableList) {
                         this.placeholder = "[#"+k+"]";
+                    } else {
+                        throw new InvalidSqlParameter(parm);
                     }
                     iMap.put(k++, new SqlParam(parm, type));
                 }

@@ -15,10 +15,10 @@ public class SqlCallBatch extends SqlCallProcedure implements CallBatchModel {
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
-        if (1<nSize && nSize<=IMAX) {
+        if (nSize<=IMAX) {
             cc.add("io.github.epi155.emsql.runtime.SqlCallBatch"+nSize);
         } else {
-            cc.add("io.github.epi155.emsql.runtime.SqlCallBatch");
+            cc.add("io.github.epi155.emsql.runtime.SqlCallBatch1");
         }
         String cName = Tools.capitalize(name);
         docBegin(ipw);

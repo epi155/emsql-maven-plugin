@@ -26,7 +26,7 @@ public class SqlInsert extends PojoAction implements ApiWriteMethod, ApiInsert, 
 
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
-        return delegateInsert.proceed(fields);
+        return delegateInsert.proceed(fields, true);
     }
 
     @Override

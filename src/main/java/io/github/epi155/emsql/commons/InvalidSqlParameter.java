@@ -14,4 +14,8 @@ public class InvalidSqlParameter extends RuntimeException {
                 i.keySet().stream().sorted().collect(Collectors.joining(",")) + ";"+
                 o.keySet().stream().sorted().collect(Collectors.joining(",")) + "]");
     }
+
+    public InvalidSqlParameter(String parm) {
+        super("Invalid SQL parameter "+parm+" in this context (list in batch operation) ");
+    }
 }

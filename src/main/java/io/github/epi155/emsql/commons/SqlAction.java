@@ -81,16 +81,14 @@ public abstract class SqlAction {
     public static void plainGenericsNew(PrintModel ipw, JdbcStatement jdbc) {
         int nSize = mc.nSize();
         if (nSize == 0) {
-            ipw.putf("<Void>");
-        } else if (nSize == 1) {
-            jdbc.getNMap().forEach((name,type) -> ipw.putf("<%s>", type.getWrapper())); // once
+            throw new IllegalArgumentException("Batch operation without arguments");
         } else if (nSize <= IMAX) {
             ipw.putf("%d<%s>", nSize, jdbc.getNMap().values().stream().map(SqlDataType::getWrapper).collect(Collectors.joining(", ")));
         } else {
             if (mc.isInputDelegate()) {
-                ipw.putf("<DI>");
+                ipw.putf("1<DI>");
             } else {
-                ipw.putf("<I>");
+                ipw.putf("1<I>");
             }
         }
     }
@@ -115,7 +113,7 @@ public abstract class SqlAction {
     public void declareInputBatch(PrintModel ipw, @NotNull JdbcStatement jdbc) {
         int nSize = mc.nSize();
         if (nSize == 0) {
-            ipw.printf("        Void nil");     // any use case ??
+            throw new IllegalArgumentException("Batch operation without arguments");
         } else if (1<=nSize && nSize<= IMAX) {
             AtomicInteger k = new AtomicInteger();
             jdbc.getNMap().forEach((name,type) -> {

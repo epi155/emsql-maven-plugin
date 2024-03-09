@@ -29,7 +29,7 @@ public class DelegateSelectFields {
             String sInto = m.group(3);
             String sTables = m.group(4);
             String oText = "SELECT " + sFld + " FROM " + sTables;
-            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields);
+            Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, true);
             @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {

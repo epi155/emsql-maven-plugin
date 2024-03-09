@@ -26,7 +26,7 @@ public class SqlUpdate extends PojoAction implements ApiWriteMethod, ApiUpdate, 
 
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
-        return delegateUpdate.proceed(fields);
+        return delegateUpdate.proceed(fields, true);
     }
 
     @Override
