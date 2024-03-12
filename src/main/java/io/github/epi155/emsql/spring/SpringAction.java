@@ -34,7 +34,7 @@ public abstract class SpringAction extends SqlAction {
         ipw.printf("public ");
         declareGenerics(ipw, cName, jdbc.getTKeys());
         ipw.putf("%s", cName);
-        genericsNew(ipw, jdbc);
+        genericsNew(ipw);
         ipw.putf(" new%s()%n", cName);
         ipw.printf("        throws SQLException {%n");
     }

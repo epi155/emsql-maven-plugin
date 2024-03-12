@@ -24,7 +24,7 @@ public class SqlCallBatch extends SqlCallProcedure implements CallBatchModel {
         docBegin(ipw);
         docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, jdbc, cName);
+        declareNewInstance(ipw, cName);
         ipw.more();
         ipw.printf("final CallableStatement ps = c.prepareCall(Q_%s);%n", kPrg);
         setQueryHints(ipw);

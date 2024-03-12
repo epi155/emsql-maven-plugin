@@ -41,7 +41,7 @@ public class SqlInsertBatch extends PojoAction implements ApiInsert, InsertBatch
         docBegin(ipw);
         docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, jdbc, cName);
+        declareNewInstance(ipw, cName);
         ipw.more();
         ipw.printf("final PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);

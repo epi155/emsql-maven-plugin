@@ -92,7 +92,7 @@ public abstract class SqlAction {
             }
         }
     }
-    public static void genericsNew(PrintModel ipw, JdbcStatement jdbc) {
+    public static void genericsNew(PrintModel ipw) {
         int nSize = mc.nSize();
         if (nSize == 0) {
             throw new IllegalArgumentException("Batch operation without arguments");
@@ -106,31 +106,16 @@ public abstract class SqlAction {
             }
         }
     }
-    public void declareInnerClass(
-            @NotNull PrintModel ipw,
-            String name,
-            String eSqlObject,
-            JdbcStatement jdbc,
-            int batchSize,
-            String kPrg) {
-        ipw.printf("class %s extends %s", name, eSqlObject);
-        plainGenericsNew(ipw, jdbc);
-        ipw.putf("{%n");
-        ipw.more();
-        ipw.printf("protected %s() {%n", name);
-        ipw.more();
-        ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
-        ipw.ends();
-    }
+
     public void declareNextClass(
-            @NotNull PrintModel ipw,
+            PrintModel ipw,
             String name,
             String eSqlObject,
             JdbcStatement jdbc,
             int batchSize,
             String kPrg) {
         ipw.printf("public static class %s", name);
-        batchGenerics(ipw, name, jdbc.getTKeys());
+        batchGenerics(ipw, name);
         ipw.putf(" extends %s", eSqlObject);
         plainGenericsNew(ipw, jdbc);
         ipw.putf("{%n");
@@ -573,7 +558,7 @@ public abstract class SqlAction {
         }
     }
 
-    public void batchGenerics(PrintModel ipw, String cName, List<String> inFlds) {
+    public void batchGenerics(PrintModel ipw, String cName) {
         if (mc.nSize() > IMAX) {
             if (mc.isInputReflect()) {
                 ipw.putf("<I");

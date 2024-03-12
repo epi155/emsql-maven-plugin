@@ -31,8 +31,6 @@ public interface ClassContext {
 
     void declareTuner(PrintModel ipw);
 
-    void anonymousGenerics(PrintModel ipw, JdbcStatement jdbc);
-
     String supplier();
 
     String consumer();

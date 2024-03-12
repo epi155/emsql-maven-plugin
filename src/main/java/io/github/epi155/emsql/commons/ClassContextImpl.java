@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import static io.github.epi155.emsql.commons.Contexts.*;
 import static io.github.epi155.emsql.commons.Tools.capitalize;
-import static io.github.epi155.emsql.pojo.PojoAction.plainGenericsNew;
 import static io.github.epi155.emsql.pojo.PojoAction.throughGetter;
 
 public abstract class ClassContextImpl implements ClassContext {
@@ -114,23 +113,6 @@ public abstract class ClassContextImpl implements ClassContext {
             sp.forEach((name, type) -> ipw.printf("result.%s = %1$s==null ? EmSQL.<%s>getDummySupplier() : %1$s;%n", name, type.getWrapper()));
         } else {
             sp.forEach((name, type) -> ipw.printf("result.%s = %1$s==null ? () -> null : %1$s;%n", name));
-        }
-    }
-
-    public void anonymousGenerics(PrintModel ipw, JdbcStatement jdbc) {
-        if (java7) {
-            plainGenericsNew(ipw, jdbc);
-        } else {
-            int nSize = mc.nSize();
-            if (nSize == 0) {
-                ipw.putf("<Void>"); // why not "<>" ?
-            } else if (nSize == 1) {
-                ipw.putf("<>");
-            } else if (nSize <= IMAX) {
-                ipw.putf("%d<>", nSize);
-            } else {
-                ipw.putf("<>");
-            }
         }
     }
 
