@@ -65,14 +65,14 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getWrapper();
             cc.add("io.github.epi155.emsql.runtime.SqlCursor");
-            ipw.putf("SqlCursor<%s> open%s(%n", oType, cName);
+            ipw.putf("SqlCursor<%s> open%s(", oType, cName);
         } else {
             if (mc.isOutputDelegate()) {
                 cc.add("io.github.epi155.emsql.runtime.SqlDelegateCursor");
-                ipw.putf("SqlDelegateCursor open%s(%n", cName);
+                ipw.putf("SqlDelegateCursor open%s(", cName);
             } else {
                 cc.add("io.github.epi155.emsql.runtime.SqlCursor");
-                ipw.putf("SqlCursor<O> open%s(%n", cName);
+                ipw.putf("SqlCursor<O> open%s(", cName);
             }
         }
         ipw.commaReset();

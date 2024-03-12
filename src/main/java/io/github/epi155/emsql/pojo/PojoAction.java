@@ -22,6 +22,15 @@ public abstract class PojoAction extends SqlAction {
         ipw.printf("        final Connection c)%n", cName);
         ipw.printf("        throws SQLException {%n");
     }
+    public void declareNewInstance(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc, String cName) {
+        ipw.printf("public static ");
+        batchGenerics(ipw, cName, jdbc.getTKeys());
+        ipw.putf(" %s", cName);
+        genericsNew(ipw, jdbc);
+        ipw.putf(" new%s(%n", cName);
+        ipw.printf("        final Connection c)%n", cName);
+        ipw.printf("        throws SQLException {%n");
+    }
 
     public void docBegin(@NotNull PrintModel ipw) {
         ipw.printf("/**%n");

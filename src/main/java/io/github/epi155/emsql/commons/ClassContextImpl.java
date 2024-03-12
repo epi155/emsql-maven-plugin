@@ -15,7 +15,7 @@ import static io.github.epi155.emsql.commons.Tools.capitalize;
 import static io.github.epi155.emsql.pojo.PojoAction.plainGenericsNew;
 import static io.github.epi155.emsql.pojo.PojoAction.throughGetter;
 
-public class ClassContextImpl implements ClassContext {
+public abstract class ClassContextImpl implements ClassContext {
     public static final String RUNTIME_EMSQL = "io.github.epi155.emsql.runtime.EmSQL";
     public static final String RUNTIME_J8TIME = "io.github.epi155.emsql.runtime.J8Time";
     public static final String RUNTIME_TRACE = "io.github.epi155.emsql.runtime.SqlTrace";

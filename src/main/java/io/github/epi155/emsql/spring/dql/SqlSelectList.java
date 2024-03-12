@@ -44,9 +44,9 @@ public class SqlSelectList extends SpringAction implements ApiSelectFields, ApiD
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 1) {
-            jdbc.getOMap().forEach((k,v) -> ipw.putf("List<%s> %s(%n", v.getType().getWrapper(), name));
+            jdbc.getOMap().forEach((k,v) -> ipw.putf("List<%s> %s(", v.getType().getWrapper(), name));
         } else {
-            ipw.putf("List<O> %s(%n", name);
+            ipw.putf("List<O> %s(", name);
         }
         ipw.commaReset();
 

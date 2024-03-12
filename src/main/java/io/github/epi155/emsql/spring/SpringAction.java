@@ -15,6 +15,7 @@ import static io.github.epi155.emsql.commons.Contexts.cc;
 @NoArgsConstructor
 @Setter
 public abstract class SpringAction extends SqlAction {
+    @Deprecated
     public void declareNewInstance(@NotNull PrintModel ipw, String eSqlObject, @NotNull JdbcStatement jdbc, String cName) {
         cc.add("org.springframework.transaction.annotation.Transactional");
         cc.add("org.springframework.transaction.annotation.Propagation");
@@ -23,6 +24,17 @@ public abstract class SpringAction extends SqlAction {
         declareGenerics(ipw, cName, jdbc.getTKeys());
         ipw.putf("%s", eSqlObject);
         plainGenericsNew(ipw, jdbc);
+        ipw.putf(" new%s()%n", cName);
+        ipw.printf("        throws SQLException {%n");
+    }
+    public void declareNewInstance(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc, String cName) {
+        cc.add("org.springframework.transaction.annotation.Transactional");
+        cc.add("org.springframework.transaction.annotation.Propagation");
+        ipw.printf("@Transactional(propagation=Propagation.MANDATORY)%n");
+        ipw.printf("public ");
+        declareGenerics(ipw, cName, jdbc.getTKeys());
+        ipw.putf("%s", cName);
+        genericsNew(ipw, jdbc);
         ipw.putf(" new%s()%n", cName);
         ipw.printf("        throws SQLException {%n");
     }

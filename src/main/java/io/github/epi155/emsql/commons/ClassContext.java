@@ -42,4 +42,6 @@ public interface ClassContext {
     void delegateResponseFields(PrintModel ipw, Collection<SqlParam> sp);
 
     String optional();
+
+    void newLine(PrintModel ipw, boolean tune);
 }

@@ -2,7 +2,6 @@ package io.github.epi155.emsql.spring;
 
 import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.BasicFactory;
-import io.github.epi155.emsql.commons.ClassContextImpl;
 import io.github.epi155.emsql.spring.dml.*;
 import io.github.epi155.emsql.spring.dpl.SqlCallBatch;
 import io.github.epi155.emsql.spring.dpl.SqlCallProcedure;
@@ -91,7 +90,7 @@ public class SpringFactory extends BasicFactory {
 
     @Override
     public void classContext(PluginContext pc, Map<String, TypeModel> declare) {
-        cc = new ClassContextImpl(pc, declare);
+        cc = new SpringClassContext(pc, declare);
     }
 
     @Override

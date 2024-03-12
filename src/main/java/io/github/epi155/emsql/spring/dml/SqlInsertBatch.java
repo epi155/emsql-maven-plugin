@@ -41,13 +41,17 @@ public class SqlInsertBatch extends SpringAction implements ApiInsert, InsertBat
         docBegin(ipw);
         docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, "SqlInsertBatch", jdbc, cName);
+        declareNewInstance(ipw, jdbc, cName);
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
         ipw.printf("final PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareInnerClass(ipw, cName, "SqlInsertBatch", jdbc, batchSize, kPrg);
+        ipw.printf("return new %s", cName);
+        batchGeneric(ipw);
+        ipw.putf("(ps);%n");
+        ipw.ends();
+        declareNextClass(ipw, cName, "SqlInsertBatch", jdbc, batchSize, kPrg);
         ipw.printf("@Override%n");
         ipw.printf("public void lazyInsert(%n");
         declareInputBatch(ipw, jdbc);
@@ -58,8 +62,6 @@ public class SqlInsertBatch extends SpringAction implements ApiInsert, InsertBat
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
-        ipw.ends();
-        ipw.printf("return new %s();%n", cName);
         ipw.ends();
     }
 }

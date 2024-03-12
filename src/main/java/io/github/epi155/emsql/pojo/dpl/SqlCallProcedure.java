@@ -82,4 +82,23 @@ public class SqlCallProcedure extends PojoAction implements ApiDocSignature, Cal
         ipw.ends();
         ipw.ends();
     }
+
+    public void declareNextClass(
+            PrintModel ipw,
+            String name,
+            String eSqlObject,
+            JdbcStatement jdbc,
+            int batchSize,
+            String kPrg) {
+        ipw.printf("public static class %s", name);
+        declareGenerics(ipw, name, jdbc.getTKeys());
+        ipw.putf(" extends %s", eSqlObject);
+        plainGenericsNew(ipw, jdbc);
+        ipw.putf("{%n");
+        ipw.more();
+        ipw.printf("protected %s(CallableStatement ps) {%n", name);
+        ipw.more();
+        ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
+        ipw.ends();
+    }
 }

@@ -24,13 +24,17 @@ public class SqlInlineBatch extends SqlInlineProcedure implements InlineBatchMod
         docBegin(ipw);
         docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, "SqlInlineBatch", jdbc, cName);
+        declareNewInstance(ipw, jdbc, cName);
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
         ipw.printf("final CallableStatement ps = c.prepareCall(Q_%s);%n", kPrg);
         setQueryHints(ipw);
-        declareInnerClass(ipw, cName, "SqlInlineBatch", jdbc, batchSize, kPrg);
+        ipw.printf("return new %s", cName);
+        batchGeneric(ipw);
+        ipw.putf("(ps);%n");
+        ipw.ends();
+        declareNextClass(ipw, cName, "SqlInlineBatch", jdbc, batchSize, kPrg);
         ipw.printf("@Override%n");
         ipw.printf("public void lazyInline(%n");
         declareInputBatch(ipw, jdbc);
@@ -41,8 +45,6 @@ public class SqlInlineBatch extends SqlInlineProcedure implements InlineBatchMod
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("addBatch();%n");
         ipw.ends();
-        ipw.ends();
-        ipw.printf("return new %s();%n", cName);
         ipw.ends();
     }
 }

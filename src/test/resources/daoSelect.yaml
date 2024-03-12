@@ -82,6 +82,15 @@ methods:
         from tbool
         where bool12 = :bool12 
 
+  - methodName: selectQ3
+    perform: !SelectSingle
+      execSql: |
+        select
+          count(*) 
+        into
+          :nmCount
+        from tbool
+
   - methodName: select04
     perform: !SelectList
       fetchSize: 256

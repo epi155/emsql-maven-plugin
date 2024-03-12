@@ -16,12 +16,12 @@ public class SqlSelectOptional extends SqlSelectSingle implements SelectOptional
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 1) {
-            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s<%s> %s(%n", cc.optional(), v.getType().getWrapper(), name));
+            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s<%s> %s(", cc.optional(), v.getType().getWrapper(), name));
         } else {
             if (mc.isOutputDelegate()) {
-                ipw.putf("boolean %s(%n", name);
+                ipw.putf("boolean %s(", name);
             } else {
-                ipw.putf("%s<O> %s(%n", cc.optional(), name);
+                ipw.putf("%s<O> %s(", cc.optional(), name);
             }
         }
 

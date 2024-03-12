@@ -27,7 +27,7 @@ public class DelegateWriteMethod {
         ipw.printf("@Transactional%n");
         ipw.printf("public ");
         api.declareGenerics(ipw, cName, jdbc.getTKeys());
-        ipw.putf("int %s(%n", name);
+        ipw.putf("int %s(", name);
         ipw.commaReset();
 
         api.declareInput(ipw, jdbc);

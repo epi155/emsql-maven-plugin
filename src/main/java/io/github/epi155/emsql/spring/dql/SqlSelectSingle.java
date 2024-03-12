@@ -44,12 +44,12 @@ public class SqlSelectSingle extends SpringAction
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 1) {
-            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getPrimitive(), name));
+            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(", v.getType().getPrimitive(), name));
         } else {
             if (mc.isOutputDelegate()) {
-                ipw.putf("void %s(%n", name);
+                ipw.putf("void %s(", name);
             } else {
-                ipw.putf("O %s(%n", name);
+                ipw.putf("O %s(", name);
             }
         }
 

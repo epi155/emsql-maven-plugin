@@ -20,4 +20,6 @@ public interface PrintModel {
     void closeParenthesisLn();
 
     void commaReset();
+
+    void putln();
 }

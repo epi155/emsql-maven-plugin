@@ -2,7 +2,6 @@ package io.github.epi155.emsql.pojo;
 
 import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.BasicFactory;
-import io.github.epi155.emsql.commons.ClassContextImpl;
 import io.github.epi155.emsql.pojo.dml.*;
 import io.github.epi155.emsql.pojo.dpl.SqlCallBatch;
 import io.github.epi155.emsql.pojo.dpl.SqlCallProcedure;
@@ -88,7 +87,7 @@ public class PojoFactory extends BasicFactory {
 
     @Override
     public void classContext(PluginContext pc, Map<String, TypeModel> declare) {
-        cc = new ClassContextImpl(pc, declare);
+        cc = new PojoClassContext(pc, declare);
     }
 
     @Override

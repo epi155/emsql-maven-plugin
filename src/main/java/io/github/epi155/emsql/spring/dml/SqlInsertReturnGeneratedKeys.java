@@ -62,9 +62,9 @@ public class SqlInsertReturnGeneratedKeys extends SpringAction implements ApiDoc
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 1) {
-            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s<%s> %s(%n", cc.optional(), v.getType().getWrapper(), name));
+            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s<%s> %s(", cc.optional(), v.getType().getWrapper(), name));
         } else {
-            ipw.putf("%s<O> %s(%n", cc.optional(), name);
+            ipw.putf("%s<O> %s(", cc.optional(), name);
         }
         ipw.commaReset();
 

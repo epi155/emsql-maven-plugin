@@ -74,6 +74,11 @@ public class IndentPrintWriter implements PrintModel {
     }
 
     @Override
+    public void putln() {
+        pw.println();
+    }
+
+    @Override
     public void commaLn() {
         if (firstComma) {
             firstComma = false;

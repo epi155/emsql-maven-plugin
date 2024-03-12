@@ -58,12 +58,12 @@ public class SqlCallProcedure extends SpringAction implements ApiDocSignature, C
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 0) {
-            ipw.putf("void %s(%n", name);
+            ipw.putf("void %s(", name);
         } else if (mc.oSize() == 1) {
             // oMap.get(1) may be NULL, the output parameter is NOT the first one
-            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(%n", v.getType().getPrimitive(), name));
+            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(", v.getType().getPrimitive(), name));
         } else {
-            ipw.putf("O %s(%n", name);
+            ipw.putf("O %s(", name);
         }
         ipw.commaReset();
 
@@ -83,6 +83,25 @@ public class SqlCallProcedure extends SpringAction implements ApiDocSignature, C
         if (mc.oSize()>0)
             ipw.printf("return o;%n");
         ipw.ends();
+        ipw.ends();
+    }
+
+    public void declareNextClass(
+            PrintModel ipw,
+            String name,
+            String eSqlObject,
+            JdbcStatement jdbc,
+            int batchSize,
+            String kPrg) {
+        ipw.printf("public static class %s", name);
+        declareGenerics(ipw, name, jdbc.getTKeys());
+        ipw.putf(" extends %s", eSqlObject);
+        plainGenericsNew(ipw, jdbc);
+        ipw.putf("{%n");
+        ipw.more();
+        ipw.printf("protected %s(CallableStatement ps) {%n", name);
+        ipw.more();
+        ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
         ipw.ends();
     }
 }

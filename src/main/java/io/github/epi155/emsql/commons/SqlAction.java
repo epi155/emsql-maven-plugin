@@ -54,10 +54,11 @@ public abstract class SqlAction {
     }
 
     public void declareInput(PrintModel ipw, @NotNull JdbcStatement jdbc) {
+        int nSize = mc.nSize();
+        cc.newLine(ipw, tune);
         if (tune) {
             cc.declareTuner(ipw);
         }
-        int nSize = mc.nSize();
         if (1<=nSize && nSize<=IMAX) {
             jdbc.getNMap().forEach((name, type) -> {
                 ipw.commaLn();
@@ -77,7 +78,6 @@ public abstract class SqlAction {
             }
         }
     }
-
     public static void plainGenericsNew(PrintModel ipw, JdbcStatement jdbc) {
         int nSize = mc.nSize();
         if (nSize == 0) {
@@ -89,6 +89,20 @@ public abstract class SqlAction {
                 ipw.putf("1<DI>");
             } else {
                 ipw.putf("1<I>");
+            }
+        }
+    }
+    public static void genericsNew(PrintModel ipw, JdbcStatement jdbc) {
+        int nSize = mc.nSize();
+        if (nSize == 0) {
+            throw new IllegalArgumentException("Batch operation without arguments");
+        } else if (nSize <= IMAX) {
+//            ipw.putf("<%s>", jdbc.getNMap().values().stream().map(SqlDataType::getWrapper).collect(Collectors.joining(", ")));
+        } else {
+            if (mc.isInputDelegate()) {
+                ipw.putf("<DI>");
+            } else {
+                ipw.putf("<I>");
             }
         }
     }
@@ -107,7 +121,24 @@ public abstract class SqlAction {
         ipw.more();
         ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
         ipw.ends();
-
+    }
+    public void declareNextClass(
+            @NotNull PrintModel ipw,
+            String name,
+            String eSqlObject,
+            JdbcStatement jdbc,
+            int batchSize,
+            String kPrg) {
+        ipw.printf("public static class %s", name);
+        batchGenerics(ipw, name, jdbc.getTKeys());
+        ipw.putf(" extends %s", eSqlObject);
+        plainGenericsNew(ipw, jdbc);
+        ipw.putf("{%n");
+        ipw.more();
+        ipw.printf("protected %s(PreparedStatement ps) {%n", name);
+        ipw.more();
+        ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
+        ipw.ends();
     }
 
     public void declareInputBatch(PrintModel ipw, @NotNull JdbcStatement jdbc) {
@@ -539,6 +570,31 @@ public abstract class SqlAction {
                     }
                 }
             }
+        }
+    }
+
+    public void batchGenerics(PrintModel ipw, String cName, List<String> inFlds) {
+        if (mc.nSize() > IMAX) {
+            if (mc.isInputReflect()) {
+                ipw.putf("<I");
+            } else if (mc.isInputDelegate()) {
+                ipw.putf("<DI extends Delegate%s" + REQUEST, cName);
+            } else {
+                ipw.putf("<I extends %s" + REQUEST , cName);
+            }
+            ipw.putf(">");
+        }
+    }
+    public void batchGeneric(PrintModel ipw) {
+        if (mc.nSize() > IMAX) {
+            if (mc.isInputReflect()) {
+                ipw.putf("<I");
+            } else if (mc.isInputDelegate()) {
+                ipw.putf("<DI");
+            } else {
+                ipw.putf("<I");
+            }
+            ipw.putf("> ");
         }
     }
 
