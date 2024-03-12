@@ -96,9 +96,7 @@ public abstract class SqlAction {
         int nSize = mc.nSize();
         if (nSize == 0) {
             throw new IllegalArgumentException("Batch operation without arguments");
-        } else if (nSize <= IMAX) {
-//            ipw.putf("<%s>", jdbc.getNMap().values().stream().map(SqlDataType::getWrapper).collect(Collectors.joining(", ")));
-        } else {
+        } else if (nSize > IMAX) {
             if (mc.isInputDelegate()) {
                 ipw.putf("<DI>");
             } else {

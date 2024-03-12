@@ -34,6 +34,7 @@ public class SqlSelectOptional extends SqlSelectSingle implements SelectOptional
         }
         ipw.ends();
         ipw.orElse();
+        ipw.printf("log.debug(\"*** NoResult ***\");%n");
         if (mc.isOutputDelegate()) {
             ipw.printf("return false;%n");
         } else {
