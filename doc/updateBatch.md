@@ -7,8 +7,8 @@ The UpdateBatch pattern is designed to queue item updates from the table and sen
 Template example
 
 ~~~yaml
-  - methodName: deleteUsers
-    perform: !DeleteBatch
+  - methodName: updateUsers
+    perform: !UpdateBatch
       input:              # optional
         reflect: false    # optional, default false
         delegate: false   # optional, default false

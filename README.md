@@ -78,7 +78,7 @@ Generate code (metod body omitted)
 
 ~~~
 
-Input and output interface are created as nexted classes
+Input and output interface are created as nested classes
 
 ~~~java
 public interface FindUserRS {
