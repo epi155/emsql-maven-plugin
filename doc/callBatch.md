@@ -21,7 +21,7 @@ Template example
 Generated DAO method signature (body omitted):
 
 ~~~java
-    public static <I extends BookPS> SqlCallBatch<I> newBook(
+    public static <I extends BookPS> Book<I> newBook(
             final Connection c)
             throws SQLException ;
 ~~~
@@ -29,7 +29,7 @@ Generated DAO method signature (body omitted):
 Example of client code:
 
 ~~~java
-        try (SqlCallBatch<XBook> bookQueue = DaoU01.newBook(c)) {
+        try (DaoU01.Book<XBook> bookQueue = DaoU01.newBook(c)) {
             while(...) {
                 XBook book = ...
                 bookeQueue.lazyCall(book);     // execute call on threshold

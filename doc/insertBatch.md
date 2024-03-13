@@ -37,7 +37,7 @@ Template example
 Generated DAO method signature (body omitted):
 
 ~~~java
-    public static <I extends SaveUsersPS> SqlInsertBatch<I> newSaveUsers(
+    public static <I extends SaveUsersPS> SaveUsers<I> newSaveUsers(
             final Connection c)
             throws SQLException ;
 ~~~
@@ -45,7 +45,7 @@ Generated DAO method signature (body omitted):
 Example of client code:
 
 ~~~java
-        try (SqlInsertBatch<XUser> saveQueue = DaoU01.newSaveUsers(c)) {
+        try (DaoU01.SaveUsers<XUser> saveQueue = DaoU01.newSaveUsers(c)) {
             while(...) {
                 XUser user = ...
                 saveQueue.lazyInsert(user);     // execute insert on threshold
