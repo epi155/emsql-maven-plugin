@@ -34,7 +34,7 @@ Template example
         )
 ~~~
 
-Generated DAO method signature (body omitted):
+Generated DAO method signature, more than 4 parameters (body omitted):
 
 ~~~java
     public static <I extends SaveUsersPS> SaveUsers<I> newSaveUsers(
@@ -63,4 +63,23 @@ it is possible to define a trigger method that is called after sending insert re
 
 ~~~java
             saveQueue.setTrigger(this::count);  // check executeBatch() result
+~~~
+
+Generated DAO method signature, up to 4 parameters (body omitted):
+
+~~~java
+    public static AddUsers newAddUsers(
+            final Connection c)
+            throws SQLException;
+~~~
+
+Example of client code:
+
+~~~java
+        try (DaoU01.AddUsers saveQueue = DaoU01.newAddUsers(c)) {
+            while(...) {
+                XUser user = ...
+                saveQueue.lazyInsert(user.getSurname(), user.getGivenName());     // execute insert on threshold
+            }
+        }   // insert on close
 ~~~

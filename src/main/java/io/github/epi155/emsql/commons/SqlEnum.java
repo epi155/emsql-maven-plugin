@@ -40,10 +40,12 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("EmSQL.setVarchar(ps, ++ki, EmSQL.get(%s, \"%s\", String.class));%n", orig, name);
         }
         @Override
         public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("EmSQL.setVarchar(ps, %d, EmSQL.get(%s, \"%s\", String.class));%n", k, orig, name);
         }
     },
@@ -61,10 +63,12 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("EmSQL.setChar(ps, ++ki, EmSQL.get(%s, \"%s\", String.class));%n", orig, name);
         }
         @Override
         public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("EmSQL.setChar(ps, %d, EmSQL.get(%s, \"%s\", String.class));%n", k, orig, name);
         }
     },
@@ -123,10 +127,12 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("ps.setByte(++ki, (byte) (EmSQL.get(%s, \"%s\", Boolean.class) ? 1 : 0));%n", orig, name);
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("ps.setByte(%d, (byte) (EmSQL.get(%s, \"%s\", Boolean.class) ? 1 : 0));%n", k, orig, name);
         }
         @Override
@@ -178,10 +184,12 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("ps.setDate(++ki, Date.valueOf(EmSQL.get(%s, \"%s\", LocalDate.class)));%n", orig, name);
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("ps.setDate(%d, Date.valueOf(EmSQL.get(%s, \"%s\", LocalDate.class)));%n", k, orig, name);
         }
         @Override
@@ -208,10 +216,12 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("J8Time.setDate(ps, ++ki, EmSQL.get(%s, \"%s\", LocalDate.class));%n", orig, name);
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("J8Time.setDate(ps, %d, EmSQL.get(%s, \"%s\", LocalDate.class));%n", k, orig, name);
         }
         @Override
@@ -238,10 +248,12 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("ps.setTimestamp(++ki, Timestamp.valueOf(EmSQL.get(%s, \"%s\", LocalDateTime.class)));%n", orig, name);
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("ps.setTimestamp(%d, Timestamp.valueOf(EmSQL.get(%s, \"%s\", LocalDateTime.class)));%n", k, orig, name);
         }
         @Override
@@ -268,10 +280,12 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("J8Time.setTimestamp(ps, ++ki, EmSQL.get(%s, \"%s\", LocalDateTime.class));%n", orig, name);
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("J8Time.setTimestamp(ps, %d, EmSQL.get(%s, \"%s\", LocalDateTime.class));%n", k, orig, name);
         }
         @Override
@@ -298,10 +312,12 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("ps.setTime(++ki, Time.valueOf(EmSQL.get(%s, \"%s\", LocalTime.class)));%n", orig, name);
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("ps.setTime(%d, Time.valueOf(EmSQL.get(%s, \"%s\", LocalTime.class)));%n", k, orig, name);
         }
         @Override
@@ -328,10 +344,12 @@ public enum SqlEnum implements SqlDataType {
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("J8Time.setTime(ps, ++ki, EmSQL.get(%s, \"%s\", LocalTime.class));%n", orig, name);
         }
         @Override
         public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.printf("J8Time.setTime(ps, %d, EmSQL.get(%s, \"%s\", LocalTime.class));%n", k, orig, name);
         }
         @Override
@@ -389,10 +407,12 @@ public enum SqlEnum implements SqlDataType {
         if (!isNullable() || isPlainClass) {
             ipw.putf("rs.get%s(%d)", jdbc, k);
         } else {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
             ipw.putf("EmSQL.get%s(rs,%d)", jdbc, k);
         }
     }
     public  void xPsPush(PrintModel ipw, String orig, String name) {
+        cc.add(ClassContextImpl.RUNTIME_EMSQL);
         if (!isNullable()) {
             ipw.printf("ps.set%s(++ki, EmSQL.get(%s, \"%s\", %s.class));%n", jdbc, orig, name, wrapper);
         } else {
@@ -400,6 +420,7 @@ public enum SqlEnum implements SqlDataType {
         }
     }
     public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+        cc.add(ClassContextImpl.RUNTIME_EMSQL);
         if (!isNullable()) {
             ipw.printf("ps.set%s(%d, EmSQL.get(%s, \"%s\", %s.class));%n", jdbc, k, orig, name, wrapper);
         } else {

@@ -27,12 +27,13 @@ public abstract class SpringAction extends SqlAction {
         ipw.putf(" new%s()%n", cName);
         ipw.printf("        throws SQLException {%n");
     }
-    public void declareNewInstance(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc, String cName) {
+    public void declareNewInstance(@NotNull PrintModel ipw, String cName) {
         cc.add("org.springframework.transaction.annotation.Transactional");
         cc.add("org.springframework.transaction.annotation.Propagation");
         ipw.printf("@Transactional(propagation=Propagation.MANDATORY)%n");
         ipw.printf("public ");
-        declareGenerics(ipw, cName, jdbc.getTKeys());
+        batchGenerics(ipw, cName);
+//        declareGenerics(ipw, cName, jdbc.getTKeys());
         ipw.putf("%s", cName);
         genericsNew(ipw);
         ipw.putf(" new%s()%n", cName);

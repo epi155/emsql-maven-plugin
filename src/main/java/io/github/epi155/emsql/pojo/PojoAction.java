@@ -25,7 +25,7 @@ public abstract class PojoAction extends SqlAction {
     public void declareNewInstance(@NotNull PrintModel ipw, String cName) {
         ipw.printf("public static ");
         batchGenerics(ipw, cName);
-        ipw.putf(" %s", cName);
+        ipw.putf("%s", cName);
         genericsNew(ipw);
         ipw.putf(" new%s(%n", cName);
         ipw.printf("        final Connection c)%n", cName);

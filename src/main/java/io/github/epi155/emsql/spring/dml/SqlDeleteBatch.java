@@ -44,7 +44,7 @@ public class SqlDeleteBatch extends SpringAction implements ApiDelete, DeleteBat
         docBegin(ipw);
         docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, jdbc, cName);
+        declareNewInstance(ipw, cName);
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");

@@ -565,7 +565,7 @@ public abstract class SqlAction {
             } else {
                 ipw.putf("<I extends %s" + REQUEST , cName);
             }
-            ipw.putf(">");
+            ipw.putf("> ");
         }
     }
     public void batchGeneric(PrintModel ipw) {

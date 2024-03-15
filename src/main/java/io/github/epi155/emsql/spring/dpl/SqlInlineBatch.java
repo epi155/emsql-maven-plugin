@@ -24,7 +24,7 @@ public class SqlInlineBatch extends SqlInlineProcedure implements InlineBatchMod
         docBegin(ipw);
         docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, jdbc, cName);
+        declareNewInstance(ipw, cName);
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
