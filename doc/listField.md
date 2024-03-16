@@ -58,7 +58,7 @@ declare:
   organization: varchar
   locality: varchar
   ...
-  locOrgs: ( locality, organization )
+  localityAndOrganization: ( locality, organization )
 methods:
   - methodName: certificateListStrict
     perform: !SelectList
@@ -68,26 +68,28 @@ methods:
         into
           :commonName, :organizationalUnit, :organization, :locality, :state, :country
         from certificate
-        where (locality, organization) in ( :locOrgs )
+        where (locality, organization) in ( :localityAndOrganization )
 ~~~
 
 Generated DAO method signature (body omitted):
 
 ~~~java
-    public static <O extends CertificateListStrictRS,L1 extends LocOrgsPS> List<O> certificateListStrict(
+    public static <O extends CertificateListStrictRS,L1 extends LocalityAndOrganizationPS> List<O> certificateListStrict(
             final Connection c,
-            final List<L1> locOrgs,
+            final List<L1> localityAndOrganization,
             final Supplier<O> so)
             throws SQLException ;
 ~~~
 
-Where `LocOrgsPS` is the DTO interface with getters
+Where `LocalityAndOrganizationPS` is the DTO interface with getters
 
 ~~~java
-    public interface LocOrgsPS {
+    public interface LocalityAndOrganizationPS {
         String getLocality();
         String getOrganization();
     }
 ~~~
+
+> List-type fields are not accepted for inserts, batch actions and procedures
 
 [![Up](go-up.png)](ConfigYaml.md)

@@ -74,7 +74,7 @@ Similarly, if only 1 value is returned in the output, it is returned directly fr
 
 If the field names are structured, i.e. contain the dot character, nested DAO interfaces will be generated.
 
-It is possible to form a `List` field so that it can be used in an `IN` clause, see the [examples](listField.md)
+> It is possible to form a `List` field so that it can be used in an `IN` clause, see the [examples](listField.md)
 
 After the declaration of the fields, the list of methods with their parameters follows
 
