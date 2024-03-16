@@ -41,3 +41,4 @@ Example of client code:
 
 see [Insert](insert.md#delegate-input)
 
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](insert.md) [![Next](go-next.png)](delete.md)

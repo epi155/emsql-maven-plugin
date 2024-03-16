@@ -56,3 +56,5 @@ it is possible to define a trigger method that is called after sending delete re
 ~~~java
             updateQueue.setTrigger(this::count);  // check executeBatch() result
 ~~~
+
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](insertBatch.md) [![Next](go-next.png)](deleteBatch.md)

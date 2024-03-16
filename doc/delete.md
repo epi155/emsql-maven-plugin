@@ -39,3 +39,5 @@ Example of client code:
 ### Delegate input
 
 see [Insert](insert.md#delegate)
+
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](update.md) [![Next](go-next.png)](insertBatch.md)

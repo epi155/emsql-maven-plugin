@@ -94,3 +94,5 @@ Example of client code:
                 .build();
         int nmInsert = DaoU01.insertUser(c,  rule);
 ~~~
+
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](CursorForSelect.md) [![Next](go-next.png)](update.md)

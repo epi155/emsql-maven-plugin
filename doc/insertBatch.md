@@ -83,3 +83,5 @@ Example of client code:
             }
         }   // insert on close
 ~~~
+
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](delete.md) [![Next](go-next.png)](updateBatch.md)

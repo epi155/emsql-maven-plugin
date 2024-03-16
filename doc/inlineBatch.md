@@ -52,3 +52,5 @@ it is possible to define a trigger method that is called after sending call requ
 ~~~java
             bookQueue.setTrigger(this::count);  // check executeBatch() result
 ~~~
+
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](callBatch.md)
