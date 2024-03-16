@@ -79,3 +79,5 @@ in the SPRING version it becomes
     ...
     XUser user = daoU01.findUser(1, XUser::new);
 ~~~
+
+[![Up](go-up.png)](../README.md) [![Next](go-next.png)](ConfigYaml.md)

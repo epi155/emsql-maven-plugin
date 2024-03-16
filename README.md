@@ -114,3 +114,5 @@ where `XUser` is a client class that implements `FindUserRS` interface.
 
 [3) Plugin parameters details](doc/plugin.md)<br/>
 [4) Configuration YAML details](doc/ConfigYaml.md)<br/>
+
+[![Next](doc/go-next.png)](doc/plugin.md)

@@ -172,3 +172,4 @@ If the delegate flag is enabled, DTO interfaces with direct getters and setters 
 
 The concept of delegated parameter is a bit convoluted, in the details of the various models there is an example of the use of delegated parameters in input and output.
 
+[![Up](go-up.png)](../README.md) [![Next](go-previous.png)](plugin.md)

@@ -169,3 +169,5 @@ Example of client code:
 ~~~
 
 The use of input delegation is more laborious than a normal DTO interface, the advantage is that it is possible to obtain the value of the fields from different objects
+
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-next.png)](SelectOptional.md)

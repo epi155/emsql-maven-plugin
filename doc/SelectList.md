@@ -111,3 +111,5 @@ Example of client code:
                 .build();
         List<XUser> users = DaoU01.findUsers(c, rule, XUser::new);
 ~~~
+
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](SelectOptional.md) [![Next](go-next.png)](CursorForSelect.md)
