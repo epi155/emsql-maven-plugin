@@ -1,4 +1,4 @@
-## 4.1.1. SelectSingle
+## 4.2.1. SelectSingle
 
 
 The SelectSingle template is designed for the situation where the selection needs to return a single element, no elements, or multiple elements throw a SqlException
@@ -170,4 +170,4 @@ Example of client code:
 
 The use of input delegation is more laborious than a normal DTO interface, the advantage is that it is possible to obtain the value of the fields from different objects
 
-[![Up](go-up.png)](ConfigYaml.md) [![Next](go-next.png)](SelectOptional.md)
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](typeUnicode.md) [![Next](go-next.png)](SelectOptional.md)

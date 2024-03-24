@@ -1,4 +1,4 @@
-## 4.2.1. Insert
+## 4.3.1. Insert
 
 The Insert template is designed to insert a new item into the table
 

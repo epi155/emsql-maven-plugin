@@ -1,4 +1,4 @@
-## 4.3.2. InlineProcedure
+## 4.4.2. InlineProcedure
 
 The InlineProcedure template is designed to call a sequence of SQL commands, as if they were the body of a stored procedure.
 A `CallableStatement` is used to execute the block of commands (not a `PreparedStatement`)

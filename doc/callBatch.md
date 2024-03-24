@@ -1,4 +1,4 @@
-## 4.3.3. CallBatch
+## 4.4.3. CallBatch
 
 The CallBatch template is designed to queue call of new items and send them to the database in bulk when the queue reaches the preset threshold.
 

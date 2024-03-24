@@ -1,4 +1,4 @@
-## 4.2.4. InsertBatch
+## 4.3.4. InsertBatch
 
 The InsertBatch template is designed to queue insertions of new items into the table and send them to the database in bulk when the queue reaches the preset threshold.
 

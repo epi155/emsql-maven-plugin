@@ -1,4 +1,4 @@
-## 4.2.6. DeleteBatch
+## 4.3.6. DeleteBatch
 
 The DeleteBatch template is designed to queue deletions of items from the table and send them in bulk to the database when the queue reaches the preset threshold.
 

@@ -1,4 +1,4 @@
-## 4.2.5. UpdateBatch
+## 4.3.5. UpdateBatch
 
 The UpdateBatch pattern is designed to queue item updates from the table and send them in bulk to the database when the queue reaches the preset threshold.
 

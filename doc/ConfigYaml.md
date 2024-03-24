@@ -23,48 +23,14 @@ declare:      # input/output fields
 mark after the data type indicates that the field is nullable in the database
 (kotlin style).
 
-The currently managed field types are shown in the following table:
-
-| Field Type|JDBC Type|java type|
-|-----------|---------|---------|
-|BIGINT<br>BIGINTEGER<br>LONG    | BIGINT    | long       |
-|BIGINT?<br>BIGINTEGER?<br>LONG? | BIGINT    | Long       |
-|BINARY                          | BINARY    | byte[]     |
-|BINARY?                         | BINARY    | byte[]     |
-|BOOL<br>BOOLEAN                 | BOOLEAN   | boolean    |
-|BOOL?<br>BOOLEAN?               | BOOLEAN   | Boolean    |
-|BYTE                            |TINYINT    | byte       |
-|BYTE?                           |TINYINT    | Byte       |
-|CHAR                            | CHAR      | String     |
-|CHAR?                           | CHAR      | String     |
-|DATE                            | DATE      | Date       |
-|DATE?                           | DATE      | Date       |
-|DOUBLE                          | DOUBLE    | double     |
-|DOUBLE?                         | DOUBLE    | Double     |
-|FLOAT                           | FLOAT     | float      |
-|FLOAT?                          | FLOAT     | Float      |
-|INT<br>INTEGER                  | INTEGER   | int        |
-|INT?<br>INTEGER?                | INTEGER   | Integer    |
-|NUMERIC<br>NUMBER               | NUMERIC   | BigDecimal |
-|NUMERIC?<br>NUMBER?             | NUMERIC   | BigDecimal |
-|SHORT<br>SMALLINT               |SMALLINT   | short      |
-|SHORT?<br>SMALLINT?             |SMALLINT   | Short      |
-|TIMESTAMP                       | TIMESTAMP | Timestamp  |
-|TIMESTAMP?                      | TIMESTAMP | Timestamp  |
-|TIME                            | TIME      | Time       |
-|TIME?                           | TIME      | Time       |
-|VARBINARY                       | VARBINARY | byte[]     |
-|VARBINARY?                      | VARBINARY | byte[]     |
-|VARCHAR                         | VARCHAR   | String     |
-|VARCHAR?                        | VARCHAR   | String     |
-|LOCALDATE     | DATE      | LocalDate     |
-|LOCALDATE?    | DATE      | LocalDate     |
-|LOCALDATETIME | TIMESTAMP | LocalDateTime |
-|LOCALDATETIME?| TIMESTAMP | LocalDateTime |
-|LOCALTIME     | TIME      | LocalTime     |
-|LOCALTIME?    | TIME      | LocalTime     |
-|NUMBOOL       | TINYINT   | boolean       |
-|NUMBOOL?      | TINYINT   | Boolean       |
+The currently managed field types are shown in the following:
+4.1) Tables<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1) String Data Types](typeString.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2) Numeric Data Types](typeNumber.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3) Date and Time Data Types](typeDateTime.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1.4) Binary Data Types](typeBinary.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1.5) Unicode Data Types](typeUnicode.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1.6) Other Data Types](typeOther.md)<br/>
 
 The list of fields is not used to create a single common class for all methods, but is consulted, for each method, to create dedicated interfaces (with getters for the input values, and with setters for the values of output).
 
@@ -90,24 +56,24 @@ Naturally `methodName` is the name of the method, `perform` is one of the models
 
 For model details refer to:
 
-4.1) Query<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1) SelectSingle](SelectSingle.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2) SelectOptional](SelectOptional.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3) SelectList](SelectList.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.1.4) CursorForSelect](CursorForSelect.md)<br/>
-4.2) Manipulation<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.1) Insert](insert.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) Update](update.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.3) Delete](delete.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.4) InsertBatch](insertBatch.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.5) UpdateBatch](updateBatch.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.6) DeleteBatch](deleteBatch.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.7) InsertReturnKeys](insertKey.md)<br/>
-4.3) Procedure<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.3.1) CallProcedure](callProc.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.3.2) InlineProcedure](inlineProc.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.3.3) CallBatch](callBatch.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.3.4) InlineBatch](inlineBatch.md)<br/>
+4.2) Query<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.1) SelectSingle](SelectSingle.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) SelectOptional](SelectOptional.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.3) SelectList](SelectList.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.4) CursorForSelect](CursorForSelect.md)<br/>
+4.3) Manipulation<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.1) Insert](insert.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.2) Update](update.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.3) Delete](delete.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.4) InsertBatch](insertBatch.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.5) UpdateBatch](updateBatch.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.6) DeleteBatch](deleteBatch.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.3.7) InsertReturnKeys](insertKey.md)<br/>
+4.4) Procedure<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.4.1) CallProcedure](callProc.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.4.2) InlineProcedure](inlineProc.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.4.3) CallBatch](callBatch.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.4.4) InlineBatch](inlineBatch.md)<br/>
 
 
 

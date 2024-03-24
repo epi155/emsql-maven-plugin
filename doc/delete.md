@@ -1,4 +1,4 @@
-## 4.2.3. Delete
+## 4.3.3. Delete
 
 The Delete template is designed to remove one or more elements from the table.
 

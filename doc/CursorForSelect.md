@@ -1,4 +1,4 @@
-## 4.1.4. CursorForSelect
+## 4.2.4. CursorForSelect
 
 The CursorForSelect template is designed for the situation where you need to manage a list of objects one at a time
 

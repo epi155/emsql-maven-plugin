@@ -1,4 +1,4 @@
-## 4.1.2. SelectOptional
+## 4.2.2. SelectOptional
 
 
 The SelectOptional template is designed for the situation where the selection must return one or no elements, the presence of multiple elements throws a SqlException

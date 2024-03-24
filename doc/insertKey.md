@@ -1,4 +1,4 @@
-## 4.2.7. InsertReturnKeys
+## 4.3.7. InsertReturnKeys
 
 When the primary key column of a table is defined as IDENTITY, how is it possible to recover the value generated in the insert together with the insert command?
 
