@@ -23,7 +23,7 @@ declare:      # input/output fields
 mark after the data type indicates that the field is nullable in the database
 (kotlin style).
 
-The currently managed field types are shown in the following:
+The currently managed field types are shown in the following:<br/>
 4.1) Tables<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1.1) String Data Types](typeString.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1.2) Numeric Data Types](typeNumber.md)<br/>
