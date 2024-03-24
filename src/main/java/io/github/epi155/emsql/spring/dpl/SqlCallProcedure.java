@@ -22,6 +22,8 @@ public class SqlCallProcedure extends SpringAction implements ApiDocSignature, C
     private InputModel input;
     @Setter @Getter
     private OutFieldsModel output;
+    @Setter @Getter
+    private InOutFieldsModel inputOutput;
     private final DelegateCallSignature delegateSelectSignature;
     public SqlCallProcedure() {
         super();
@@ -41,7 +43,10 @@ public class SqlCallProcedure extends SpringAction implements ApiDocSignature, C
             Map<String, SqlDataType> inpFields = new HashMap<>();
             Map<String, SqlDataType> outFields = new HashMap<>();
             fields.forEach((k,v) -> {
-                if (output!=null && output.getFields().contains(k)) {
+                if (inputOutput!=null && inputOutput.getFields().contains(k)) {
+                    inpFields.put(k,v);
+                    outFields.put(k, v);
+                } else if (output!=null && output.getFields().contains(k)) {
                     outFields.put(k, v);
                 } else {
                     inpFields.put(k,v);

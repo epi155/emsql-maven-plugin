@@ -11,6 +11,7 @@ public interface CodeFactory {
     InputModel newInputModel();
     OutputModel newOutputModel();
     OutFieldsModel newOutFieldsModel();
+    InOutFieldsModel newInOutFieldsModel();
 
     SelectSingleModel newSelectSingleModel();
     SelectOptionalModel newSelectOptionalModel();

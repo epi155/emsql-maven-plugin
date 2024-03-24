@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.github.epi155.emsql.commons.Contexts.*;
+import static io.github.epi155.emsql.commons.Contexts.REQUEST;
 import static io.github.epi155.emsql.commons.Tools.capitalize;
 import static io.github.epi155.emsql.pojo.PojoAction.throughGetter;
 

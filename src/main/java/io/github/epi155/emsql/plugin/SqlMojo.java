@@ -124,6 +124,7 @@ public class SqlMojo extends AbstractMojo {
         c1.addTypeDescription(new TdInput(factory));
         c1.addTypeDescription(new TdOutput(factory));
         c1.addTypeDescription(new TdOutFields(factory));
+        c1.addTypeDescription(new TdInOutFields(factory));
         c1.addTypeDescription(new TdSelectOptional(factory));
         c1.addTypeDescription(new TdSelectSingle(factory));
         c1.addTypeDescription(new TdSelectList(factory));

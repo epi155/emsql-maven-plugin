@@ -21,6 +21,8 @@ public class SqlCallProcedure extends PojoAction implements ApiDocSignature, Cal
     private InputModel input;
     @Setter @Getter
     private OutFieldsModel output;
+    @Setter @Getter
+    private InOutFieldsModel inputOutput;
     private final DelegateCallSignature delegateCallSignature;
     public SqlCallProcedure() {
         super();
@@ -39,14 +41,17 @@ public class SqlCallProcedure extends PojoAction implements ApiDocSignature, Cal
         if (m.find()) {
             Map<String, SqlDataType> inpFields = new HashMap<>();
             Map<String, SqlDataType> outFields = new HashMap<>();
+            Map<String, SqlDataType> ioFields = new HashMap<>();
             fields.forEach((k,v) -> {
-                if (output!=null && output.getFields().contains(k)) {
-                    outFields.put(k, v);
+                if (inputOutput!=null && inputOutput.getFields().contains(k)) {
+                    ioFields.put(k,v);
+                } else if (output!=null && output.getFields().contains(k)) {
+                    outFields.put(k,v);
                 } else {
                     inpFields.put(k,v);
                 }
             });
-            return Tools.replacePlaceholder(nText, inpFields, outFields);
+            return Tools.replacePlaceholder(nText, inpFields, outFields, ioFields);
 
         } else {
             throw new InvalidQueryException("Invalid query format: "+ getExecSql());

@@ -155,6 +155,10 @@ public abstract class BasicFactory implements CodeFactory {
     public OutFieldsModel newOutFieldsModel() {
         return new ComAreaDef();
     }
+    @Override
+    public InOutFieldsModel newInOutFieldsModel() {
+        return new ComAreaDef();
+    }
 
     @Override
     public SqlDataType getInstance(String value, MapContext mapContext) {

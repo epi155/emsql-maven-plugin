@@ -11,11 +11,22 @@ Template example
 ~~~yaml
   - methodName: book
     perform: !CallProcedure
-      output:
-        fields:
-          - nmBook
+      input:              # optional
+        reflect: false    # optional, default false
+        delegate: false   # optional, default false
+      output:             # optional
+        reflect: false    # optional, default false
+        delegate: false   # optional, default false
+        fields:           # output fields
+          - ...           # field name
+      input-output:       # optional
+        reflect: false    # optional, default false
+        delegate: false   # optional, default false
+        fields:           # input-output fields
+          - qty           # field name
+      timeout: 5          # (seconds) optional, default null (system default)
       execSql: |
-        call book(:nmBook, :abi, :posi, :circ, :qty) 
+        call book(:abi, :posi, :circ, :aff, :cpp, :qty)
 ~~~
 
 Generated DAO method signature (body omitted):
@@ -30,7 +41,7 @@ Generated DAO method signature (body omitted):
 Example of client code:
 
 ~~~java
-        int booked = DaoP01.book(c, bookInp);
+        int qty = DaoP01.book(c, bookInp);
 ~~~
 
 [![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](insertKey.md) [![Next](go-next.png)](inlineProc.md)

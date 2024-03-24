@@ -144,6 +144,81 @@ public class Tools {
 
         return null;    // dead exit point
     }
+    public static JdbcStatement replacePlaceholder(
+            String text,
+            Map<String, SqlDataType> iFields,
+            Map<String, SqlDataType> oFields,
+            Map<String, SqlDataType> ioFields
+    ) {
+        int ixCol = text.indexOf(':');
+        if (ixCol<0) {
+            // there are no parameters
+            return new JdbcStatement(text, Map.of(), Map.of());
+        }
+        int ixEnd = indexOf(text, ixCol + 1);
+        if (ixEnd<0) {
+            // only one parameter at end-of-text (no space)
+            String parm = text.substring(ixCol + 1);
+            SqlDataType type = ioFields.get(parm);
+            if (type != null) {
+                return new JdbcStatement(
+                        text.substring(0, ixCol)+"?",
+                        Map.of(1, new SqlParam(parm, type)),
+                        Map.of(1, new SqlParam(parm, type)));
+            }
+            type = iFields.get(parm);
+            if (type != null) {
+                return new JdbcStatement(
+                        text.substring(0, ixCol)+"?",
+                        Map.of(1, new SqlParam(parm, type)),
+                        Map.of());
+            }
+            type = oFields.get(parm);
+            if (type != null) {
+                return new JdbcStatement(
+                        text.substring(0, ixCol) + "?",
+                        Map.of(),
+                        Map.of(1, new SqlParam(parm, type)));
+            }
+            throw new InvalidSqlParameter(parm, iFields, oFields);
+        }
+        String parm = text.substring(ixCol + 1, ixEnd);
+
+        class MapStore implements ApiStore<JdbcStatement> {
+            private final Map<Integer, SqlParam> iMap = new LinkedHashMap<>();
+            private final Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
+            private int k=1;
+
+            public void push(String parm) {
+                if (parm.isEmpty())
+                    return;
+                SqlDataType type = ioFields.get(parm);
+                if (type != null) {
+                    iMap.put(k, new SqlParam(parm, type));
+                    oMap.put(k++, new SqlParam(parm, type));
+                    return;
+                }
+                type = iFields.get(parm);
+                if (type != null) {
+                    iMap.put(k++, new SqlParam(parm, type));
+                    return;
+                }
+                type = oFields.get(parm);
+                if (type != null) {
+                    oMap.put(k++, new SqlParam(parm, type));
+                    return;
+                }
+                throw new InvalidSqlParameter(parm, iFields, oFields);
+            }
+
+            public JdbcStatement close(String s) {
+                return new JdbcStatement(s, iMap, oMap);
+            }
+        }
+        val store = new MapStore();
+        store.push(parm);
+        return deepScan(text, ixCol, ixEnd, store);
+    }
 
     public static JdbcStatement replacePlaceholder(String text, Map<String, SqlDataType> iFields, Map<String, SqlDataType> oFields) {
         int ixCol = text.indexOf(':');
