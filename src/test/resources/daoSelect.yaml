@@ -11,9 +11,6 @@ declare:
   bool13: Bool
   bool14: Bool
   nmCount: int
-  commonName: varchar
-  state: char
-  states: (state)
 methods:
   - methodName: select01
     perform: !SelectSingle
@@ -37,6 +34,7 @@ methods:
   - methodName: select11
     perform: !SelectSingle
       timeout: 5
+      tune: yes
       input:
         delegate: no
       output:
@@ -82,15 +80,6 @@ methods:
         from tbool
         where bool12 = :bool12 
 
-  - methodName: selectQ3
-    perform: !SelectSingle
-      execSql: |
-        select
-          count(*) 
-        into
-          :nmCount
-        from tbool
-
   - methodName: select04
     perform: !SelectList
       fetchSize: 256
@@ -123,13 +112,3 @@ methods:
         and   bool02 = :bool02
         and   bool03 = :bool03
         and   bool13 = :bool13
-
-  - methodName: select06
-    perform: !SelectList
-      execSql: |
-        select
-          common_name
-        into
-          :commonName
-        from tbcrt
-        where state in ( :states )

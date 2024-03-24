@@ -52,6 +52,7 @@ methods:
           :idPratica
         from p01
         where (abi, ibr_key) = ( :keys )
+        and circ = :circ
         and dtEmis between :dtMin and :dtMax
 
   - methodName: select12
@@ -65,6 +66,7 @@ methods:
           :idPratica
         from p01
         where (abi, ibr_key) = ( :keys )
+        and circ = :circ
         and dtEmis between :dtMin and :dtMax
 
   - methodName: select13
@@ -78,4 +80,5 @@ methods:
           :idPratica
         from p01
         where (abi, ibr_key) = ( :keys )
+        and circ = :circ
         and dtEmis between :dtMin and :dtMax

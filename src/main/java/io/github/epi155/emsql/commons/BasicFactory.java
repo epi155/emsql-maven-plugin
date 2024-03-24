@@ -87,6 +87,50 @@ public abstract class BasicFactory implements CodeFactory {
         map.put("LOCALTIME", SqlEnum.LocalTimeStd);
         map.put("LOCALTIME?", SqlEnum.LocalTimeNil);
 
+        map.put("NVARCHAR", SqlEnum.NVarCharStd);
+        map.put("NVARCHAR?", SqlEnum.NVarCharNil);
+        map.put("NCHAR", SqlEnum.NCharStd);
+        map.put("NCHAR?", SqlEnum.NCharNil);
+
+        map.put("LONGVARBINARY", SqlEnum.LongVarBinaryStd);
+        map.put("LONGVARBINARY?", SqlEnum.LongVarBinaryNil);
+        map.put("LONGVARCHAR", SqlEnum.LongVarCharStd);
+        map.put("LONGVARCHAR?", SqlEnum.LongVarCharNil);
+        map.put("LONGNVARCHAR", SqlEnum.LongNVarCharStd);
+        map.put("LONGNVARCHAR?", SqlEnum.LongNVarCharNil);
+
+        map.put("BLOB", SqlEnum.BlobStd);
+        map.put("BLOB?", SqlEnum.BlobNil);
+        map.put("CLOB", SqlEnum.ClobStd);
+        map.put("CLOB?", SqlEnum.ClobNil);
+        map.put("NCLOB", SqlEnum.NClobStd);
+        map.put("NCLOB?", SqlEnum.NClobNil);
+
+        map.put("LONGVARCHARSTREAM", SqlEnum.LongVarCharStreamStd);
+        map.put("LONGVARCHARSTREAM?", SqlEnum.LongVarCharStreamNil);
+        map.put("LONGNVARCHARSTREAM", SqlEnum.LongNVarCharStreamStd);
+        map.put("LONGNVARCHARSTREAM?", SqlEnum.LongNVarCharStreamNil);
+        map.put("LONGVARBINARYSTREAM", SqlEnum.LongVarBinaryStreamStd);
+        map.put("LONGVARBINARYSTREAM?", SqlEnum.LongVarBinaryStreamNil);
+
+        map.put("BLOBSTREAM", SqlEnum.BlobStreamStd);
+        map.put("BLOBSTREAM?", SqlEnum.BlobStreamNil);
+        map.put("CLOBSTREAM", SqlEnum.ClobStreamStd);
+        map.put("CLOBSTREAM?", SqlEnum.ClobStreamNil);
+        map.put("NCLOBSTREAM", SqlEnum.NClobStreamStd);
+        map.put("NCLOBSTREAM?", SqlEnum.NClobStreamNil);
+
+        map.put("REF", SqlEnum.RefStd);
+        map.put("REF?", SqlEnum.RefNil);
+        map.put("ROWID", SqlEnum.RowIdStd);
+        map.put("ROWID?", SqlEnum.RowIdNil);
+        map.put("XML", SqlEnum.SQLXMLStd);
+        map.put("XML?", SqlEnum.SQLXMLNil);
+        map.put("URL", SqlEnum.URLStd);
+        map.put("URL?", SqlEnum.URLNil);
+        map.put("ARRAY", SqlEnum.ArrayStd);
+        map.put("ARRAY?", SqlEnum.ArrayNil);
+
         //---------------------------------------------------------
 //            new AbstractMap.SimpleEntry<>("(CHAR)", new SqlVector(SqlEnum.CharStd))
         sqlMap = Collections.unmodifiableMap(map);

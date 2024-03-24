@@ -10,7 +10,6 @@ declare:
   bool12: Bool
   bool13: Bool
   bool14: Bool
-  booList: ( bool13 )
 methods:
   - methodName: queue01
     perform: !UpdateBatch
@@ -63,18 +62,3 @@ methods:
         where bool14 = :bool14
         and   bool03 = :bool03
 
-#  - methodName: queue06
-#    perform: !UpdateBatch
-#      execSql: |
-#        update tbool
-#        set bool04 = true
-#        where bool14 = :bool14
-#        and   bool13 in ( :booList )
-
-  - methodName: queueQ6
-    perform: !Update
-      execSql: |
-        update tbool
-        set bool04 = true
-        where bool14 = :bool14
-        and   bool13 in ( :booList )

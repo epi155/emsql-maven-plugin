@@ -15,7 +15,6 @@ declare:
   idPraticaCdmOrig: int?
   tsVers: localdatetime
   p01.abi: int?
-  p02.abi: int?
   p01.ibrKey: long?
   p01.idFile: int?
   p01.cdPosizione: varchar
@@ -25,8 +24,6 @@ declare:
   p01.label: char
   p01.categoria: char?
   p01.idPraticaCdmOrig: long?
-  p01.issuerId: char
-  p01.centroServiziRichiesta: char
   p02.ibrPrg: int
   p01.idPraticaApp: long
   p02.idFunzioneApp: long
@@ -91,44 +88,3 @@ methods:
           set :p01.idPraticaApp = id01;
           set :p02.idFunzioneApp = id02;
         end;
-
-  - methodName: selectId
-    perform: !SelectSingle
-      execSql: |
-        select id_pratica_app 
-        into :p01.idPraticaApp
-        from p01_pratica
-        where abi = :p01.abi
-        and   ibr_key = :p01.ibrKey
-
-  - methodName: selectId2
-    perform: !SelectSingle
-      execSql: |
-        select id_pratica_app 
-        into :p01.idPraticaApp
-        from p01_pratica
-        where abi = :p01.abi
-        and   abi_Collocatrice = :p01.abi
-        and   ibr_key = :p01.ibrKey
-
-  - methodName: selectId3
-    perform: !SelectSingle
-      execSql: |
-        select id_pratica_app 
-        into :p01.idPraticaApp
-        from p01_pratica
-        where abi = :p01.abi
-        and   abi_Collocatrice = :p01.abi
-        and   ibr_key = :p01.ibrKey
-        and   issuer_id = :p01.issuerId
-        and   CS_RICHIESTA = :p01.centroServiziRichiesta
-
-  - methodName: selectId4
-    perform: !SelectSingle
-      execSql: |
-        select id_pratica_app 
-        into :p01.idPraticaApp
-        from p01_pratica
-        where abi = :p01.abi
-        and   abi_Collocatrice = :p02.abi
-        and   ibr_key = :p01.ibrKey

@@ -3,14 +3,13 @@ className: DaoList
 declare:
   count: long
   abi: int
-  abis: ( abi )
+  abis: (abi)
   circ: int
   dtMin: date
   dtMax: date
 methods:
   - methodName: select
     perform: !SelectList
-      tune: yes
       execSql: |
         select
           count(*),

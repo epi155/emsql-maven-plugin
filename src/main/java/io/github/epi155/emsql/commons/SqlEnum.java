@@ -24,8 +24,8 @@ public enum SqlEnum implements SqlDataType {
     LongNil("Long", "BIGINT", "Long"),
     DoubleStd("Double", "DOUBLE", "double", "Double"),
     DoubleNil("Double", "DOUBLE", "Double"),
-    FloatStd("Float", "FLOAT", "float", "Float"),
-    FloatNil("Float", "FLOAT", "Float"),
+    FloatStd("Float", "REAL", "float", "Float"),
+    FloatNil("Float", "REAL", "Float"),
     VarCharStd("String", "VARCHAR"),
     VarCharNil("String", "VARCHAR") {
         @Override
@@ -106,11 +106,17 @@ public enum SqlEnum implements SqlDataType {
     },
     BinaryStd("Bytes", "BINARY", "byte[]"),
     BinaryNil("Bytes", "BINARY", "byte[]") {
+        @Override
         public void rsGetValue(PrintModel ipw, int k) { BinaryStd.rsGetValue(ipw, k); }
+        @Override
+        public void csGetValue(PrintModel ipw, int k) { BinaryStd.csGetValue(ipw, k);}
     },
     VarBinaryStd("Bytes", "VARBINARY", "byte[]"),
     VarBinaryNil("Bytes", "VARBINARY", "byte[]") {
+        @Override
         public void rsGetValue(PrintModel ipw, int k) { VarBinaryStd.rsGetValue(ipw, k); }
+        @Override
+        public void csGetValue(PrintModel ipw, int k) { VarBinaryStd.csGetValue(ipw, k); }
     },
     NumBoolStd("Boolean", "TINYINT", "boolean", "Boolean") {
         public String getterPrefix() { return "is"; }
@@ -355,6 +361,551 @@ public enum SqlEnum implements SqlDataType {
         @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("J8Time.toLocalTime(ps.getTime(%d))", k);
+        }
+    },
+    NVarCharStd("NString", "NVARCHAR", "String"),
+    NVarCharNil("NString", "NVARCHAR", "String"){
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getNString(%d)", k);
+        }
+        @Override
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getNString(%d)", k);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNVarChar(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNVarChar(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNVarChar(ps, ++ki, EmSQL.get(%s, \"%s\", String.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNVarChar(ps, %d, EmSQL.get(%s, \"%s\", String.class));%n", k, orig, name);
+        }
+    },
+    NCharStd("NString", "NCHAR", "String"),
+    NCharNil("NString", "NCHAR", "String"){
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getNString(%d)", k);
+        }
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getNString(%d)", k);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNChar(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNChar(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNChar(ps, ++ki, EmSQL.get(%s, \"%s\", String.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNChar(ps, %d, EmSQL.get(%s, \"%s\", String.class));%n", k, orig, name);
+        }
+    },
+    LongVarCharStd("String", "LONGVARCHAR"),
+    LongVarCharNil("String", "LONGVARCHAR"){
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongVarChar(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongVarChar(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongVarChar(ps, ++ki, EmSQL.get(%s, \"%s\", String.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongVarChar(ps, %d, EmSQL.get(%s, \"%s\", String.class));%n", k, orig, name);
+        }
+    },
+    LongNVarCharStd("NString", "LONGNVARCHAR", "String"),
+    LongNVarCharNil("NString", "LONGNVARCHAR", "String"){
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getNString(%d)", k);
+        }
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getNString(%d)", k);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongNVarChar(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongNVarChar(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongNVarChar(ps, ++ki, EmSQL.get(%s, \"%s\", String.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongNVarChar(ps, %d, EmSQL.get(%s, \"%s\", String.class));%n", k, orig, name);
+        }
+    },
+    LongVarBinaryStd("Bytes", "LONGVARBINARY", "byte[]"),
+    LongVarBinaryNil("Bytes", "LONGVARBINARY", "byte[]"){
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getBytes(%d)", k);
+        }
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getBytes(%d)", k);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongVarBinary(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongVarBinary(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongVarBinary(ps, ++ki, EmSQL.get(%s, \"%s\", byte[].class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setLongVarBinary(ps, %d, EmSQL.get(%s, \"%s\", byte[].class));%n", k, orig, name);
+        }
+    },
+    LongVarBinaryStreamStd("BinaryStream", "LONGVARBINARY", "InputStream"){
+        @Override public Collection<String> requires() { return Set.of("java.io.InputStream"); }
+        public void csGetValue(PrintModel ipw, int k) {
+            throw new IllegalArgumentException("Output BinaryStream not present in CallableStatement");
+        }
+    },
+    LongVarBinaryStreamNil("BinaryStream", "LONGVARBINARY", "InputStream"){
+        @Override public Collection<String> requires() { return Set.of("java.io.InputStream"); }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) { LongVarBinaryStreamStd.rsGetValue(ipw, k); }
+        public void csGetValue(PrintModel ipw, int k) { LongVarBinaryStreamStd.csGetValue(ipw, k); }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBinaryStream(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBinaryStream(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBinaryStream(ps, ++ki, EmSQL.get(%s, \"%s\", InputStream.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBinaryStream(ps, %d, EmSQL.get(%s, \"%s\", InputStream.class));%n", k, orig, name);
+        }
+    },
+    LongVarCharStreamStd("CharacterStream", "LONGVARCHAR", "Reader"){
+        @Override public Collection<String> requires() { return Set.of("java.io.Reader"); }
+    },
+    LongVarCharStreamNil("CharacterStream", "LONGVARCHAR", "Reader"){
+        @Override public Collection<String> requires() { return Set.of("java.io.Reader"); }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getCharacterStream(%d)", k);
+        }
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getCharacterStream(%d)", k);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setCharacterStream(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setCharacterStream(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setCharacterStream(ps, ++ki, EmSQL.get(%s, \"%s\", Reader.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setCharacterStream(ps, %d, EmSQL.get(%s, \"%s\", Reader.class));%n", k, orig, name);
+        }
+    },
+    LongNVarCharStreamStd("NCharacterStream", "LONGNVARCHAR", "Reader"){
+        @Override public Collection<String> requires() { return Set.of("java.io.Reader"); }
+    },
+    LongNVarCharStreamNil("NCharacterStream", "LONGNVARCHAR", "Reader"){
+        @Override public Collection<String> requires() { return Set.of("java.io.Reader"); }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getNCharacterStream(%d)", k);
+        }
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getNCharacterStream(%d)", k);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNCharacterStream(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNCharacterStream(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNCharacterStream(ps, ++ki, EmSQL.get(%s, \"%s\", Reader.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNCharacterStream(ps, %d, EmSQL.get(%s, \"%s\", Reader.class));%n", k, orig, name);
+        }
+    },
+    BlobStreamStd("Blob", "BLOB", "InputStream") {
+        @Override public Collection<String> requires() { return Set.of("java.io.InputStream"); }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getBinaryStream(%d)", k);
+        }
+        public void csGetValue(PrintModel ipw, int k) {
+            throw new IllegalArgumentException("Output BinaryStream not present in CallableStatement");
+        }
+    },
+    BlobStreamNil("Blob", "BLOB", "InputStream") {
+        @Override public Collection<String> requires() { return Set.of("java.io.InputStream"); }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) { BlobStreamStd.rsGetValue(ipw, k); }
+        public void csGetValue(PrintModel ipw, int k) { BlobStreamStd.csGetValue(ipw, k); }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBlobStream(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBlobStream(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBlobStream(ps, ++ki, EmSQL.get(%s, \"%s\", InputStream.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBlobStream(ps, %d, EmSQL.get(%s, \"%s\", InputStream.class));%n", k, orig, name);
+        }
+    },
+    ClobStreamStd("Clob", "CLOB", "Reader") {
+        @Override public Collection<String> requires() { return Set.of("java.io.Reader"); }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getCharacterStream(%d)", k);
+        }
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getCharacterStream(%d)", k);
+        }
+    },
+    ClobStreamNil("Clob", "CLOB", "Reader") {
+        @Override public Collection<String> requires() { return Set.of("java.io.Reader"); }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getCharacterStream(%d)", k);
+        }
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getCharacterStream(%d)", k);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setClobStream(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setClobStream(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setClobStream(ps, ++ki, EmSQL.get(%s, \"%s\", Reader.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setClobStream(ps, %d, EmSQL.get(%s, \"%s\", Reader.class));%n", k, orig, name);
+        }
+    },
+    NClobStreamStd("NClob", "CLOB", "Reader") {
+        @Override public Collection<String> requires() { return Set.of("java.io.Reader"); }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getNCharacterStream(%d)", k);
+        }
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getNCharacterStream(%d)", k);
+        }
+    },
+    NClobStreamNil("NClob", "CLOB", "Reader") {
+        @Override public Collection<String> requires() { return Set.of("java.io.Reader"); }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getNCharacterStream(%d)", k);
+        }
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getNCharacterStream(%d)", k);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNClobStream(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNClobStream(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNClobStream(ps, ++ki, EmSQL.get(%s, \"%s\", Reader.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNClobStream(ps, %d, EmSQL.get(%s, \"%s\", Reader.class));%n", k, orig, name);
+        }
+    },
+    BlobStd("Blob", "BLOB"),
+    BlobNil("Blob", "BLOB"){
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBlob(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBlob(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBlob(ps, ++ki, EmSQL.get(%s, \"%s\", Blob.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBlob(ps, %d, EmSQL.get(%s, \"%s\", Blob.class));%n", k, orig, name);
+        }
+    },
+    ClobStd("Clob", "CLOB"),
+    ClobNil("Clob", "CLOB"){
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setClob(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setClob(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setClob(ps, ++ki, EmSQL.get(%s, \"%s\", Clob.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setClob(ps, %d, EmSQL.get(%s, \"%s\", Clob.class));%n", k, orig, name);
+        }
+    },
+    NClobStd("NClob", "NCLOB"),
+    NClobNil("NClob", "NCLOB"){
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNClob(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNClob(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNClob(ps, ++ki, EmSQL.get(%s, \"%s\", NClob.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setNClob(ps, %d, EmSQL.get(%s, \"%s\", NClob.class));%n", k, orig, name);
+        }
+    },
+    RefStd("Ref", "REF"),
+    RefNil("Ref", "REF"){
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setRef(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setRef(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setRef(ps, ++ki, EmSQL.get(%s, \"%s\", Ref.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setRef(ps, %d, EmSQL.get(%s, \"%s\", Ref.class));%n", k, orig, name);
+        }
+    },
+    RowIdStd("RowId", "ROWID"),
+    RowIdNil("RowId", "ROWID"){
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setRowId(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setRowId(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setRowId(ps, ++ki, EmSQL.get(%s, \"%s\", RowId.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setRowId(ps, %d, EmSQL.get(%s, \"%s\", RowId.class));%n", k, orig, name);
+        }
+    },
+    SQLXMLStd("SQLXML", "SQLXML"),
+    SQLXMLNil("SQLXML", "SQLXML"){
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setSQLXML(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setSQLXML(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setSQLXML(ps, ++ki, EmSQL.get(%s, \"%s\", SQLXML.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setSQLXML(ps, %d, EmSQL.get(%s, \"%s\", SQLXML.class));%n", k, orig, name);
+        }
+    },
+    ArrayStd("Array", "ARRAY"),
+    ArrayNil("Array", "ARRAY"){
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setArray(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setArray(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setArray(ps, ++ki, EmSQL.get(%s, \"%s\", Array.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setArray(ps, %d, EmSQL.get(%s, \"%s\", Array.class));%n", k, orig, name);
+        }
+    },
+    URLStd("URL", "DATALINK") {
+        @Override public Collection<String> requires() { return Set.of("java.net.URL"); }
+    },
+    URLNil("URL", "DATALINK") {
+        @Override public Collection<String> requires() { return Set.of("java.net.URL"); }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setURL(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setURL(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setURL(ps, ++ki, EmSQL.get(%s, \"%s\", URL.class));%n", orig, name);
+        }
+        @Override
+        public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setURL(ps, %d, EmSQL.get(%s, \"%s\", URL.class));%n", k, orig, name);
         }
     };
     private final String jdbc;

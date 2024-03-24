@@ -186,3 +186,27 @@ methods:
           :binary11 
         from tbinary
         where id_Binary = :idBinary
+
+  - methodName: call01
+    perform: !CallProcedure
+      output:
+        fields:
+          - binary02
+          - binary12
+      execSql: |
+        call solve(:binary01, :binary11, :binary02, :binary12)
+
+  - methodName: call02
+    perform: !CallProcedure
+      input:
+        reflect: yes
+      output:
+        reflect: yes
+        fields:
+          - binary02
+          - binary12
+      execSql: |
+        call solve(:binary01, :binary11, 
+                   :binary03, :binary13,
+                   :binary04, :binary14,
+                   :binary02, :binary12)
