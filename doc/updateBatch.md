@@ -15,7 +15,6 @@ Template example
       timeout: 5          # (seconds) optional, default null (system default)
       batchSize: 1024     # optional, default 1024, threshold for execute
       execSql: |
-      execSql: |
         update u01_user
         set BIRTH_COUNTRY = :birthCountry
           , CITIZENSHIP   = :citizenship
@@ -48,7 +47,7 @@ Example of client code:
 it is possible to force the execution of the updates before reaching the threshold using
 
 ~~~java
-                saveQueue.flush();     // force execute update
+                updateQueue.flush();     // force execute update
 ~~~
 
 it is possible to define a trigger method that is called after sending delete requests to the database with the result returned by the `.executeBatch()` function

@@ -122,6 +122,13 @@ public abstract class SqlAction {
         ipw.more();
         ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
         ipw.ends();
+        ipw.printf("public %s", name);
+        batchGeneric(ipw);
+        ipw.putf("afterFlush(Runnable action) {%n", name);
+        ipw.more();
+        ipw.printf("setAfterFlush(action);%n");
+        ipw.printf("return this;%n");
+        ipw.ends();
     }
 
     public void declareInputBatch(PrintModel ipw, @NotNull JdbcStatement jdbc) {
