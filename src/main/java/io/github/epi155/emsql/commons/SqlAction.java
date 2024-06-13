@@ -124,7 +124,14 @@ public abstract class SqlAction {
         ipw.ends();
         ipw.printf("public %s", name);
         batchGeneric(ipw);
-        ipw.putf("afterFlush(Runnable action) {%n", name);
+        ipw.putf(" beforeFlush(Runnable action) {%n", name);
+        ipw.more();
+        ipw.printf("setBeforeFlush(action);%n");
+        ipw.printf("return this;%n");
+        ipw.ends();
+        ipw.printf("public %s", name);
+        batchGeneric(ipw);
+        ipw.putf(" afterFlush(Runnable action) {%n", name);
         ipw.more();
         ipw.printf("setAfterFlush(action);%n");
         ipw.printf("return this;%n");
@@ -584,7 +591,7 @@ public abstract class SqlAction {
             } else {
                 ipw.putf("<I");
             }
-            ipw.putf("> ");
+            ipw.putf(">");
         }
     }
 
