@@ -58,7 +58,7 @@ public class Tools {
     private static boolean isBreak(char c) {
         return c=='\n' || c=='\r';
     }
-    private static final char[] BREAK_PARMS = {' ', ',',')',';','\n'};
+    private static final char[] BREAK_PARMS = {' ', ',',')',';','\n','=','+','-','*','/'};
     public static SqlStatement replacePlaceholder(String text, Map<String, SqlDataType> fields, boolean enableList) {
         int ixCol = text.indexOf(':');
         if (ixCol<0) {

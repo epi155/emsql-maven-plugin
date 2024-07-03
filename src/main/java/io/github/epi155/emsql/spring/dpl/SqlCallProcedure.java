@@ -30,9 +30,9 @@ public class SqlCallProcedure extends SpringAction implements ApiDocSignature, C
         this.delegateSelectSignature = new DelegateCallSignature(this);
     }
 
-    private static final String tmpl =
+    private static final String CALL_TEMPLATE =
             "^CALL (\\w+)\\((.*)\\)$";
-    private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
+    private static final Pattern regx = Pattern.compile(CALL_TEMPLATE, Pattern.CASE_INSENSITIVE);
 
 
     @Override
@@ -91,6 +91,7 @@ public class SqlCallProcedure extends SpringAction implements ApiDocSignature, C
         ipw.ends();
     }
 
+    @Override
     public void declareNextClass(
             PrintModel ipw,
             String name,
@@ -108,5 +109,6 @@ public class SqlCallProcedure extends SpringAction implements ApiDocSignature, C
         ipw.more();
         ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
         ipw.ends();
+        flushSettings(ipw, name);
     }
 }

@@ -122,18 +122,22 @@ public abstract class SqlAction {
         ipw.more();
         ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
         ipw.ends();
+        flushSettings(ipw, name);
+    }
+
+    public void flushSettings(PrintModel ipw, String name) {
         ipw.printf("public %s", name);
         batchGeneric(ipw);
         ipw.putf(" beforeFlush(Runnable action) {%n", name);
         ipw.more();
-        ipw.printf("setBeforeFlush(action);%n");
+        ipw.printf("addBefore(action);%n");
         ipw.printf("return this;%n");
         ipw.ends();
         ipw.printf("public %s", name);
         batchGeneric(ipw);
         ipw.putf(" afterFlush(Runnable action) {%n", name);
         ipw.more();
-        ipw.printf("setAfterFlush(action);%n");
+        ipw.printf("addAfter(action);%n");
         ipw.printf("return this;%n");
         ipw.ends();
     }
