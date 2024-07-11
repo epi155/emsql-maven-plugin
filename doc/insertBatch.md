@@ -84,4 +84,23 @@ Example of client code:
         }   // insert on close
 ~~~
 
+### <a name="cascade"></a>Note
+
+In general there may be multiple batch insert queues (but this applies to any batch operation queue) acting on linked tables (e.g. via a foreign key), the execution of the batch operation is started when the queue closes, but can also be started when the queue is full, and queues on different tables can reach the full threshold regardless of the links between the tables.
+To manage the correct execution sequence of the batch queues, the `beforeFlush` and `afterFlush` methods are present on the batch queue, which allow you to activate the execution of other batch queues linked to the current one.
+
+~~~java
+        public <BatchQueueClass> beforeFlush(SqlRunnable action);   // return this
+        public <BatchQueueClass> afterFlush(SqlRunnable action);    // return this
+~~~
+
+where the action will be `other-queue-batch::flush`, `SqlRunnable` is equivalent to a `Runnable` that can throw a `SQLException`
+
+~~~java
+public interface SqlRunnable {
+    void run() throws SQLException;
+}
+~~~
+
+
 [![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](delete.md) [![Next](go-next.png)](updateBatch.md)

@@ -126,16 +126,17 @@ public abstract class SqlAction {
     }
 
     public void flushSettings(PrintModel ipw, String name) {
+        cc.add("io.github.epi155.emsql.runtime.SqlRunnable");
         ipw.printf("public %s", name);
         batchGeneric(ipw);
-        ipw.putf(" beforeFlush(Runnable action) {%n", name);
+        ipw.putf(" beforeFlush(SqlRunnable action) {%n", name);
         ipw.more();
         ipw.printf("addBefore(action);%n");
         ipw.printf("return this;%n");
         ipw.ends();
         ipw.printf("public %s", name);
         batchGeneric(ipw);
-        ipw.putf(" afterFlush(Runnable action) {%n", name);
+        ipw.putf(" afterFlush(SqlRunnable action) {%n", name);
         ipw.more();
         ipw.printf("addAfter(action);%n");
         ipw.printf("return this;%n");
