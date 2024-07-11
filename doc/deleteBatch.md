@@ -54,4 +54,6 @@ it is possible to define a trigger method that is called after sending delete re
             deleteQueue.setTrigger(this::count);  // check executeBatch() result
 ~~~
 
+For linked queue see note on [insert](insertBatch.md#cascade).
+
 [![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](updateBatch.md) [![Next](go-next.png)](insertKey.md)

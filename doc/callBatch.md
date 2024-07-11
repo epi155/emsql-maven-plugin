@@ -49,4 +49,6 @@ it is possible to define a trigger method that is called after sending call requ
             bookQueue.setTrigger(this::count);  // check executeBatch() result
 ~~~
 
+For linked queue see note on [insert](insertBatch.md#cascade).
+
 [![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](inlineProc.md) [![Next](go-next.png)](inlineBatch.md)
