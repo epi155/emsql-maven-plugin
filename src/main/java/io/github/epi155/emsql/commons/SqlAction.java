@@ -122,25 +122,6 @@ public abstract class SqlAction {
         ipw.more();
         ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
         ipw.ends();
-        flushSettings(ipw, name);
-    }
-
-    public void flushSettings(PrintModel ipw, String name) {
-        cc.add("io.github.epi155.emsql.runtime.SqlRunnable");
-        ipw.printf("public %s", name);
-        batchGeneric(ipw);
-        ipw.putf(" beforeFlush(SqlRunnable action) {%n", name);
-        ipw.more();
-        ipw.printf("addBefore(action);%n");
-        ipw.printf("return this;%n");
-        ipw.ends();
-        ipw.printf("public %s", name);
-        batchGeneric(ipw);
-        ipw.putf(" afterFlush(SqlRunnable action) {%n", name);
-        ipw.more();
-        ipw.printf("addAfter(action);%n");
-        ipw.printf("return this;%n");
-        ipw.ends();
     }
 
     public void declareInputBatch(PrintModel ipw, @NotNull JdbcStatement jdbc) {

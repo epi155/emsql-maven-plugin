@@ -90,8 +90,8 @@ In general there may be multiple batch insert queues (but this applies to any ba
 To manage the correct execution sequence of the batch queues, the `beforeFlush` and `afterFlush` methods are present on the batch queue, which allow you to activate the execution of other batch queues linked to the current one.
 
 ~~~java
-        public <BatchQueueClass> beforeFlush(SqlRunnable action);   // return this
-        public <BatchQueueClass> afterFlush(SqlRunnable action);    // return this
+        public void beforeFlush(SqlRunnable ... actions);
+        public void afterFlush(SqlRunnable ... actions);
 ~~~
 
 where the action will be `other-queue-batch::flush`, `SqlRunnable` is equivalent to a `Runnable` that can throw a `SQLException`

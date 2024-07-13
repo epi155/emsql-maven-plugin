@@ -106,6 +106,5 @@ public class SqlCallProcedure extends PojoAction implements ApiDocSignature, Cal
         ipw.more();
         ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
         ipw.ends();
-        flushSettings(ipw, name);
     }
 }

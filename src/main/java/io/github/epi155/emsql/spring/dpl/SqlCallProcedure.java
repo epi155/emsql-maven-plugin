@@ -109,6 +109,5 @@ public class SqlCallProcedure extends SpringAction implements ApiDocSignature, C
         ipw.more();
         ipw.printf("super(Q_%s, ps, %d);%n", kPrg, batchSize);
         ipw.ends();
-        flushSettings(ipw, name);
     }
 }
