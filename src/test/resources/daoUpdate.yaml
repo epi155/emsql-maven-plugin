@@ -26,10 +26,10 @@ methods:
       input:
         delegate: no
       execSql: |
-        update tbool
-        set bool11 = :bool11
-        where bool01 = :bool01
-        and   bool02 in ( :boolList )
+        update tbool a
+        set a.bool11 = :bool11
+        where a.bool01 = :bool01
+        and   a.bool02 in ( :boolList )
 
   - methodName: update02
     perform: !Update

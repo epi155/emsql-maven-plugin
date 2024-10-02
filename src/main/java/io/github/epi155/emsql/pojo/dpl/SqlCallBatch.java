@@ -1,21 +1,44 @@
 package io.github.epi155.emsql.pojo.dpl;
 
-import io.github.epi155.emsql.api.CallBatchModel;
-import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dpl.ApiCall;
+import io.github.epi155.emsql.commons.dpl.DelegateCall;
+import lombok.Getter;
 import lombok.Setter;
 
-import static io.github.epi155.emsql.commons.Contexts.*;
+import java.util.Map;
 
-@Setter
-public class SqlCallBatch extends SqlCallProcedure implements CallBatchModel {
-    private int batchSize = 1024;
+import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
+
+public class SqlCallBatch extends PojoBatchAction
+        implements ApiCall, CallBatchModel {
+    private final DelegateCall delegateCall;
+
+    @Setter
+    @Getter
+    private InputModel input;
+    @Setter @Getter
+    private OutFieldsModel output;
+    @Setter @Getter
+    private InOutFieldsModel inputOutput;
+
+    public SqlCallBatch() {
+        super();
+        this.delegateCall = new DelegateCall(this);
+    }
+
+    @Override
+    public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
+        return delegateCall.proceed(fields);
+    }
 
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
-        if (nSize<=IMAX) {
+        if (isUnboxRequest(nSize)) {
             cc.add("io.github.epi155.emsql.runtime.SqlCallBatch"+nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlCallBatch1");

@@ -5,10 +5,7 @@ import io.github.epi155.emsql.api.CodeProvider;
 import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.plugin.td.*;
 import io.github.epi155.emsql.plugin.td.dml.*;
-import io.github.epi155.emsql.plugin.td.dpl.TdCallBatch;
-import io.github.epi155.emsql.plugin.td.dpl.TdCallProcedure;
-import io.github.epi155.emsql.plugin.td.dpl.TdInlineBatch;
-import io.github.epi155.emsql.plugin.td.dpl.TdInlineProcedure;
+import io.github.epi155.emsql.plugin.td.dpl.*;
 import io.github.epi155.emsql.plugin.td.dql.TdCursorForSelect;
 import io.github.epi155.emsql.plugin.td.dql.TdSelectList;
 import io.github.epi155.emsql.plugin.td.dql.TdSelectOptional;
@@ -116,7 +113,6 @@ public class SqlMojo extends AbstractMojo {
         CodeProvider codeProvider = getProvider();
         CodeFactory factory = codeProvider.getInstance();
 
-//        Constructor c1 = new Constructor(SqlApi.class, new LoaderOptions());
         Constructor c1 = new MyConstructor(mapContext);
         c1.addTypeDescription(new TdProgrammingModeEnum());
         c1.addTypeDescription(new TdType(factory));
@@ -140,6 +136,7 @@ public class SqlMojo extends AbstractMojo {
         c1.addTypeDescription(new TdInlineProcedure(factory));
         c1.addTypeDescription(new TdCallBatch(factory));
         c1.addTypeDescription(new TdInlineBatch(factory));
+        c1.addTypeDescription(new TdCommand(factory));
 //        c1.addTypeDescription(new TdCursorForUpdate());   // da rivedere
 
         Yaml apiYaml = new Yaml(c1);

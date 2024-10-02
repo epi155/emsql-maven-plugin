@@ -3,10 +3,7 @@ package io.github.epi155.emsql.pojo;
 import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.BasicFactory;
 import io.github.epi155.emsql.pojo.dml.*;
-import io.github.epi155.emsql.pojo.dpl.SqlCallBatch;
-import io.github.epi155.emsql.pojo.dpl.SqlCallProcedure;
-import io.github.epi155.emsql.pojo.dpl.SqlInlineBatch;
-import io.github.epi155.emsql.pojo.dpl.SqlInlineProcedure;
+import io.github.epi155.emsql.pojo.dpl.*;
 import io.github.epi155.emsql.pojo.dql.SqlCursorForSelect;
 import io.github.epi155.emsql.pojo.dql.SqlSelectList;
 import io.github.epi155.emsql.pojo.dql.SqlSelectOptional;
@@ -82,6 +79,11 @@ public class PojoFactory extends BasicFactory {
     @Override
     public InlineProcedureModel newInlineProcedureModel() {
         return new SqlInlineProcedure();
+    }
+
+    @Override
+    public CommandModel newCommandModel() {
+        return new SqlCommand();
     }
 
 

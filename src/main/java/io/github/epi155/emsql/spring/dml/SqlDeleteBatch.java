@@ -5,22 +5,21 @@ import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dml.ApiDelete;
 import io.github.epi155.emsql.commons.dml.DelegateDelete;
-import io.github.epi155.emsql.spring.SpringAction;
+import io.github.epi155.emsql.spring.SpringBatchAction;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static io.github.epi155.emsql.commons.Contexts.*;
+import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlDeleteBatch extends SpringAction implements ApiDelete, DeleteBatchModel {
+public class SqlDeleteBatch extends SpringBatchAction implements ApiDelete, DeleteBatchModel {
     private final DelegateDelete delegateDelete;
     @Getter
     @Setter
     private InputModel input;
-    @Setter
-    private int batchSize = 1024;
 
     public SqlDeleteBatch() {
         super();
@@ -35,7 +34,7 @@ public class SqlDeleteBatch extends SpringAction implements ApiDelete, DeleteBat
     @Override
     public void writeMethod(PrintModel ipw, String name, @NotNull JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
-        if (nSize<=IMAX) {
+        if (isUnboxRequest(nSize)) {
             cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch"+nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch1");

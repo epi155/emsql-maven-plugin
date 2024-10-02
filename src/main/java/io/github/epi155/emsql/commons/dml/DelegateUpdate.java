@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class DelegateUpdate {
     private final ApiUpdate api;
     private static final String tmpl =
-            "^UPDATE (\\w+) SET (.*) WHERE (.*)$";
+            "^UPDATE (\\w+) ((\\w+)\\s+)?SET (.*) WHERE (.*)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
 
     public DelegateUpdate(ApiUpdate api) {
@@ -24,9 +24,10 @@ public class DelegateUpdate {
         Matcher m = regx.matcher(nText);
         if (m.find()) {
             String sTable = m.group(1);
-            String sAlter = m.group(2);
-            String sWhere = m.group(3);
-            String oText = "UPDATE " + sTable + " SET " + sAlter + " WHERE " + sWhere;
+            String sAlias = m.group(3);
+            String sAlter = m.group(4);
+            String sWhere = m.group(5);
+            String oText = "UPDATE " + sTable + (sAlias==null ? "" : " " + sAlias)+ " SET " + sAlter + " WHERE " + sWhere;
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, enableList);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), Map.of());
         } else {

@@ -20,6 +20,7 @@ import static io.github.epi155.emsql.commons.Tools.getterOf;
 @NoArgsConstructor
 @Setter
 public abstract class SqlAction {
+    @NotNull
     private String execSql;
     /** seconds */ private Integer timeout;
     private boolean tune;
@@ -78,11 +79,11 @@ public abstract class SqlAction {
             }
         }
     }
-    public static void plainGenericsNew(PrintModel ipw, JdbcStatement jdbc) {
+    public void plainGenericsNew(PrintModel ipw, JdbcStatement jdbc) {
         int nSize = mc.nSize();
         if (nSize == 0) {
             throw new IllegalArgumentException("Batch operation without arguments");
-        } else if (nSize <= IMAX) {
+        } else if (isUnboxRequest(nSize)) {
             ipw.putf("%d<%s>", nSize, jdbc.getNMap().values().stream().map(SqlDataType::getWrapper).collect(Collectors.joining(", ")));
         } else {
             if (mc.isInputDelegate()) {
@@ -92,11 +93,11 @@ public abstract class SqlAction {
             }
         }
     }
-    public static void genericsNew(PrintModel ipw) {
+    public void genericsNew(PrintModel ipw) {
         int nSize = mc.nSize();
         if (nSize == 0) {
             throw new IllegalArgumentException("Batch operation without arguments");
-        } else if (nSize > IMAX) {
+        } else if (!isUnboxRequest(nSize)) {
             if (mc.isInputDelegate()) {
                 ipw.putf("<DI>");
             } else {
@@ -128,7 +129,7 @@ public abstract class SqlAction {
         int nSize = mc.nSize();
         if (nSize == 0) {
             throw new IllegalArgumentException("Batch operation without arguments");
-        } else if (1<=nSize && nSize<= IMAX) {
+        } else if (isUnboxRequest(nSize)) {
             AtomicInteger k = new AtomicInteger();
             jdbc.getNMap().forEach((name,type) -> {
                 ipw.printf("        final %s %s", type.getWrapper(), name);
@@ -279,7 +280,7 @@ public abstract class SqlAction {
     public void setInputAbs(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc) {
         int nSize = mc.nSize();
         Map<Integer, SqlParam> iMap = jdbc.getIMap();
-        if (1<=nSize && nSize<= IMAX) {
+        if (isUnboxRequest(nSize)) {
             iMap.forEach((k,s) -> {
                 if (s.getType().isScalar() || s.getType().columns() <= 1) {
                     s.setValue(ipw, k);
@@ -304,7 +305,7 @@ public abstract class SqlAction {
     }
 
     public void writeRequest(PrintModel ipw, String cMethodName, @NotNull Map<String, SqlDataType> sp) throws InvalidQueryException {
-        if (sp.size()<=IMAX) return;
+        if (isUnboxRequest(sp.size())) return;
         if (mc.isInputReflect()) return;
         if (mc.isInputDelegate()) {
             List<String> badNames = sp.keySet().stream().filter(it -> it.contains(".")).collect(Collectors.toList());
@@ -313,6 +314,15 @@ public abstract class SqlAction {
             }
         }
         writeRequestInterface(ipw, cMethodName, sp);
+    }
+
+    /**
+     *
+     * @param size input parameter number
+     * @return  {@code true} unbox parameters, {@code false} boxed parameters
+     */
+    protected boolean isUnboxRequest(int size) {
+        return  size<=IMAX;
     }
 
     private void writeRequestInterface(PrintModel ipw, String methodName, Map<String, SqlDataType> sp) {
@@ -346,6 +356,7 @@ public abstract class SqlAction {
                     methodName, name, cc.supplier(), type.getWrapper()));
             ipw.ends();
         } else {
+            docInterfacePS(ipw, methodName, sp);
             ipw.printf("public interface %s" + REQUEST, methodName);
             writeRequestGenerics(ipw, sp);
             ipw.putf(" {%n");
@@ -353,6 +364,55 @@ public abstract class SqlAction {
             next.forEach((n, np) -> writeRequestInterface(ipw, capitalize(n), np));
         }
         ipw.ends();
+    }
+
+    public static void docInterfacePS(PrintModel ipw, String methodName, Map<String, SqlDataType> map) {
+        ipw.printf("/**%n");
+        ipw.printf(" *<pre>%n");
+        ipw.printf(" *{@literal @}Data%n");
+        ipw.printf(" * public class Dto%1$s implements %1$s%2$s {%n", methodName, REQUEST);
+        Set<String> chld = new HashSet<>();
+        map.forEach((k,v) -> {
+            int kDot = k.indexOf('.');
+            if (kDot < 0) {
+                ipw.printf(" *     private %s %s;%n", v.getPrimitive(), k);
+            } else {
+                String ante = k.substring(0, kDot);
+                String cName = capitalize(ante);
+                if (chld.add(cName)) {
+                    String claz = cName+REQUEST;
+                    ipw.printf(" *     private Dto%s %s; // {@link #%s}%n",cName, ante, claz);
+                }
+            }
+        });
+        ipw.printf(" * }%n");
+        ipw.printf(" *</pre>%n");
+        ipw.printf(" */%n");
+    }
+
+    public static void docInterfaceRS(PrintModel ipw, String methodName, Collection<SqlParam> map) {
+        ipw.printf("/**%n");
+        ipw.printf(" *<pre>%n");
+        ipw.printf(" *{@literal @}Data%n");
+        ipw.printf(" * public class Dto%1$s implements %1$s%2$s {%n", methodName, RESPONSE);
+        Set<String> chld = new HashSet<>();
+        map.forEach(k -> {
+            String name = k.getName();
+            int kDot = name.indexOf('.');
+            if (kDot < 0) {
+                ipw.printf(" *     private %s %s;%n", k.getType().getPrimitive(), name);
+            } else {
+                String ante = name.substring(0, kDot);
+                String cName = capitalize(ante);
+                if (chld.add(cName)) {
+                    String claz = cName+RESPONSE;
+                    ipw.printf(" *     private Dto%s %s; // {@link #%s}%n",cName, ante, claz);
+                }
+            }
+        });
+        ipw.printf(" * }%n");
+        ipw.printf(" *</pre>%n");
+        ipw.printf(" */%n");
     }
 
     private void writeRequestGenerics(PrintModel ipw, Map<String, SqlDataType> sp) {
@@ -426,6 +486,7 @@ public abstract class SqlAction {
             ipw.ends();
 
         } else {
+            docInterfaceRS(ipw, cMethodName, sp);
             ipw.printf("public interface %s"+RESPONSE+" {%n", cMethodName);
             ipw.more();
             Map<String, List<SqlParam>> next = new LinkedHashMap<>();
@@ -557,7 +618,7 @@ public abstract class SqlAction {
     }
 
     public void batchGenerics(PrintModel ipw, String cName) {
-        if (mc.nSize() > IMAX) {
+        if (!isUnboxRequest(mc.nSize())) {
             if (mc.isInputReflect()) {
                 ipw.putf("<I");
             } else if (mc.isInputDelegate()) {
@@ -630,7 +691,7 @@ public abstract class SqlAction {
             ipw.printf("SqlArg[] args =  new SqlArg[]{%n");
             ipw.more();
             val eol = new Eol(mc.iSize());
-            if ( nSize <= IMAX) {
+            if ( isUnboxRequest(nSize)) {
                 jdbcStatement.getIMap().forEach((k,v) ->
                         ipw.printf("new SqlArg(\"%1$s\", \"%2$s\", %1$s)%3$s%n", v.getName(), v.getType().getPrimitive(), eol.nl()));
             } else {

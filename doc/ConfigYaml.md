@@ -72,8 +72,9 @@ For model details refer to:
 4.4) Procedure<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.4.1) CallProcedure](callProc.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.4.2) InlineProcedure](inlineProc.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.4.3) CallBatch](callBatch.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.4.4) InlineBatch](inlineBatch.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.4.3) Command](command.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.4.4) CallBatch](callBatch.md)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.4.5) InlineBatch](inlineBatch.md)<br/>
 
 
 

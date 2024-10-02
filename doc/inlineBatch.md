@@ -1,4 +1,4 @@
-## 4.4.4. InlineBatch
+## 4.4.5. InlineBatch
 
 The InlineBatch template is designed to queue call a sequence of SQL commands and send them to the database in bulk when the queue reaches the preset threshold.
 

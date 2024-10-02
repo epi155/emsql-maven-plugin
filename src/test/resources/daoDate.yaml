@@ -125,6 +125,11 @@ methods:
         into :date03, :date04;
         end;
 
+  - methodName: lockTDate
+    perform: !Command
+      execSql: |
+        lock table tdate in exclusive mode
+
   - methodName: findDateAny
     perform: !SelectOptional
       execSql: |

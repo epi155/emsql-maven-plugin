@@ -1,16 +1,37 @@
 package io.github.epi155.emsql.pojo.dpl;
 
-import io.github.epi155.emsql.api.InlineBatchModel;
-import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dpl.ApiInline;
+import io.github.epi155.emsql.commons.dpl.DelegateInline;
+import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.*;
 
 @Setter
-public class SqlInlineBatch extends SqlInlineProcedure implements InlineBatchModel {
-    private int batchSize = 1024;
+public class SqlInlineBatch extends PojoBatchAction implements ApiInline, InlineBatchModel {
+    private final DelegateInline delegateInline;
+    @Setter
+    @Getter
+    private InputModel input;
+    @Setter @Getter
+    private OutFieldsModel output;
+    @Setter @Getter
+    private InOutFieldsModel inputOutput;
+
+    public SqlInlineBatch()   {
+        super();
+        this.delegateInline = new DelegateInline(this);
+    }
+
+    @Override
+    public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
+        return delegateInline.proceed(fields);
+    }
 
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {

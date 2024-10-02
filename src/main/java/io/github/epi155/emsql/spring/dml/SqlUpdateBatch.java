@@ -5,21 +5,20 @@ import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dml.ApiUpdate;
 import io.github.epi155.emsql.commons.dml.DelegateUpdate;
-import io.github.epi155.emsql.spring.SpringAction;
+import io.github.epi155.emsql.spring.SpringBatchAction;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Map;
 
-import static io.github.epi155.emsql.commons.Contexts.*;
+import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlUpdateBatch extends SpringAction implements ApiUpdate, UpdateBatchModel {
+public class SqlUpdateBatch extends SpringBatchAction implements ApiUpdate, UpdateBatchModel {
     private final DelegateUpdate delegateUpdate;
     @Getter
     @Setter
     private InputModel input;
-    @Setter
-    private int batchSize = 1024;
 
     public SqlUpdateBatch() {
         super();
@@ -34,7 +33,7 @@ public class SqlUpdateBatch extends SpringAction implements ApiUpdate, UpdateBat
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
-        if (nSize<=IMAX) {
+        if (isUnboxRequest(nSize)) {
             cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch"+nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch1");

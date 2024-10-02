@@ -3,10 +3,7 @@ package io.github.epi155.emsql.spring;
 import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.BasicFactory;
 import io.github.epi155.emsql.spring.dml.*;
-import io.github.epi155.emsql.spring.dpl.SqlCallBatch;
-import io.github.epi155.emsql.spring.dpl.SqlCallProcedure;
-import io.github.epi155.emsql.spring.dpl.SqlInlineBatch;
-import io.github.epi155.emsql.spring.dpl.SqlInlineProcedure;
+import io.github.epi155.emsql.spring.dpl.*;
 import io.github.epi155.emsql.spring.dql.SqlCursorForSelect;
 import io.github.epi155.emsql.spring.dql.SqlSelectList;
 import io.github.epi155.emsql.spring.dql.SqlSelectOptional;
@@ -86,7 +83,10 @@ public class SpringFactory extends BasicFactory {
         return new SqlInlineProcedure();
     }
 
-
+    @Override
+    public CommandModel newCommandModel() {
+        return new SqlCommand();
+    }
 
     @Override
     public void classContext(PluginContext pc, Map<String, TypeModel> declare) {

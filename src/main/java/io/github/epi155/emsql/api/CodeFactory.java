@@ -26,6 +26,7 @@ public interface CodeFactory {
     InsertReturnGeneratedKeysModel newInsertReturnGeneratedKeysModel();
     CallProcedureModel newCallProcedureModel();
     InlineProcedureModel newInlineProcedureModel();
+    CommandModel newCommandModel();
 
     Consumer<PrintWriter> createClass(PrintModel pw, String className, List<MethodModel> methods, Map<String, TypeModel> declare) throws InvalidQueryException;
 
@@ -36,4 +37,5 @@ public interface CodeFactory {
     CallBatchModel newCallBatchModel();
 
     InlineBatchModel newInlineBatchModel();
+
 }

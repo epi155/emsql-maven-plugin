@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.github.epi155.emsql.commons.Contexts.REQUEST;
+import static io.github.epi155.emsql.commons.SqlAction.docInterfacePS;
 import static io.github.epi155.emsql.commons.Tools.capitalize;
 import static io.github.epi155.emsql.pojo.PojoAction.throughGetter;
 
@@ -30,7 +31,7 @@ public abstract class ClassContextImpl implements ClassContext {
     private final Map<String, TypeModel> inFields = new LinkedHashMap<>();
     private final PluginContext pc;
 
-    public ClassContextImpl(PluginContext pc, Map<String, TypeModel> declare) {
+    protected ClassContextImpl(PluginContext pc, Map<String, TypeModel> declare) {
         this.pc = pc;
         this.debug = pc.isDebug();
         this.java7 = pc.isJava7();
@@ -142,6 +143,7 @@ public abstract class ClassContextImpl implements ClassContext {
         });
     }
     private void writeInFieldInterface(PrintModel ipw, String hiName, Map<String, SqlDataType> map) {
+        docInterfacePS(ipw, hiName, map);
         ipw.printf("public interface %s"+REQUEST+" {%n", hiName);
         Map<String, Map<String, SqlDataType>> next = throughGetter(ipw, map);
         next.forEach((n,np) -> writeInFieldInterface(ipw, capitalize(n), np));

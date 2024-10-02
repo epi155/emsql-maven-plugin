@@ -3,15 +3,9 @@ package io.github.epi155.emsql.pojo;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlAction;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
-@Getter
-@NoArgsConstructor
-@Setter
 public abstract class PojoAction extends SqlAction {
     public void declareNewInstance(@NotNull PrintModel ipw, String eSqlObject, @NotNull JdbcStatement jdbc, String cName) {
         ipw.printf("public static ");

@@ -56,6 +56,7 @@ methods:
 
   - methodName: queue05
     perform: !UpdateBatch
+      force: true
       execSql: |
         update tbool
         set bool04 = true

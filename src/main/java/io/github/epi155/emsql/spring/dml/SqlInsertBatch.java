@@ -5,21 +5,20 @@ import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dml.ApiInsert;
 import io.github.epi155.emsql.commons.dml.DelegateInsert;
-import io.github.epi155.emsql.spring.SpringAction;
+import io.github.epi155.emsql.spring.SpringBatchAction;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Map;
 
-import static io.github.epi155.emsql.commons.Contexts.*;
+import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlInsertBatch extends SpringAction implements ApiInsert, InsertBatchModel {
+public class SqlInsertBatch extends SpringBatchAction implements ApiInsert, InsertBatchModel {
     private final DelegateInsert delegateInsert;
     @Setter
     @Getter
     private InputModel input;
-    @Setter
-    private int batchSize = 1024;
 
     public SqlInsertBatch() {
         super();
@@ -32,7 +31,7 @@ public class SqlInsertBatch extends SpringAction implements ApiInsert, InsertBat
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
-        if (nSize<=IMAX) {
+        if (isUnboxRequest(nSize)) {
             cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch"+nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch1");
