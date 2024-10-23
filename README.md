@@ -102,6 +102,13 @@ Generated code requires dependencies
         </dependency>
 ~~~
 
+If java 9 jigsaw modules are used it is necessary to add in `module-info.java`
+
+~~~java
+module myModule {
+    ...
+    requires emsql.runtime;
+}~~~
 
 Example of client code
 

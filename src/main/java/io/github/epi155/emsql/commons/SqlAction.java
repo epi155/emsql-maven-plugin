@@ -368,6 +368,7 @@ public abstract class SqlAction {
 
     public static void docInterfacePS(PrintModel ipw, String methodName, Map<String, SqlDataType> map) {
         ipw.printf("/**%n");
+        ipw.printf(" * Example of DTO class using interface (getter)%n");
         ipw.printf(" *<pre>%n");
         ipw.printf(" *{@literal @}Data%n");
         ipw.printf(" * public class Dto%1$s implements %1$s%2$s {%n", methodName, REQUEST);
@@ -392,6 +393,7 @@ public abstract class SqlAction {
 
     public static void docInterfaceRS(PrintModel ipw, String methodName, Collection<SqlParam> map) {
         ipw.printf("/**%n");
+        ipw.printf(" * Example of DTO class using interface (setter)%n");
         ipw.printf(" *<pre>%n");
         ipw.printf(" *{@literal @}Data%n");
         ipw.printf(" * public class Dto%1$s implements %1$s%2$s {%n", methodName, RESPONSE);

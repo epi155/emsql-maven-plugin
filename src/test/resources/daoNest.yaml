@@ -27,6 +27,7 @@ declare:
   p02.ibrPrg: int
   p01.idPraticaApp: long
   p02.idFunzioneApp: long
+  p02.stato: varchar
 methods:
   - methodName: salvaPraticaDeep
     perform: !InlineProcedure
@@ -88,3 +89,18 @@ methods:
           set :p01.idPraticaApp = id01;
           set :p02.idFunzioneApp = id02;
         end;
+
+  - methodName: selectPratica
+    perform: !SelectList
+      execSql: |
+        select
+          a.stato_pratica,
+          b.stato,
+          b.ibr_prg
+        into
+          :p01.stato,
+          :p02.stato,
+          :p02.ibrPrg
+        from p01 a
+        join p02 b on a.id_pratica_app = b.id_pratica_app
+        where a.id_pratica_cdm = :idPraticaCdm
