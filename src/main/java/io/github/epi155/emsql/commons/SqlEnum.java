@@ -78,30 +78,83 @@ public enum SqlEnum implements SqlDataType {
     TimestampNil("Timestamp", "TIMESTAMP"),
     TimeStd("Time", "TIME"),
     TimeNil("Time", "TIME"),
-    NumericStd("BigDecimal", "NUMERIC") {
+    NumberStd("BigDecimal", "NUMERIC", "BigInteger") {
+        @Override
+        public Collection<String> requires() {
+            return Set.of("java.math.BigInteger", "java.math.BigDecimal");
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            ipw.printf("ps.setBigDecimal(++ki, new BigDecimal(%s));%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            ipw.printf("ps.setBigDecimal(%d, new BigDecimal(%s));%n", k, source);
+        }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getBigDecimal(%d).toBigInteger()", k);
+        }
+        @Override
+        public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("ps.setBigDecimal(++ki, new BigDecimal(EmSQL.get(%s, \"%s\", BigInteger.class)));%n", orig, name);
+        }
+        @Override
+        public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("ps.setBigDecimal(%d, new BigDecimal(EmSQL.get(%s, \"%s\", BigInteger.class)));%n", k, orig, name);
+        }
+        @Override
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.setBigDecimal(%d).toBigInteger()", k);
+        }
+    },
+    NumberNil("BigDecimal", "NUMERIC", "BigInteger") {
+        @Override
+        public Collection<String> requires() {
+            return NumberStd.requires();
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            ipw.printf("ps.setBigDecimal(++ki, %1$s==null ? null : new BigDecimal(%1$s));%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            ipw.printf("ps.setBigDecimal(%d, %2$s==null ? null : new BigDecimal(%2$s));%n", k, source);
+        }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.putf("EmSQL.toBigInteger(rs.getBigDecimal(%d))", k);
+        }
+        @Override
+        public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBigInteger(ps, ++ki, EmSQL.get(%s, \"%s\", BigInteger.class));%n", orig, name);
+        }
+        @Override
+        public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("EmSQL.setBigInteger(ps, %d, EmSQL.get(%s, \"%s\", BigInteger.class));%n", k, orig, name);
+        }
+        @Override
+        public void csGetValue(PrintModel ipw, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.putf("EmSQL.toBigInteger(ps.getBigDecimal(%d))", k);
+        }
+    },
+    /* NUMERIC 128-bit, DECIMAL 64-bit*/
+    DecimalStd("BigDecimal", "NUMERIC") {
         @Override
         public Collection<String> requires() {
             return Set.of("java.math.BigDecimal");
         }
     },
-    NumericNil("BigDecimal", "NUMERIC") {
+    DecimalNil("BigDecimal", "NUMERIC") {
         @Override
         public Collection<String> requires() {
-            return NumericStd.requires();
-        }
-    },
-    @Deprecated
-    DecimalStd("BigDecimal", "DECIMAL") {
-        @Override
-        public Collection<String> requires() {
-            return Set.of("java.math.BigDecimal");
-        }
-    },
-    @Deprecated
-    DecimalNil("BigDecimal", "DECIMAL") {
-        @Override
-        public Collection<String> requires() {
-            return NumericStd.requires();
+            return NumberStd.requires();
         }
     },
     BinaryStd("Bytes", "BINARY", "byte[]"),

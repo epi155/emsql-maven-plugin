@@ -44,12 +44,12 @@ public abstract class BasicFactory implements CodeFactory {
         map.put("BIGINTEGER?", SqlEnum.LongNil);
         map.put("LONG?", SqlEnum.LongNil);
 
-        map.put("NUMERIC", SqlEnum.NumericStd);
-        map.put("NUMBER", SqlEnum.NumericStd);
-        map.put("DECIMAL", SqlEnum.NumericStd);
-        map.put("NUMERIC?", SqlEnum.NumericNil);
-        map.put("NUMBER?", SqlEnum.NumericNil);
-        map.put("DECIMAL?", SqlEnum.NumericNil);
+//        map.put("NUMERIC", SqlEnum.NumericStd);
+        map.put("NUMBER", SqlEnum.NumberStd);
+        map.put("DECIMAL", SqlEnum.DecimalStd);
+//        map.put("NUMERIC?", SqlEnum.NumericNil);
+        map.put("NUMBER?", SqlEnum.NumberNil);
+        map.put("DECIMAL?", SqlEnum.DecimalNil);
 
         map.put("DOUBLE", SqlEnum.DoubleStd);
         map.put("DOUBLE?", SqlEnum.DoubleNil);
