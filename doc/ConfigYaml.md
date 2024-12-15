@@ -35,6 +35,7 @@ The currently managed field types are shown in the following:<br/>
 The list of fields is not used to create a single common class for all methods, but is consulted, for each method, to create dedicated interfaces (with getters for the input values, and with setters for the values of output).
 
 If up to 4 parameters are required in input, these are passed directly as method arguments; if more than 4 parameters are required, a wrapper interface is created.
+In batch operations it is possible to force the use of the wrapper interface in any case.
 
 Similarly, if only 1 value is returned in the output, it is returned directly from the method, otherwise a wrapper interface is created.
 

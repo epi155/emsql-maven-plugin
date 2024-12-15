@@ -55,12 +55,12 @@ public class SqlSelectList extends SpringAction implements ApiSelectFields, ApiD
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
+        debugAction(ipw, kPrg, jdbc);
         openQuery(ipw, jdbc, kPrg);
         ipw.more();
         setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
-        debugAction(ipw, kPrg, jdbc);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
         if (mc.oSize() == 1) {

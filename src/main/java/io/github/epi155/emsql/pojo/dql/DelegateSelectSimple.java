@@ -20,6 +20,7 @@ public class DelegateSelectSimple {
         api.declareInput(ipw, jdbc);
         api.declareOutput(ipw);
         ipw.more();
+        api.debugAction(ipw, kPrg, jdbc);
         Map<Integer, SqlParam> notScalar = api.notScalar(jdbc.getIMap());
         if (notScalar.isEmpty()) {
             ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
@@ -32,7 +33,6 @@ public class DelegateSelectSimple {
         ipw.printf("ps.setFetchSize(2);%n");
         ipw.printf("ps.setMaxRows(2);%n");
         api.setQueryHints(ipw);
-        api.debugAction(ipw, kPrg, jdbc);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
         ipw.printf("if (rs.next()) {%n");

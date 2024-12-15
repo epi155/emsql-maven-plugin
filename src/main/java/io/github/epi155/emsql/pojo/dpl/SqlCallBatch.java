@@ -49,6 +49,7 @@ public class SqlCallBatch extends PojoBatchAction
         docEnd(ipw);
         declareNewInstance(ipw, cName);
         ipw.more();
+        debugQuery(ipw, kPrg);
         ipw.printf("final CallableStatement ps = c.prepareCall(Q_%s);%n", kPrg);
         setQueryHints(ipw);
         ipw.printf("return new %s", cName);

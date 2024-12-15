@@ -36,6 +36,7 @@ public class DelegateWriteMethod {
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
+        api.debugAction(ipw, kPrg, jdbc);
         Map<Integer, SqlParam> notScalar = api.notScalar(jdbc.getIMap());
         if (notScalar.isEmpty()) {
             ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
@@ -46,7 +47,6 @@ public class DelegateWriteMethod {
         ipw.more();
         api.setInput(ipw, jdbc);
         api.setQueryHints(ipw);
-        api.debugAction(ipw, kPrg, jdbc);
         ipw.printf("return ps.executeUpdate();%n");
         ipw.ends();
         ipw.ends();

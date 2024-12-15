@@ -52,6 +52,7 @@ public class SqlInlineBatch extends SpringBatchAction
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
+        debugQuery(ipw, kPrg);
         ipw.printf("final CallableStatement ps = c.prepareCall(Q_%s);%n", kPrg);
         setQueryHints(ipw);
         ipw.printf("return new %s", cName);

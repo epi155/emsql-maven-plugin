@@ -42,12 +42,12 @@ public class DelegateWrite {
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
+        api.debugAction(ipw, kPrg, jdbc);
         ipw.printf("try (CallableStatement ps = c.prepareCall(Q_%s)) {%n", kPrg);
         ipw.more();
         api.setInputAbs(ipw, jdbc);
         api.registerOutAbs(ipw, jdbc.getOMap());
         api.setQueryHints(ipw);
-        api.debugAction(ipw, kPrg, jdbc);
         ipw.printf("ps.execute();%n");
         api.getOutput(ipw, jdbc.getOMap());
         if (mc.oSize()>0)

@@ -95,6 +95,7 @@ public class SqlCursorForSelect extends PojoAction implements ApiSelectFields, C
         ipw.printf("private final PreparedStatement ps;%n");
         ipw.printf("{%n");
         ipw.more();
+        debugAction(ipw, kPrg, jdbc);
         if(notScalar.isEmpty()) {
             ipw.printf("this.ps = c.prepareStatement(Q_%s);%n", kPrg);
         } else {
@@ -103,7 +104,6 @@ public class SqlCursorForSelect extends PojoAction implements ApiSelectFields, C
         setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
-        debugAction(ipw, kPrg, jdbc);
         ipw.printf("this.rs = ps.executeQuery();%n");
         ipw.ends();
         ipw.printf("@Override%n");
@@ -156,12 +156,12 @@ public class SqlCursorForSelect extends PojoAction implements ApiSelectFields, C
         declareInput(ipw, jdbc);
         declareOutputUse(ipw, oMap.get(1).getType().getWrapper());
         ipw.more();
+        debugAction(ipw, kPrg, jdbc);
         openQuery(ipw, jdbc, kPrg);
         ipw.more();
         setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
-        debugAction(ipw, kPrg, jdbc);
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
         ipw.printf("while (rs.next()) {%n");

@@ -71,11 +71,11 @@ public class SqlInsertReturnGeneratedKeys extends PojoAction implements ApiDocSi
         declareInput(ipw, jdbc);
         declareOutput(ipw);
         ipw.more();
+        debugAction(ipw, kPrg, jdbc);
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s, Statement.RETURN_GENERATED_KEYS)) {%n", kPrg);
         ipw.more();
         setInput(ipw, jdbc);
         setQueryHints(ipw);
-        debugAction(ipw, kPrg, jdbc);
         ipw.printf("ps.executeUpdate();%n");
         ipw.printf("ResultSet rs = ps.getGeneratedKeys();%n");
         ipw.printf("if (rs.next()) {%n");

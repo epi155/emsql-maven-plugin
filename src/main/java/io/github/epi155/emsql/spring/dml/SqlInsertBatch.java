@@ -44,6 +44,7 @@ public class SqlInsertBatch extends SpringBatchAction implements ApiInsert, Inse
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
+        debugQuery(ipw, kPrg);
         ipw.printf("final PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);
         setQueryHints(ipw);
         ipw.printf("return new %s", cName);

@@ -681,6 +681,12 @@ public abstract class SqlAction {
         }
     }
 
+    public void debugQuery(PrintModel ipw, String kPrg) {
+        if (cc.isDebug()) {
+            ipw.printf("log.debug(\"BatchQuery: {}\", Q_%s);", kPrg);
+        }
+    }
+
     public void debugAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
         if (cc.isDebug()) {
             cc.add("io.github.epi155.emsql.runtime.SqlArg");

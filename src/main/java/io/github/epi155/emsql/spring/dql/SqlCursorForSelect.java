@@ -82,6 +82,7 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
+        debugAction(ipw, kPrg, jdbc);
         Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
         if (! notScalar.isEmpty()) {
             expandIn(ipw, notScalar, kPrg);
@@ -108,7 +109,6 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         setInput(ipw, jdbc);
         if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
         setQueryHints(ipw);
-        debugAction(ipw, kPrg, jdbc);
         ipw.printf("this.rs = ps.executeQuery();%n");
         ipw.ends();
         ipw.printf("@Override%n");
