@@ -4,7 +4,7 @@
 
     <groupId>io.github.epi155</groupId>
     <artifactId>emsql-maven-plugin</artifactId>
-    <version>0.1-RC2-SNAPSHOT</version>
+    <version>0.1-RC2</version>
     <packaging>maven-plugin</packaging>
     <name>JDBC DAO code generator</name>
 
@@ -37,7 +37,7 @@
         <url>https://github.com/epi155/emsql-maven-plugin</url>
         <connection>scm:git:git://github.com/epi155/emsql-maven-plugin.git</connection>
         <developerConnection>scm:git:https://github.com/epi155/emsql-maven-plugin.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>0.1-RC2</tag>
     </scm>
 
     <properties>
