@@ -17,9 +17,9 @@ public class DelegateSelectFields {
     public DelegateSelectFields(ApiSelectFields api) {
         this.api = api;
     }
-    private static final String tmpl =
-            "^SELECT (.*) (INTO (.*)) FROM (.*)$";
-    private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
+    private static final String TMPL =
+            "^SELECT (.*) (INTO\\s+(:\\w+[.\\w+]*(\\s*,\\s*:\\w+[.\\w+]*)*))\\s+FROM (.*)$";
+    private static final Pattern regx = Pattern.compile(TMPL, Pattern.CASE_INSENSITIVE);
 
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         String nText = Tools.oneLine(api.getExecSql());
@@ -27,7 +27,7 @@ public class DelegateSelectFields {
         if (m.find()) {
             String sFld = m.group(1);
             String sInto = m.group(3);
-            String sTables = m.group(4);
+            String sTables = m.group(5);
             String oText = "SELECT " + sFld + " FROM " + sTables;
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, true);
             @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);

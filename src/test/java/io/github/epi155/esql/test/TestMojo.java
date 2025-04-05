@@ -18,6 +18,7 @@ import java.nio.file.Path;
 @Order(1)
 class TestMojo {
     private static final String[] MODULES = {
+            "daoSubSelect.yaml",
             "daoArray.yaml",
             "daoBatch.yaml",
             "daoBin.yaml",

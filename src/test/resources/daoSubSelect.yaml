@@ -1,0 +1,17 @@
+packageName: com.example.dao
+className: DaoQuote
+declare:
+  isin: varchar
+  value: double
+methods:
+  - methodName: lastPrice
+    perform: !SelectOptional
+      execSql: |
+        select value into :value 
+        from T02_CTLG_VALUE 
+        where isin = :isin 
+        and date in ( 
+          select max(date) 
+          from T02_CTLG_VALUE 
+          where isin = :isin 
+        )
