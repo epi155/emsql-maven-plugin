@@ -4,6 +4,7 @@
 
 ### Added
 - add new java8 sql types:
+
 | Field Type|JDBC Type|java type|
 |-----------|---------|---------|
 |TIMEZ       | TIME_WITH_TIMEZONE (NOT NULL)| OffsetTime |
