@@ -72,6 +72,12 @@ public abstract class BasicFactory implements CodeFactory {
         map.put("TIME", SqlEnum.TimeStd);
         map.put("TIME?", SqlEnum.TimeNil);
 
+        map.put("TIMESTAMPZ", SqlEnum.TimestampZStd);
+        map.put("TIMESTAMPZ?", SqlEnum.TimestampZNil);
+
+        map.put("TIMEZ", SqlEnum.TimeZStd);
+        map.put("TIMEZ?", SqlEnum.TimeZNil);
+
         map.put("BINARY", SqlEnum.BinaryStd);
         map.put("BINARY?", SqlEnum.BinaryNil);
 
@@ -79,13 +85,19 @@ public abstract class BasicFactory implements CodeFactory {
         map.put("VARBINARY?", SqlEnum.VarBinaryNil);
 
         map.put("LOCALDATE", SqlEnum.LocalDateStd);
+        map.put("LDATE", SqlEnum.LocalDateStd);
         map.put("LOCALDATE?", SqlEnum.LocalDateNil);
+        map.put("LDATE?", SqlEnum.LocalDateNil);
 
         map.put("LOCALDATETIME", SqlEnum.LocalDateTimeStd);
+        map.put("LDATETIME", SqlEnum.LocalDateTimeStd);
         map.put("LOCALDATETIME?", SqlEnum.LocalDateTimeNil);
+        map.put("LDATETIME?", SqlEnum.LocalDateTimeNil);
 
         map.put("LOCALTIME", SqlEnum.LocalTimeStd);
+        map.put("LTIME", SqlEnum.LocalTimeStd);
         map.put("LOCALTIME?", SqlEnum.LocalTimeNil);
+        map.put("LTIME?", SqlEnum.LocalTimeNil);
 
         map.put("NVARCHAR", SqlEnum.NVarCharStd);
         map.put("NVARCHAR?", SqlEnum.NVarCharNil);

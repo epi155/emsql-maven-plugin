@@ -11,6 +11,7 @@ import static io.github.epi155.emsql.commons.Contexts.cc;
 
 public enum SqlEnum implements SqlDataType {
     BooleanStd("Boolean", "BOOLEAN", "boolean", "Boolean") {
+        @Override
         public String getterPrefix() { return "is"; }
     },
     BooleanNil("Boolean", "BOOLEAN", "Boolean"),
@@ -178,11 +179,13 @@ public enum SqlEnum implements SqlDataType {
         public void csGetValue(PrintModel ipw, int k) { VarBinaryStd.csGetValue(ipw, k); }
     },
     NumBoolStd("Boolean", "TINYINT", "boolean", "Boolean") {
+        @Override
         public String getterPrefix() { return "is"; }
         @Override
         public void psSet(PrintModel ipw, String source) {
             ipw.printf("ps.setByte(++ki, (byte) (%s ? 1 : 0));%n", source);
         }
+        @Override
         public void psSet(PrintModel ipw, String source, int k) {
             ipw.printf("ps.setByte(%d, (byte) (%s ? 1 : 0));%n", k, source);
         }
@@ -210,22 +213,32 @@ public enum SqlEnum implements SqlDataType {
         public Collection<String> requires() {
             return Set.of(ClassContextImpl.RUNTIME_EMSQL);
         }
+
+        @Override
         public void psSet(PrintModel ipw, String source) {
             ipw.printf("EmSQL.setNumBool(ps, ++ki, %s);%n", source);
         }
+
+        @Override
         public void psSet(PrintModel ipw, String source, int k) {
             ipw.printf("EmSQL.setNumBool(ps, %d, %s);%n", k, source);
         }
 
+        @Override
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("EmSQL.getNumBool(rs,%d)", k);
         }
+
+        @Override
         public  void xPsPush(PrintModel ipw, String orig, String name) {
             ipw.printf("EmSQL.setNumBool(ps, ++ki, EmSQL.get(%s, \"%s\", Boolean.class));%n", orig, name);
         }
+
+        @Override
         public  void xPsPush(PrintModel ipw, String orig, String name, int k) {
             ipw.printf("EmSQL.setNumBool(ps, %d, EmSQL.get(%s, \"%s\", Boolean.class));%n", k, orig, name);
         }
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("EmSQL.getNumBool(ps,%d)", k);
         }
@@ -422,6 +435,104 @@ public enum SqlEnum implements SqlDataType {
             ipw.putf("J8Time.toLocalTime(ps.getTime(%d))", k);
         }
     },
+    TimestampZStd("Object", "TIMESTAMP_WITH_TIMEZONE", "OffsetDateTime") {
+        @Override
+        public Collection<String> requires() {
+            return Set.of("java.time.OffsetDateTime");
+        }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getObject(%d, OffsetDateTime.class)", k);
+        }
+        @Override
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getObject(%d, OffsetDateTime.class)", k);
+        }
+    },
+    TimestampZNil("Object", "TIMESTAMP_WITH_TIMEZONE", "OffsetDateTime") {
+        @Override
+        public Collection<String> requires() {
+            return TimestampZStd.requires();
+        }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            TimestampZStd.rsGetValue(ipw, k);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_J8TIME);
+            ipw.printf("J8Time.setOffsetDateTime(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_J8TIME);
+            ipw.printf("J8Time.setOffsetDateTime(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            cc.add(ClassContextImpl.RUNTIME_J8TIME);
+            ipw.printf("J8Time.setOffsetDateTime(ps, ++ki, EmSQL.get(%s, \"%s\", OffsetDateTime.class));%n", orig, name);
+        }
+        @Override
+        public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            cc.add(ClassContextImpl.RUNTIME_J8TIME);
+            ipw.printf("J8Time.setOffsetDateTime(ps, %d, EmSQL.get(%s, \"%s\", OffsetDateTime.class));%n", k, orig, name);
+        }
+        @Override
+        public void csGetValue(PrintModel ipw, int k) {
+            TimestampZStd.csGetValue(ipw, k);
+        }
+    },
+    TimeZStd("Object", "TIME_WITH_TIMEZONE", "OffsetTime") {
+        @Override
+        public Collection<String> requires() {
+            return Set.of("java.time.OffsetTime");
+        }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            ipw.putf("rs.getObject(%d, OffsetTime.class)", k);
+        }
+        @Override
+        public void csGetValue(PrintModel ipw, int k) {
+            ipw.putf("ps.getObject(%d, OffsetTime.class)", k);
+        }
+    },
+    TimeZNil("Object", "TIME_WITH_TIMEZONE", "OffsetTime") {
+        @Override
+        public Collection<String> requires() {
+            return TimeZStd.requires();
+        }
+        @Override
+        public void rsGetValue(PrintModel ipw, int k) {
+            TimeZStd.rsGetValue(ipw, k);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source) {
+            cc.add(ClassContextImpl.RUNTIME_J8TIME);
+            ipw.printf("J8Time.setOffsetTime(ps, ++ki, %s);%n", source);
+        }
+        @Override
+        public void psSet(PrintModel ipw, String source, int k) {
+            cc.add(ClassContextImpl.RUNTIME_J8TIME);
+            ipw.printf("J8Time.setOffsetTime(ps, %d, %s);%n", k, source);
+        }
+        @Override
+        public void xPsPush(PrintModel ipw, String orig, String name) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("J8Time.setOffsetTime(ps, ++ki, EmSQL.get(%s, \"%s\", OffsetTime.class));%n", orig, name);
+        }
+        @Override
+        public void xPsPush(PrintModel ipw, String orig, String name, int k) {
+            cc.add(ClassContextImpl.RUNTIME_EMSQL);
+            ipw.printf("J8Time.setOffsetTime(ps, %d, EmSQL.get(%s, \"%s\", OffsetTime.class));%n", k, orig, name);
+        }
+        @Override
+        public void csGetValue(PrintModel ipw, int k) {
+            TimeZStd.csGetValue(ipw, k);
+        }
+    },
     NVarCharStd("NString", "NVARCHAR", "String"),
     NVarCharNil("NString", "NVARCHAR", "String"){
         @Override
@@ -459,6 +570,8 @@ public enum SqlEnum implements SqlDataType {
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("rs.getNString(%d)", k);
         }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("ps.getNString(%d)", k);
         }
@@ -512,6 +625,8 @@ public enum SqlEnum implements SqlDataType {
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("rs.getNString(%d)", k);
         }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("ps.getNString(%d)", k);
         }
@@ -542,6 +657,8 @@ public enum SqlEnum implements SqlDataType {
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("rs.getBytes(%d)", k);
         }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("ps.getBytes(%d)", k);
         }
@@ -568,6 +685,8 @@ public enum SqlEnum implements SqlDataType {
     },
     LongVarBinaryStreamStd("BinaryStream", "LONGVARBINARY", "InputStream"){
         @Override public Collection<String> requires() { return Set.of("java.io.InputStream"); }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             throw new IllegalArgumentException("Output BinaryStream not present in CallableStatement");
         }
@@ -576,6 +695,8 @@ public enum SqlEnum implements SqlDataType {
         @Override public Collection<String> requires() { return Set.of("java.io.InputStream"); }
         @Override
         public void rsGetValue(PrintModel ipw, int k) { LongVarBinaryStreamStd.rsGetValue(ipw, k); }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) { LongVarBinaryStreamStd.csGetValue(ipw, k); }
         @Override
         public void psSet(PrintModel ipw, String source) {
@@ -607,6 +728,8 @@ public enum SqlEnum implements SqlDataType {
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("rs.getCharacterStream(%d)", k);
         }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("ps.getCharacterStream(%d)", k);
         }
@@ -640,6 +763,7 @@ public enum SqlEnum implements SqlDataType {
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("rs.getNCharacterStream(%d)", k);
         }
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("ps.getNCharacterStream(%d)", k);
         }
@@ -670,6 +794,8 @@ public enum SqlEnum implements SqlDataType {
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("rs.getBinaryStream(%d)", k);
         }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             throw new IllegalArgumentException("Output BinaryStream not present in CallableStatement");
         }
@@ -678,6 +804,8 @@ public enum SqlEnum implements SqlDataType {
         @Override public Collection<String> requires() { return Set.of("java.io.InputStream"); }
         @Override
         public void rsGetValue(PrintModel ipw, int k) { BlobStreamStd.rsGetValue(ipw, k); }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) { BlobStreamStd.csGetValue(ipw, k); }
         @Override
         public void psSet(PrintModel ipw, String source) {
@@ -706,6 +834,8 @@ public enum SqlEnum implements SqlDataType {
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("rs.getCharacterStream(%d)", k);
         }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("ps.getCharacterStream(%d)", k);
         }
@@ -716,6 +846,8 @@ public enum SqlEnum implements SqlDataType {
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("rs.getCharacterStream(%d)", k);
         }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("ps.getCharacterStream(%d)", k);
         }
@@ -746,6 +878,8 @@ public enum SqlEnum implements SqlDataType {
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("rs.getNCharacterStream(%d)", k);
         }
+
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("ps.getNCharacterStream(%d)", k);
         }
@@ -756,6 +890,7 @@ public enum SqlEnum implements SqlDataType {
         public void rsGetValue(PrintModel ipw, int k) {
             ipw.putf("rs.getNCharacterStream(%d)", k);
         }
+        @Override
         public void csGetValue(PrintModel ipw, int k) {
             ipw.putf("ps.getNCharacterStream(%d)", k);
         }
@@ -1013,6 +1148,8 @@ public enum SqlEnum implements SqlDataType {
             ipw.printf("EmSQL.set%s(ps, %d, %s);%n", jdbc, k, source);
         }
     }
+
+    @Override
     public void rsGetValue(PrintModel ipw, int k) {
         if (!isNullable() || isPlainClass) {
             ipw.putf("rs.get%s(%d)", jdbc, k);
@@ -1037,12 +1174,18 @@ public enum SqlEnum implements SqlDataType {
             ipw.printf("EmSQL.set%s(ps, %d, EmSQL.get(%s, \"%s\", %s.class));%n", jdbc, k, orig, name, wrapper);
         }
     }
+
+    @Override
     public void registerOut(PrintModel ipw) {
         ipw.printf("ps.registerOutParameter(++ki, Types.%s);%n", sql);
     }
+
+    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.%s);%n", k, sql);
     }
+
+    @Override
     public void csGetValue(PrintModel ipw, int k) {
         if (!isNullable() || isPlainClass) {
             ipw.putf("ps.get%s(%d)", jdbc, k);

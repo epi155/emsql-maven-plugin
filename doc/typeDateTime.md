@@ -14,5 +14,9 @@
 |LOCALDATETIME?| TIMESTAMP | LocalDateTime |
 |LOCALTIME     | TIME      | LocalTime     |
 |LOCALTIME?    | TIME      | LocalTime     |
+|TIMEZ         | TIME_WITH_TIMEZONE | OffsetTime |
+|TIMEZ?        | TIME_WITH_TIMEZONE | OffsetTime |
+|TIMESTAMPZ    | TIMESTAMP_WITH_TIMEZONE | OffsetDateTime |
+|TIMESTAMPZ?   | TIMESTAMP_WITH_TIMEZONE | OffsetDateTime |
 
 [![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](typeNumber.md) [![Next](go-next.png)](typeBinary.md)
