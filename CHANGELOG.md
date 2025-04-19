@@ -15,7 +15,7 @@
 ## [1.0.1] - 2025-04-06
 
 ### Fixed
-- changed regex for select (BUG in subselect). 
+- changed regex for select (BUG in subselect). <br>
 From `(INTO (.*)) FROM` to `(INTO\s+(:\w+[.\w+]*(\s*,\s*:\w+[.\w+]*)*))\s+FROM`
 
 
