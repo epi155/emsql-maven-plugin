@@ -61,7 +61,7 @@ The default value (**POJO**) generates utility classes with static methods that 
 The alternative value (SPRING) generates spring-bean classes with instance methods that do not require connection as a parameter.
 The connection is retrieved from the spring context. Transactions are also managed via spring.
 Of course in this case some spring libraries are required for compilation.
-If you use springboot you can add the `spring-boot-data-jdbc` dependency, the required springframework dependencies are `spring-jdbc` and `spring-context`.
+If you are using Springboot you can add the `spring-boot-data-jdbc` dependency; if you are using SpringFramework the required dependencies are `spring-jdbc` and `spring-context`.
 
 > In the following documentation only code examples generated with the POJO module will be shown.
 > The corresponding SPRING code is obtained by replacing the static class with its instance and removing the connection parameter.
@@ -79,5 +79,15 @@ in the SPRING version it becomes
     ...
     XUser user = daoU01.findUser(1, XUser::new);
 ~~~
+
+If your application uses more than one data source, you must associate a qualifier with each data source and specify the qualifier in the configuration file to indicate which data source to query.
+
+~~~yaml
+packageName: com.example    # String
+className: DaoFoo           # String
+qualifier: ds1              # String :: @Qualifier("ds1") DataSource dataSource
+...
+~~~
+
 
 [![Up](go-up.png)](../README.md) [![Next](go-next.png)](ConfigYaml.md)

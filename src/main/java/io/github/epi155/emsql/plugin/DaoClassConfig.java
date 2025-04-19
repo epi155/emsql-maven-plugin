@@ -4,6 +4,7 @@ import io.github.epi155.emsql.api.CodeFactory;
 import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.MethodModel;
 import io.github.epi155.emsql.api.TypeModel;
+import io.github.epi155.emsql.spring.SpringClassContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.epi155.emsql.commons.Contexts.cc;
+
 @Setter
 @Slf4j
 public class DaoClassConfig {
@@ -26,6 +29,7 @@ public class DaoClassConfig {
     private String packageName;
     @Getter
     private String className;
+    private String qualifier;
     private Map<String, TypeModel> declare = new LinkedHashMap<>();
     private List<MethodModel> methods;
 
@@ -37,6 +41,9 @@ public class DaoClassConfig {
         File pkgFolder = new File(srcMainJava, packageName.replace('.', File.separatorChar));
         File clsFile = new File(pkgFolder, className+DOT_JAVA);
         factory.classContext(pc, declare);
+        if (qualifier!=null && cc instanceof SpringClassContext) {
+            ((SpringClassContext)cc).setQualifier(qualifier);
+        }
         try (PrintWriter pw = new PrintWriter(clsFile)) {
             writePackage(pw, pc);
             StringWriter swCls = new StringWriter();

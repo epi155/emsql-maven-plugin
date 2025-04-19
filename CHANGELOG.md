@@ -3,7 +3,7 @@
 ## [1.0.2] - Unreleased
 
 ### Added
-- add new java8 sql types:
+- added new java8 sql types:
 
 | Field Type|JDBC Type|java type|
 |-----------|---------|---------|
@@ -11,6 +11,11 @@
 |TIMEZ?      | TIME_WITH_TIMEZONE (NULL)| OffsetTime |
 |TIMESTAMPZ  | TIMESTAMP_WITH_TIMEZONE (NOT NULL)| OffsetDateTime |
 |TIMESTAMPZ? | TIMESTAMP_WITH_TIMEZONE (NULL)| OffsetDateTime |
+
+- added `qualifier` configuration field to root level, to select datasource (SPRING provider)
+
+### Changed
+- `@Autowired` from field to constructor (SPRING provider)
 
 ## [1.0.1] - 2025-04-06
 

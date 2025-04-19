@@ -111,9 +111,19 @@ public class SpringFactory extends BasicFactory {
         if (isDebug) {
             pw.printf("private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(%s.class);%n", className);
         }
+        String qualifier = ((SpringClassContext) cc).getQualifier();
+        cc.add("javax.sql.DataSource");
+        pw.printf("private final DataSource dataSource;%n");
         cc.add("org.springframework.beans.factory.annotation.Autowired");
         pw.printf("@Autowired%n");
-        cc.add("javax.sql.DataSource");
-        pw.printf("private DataSource dataSource;%n");
+        if (qualifier==null) {
+            pw.printf("public %s(DataSource dataSource) {%n", className);
+        } else {
+            cc.add("org.springframework.beans.factory.annotation.Qualifier");
+            pw.printf("public %s(@Qualifier(\"%s\") DataSource dataSource) {%n", className, qualifier);
+        }
+        pw.more();
+        pw.printf("this.dataSource = dataSource;%n");
+        pw.ends();
     }
 }

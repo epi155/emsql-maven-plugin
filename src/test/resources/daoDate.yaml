@@ -1,5 +1,6 @@
 packageName: com.example.emsql
 className: DaoDate
+qualifier: ds1
 declare:
   idDate: long
   date01: Date?
