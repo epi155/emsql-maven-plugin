@@ -83,9 +83,8 @@ in the SPRING version it becomes
 If your application uses more than one data source, you must associate a qualifier with each data source and specify the qualifier in the configuration file to indicate which data source to query.
 
 ~~~yaml
-packageName: com.example    # String
-className: DaoFoo           # String
-qualifier: ds1              # String :: @Qualifier("ds1") DataSource dataSource
+...
+qualifier: ds1              # @Qualifier("ds1") DataSource dataSource
 ...
 ~~~
 
