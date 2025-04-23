@@ -1,6 +1,15 @@
 # Change Log
 
-## [1.0.2] - Unreleased
+## [1.0.3] - Unreleased
+
+### Added
+- optional custom query validator via SPI
+
+### Fixed
+- missed import for type DECIMAL?
+
+
+## [1.0.2] - 2025-04-21
 
 ### Added
 - added new java8 sql types:

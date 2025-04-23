@@ -35,6 +35,7 @@ public abstract class SqlAction {
     public void writeCode(PrintModel ipw, String kPrg) throws InvalidQueryException {
         JdbcStatement jdbc = sql(cc.getFields());
         String sQuery = jdbc.getText();
+        cc.validate(sQuery, getClass(), jdbc.getIMap());
         ipw.printf("private static final String Q_%s = \"%s\";%n", kPrg, StringEscapeUtils.escapeJava(sQuery));
         /*-------------------------------------------------*/
         writeMethod(ipw, mc.getName(), jdbc, kPrg);

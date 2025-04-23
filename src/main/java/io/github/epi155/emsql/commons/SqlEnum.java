@@ -161,7 +161,7 @@ public enum SqlEnum implements SqlDataType {
     DecimalNil("BigDecimal", "NUMERIC") {
         @Override
         public Collection<String> requires() {
-            return NumberStd.requires();
+            return DecimalStd.requires();
         }
     },
     BinaryStd("Bytes", "BINARY", "byte[]"),

@@ -122,13 +122,16 @@ public abstract class ClassContextImpl implements ClassContext {
         importSet.add("io.github.epi155.emsql.runtime.SqlStmtSetter");
         importSet.add("io.github.epi155.emsql.runtime.SqlStmtSetImpl");
         if (java7) {
-            importSet.add("io.github.epi155.emsql.runtime.EConsumer");
+            importSet.add(RUNTIME_CONSUMER);
             ipw.printf("        final EConsumer<SqlStmtSetter> u");
         } else {
             importSet.add("java.util.function.Consumer");
             ipw.printf("        final Consumer<SqlStmtSetter> u");
         }
 
+    }
+    public void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters) {
+        pc.validate(query, claz, parameters);
     }
 
     public void put(String key, TypeModel kind) {

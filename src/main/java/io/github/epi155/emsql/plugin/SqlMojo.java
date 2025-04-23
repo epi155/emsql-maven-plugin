@@ -78,6 +78,10 @@ public class SqlMojo extends AbstractMojo {
     @Setter
     private boolean java7;
 
+    @Parameter(property = "maven.emsql.parser-provider")
+    @Setter
+    private String parserProvider;
+
     @Parameter(defaultValue = "${project}", readonly = true)
     @Setter
     private MavenProject project;
@@ -176,14 +180,15 @@ public class SqlMojo extends AbstractMojo {
     }
 
     private void loadSqlApi(CodeFactory factory, Yaml yaml) throws IOException, MojoExecutionException, InvalidQueryException {
-        val pc = MojoContext.builder()
-                .sourceDirectory(generateDirectory.getPath())
-                .group(plugin.getGroupId())
-                .artifact(plugin.getArtifactId())
-                .version(plugin.getVersion())
-                .debug(debugCode)
-                .java7(java7)
-                .build();
+        val pc = new MojoContext(
+                generateDirectory.getPath(),
+                plugin.getGroupId(),
+                plugin.getArtifactId(),
+                plugin.getVersion(),
+                debugCode,
+                java7,
+                parserProvider
+        );
 
         for (val module : modules) {
             log.info("Loading API from {}", module);

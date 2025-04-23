@@ -42,4 +42,6 @@ public interface ClassContext {
     String optional();
 
     void newLine(PrintModel ipw, boolean tune);
+
+    void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters);
 }
