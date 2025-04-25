@@ -108,6 +108,10 @@ methods:
 
   - methodName: insert12K2
     perform: !InlineProcedure
+      output:
+        fields:
+          - localDate03
+          - localDate04
       execSql: |
         begin
         insert into tlocalDate (

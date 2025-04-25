@@ -7,6 +7,7 @@
 
 ### Fixed
 - missed import for type DECIMAL?
+- missed log query/parameters in template Insert, Update, Delete, Command
 
 
 ## [1.0.2] - 2025-04-21

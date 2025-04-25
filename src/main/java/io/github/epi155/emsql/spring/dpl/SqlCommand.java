@@ -43,6 +43,7 @@ public class SqlCommand extends SpringAction implements CommandModel {
         ipw.printf("try (Statement st = c.createStatement()) {%n");
         ipw.more();
         setQueryHints(ipw);
+        debugAction(ipw, kPrg, jdbc);
         ipw.printf("st.execute(Q_%s);%n", kPrg);
         ipw.ends();
         ipw.ends();
