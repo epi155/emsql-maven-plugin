@@ -82,7 +82,6 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
-        debugAction(ipw, kPrg, jdbc);
         Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
         if (! notScalar.isEmpty()) {
             expandIn(ipw, notScalar, kPrg);
@@ -101,6 +100,7 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         ipw.printf("private final PreparedStatement ps;%n");
         ipw.printf("{%n");
         ipw.more();
+        debugAction(ipw, kPrg, jdbc);
         if(notScalar.isEmpty()) {
             ipw.printf("this.ps = c.prepareStatement(Q_%s);%n", kPrg);
         } else {
@@ -165,6 +165,7 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
+        debugAction(ipw, kPrg, jdbc);
         openQuery(ipw, jdbc, kPrg);
         ipw.more();
         setInput(ipw, jdbc);

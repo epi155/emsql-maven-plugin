@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.0.3] - Unreleased
+## [1.0.3] - 2025-05-08
 
 ### Added
 - optional custom query validator via SPI
