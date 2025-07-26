@@ -2,7 +2,6 @@ package io.github.epi155.emsql.spring.dql;
 
 import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.*;
-import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 import io.github.epi155.emsql.commons.dql.ApiSelectFields;
 import io.github.epi155.emsql.commons.dql.DelegateSelectDynFields;
 import io.github.epi155.emsql.spring.SpringAction;
@@ -14,9 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static io.github.epi155.emsql.commons.Contexts.IMAX;
-import static io.github.epi155.emsql.commons.Contexts.cc;
-import static io.github.epi155.emsql.commons.Contexts.mc;
+import static io.github.epi155.emsql.commons.Contexts.*;
 import static io.github.epi155.emsql.commons.Tools.getterOf;
 
 public class SqlSelectListDyn extends SpringAction implements ApiSelectFields, SelectListDynModel {
@@ -196,7 +193,7 @@ public class SqlSelectListDyn extends SpringAction implements ApiSelectFields, S
         assignInput(ipw, jdbc);
         assignOutput(ipw);
         ipw.ends();
-        defineMethodArgBuilder(ipw, kPrg, cName);
+        defineMethodArgBuilder(ipw, kPrg, cName);   // final ?! CGLIB conflict
         defineMethodList(ipw, jdbc, kPrg);
         ipw.ends();
     }
@@ -210,7 +207,7 @@ public class SqlSelectListDyn extends SpringAction implements ApiSelectFields, S
          * In this case the *Builder class is created programmatically.
          */
         ipw.printf("// @Transactional(readOnly=true)%n");
-        ipw.printf("public List<? super O> list() throws SQLException {%n");
+        ipw.printf("public List<O> list() throws SQLException {%n");
         ipw.more();
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
         Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
@@ -340,7 +337,7 @@ public class SqlSelectListDyn extends SpringAction implements ApiSelectFields, S
         int k=1;
         for(Map.Entry<String, String> a: optionalAnd.entrySet()) {
             docMethod(ipw, a, k, cName);
-            ipw.printf("public %sBuilder<O> %s(", cName, a.getKey());   // final ?! CGLIB conflict
+            ipw.printf("public %sBuilder<O> %s(", cName, a.getKey());
             Map<Integer, SqlParam> parms = andParms.get(a.getKey());
             Map<OptArg, List<Integer>> pArg = writeArgument(ipw, parms, k);
             ipw.putf(") {%n");

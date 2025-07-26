@@ -4,7 +4,7 @@ import io.github.epi155.emsql.api.PrintModel;
 import lombok.Getter;
 import org.apache.commons.text.StringEscapeUtils;
 
-import java.util.*;
+import java.util.Map;
 
 @Getter
 public class JdbcDynStatement extends JdbcStatement {

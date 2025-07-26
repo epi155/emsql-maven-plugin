@@ -14,9 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static io.github.epi155.emsql.commons.Contexts.IMAX;
-import static io.github.epi155.emsql.commons.Contexts.cc;
-import static io.github.epi155.emsql.commons.Contexts.mc;
+import static io.github.epi155.emsql.commons.Contexts.*;
 import static io.github.epi155.emsql.commons.Tools.getterOf;
 
 public class SqlSelectListDyn
@@ -118,6 +116,7 @@ public class SqlSelectListDyn
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
 
+        // class definition
         ipw.printf("public static class %sBuilder", cName);
         declareGenerics(ipw, cName, jdbc.getTKeys());
 
@@ -129,6 +128,7 @@ public class SqlSelectListDyn
         defineOptional(ipw);
         ipw.println();
 
+        // ctor definition
         ipw.printf("public %sBuilder(%n", cName);
         ipw.printf("        final Connection c");
         declareInput(ipw, jdbc);
@@ -144,7 +144,7 @@ public class SqlSelectListDyn
     }
 
     private void defineMethodList(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc, String kPrg) {
-        ipw.printf("public List<? super O> list() throws SQLException {%n");
+        ipw.printf("public List<O> list() throws SQLException {%n");
         ipw.more();
         Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
         if (notScalar.isEmpty()) {
@@ -224,7 +224,6 @@ public class SqlSelectListDyn
                 }
                 ipw.ends();
             }
-
 
             ipw.printf("return args.toArray(new SqlArg[0]);%n");
             cc.traceParameterEnds(ipw);
@@ -437,5 +436,4 @@ public class SqlSelectListDyn
             }
         }
     }
-
 }

@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.1.0] -
+
+### Added
+- new *SelectListDyn* template with optional AND conditions in the WHERE clause
+
+
 ## [1.0.3] - 2025-05-08
 
 ### Added
