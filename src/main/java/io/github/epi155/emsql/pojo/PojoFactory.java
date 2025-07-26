@@ -4,10 +4,7 @@ import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.BasicFactory;
 import io.github.epi155.emsql.pojo.dml.*;
 import io.github.epi155.emsql.pojo.dpl.*;
-import io.github.epi155.emsql.pojo.dql.SqlCursorForSelect;
-import io.github.epi155.emsql.pojo.dql.SqlSelectList;
-import io.github.epi155.emsql.pojo.dql.SqlSelectOptional;
-import io.github.epi155.emsql.pojo.dql.SqlSelectSingle;
+import io.github.epi155.emsql.pojo.dql.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -34,6 +31,11 @@ public class PojoFactory extends BasicFactory {
     @Override
     public CursorForSelectModel newCursorForSelectModel() {
         return new SqlCursorForSelect();
+    }
+
+    @Override
+    public SelectListDynModel newSelectListDynModel() {
+        return new SqlSelectListDyn();
     }
 
     @Override

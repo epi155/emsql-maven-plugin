@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-@Order(1)
+//@Order(1)
 class TestMojo {
     private static final String[] MODULES = {
             "daoSubSelect.yaml",
@@ -77,6 +77,32 @@ class TestMojo {
             "roSelect.yaml",
             "rrSelect.yaml",
     };
+
+    @Test
+    void generateTestLite() {
+        SqlMojo mojo = new SqlMojo();
+        mojo.setGenerateDirectory(new File("target/generated-test-sources/esql7"));
+        mojo.setPlugin(new PluginDescriptor() {
+            public String getGroupId() { return "io.github.epi155"; }
+            public String getArtifactId() { return "emsql-maven-plugin"; }
+            public String getVersion() { return "TEST"; }
+        });
+        mojo.setDebugCode(true);
+        mojo.setJava7(false);
+        mojo.setConfigDirectory(new File("src/test/resources"));
+        mojo.setModules(new String[]{"daoListD.yaml"});
+        mojo.setProvider(ProviderEnum.SPRING.name());
+
+
+        File pomFile = new File("pom.xml");
+        MavenProject project = getProject(pomFile.toPath());
+        mojo.setProject(project);
+
+        mojo.setAddCompileSourceRoot(false);
+        mojo.setAddTestCompileSourceRoot(false);
+
+        Assertions.assertDoesNotThrow(mojo::execute);
+    }
 
     @Test
     void generateTest7() {

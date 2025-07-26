@@ -17,6 +17,8 @@ public interface CodeFactory {
     SelectOptionalModel newSelectOptionalModel();
     SelectListModel newSelectListModel();
     CursorForSelectModel newCursorForSelectModel();
+    SelectListDynModel newSelectListDynModel();
+
     DeleteModel newDeleteModel();
     InsertModel newInsertModel();
     UpdateModel newUpdateModel();

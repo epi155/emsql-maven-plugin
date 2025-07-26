@@ -36,7 +36,8 @@ public abstract class SqlAction {
         JdbcStatement jdbc = sql(cc.getFields());
         String sQuery = jdbc.getText();
         cc.validate(sQuery, getClass(), jdbc.getIMap());
-        ipw.printf("private static final String Q_%s = \"%s\";%n", kPrg, StringEscapeUtils.escapeJava(sQuery));
+        jdbc.writeQuery(kPrg, ipw);
+        customWrite(kPrg, ipw);
         /*-------------------------------------------------*/
         writeMethod(ipw, mc.getName(), jdbc, kPrg);
         /*-------------------------------------------------*/
@@ -53,6 +54,10 @@ public abstract class SqlAction {
         jdbc.getIMap().values().forEach(it -> cc.addAll(it.getType().requires()));
         jdbc.getOMap().values().forEach(it -> cc.addAll(it.getType().requires()));
 
+    }
+
+    protected void customWrite(String kPrg, PrintModel ipw) {
+        // nope
     }
 
     public void declareInput(PrintModel ipw, @NotNull JdbcStatement jdbc) {
@@ -733,7 +738,7 @@ public abstract class SqlAction {
         if (tune) ipw.printf("u.accept(new SqlStmtSetImpl(ps));%n");
     }
 
-    private static class Eol {
+    public static class Eol {
         private int count;
 
         public Eol(int size) {

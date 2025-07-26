@@ -1,0 +1,43 @@
+packageName: com.example.emsql
+className: DaoListDyn
+declare:
+  count: long
+  abi: int
+  abis: (abi)
+  circ: int
+  dtMin: date
+  dtMax: date
+  now: timestamp
+methods:
+  - methodName: select01
+    perform: !SelectList
+      execSql: |
+        select
+          count(*),
+          abi
+        into
+          :count,
+          :abi 
+        from j01
+        where abi in ( :abis )
+        group by abi
+        order by 1 desc
+
+  - methodName: select05
+    perform: !SelectListDyn
+      execSql: |
+        select
+          count(*),
+          abi
+        into
+          :count,
+          :abi 
+        from j01
+        where abi in ( :abis )
+        group by abi
+        order by 1 desc
+      optionalAnd:
+        circuitEq: circ = :circ
+        dtEmisRange: dt_Emis between :dtMin and :dtMax
+        isRevoked: cd_revoke is null
+        notExpired: B.NOT_BEFORE <= :now and :now <= B.NOT_AFTER

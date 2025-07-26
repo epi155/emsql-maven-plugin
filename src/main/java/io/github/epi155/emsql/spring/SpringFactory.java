@@ -4,10 +4,7 @@ import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.BasicFactory;
 import io.github.epi155.emsql.spring.dml.*;
 import io.github.epi155.emsql.spring.dpl.*;
-import io.github.epi155.emsql.spring.dql.SqlCursorForSelect;
-import io.github.epi155.emsql.spring.dql.SqlSelectList;
-import io.github.epi155.emsql.spring.dql.SqlSelectOptional;
-import io.github.epi155.emsql.spring.dql.SqlSelectSingle;
+import io.github.epi155.emsql.spring.dql.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -36,6 +33,11 @@ public class SpringFactory extends BasicFactory {
     @Override
     public CursorForSelectModel newCursorForSelectModel() {
         return new SqlCursorForSelect();
+    }
+
+    @Override
+    public SelectListDynModel newSelectListDynModel() {
+        return new SqlSelectListDyn();
     }
 
     @Override
@@ -114,16 +116,19 @@ public class SpringFactory extends BasicFactory {
         String qualifier = ((SpringClassContext) cc).getQualifier();
         cc.add("javax.sql.DataSource");
         pw.printf("private final DataSource dataSource;%n");
+        cc.add("org.springframework.transaction.PlatformTransactionManager");
+        pw.printf("private final PlatformTransactionManager transactionManager;%n");
         cc.add("org.springframework.beans.factory.annotation.Autowired");
         pw.printf("@Autowired%n");
         if (qualifier==null) {
-            pw.printf("public %s(DataSource dataSource) {%n", className);
+            pw.printf("public %s(DataSource dataSource, PlatformTransactionManager transactionManager) {%n", className);
         } else {
             cc.add("org.springframework.beans.factory.annotation.Qualifier");
-            pw.printf("public %s(@Qualifier(\"%s\") DataSource dataSource) {%n", className, qualifier);
+            pw.printf("public %1$s(@Qualifier(\"%2$s\") DataSource dataSource, @Qualifier(\"%2$s\") PlatformTransactionManager transactionManager) {%n", className, qualifier);
         }
         pw.more();
         pw.printf("this.dataSource = dataSource;%n");
+        pw.printf("this.transactionManager = transactionManager;%n");
         pw.ends();
     }
 }

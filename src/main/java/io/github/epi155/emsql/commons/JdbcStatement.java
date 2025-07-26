@@ -1,8 +1,10 @@
 package io.github.epi155.emsql.commons;
 
+import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,5 +73,9 @@ public class JdbcStatement implements JdbcMap {
     public void flush() {
         if (mc.isInputReflect()) return;
         tKeys.forEach(key -> cc.put(key, nMap.get(key)));
+    }
+
+    public void writeQuery(String kPrg, PrintModel ipw) {
+        ipw.printf("private static final String Q_%s = \"%s\";%n", kPrg, StringEscapeUtils.escapeJava(text));
     }
 }
