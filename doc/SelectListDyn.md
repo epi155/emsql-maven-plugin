@@ -1,18 +1,17 @@
-## 4.2.3. SelectListDyn
+## 4.2.5. SelectListDyn
 
 
-in applicazioni interattive
-può capitare di avere query con dei
-filtri attivabili a discrezione dell'utente.
-Questo porta a una proliferazione delle query.
-Se ho 4 parametri opzionali devo preparare 2^4=16 query.
-Query molto simili con rischi di errore.
+In interactive applications, it's possible to have queries with filters that can be activated at the user's discretion.
+This leads to query proliferation.
+If I have 4 optional parameters, I have to prepare 2^4=16 queries.
+Very similar queries with the risk of errors and code duplication.
 
-questo modello permette di definire parametri
-opzionali che possono essere attivati a runtime.
-In questo modo è sufficiente definire 1 query.
-La query che viene eseguita è costruita a runtime
-in base ai parametri di esecuzione della query.
+This template allows you to define optional parameters that can be activated at runtime.
+This way, you only need to define one query.
+The actual query is constructed at runtime based on the optional parameters provided.
+
+The method generated in this case does not return the list, but a builder that allows you to set optional parameters
+and finally get the list.
 
 ### Standard use
 
@@ -56,6 +55,9 @@ Template example
         isNotRenewed: C.ULTIMATE = 1
 ~~~
 
+`optionalAnd` is defined as `Map`,
+the value used as key will be used as method name to set corresponding parameters in builder
+
 Generated DAO Builder method signature (body omitted):
 
 ~~~java
@@ -76,4 +78,4 @@ Example of client code:
 ~~~
 
 
-[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](SelectOptional.md) [![Next](go-next.png)](CursorForSelect.md)
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](CursorForSelect.md) [![Next](go-next.png)](insert.md)
