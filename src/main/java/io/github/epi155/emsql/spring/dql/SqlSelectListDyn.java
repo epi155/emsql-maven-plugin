@@ -188,7 +188,7 @@ public class SqlSelectListDyn extends SpringAction implements ApiSelectFields, S
         ipw.println();
 
         // ctor definition
-        ipw.printf("private %sBuilder(%n", cName);
+        ipw.printf("public %sBuilder(%n", cName);   // public required by CGLIB
         ipw.commaReset();
         declareInput(ipw, jdbc);
         declareOutput(ipw);
@@ -340,7 +340,7 @@ public class SqlSelectListDyn extends SpringAction implements ApiSelectFields, S
         int k=1;
         for(Map.Entry<String, String> a: optionalAnd.entrySet()) {
             docMethod(ipw, a, k, cName);
-            ipw.printf("public final %sBuilder<O> %s(", cName, a.getKey());
+            ipw.printf("public %sBuilder<O> %s(", cName, a.getKey());   // final ?! CGLIB conflict
             Map<Integer, SqlParam> parms = andParms.get(a.getKey());
             Map<OptArg, List<Integer>> pArg = writeArgument(ipw, parms, k);
             ipw.putf(") {%n");
