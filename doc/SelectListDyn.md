@@ -9,7 +9,6 @@ Very similar queries with the risk of errors and code duplication.
 This template allows you to define optional parameters that can be activated at runtime.
 This way, you only need to define one query.
 The actual query is constructed at runtime based on the optional parameters provided.
-
 The method generated in this case does not return the list, but a builder that allows you to set optional parameters
 and finally get the list.
 
@@ -56,7 +55,7 @@ Template example
 ~~~
 
 `optionalAnd` is defined as `Map`,
-the value used as key will be used as method name to set corresponding parameters in builder
+the value used as key will be used as method name to set corresponding parameters in builder.
 
 Generated DAO Builder method signature (body omitted):
 
