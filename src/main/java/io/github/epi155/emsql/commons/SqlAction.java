@@ -326,7 +326,7 @@ public abstract class SqlAction {
      * @param size input parameter number
      * @return  {@code true} unbox parameters, {@code false} boxed parameters
      */
-    protected boolean isUnboxRequest(int size) {
+    public boolean isUnboxRequest(int size) {
         return  size<=IMAX;
     }
 

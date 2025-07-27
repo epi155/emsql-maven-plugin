@@ -10,7 +10,7 @@ public abstract class SpringBatchAction extends SpringAction {
     private boolean force;
 
     @Override
-    protected boolean isUnboxRequest(int size) {
+    public boolean isUnboxRequest(int size) {
         if (size <= 1) return true;
         if (force) return false;
         return  size<=IMAX;
