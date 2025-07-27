@@ -14,6 +14,7 @@ public class TdInsertReturnGeneratedKeys extends TypeDescription {
 
         substituteProperty("exec-sql", String.class, null, "setExecSql");
     }
+
     public Object newInstance(Node node) {
         return factory.newInsertReturnGeneratedKeysModel();
     }

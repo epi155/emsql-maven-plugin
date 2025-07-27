@@ -21,9 +21,11 @@ public class SqlCallBatch extends SpringBatchAction
     @Setter
     @Getter
     private InputModel input;
-    @Setter @Getter
+    @Setter
+    @Getter
     private OutFieldsModel output;
-    @Setter @Getter
+    @Setter
+    @Getter
     private InOutFieldsModel inputOutput;
 
     public SqlCallBatch() {
@@ -40,7 +42,7 @@ public class SqlCallBatch extends SpringBatchAction
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
         if (isUnboxRequest(nSize)) {
-            cc.add("io.github.epi155.emsql.runtime.SqlCallBatch"+nSize);
+            cc.add("io.github.epi155.emsql.runtime.SqlCallBatch" + nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlCallBatch1");
         }

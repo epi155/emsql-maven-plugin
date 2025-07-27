@@ -4,6 +4,8 @@ public interface UpdateModel extends PerformModel {
     void setInput(InputModel it);
 
     void setExecSql(String it);
+
     void setTimeout(Integer it);
+
     void setTune(boolean it);
 }

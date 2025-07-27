@@ -10,10 +10,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DelegateDelete {
-    private final ApiDelete api;
     private static final String tmpl =
             "^DELETE FROM (.*)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
+    private final ApiDelete api;
 
     public DelegateDelete(ApiDelete api) {
         this.api = api;
@@ -28,7 +28,7 @@ public class DelegateDelete {
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, enableList);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), Map.of());
         } else {
-            throw new InvalidQueryException("Invalid query format: "+ api.getExecSql());
+            throw new InvalidQueryException("Invalid query format: " + api.getExecSql());
         }
     }
 }

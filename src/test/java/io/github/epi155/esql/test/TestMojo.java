@@ -86,9 +86,17 @@ class TestMojo {
         SqlMojo mojo = new SqlMojo();
         mojo.setGenerateDirectory(new File("target/generated-test-sources/esql7"));
         mojo.setPlugin(new PluginDescriptor() {
-            public String getGroupId() { return "io.github.epi155"; }
-            public String getArtifactId() { return "emsql-maven-plugin"; }
-            public String getVersion() { return "TEST"; }
+            public String getGroupId() {
+                return "io.github.epi155";
+            }
+
+            public String getArtifactId() {
+                return "emsql-maven-plugin";
+            }
+
+            public String getVersion() {
+                return "TEST";
+            }
         });
         mojo.setDebugCode(true);
         mojo.setJava7(false);
@@ -112,9 +120,17 @@ class TestMojo {
         SqlMojo mojo = new SqlMojo();
         mojo.setGenerateDirectory(new File("target/generated-test-sources/esql7"));
         mojo.setPlugin(new PluginDescriptor() {
-            public String getGroupId() { return "io.github.epi155"; }
-            public String getArtifactId() { return "emsql-maven-plugin"; }
-            public String getVersion() { return "TEST"; }
+            public String getGroupId() {
+                return "io.github.epi155";
+            }
+
+            public String getArtifactId() {
+                return "emsql-maven-plugin";
+            }
+
+            public String getVersion() {
+                return "TEST";
+            }
         });
         mojo.setDebugCode(true);
         mojo.setJava7(true);
@@ -138,9 +154,17 @@ class TestMojo {
         SqlMojo mojo = new SqlMojo();
         mojo.setGenerateDirectory(new File("target/generated-test-sources/esql8"));
         mojo.setPlugin(new PluginDescriptor() {
-            public String getGroupId() { return "io.github.epi155"; }
-            public String getArtifactId() { return "emsql-maven-plugin"; }
-            public String getVersion() { return "TEST"; }
+            public String getGroupId() {
+                return "io.github.epi155";
+            }
+
+            public String getArtifactId() {
+                return "emsql-maven-plugin";
+            }
+
+            public String getVersion() {
+                return "TEST";
+            }
         });
         mojo.setDebugCode(true);
         mojo.setJava7(false);

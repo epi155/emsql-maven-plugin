@@ -32,6 +32,7 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         super();
         this.delegateSelectFields = new DelegateSelectFields(this);
     }
+
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateSelectFields.sql(fields);
@@ -83,14 +84,14 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
         Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
-        if (! notScalar.isEmpty()) {
+        if (!notScalar.isEmpty()) {
             expandIn(ipw, notScalar, kPrg);
         }
         if (mc.isOutputDelegate()) {
             ipw.printf("return new SqlDelegateCursor() {%n");
         } else {
-            if (oSize==1) {
-                ipw.printf("return new SqlCursor<%s>() {%n",oMap.get(1).getType().getWrapper());
+            if (oSize == 1) {
+                ipw.printf("return new SqlCursor<%s>() {%n", oMap.get(1).getType().getWrapper());
             } else {
                 ipw.printf("return new SqlCursor<O>() {%n");
             }
@@ -101,7 +102,7 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         ipw.printf("{%n");
         ipw.more();
         debugAction(ipw, kPrg, jdbc);
-        if(notScalar.isEmpty()) {
+        if (notScalar.isEmpty()) {
             ipw.printf("this.ps = c.prepareStatement(Q_%s);%n", kPrg);
         } else {
             ipw.printf("this.ps = c.prepareStatement(query);%n");
@@ -120,7 +121,7 @@ public class SqlCursorForSelect extends SpringAction implements ApiSelectFields,
         if (mc.isOutputDelegate()) {
             ipw.printf("public void fetchNext() throws SQLException {%n");
         } else {
-            if (oSize==1) {
+            if (oSize == 1) {
                 ipw.printf("public %s fetchNext() throws SQLException {%n", oMap.get(1).getType().getWrapper());
             } else {
                 ipw.printf("public O fetchNext() throws SQLException {%n");

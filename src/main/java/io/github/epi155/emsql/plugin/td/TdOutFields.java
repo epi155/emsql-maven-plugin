@@ -12,6 +12,7 @@ public class TdOutFields extends TypeDescription {
         super(OutFieldsModel.class);
         this.factory = factory;
     }
+
     public Object newInstance(Node node) {
         return factory.newOutFieldsModel();
     }

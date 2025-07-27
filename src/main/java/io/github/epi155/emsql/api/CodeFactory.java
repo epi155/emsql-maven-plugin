@@ -9,25 +9,41 @@ public interface CodeFactory {
     MethodModel newMethodModel();
 
     InputModel newInputModel();
+
     OutputModel newOutputModel();
+
     OutFieldsModel newOutFieldsModel();
+
     InOutFieldsModel newInOutFieldsModel();
 
     SelectSingleModel newSelectSingleModel();
+
     SelectOptionalModel newSelectOptionalModel();
+
     SelectListModel newSelectListModel();
+
     CursorForSelectModel newCursorForSelectModel();
+
     SelectListDynModel newSelectListDynModel();
 
     DeleteModel newDeleteModel();
+
     InsertModel newInsertModel();
+
     UpdateModel newUpdateModel();
+
     DeleteBatchModel newDeleteBatchModel();
+
     InsertBatchModel newInsertBatchModel();
+
     UpdateBatchModel newUpdateBatchModel();
+
     InsertReturnGeneratedKeysModel newInsertReturnGeneratedKeysModel();
+
     CallProcedureModel newCallProcedureModel();
+
     InlineProcedureModel newInlineProcedureModel();
+
     CommandModel newCommandModel();
 
     Consumer<PrintWriter> createClass(PrintModel pw, String className, List<MethodModel> methods, Map<String, TypeModel> declare) throws InvalidQueryException;

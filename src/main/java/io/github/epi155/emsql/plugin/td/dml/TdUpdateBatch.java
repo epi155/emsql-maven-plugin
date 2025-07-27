@@ -15,6 +15,7 @@ public class TdUpdateBatch extends TypeDescription {
         substituteProperty("exec-sql", String.class, null, "setExecSql");
         substituteProperty("batch-size", int.class, null, "setBatchSize");
     }
+
     public Object newInstance(Node node) {
         return factory.newUpdateBatchModel();
     }

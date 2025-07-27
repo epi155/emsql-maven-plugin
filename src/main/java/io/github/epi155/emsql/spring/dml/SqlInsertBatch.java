@@ -24,15 +24,17 @@ public class SqlInsertBatch extends SpringBatchAction implements ApiInsert, Inse
         super();
         this.delegateInsert = new DelegateInsert(this);
     }
+
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateInsert.proceed(fields, false);
     }
+
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
         if (isUnboxRequest(nSize)) {
-            cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch"+nSize);
+            cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch" + nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch1");
         }

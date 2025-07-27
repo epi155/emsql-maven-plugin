@@ -12,14 +12,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DelegateSelectFields {
-    private final ApiSelectFields api;
-
-    public DelegateSelectFields(ApiSelectFields api) {
-        this.api = api;
-    }
     private static final String TMPL =
             "^SELECT (.*) (INTO\\s+(:\\w+[.\\w+]*(\\s*,\\s*:\\w+[.\\w+]*)*))\\s+FROM (.*)$";
     private static final Pattern regx = Pattern.compile(TMPL, Pattern.CASE_INSENSITIVE);
+    private final ApiSelectFields api;
+    public DelegateSelectFields(ApiSelectFields api) {
+        this.api = api;
+    }
 
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         String nText = Tools.oneLine(api.getExecSql());
@@ -33,7 +32,7 @@ public class DelegateSelectFields {
             @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {
-            throw new InvalidQueryException("Invalid query format: "+ api.getExecSql());
+            throw new InvalidQueryException("Invalid query format: " + api.getExecSql());
         }
     }
 }

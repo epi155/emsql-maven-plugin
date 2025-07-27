@@ -15,6 +15,7 @@ public class TdSelectList extends TypeDescription {
         substituteProperty("exec-sql", String.class, null, "setExecSql");
         substituteProperty("fetch-size", Integer.class, null, "setFetchSize");
     }
+
     public Object newInstance(Node node) {
         return factory.newSelectListModel();
     }

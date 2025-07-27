@@ -13,6 +13,6 @@ public abstract class PojoBatchAction extends PojoAction {
     public boolean isUnboxRequest(int size) {
         if (size <= 1) return true;
         if (force) return false;
-        return  size<=IMAX;
+        return size <= IMAX;
     }
 }

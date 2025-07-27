@@ -15,6 +15,7 @@ import static io.github.epi155.emsql.commons.Contexts.mc;
 @Getter
 public class SpringClassContext extends ClassContextImpl {
     private String qualifier;
+
     public SpringClassContext(PluginContext pc, Map<String, TypeModel> declare) {
         super(pc, declare);
     }

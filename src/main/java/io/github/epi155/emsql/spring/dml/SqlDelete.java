@@ -24,10 +24,12 @@ public class SqlDelete extends SpringAction implements ApiWriteMethod, ApiDelete
         this.delegateWriteMethod = new DelegateWriteMethod(this);
         this.delegateDelete = new DelegateDelete(this);
     }
+
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateDelete.proceed(fields, true);
     }
+
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         delegateWriteMethod.proceed(ipw, name, jdbc, kPrg);
     }

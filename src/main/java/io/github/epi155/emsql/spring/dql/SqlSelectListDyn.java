@@ -24,10 +24,11 @@ public class SqlSelectListDyn extends SpringAction
         SelectListDynModel {
     private final DelegateSelectDyn delegateSelectDyn;
     private final DelegateSelectDynFields delegateSelectFields;
-
+    @Getter
+    private final Map<String, Map<Integer, SqlParam>> andParms = new LinkedHashMap<>();
     @Setter
     @Getter
-    private Map<String,String> optionalAnd = new LinkedHashMap<>();
+    private Map<String, String> optionalAnd = new LinkedHashMap<>();
     @Getter
     @Setter
     private InputModel input;
@@ -36,9 +37,6 @@ public class SqlSelectListDyn extends SpringAction
     private OutputModel output;
     @Setter
     private Integer fetchSize;
-
-    @Getter
-    private final Map<String,Map<Integer, SqlParam>> andParms = new LinkedHashMap<>();
 
     public SqlSelectListDyn() {
         super();
@@ -50,6 +48,7 @@ public class SqlSelectListDyn extends SpringAction
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateSelectFields.sql(fields);
     }
+
     @Override
     protected void customWrite(String kPrg, @NotNull PrintModel ipw) {
         delegateSelectDyn.customWrite(ipw, kPrg);
@@ -127,13 +126,15 @@ public class SqlSelectListDyn extends SpringAction
 
         // 4. Collegamento del proxy con l'intercettore
         ipw.printf("%1$sBuilder<O> target = new %1$sBuilder<>(", cName);
-        int c=0;
-        for(String arg: jdbc.getNMap().keySet()) {
-            if(c++ > 0) ipw.commaLn(); else ipw.println();
+        int c = 0;
+        for (String arg : jdbc.getNMap().keySet()) {
+            if (c++ > 0) ipw.commaLn();
+            else ipw.println();
             ipw.printf("        %s", arg);
         }
         if (mc.oSize() >= 2) {
-            if(c > 0) ipw.commaLn(); else ipw.println();
+            if (c > 0) ipw.commaLn();
+            else ipw.println();
             if (mc.isOutputDelegate()) {
                 ipw.printf("        o");
             } else {
@@ -218,7 +219,7 @@ public class SqlSelectListDyn extends SpringAction
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
         if (mc.oSize() == 1) {
-            jdbc.getOMap().forEach((k,v) ->
+            jdbc.getOMap().forEach((k, v) ->
                     ipw.printf("List<%s> list = new ArrayList<>();%n", v.getType().getWrapper()));
         } else {
             ipw.printf("List<O> list = new ArrayList<>();%n");

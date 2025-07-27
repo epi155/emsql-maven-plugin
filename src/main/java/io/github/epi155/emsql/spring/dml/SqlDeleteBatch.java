@@ -35,7 +35,7 @@ public class SqlDeleteBatch extends SpringBatchAction implements ApiDelete, Dele
     public void writeMethod(PrintModel ipw, String name, @NotNull JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
         if (isUnboxRequest(nSize)) {
-            cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch"+nSize);
+            cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch" + nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlDeleteBatch1");
         }

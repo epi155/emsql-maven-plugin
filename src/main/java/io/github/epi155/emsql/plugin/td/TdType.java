@@ -14,6 +14,7 @@ public class TdType extends TypeDescription {
         super(TypeModel.class);
         this.factory = factory;
     }
+
     @Override
     public Object newInstance(Node node) {
         if (node instanceof ScalarNode) {

@@ -20,6 +20,9 @@ import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Contexts.mc;
 
 public class SqlInsertReturnGeneratedKeys extends PojoAction implements ApiDocSignature, InsertReturnGeneratedKeysModel {
+    private static final String tmpl =
+            "^INSERT INTO (\\w+) \\((.*)\\) VALUES \\((.*)\\)$";
+    private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     private final DelegateSelectSignature delegateSelectSignature;
     @Setter
     @Getter
@@ -27,33 +30,29 @@ public class SqlInsertReturnGeneratedKeys extends PojoAction implements ApiDocSi
     @Setter
     @Getter
     private OutFieldsModel output;
-
     public SqlInsertReturnGeneratedKeys() {
         super();
         this.delegateSelectSignature = new DelegateSelectSignature(this);
     }
 
-    private static final String tmpl =
-            "^INSERT INTO (\\w+) \\((.*)\\) VALUES \\((.*)\\)$";
-    private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         String nText = Tools.oneLine(getExecSql());
         Matcher m = regx.matcher(nText);
         if (m.find()) {
             String sTable = m.group(1);
-            String sCols  = m.group(2).trim();
+            String sCols = m.group(2).trim();
             String sParms = m.group(3).trim();
-            String oText = "INSERT INTO "+sTable+" ( "+sCols+" ) VALUES ( "+sParms+" )";
+            String oText = "INSERT INTO " + sTable + " ( " + sCols + " ) VALUES ( " + sParms + " )";
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, true);
             Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
-            int k=0;
-            for(val e: output.getFields()) {
+            int k = 0;
+            for (val e : output.getFields()) {
                 oMap.put(++k, new SqlParam(e, fields.get(e)));
             }
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {
-            throw new InvalidQueryException("Invalid query format: "+ getExecSql());
+            throw new InvalidQueryException("Invalid query format: " + getExecSql());
         }
     }
 
@@ -62,7 +61,7 @@ public class SqlInsertReturnGeneratedKeys extends PojoAction implements ApiDocSi
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 1) {
-            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s<%s> %s(%n", cc.optional(), v.getType().getWrapper(), name));
+            jdbc.getOMap().forEach((k, v) -> ipw.putf("%s<%s> %s(%n", cc.optional(), v.getType().getWrapper(), name));
         } else {
             ipw.putf("%s<O> %s(%n", cc.optional(), name);
         }

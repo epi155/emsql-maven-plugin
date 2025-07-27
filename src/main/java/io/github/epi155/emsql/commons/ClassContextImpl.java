@@ -35,21 +35,23 @@ public abstract class ClassContextImpl implements ClassContext {
         this.pc = pc;
         this.debug = pc.isDebug();
         this.java7 = pc.isJava7();
-        this.fields = declare.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (SqlDataType)e.getValue()));
+        this.fields = declare.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (SqlDataType) e.getValue()));
         importSet.add("java.sql.*");
         if (debug) {
             importSet.add(RUNTIME_TRACE);
         }
     }
+
     public String supplier() {
         if (java7) {
             importSet.add(RUNTIME_SUPPLIER);
             return "ESupplier";
-        } else{
+        } else {
             importSet.add("java.util.function.Supplier");
             return "Supplier";
         }
     }
+
     public String consumer() {
         if (java7) {
             importSet.add(RUNTIME_CONSUMER);
@@ -59,6 +61,7 @@ public abstract class ClassContextImpl implements ClassContext {
             return "Consumer";
         }
     }
+
     public String optional() {
         if (java7) {
             importSet.add(RUNTIME_OPTIONAL);
@@ -68,6 +71,7 @@ public abstract class ClassContextImpl implements ClassContext {
             return "Optional";
         }
     }
+
     public void writeImport(PrintWriter pw) {
         importSet.forEach(it -> pw.printf("import %s;%n", it));
     }
@@ -130,6 +134,7 @@ public abstract class ClassContextImpl implements ClassContext {
         }
 
     }
+
     public void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters) {
         pc.validate(query, claz, parameters);
     }
@@ -140,16 +145,17 @@ public abstract class ClassContextImpl implements ClassContext {
 
     public void flush(PrintModel ipw) {
         inFields.forEach((name, kind) -> {
-            if (kind.columns()>1) {
+            if (kind.columns() > 1) {
                 writeInFieldInterface(ipw, capitalize(name), kind.toMap());
             }
         });
     }
+
     private void writeInFieldInterface(PrintModel ipw, String hiName, Map<String, SqlDataType> map) {
         docInterfacePS(ipw, hiName, map);
-        ipw.printf("public interface %s"+REQUEST+" {%n", hiName);
+        ipw.printf("public interface %s" + REQUEST + " {%n", hiName);
         Map<String, Map<String, SqlDataType>> next = throughGetter(ipw, map);
-        next.forEach((n,np) -> writeInFieldInterface(ipw, capitalize(n), np));
+        next.forEach((n, np) -> writeInFieldInterface(ipw, capitalize(n), np));
         ipw.ends();
     }
 

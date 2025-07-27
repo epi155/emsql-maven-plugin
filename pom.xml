@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.epi155</groupId>
@@ -10,7 +11,7 @@
 
     <description>Generate DAO classes with JDBC code and DTO interfaces from YAML configuration files</description>
     <url>https://github.com/epi155/emsql-maven-plugin</url>
-	<inceptionYear>2024</inceptionYear>
+    <inceptionYear>2024</inceptionYear>
 
     <!-- mvn release:clean -->
     <!-- mvn release:prepare -->
@@ -26,12 +27,12 @@
             <email>epi155.dev@gmail.com</email>
         </developer>
     </developers>
-  <licenses>
-    <license>
-      <name>GNU LGPL 3</name>
-      <url>http://www.gnu.org/licenses/lgpl.txt</url>
-    </license>
-  </licenses>
+    <licenses>
+        <license>
+            <name>GNU LGPL 3</name>
+            <url>http://www.gnu.org/licenses/lgpl.txt</url>
+        </license>
+    </licenses>
 
     <scm>
         <url>https://github.com/epi155/emsql-maven-plugin</url>

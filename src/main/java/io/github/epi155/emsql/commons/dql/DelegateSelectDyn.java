@@ -22,15 +22,15 @@ public class DelegateSelectDyn {
         if (api.getOptionalAnd().isEmpty())
             return;
         ipw.printf("private static final Map<String,String> Q_%s_OPT_MAP;%n", kPrg);
-        int k=0;
-        for(String key: api.getOptionalAnd().keySet()) {
+        int k = 0;
+        for (String key : api.getOptionalAnd().keySet()) {
             ipw.printf("private static final String Q_%s_OPT%04d = \"%s\";%n", kPrg, ++k, StringEscapeUtils.escapeJava(key));
         }
-        k=0;
+        k = 0;
         ipw.printf("static {%n");
         ipw.more();
         ipw.printf("Q_%s_OPT_MAP = new LinkedHashMap<>();%n", kPrg);
-        for(Map.Entry<String, String> entry: api.getOptionalAnd().entrySet()) {
+        for (Map.Entry<String, String> entry : api.getOptionalAnd().entrySet()) {
             // :parm -> ?
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(entry.getValue(), cc.getFields(), true);
             ipw.printf("Q_%s_OPT_MAP.put(Q_%s_OPT%04d, \"%s\");%n", kPrg, kPrg, ++k, StringEscapeUtils.escapeJava(iStmt.getText()));
@@ -44,45 +44,14 @@ public class DelegateSelectDyn {
     public void debugAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
         if (cc.isDebug()) {
             cc.add("io.github.epi155.emsql.runtime.SqlArg");
-            int nSize = mc.nSize();
             ipw.printf("if (log.isDebugEnabled()) {%n");
             ipw.more();
             ipw.printf("SqlTrace.showQuery(query, ");
             cc.traceParameterBegin(ipw);
             ipw.more();
             ipw.printf("List<SqlArg> args = new ArrayList<>();%n");
-            if ( api.isUnboxRequest(nSize)) {
-                jdbcStatement.getIMap().forEach((k,v) ->
-                        ipw.printf("args.add(new SqlArg(\"%1$s\", \"%2$s\", %1$s));%n", v.getName(), v.getType().getPrimitive()));
-            } else {
-                Map<Integer, SqlParam> iMap = jdbcStatement.getIMap();
-                if (mc.isInputReflect()) {
-                    iMap.forEach((k,v) ->
-                            ipw.printf("args.add(new SqlArg(\"%1$s\", \"%2$s\", EmSQL.get(i, \"%1$s\", %3$s.class)));%n",
-                                    v.getName(), v.getType().getPrimitive(), v.getType().getContainer()));
-                } else if (mc.isInputDelegate()) {
-                    iMap.forEach((k,v) ->
-                            ipw.printf("args.add(new SqlArg(\"%1$s\", \"%2$s\", i.%1$s.get()));%n",
-                                    v.getName(), v.getType().getPrimitive()));
-                } else {
-                    iMap.forEach((k,v) ->
-                            ipw.printf("args.add(new SqlArg(\"%s\", \"%s\", i.%s()));%n",
-                                    v.getName(), v.getType().getPrimitive(), getterOf(v)));
-                }
-            }
-            int k=0;
-            for(Map.Entry<String,Map<Integer, SqlParam>> e: api.getAndParms().entrySet()) {
-                k++;
-                if (e.getValue().isEmpty()) continue;
-                ipw.printf("if (options.contains(Q_%s_OPT%04d)) {%n", kPrg, k);
-                ipw.more();
-                for(Map.Entry<Integer, SqlParam> p: e.getValue().entrySet()) {
-                    SqlParam v = p.getValue();
-                    ipw.printf("args.add(new SqlArg(\"%s\", \"%s\", opt%dp%d));%n",
-                            v.getName(), v.getType().getPrimitive(), k, p.getKey());
-                }
-                ipw.ends();
-            }
+            debugInpStd(ipw, jdbcStatement);
+            debugInpOpt(ipw, kPrg);
 
             ipw.printf("return args.toArray(new SqlArg[0]);%n");
             cc.traceParameterEnds(ipw);
@@ -90,14 +59,54 @@ public class DelegateSelectDyn {
             ipw.ends();
         }
     }
-    public void setOptInput(PrintModel ipw, String kPrg) {
-        int k=0;
-        for(Map.Entry<String,Map<Integer, SqlParam>> e: api.getAndParms().entrySet()) {
+
+    private void debugInpStd(PrintModel ipw, JdbcStatement jdbcStatement) {
+        int nSize = mc.nSize();
+        if (api.isUnboxRequest(nSize)) {
+            jdbcStatement.getIMap().forEach((k, v) ->
+                    ipw.printf("args.add(new SqlArg(\"%1$s\", \"%2$s\", %1$s));%n", v.getName(), v.getType().getPrimitive()));
+        } else {
+            Map<Integer, SqlParam> iMap = jdbcStatement.getIMap();
+            if (mc.isInputReflect()) {
+                iMap.forEach((k, v) ->
+                        ipw.printf("args.add(new SqlArg(\"%1$s\", \"%2$s\", EmSQL.get(i, \"%1$s\", %3$s.class)));%n",
+                                v.getName(), v.getType().getPrimitive(), v.getType().getContainer()));
+            } else if (mc.isInputDelegate()) {
+                iMap.forEach((k, v) ->
+                        ipw.printf("args.add(new SqlArg(\"%1$s\", \"%2$s\", i.%1$s.get()));%n",
+                                v.getName(), v.getType().getPrimitive()));
+            } else {
+                iMap.forEach((k, v) ->
+                        ipw.printf("args.add(new SqlArg(\"%s\", \"%s\", i.%s()));%n",
+                                v.getName(), v.getType().getPrimitive(), getterOf(v)));
+            }
+        }
+    }
+
+    private void debugInpOpt(PrintModel ipw, String kPrg) {
+        int k = 0;
+        for (Map.Entry<String, Map<Integer, SqlParam>> e : api.getAndParms().entrySet()) {
             k++;
             if (e.getValue().isEmpty()) continue;
             ipw.printf("if (options.contains(Q_%s_OPT%04d)) {%n", kPrg, k);
             ipw.more();
-            for(Map.Entry<Integer, SqlParam> p: e.getValue().entrySet()) {
+            for (Map.Entry<Integer, SqlParam> p : e.getValue().entrySet()) {
+                SqlParam v = p.getValue();
+                ipw.printf("args.add(new SqlArg(\"%s\", \"%s\", opt%dp%d));%n",
+                        v.getName(), v.getType().getPrimitive(), k, p.getKey());
+            }
+            ipw.ends();
+        }
+    }
+
+    public void setOptInput(PrintModel ipw, String kPrg) {
+        int k = 0;
+        for (Map.Entry<String, Map<Integer, SqlParam>> e : api.getAndParms().entrySet()) {
+            k++;
+            if (e.getValue().isEmpty()) continue;
+            ipw.printf("if (options.contains(Q_%s_OPT%04d)) {%n", kPrg, k);
+            ipw.more();
+            for (Map.Entry<Integer, SqlParam> p : e.getValue().entrySet()) {
                 String src = String.format("opt%dp%d", k, p.getKey());
                 p.getValue().getType().psSet(ipw, src);
             }
@@ -109,16 +118,16 @@ public class DelegateSelectDyn {
         cc.add(ClassContextImpl.RUNTIME_EMSQL);
         ipw.printf("final String queryAnte = EmSQL.expandQueryParameters(Q_%s_ANTE%n", kPrg);
         ipw.more();
-        if (mc.nSize()<=IMAX) {
-            notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, %s.size(), %d)%n", k, v.getName(), v.getType().columns()));
+        if (mc.nSize() <= IMAX) {
+            notScalar.forEach((k, v) -> ipw.printf(", new EmSQL.Mul(%d, %s.size(), %d)%n", k, v.getName(), v.getType().columns()));
         } else {
             if (mc.isInputReflect()) {
                 cc.add("java.util.List");
-                notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, EmSQL.get(i, \"%s\", List.class).size(), %d)%n", k, v.getName(), v.getType().columns()));
+                notScalar.forEach((k, v) -> ipw.printf(", new EmSQL.Mul(%d, EmSQL.get(i, \"%s\", List.class).size(), %d)%n", k, v.getName(), v.getType().columns()));
             } else if (mc.isInputDelegate()) {
-                notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s.get().size(), %d)%n", k, v.getName(), v.getType().columns()));
+                notScalar.forEach((k, v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s.get().size(), %d)%n", k, v.getName(), v.getType().columns()));
             } else {
-                notScalar.forEach((k,v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s().size(), %d)%n", k, getterOf(v), v.getType().columns()));
+                notScalar.forEach((k, v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s().size(), %d)%n", k, getterOf(v), v.getType().columns()));
             }
         }
         ipw.less();
@@ -126,8 +135,8 @@ public class DelegateSelectDyn {
     }
 
     public void defineMethodArgBuilder(PrintModel ipw, String kPrg, String cName) {
-        int k=1;
-        for(Map.Entry<String, String> a: api.getOptionalAnd().entrySet()) {
+        int k = 1;
+        for (Map.Entry<String, String> a : api.getOptionalAnd().entrySet()) {
             docMethod(ipw, a, k, cName);
             ipw.printf("public %sBuilder<O> %s(", cName, a.getKey());
             Map<Integer, SqlParam> parms = api.getAndParms().get(a.getKey());
@@ -147,7 +156,7 @@ public class DelegateSelectDyn {
         ipw.printf(" * Add condition <b>%s</b> (#%d)%n", a.getKey(), k);
         ipw.printf(" * <pre>%n");
         val lines = ("AND " + a.getValue()).split("\n");
-        for(val line: lines) {
+        for (val line : lines) {
             ipw.printf(" * %s%n", line);
         }
         ipw.printf(" * </pre>%n");
@@ -155,8 +164,8 @@ public class DelegateSelectDyn {
 
         Collection<SqlParam> parms = api.getAndParms().get(a.getKey()).values();
         Set<String> doubleCheck = new HashSet<>();
-        int c=0;
-        for(SqlParam p: parms) {
+        int c = 0;
+        for (SqlParam p : parms) {
             String name = p.getName();
             if (!doubleCheck.contains(name)) {
                 doubleCheck.add(name);
@@ -171,9 +180,9 @@ public class DelegateSelectDyn {
     private Map<OptArg, List<Integer>> writeArgument(PrintModel ipw, Map<Integer, SqlParam> parms, int k) {
         Map<OptArg, List<Integer>> pArg = new LinkedHashMap<>();
         if (parms.isEmpty()) return pArg;
-        int n=0;
+        int n = 0;
         ipw.println();
-        for(Map.Entry<Integer, SqlParam> e: parms.entrySet()) {
+        for (Map.Entry<Integer, SqlParam> e : parms.entrySet()) {
             SqlParam qParm = e.getValue();
             String name = qParm.getName();
             OptArg oa = new OptArg(name, k);
@@ -190,8 +199,8 @@ public class DelegateSelectDyn {
     }
 
     private void writeAssign(PrintModel ipw, Map<OptArg, List<Integer>> pArg) {
-        for(Map.Entry<OptArg, List<Integer>> a: pArg.entrySet()) {
-            for(int i: a.getValue()) {
+        for (Map.Entry<OptArg, List<Integer>> a : pArg.entrySet()) {
+            for (int i : a.getValue()) {
                 ipw.printf("this.opt%dp%d = %s;%n", a.getKey().getNdx(), i, a.getKey().getName());
             }
         }
@@ -199,15 +208,15 @@ public class DelegateSelectDyn {
 
     public void defineInput(PrintModel ipw, JdbcStatement jdbc) {
         int nSize = mc.nSize();
-        if (1<=nSize && nSize<=IMAX) {
+        if (1 <= nSize && nSize <= IMAX) {
             jdbc.getNMap().forEach((name, type) -> {
-                if (type.isScalar() || type.columns() <=1) {
+                if (type.isScalar() || type.columns() <= 1) {
                     ipw.printf("private final %s %s;%n", type.getPrimitive(), name);
                 } else {
                     ipw.printf("private final List<%s> %s;%n", type.getGeneric(), name);
                 }
             });
-        } else if (nSize>IMAX){
+        } else if (nSize > IMAX) {
             if (mc.isInputDelegate()) {
                 ipw.printf("private final DI i;%n");
             } else {
@@ -215,6 +224,7 @@ public class DelegateSelectDyn {
             }
         }
     }
+
     public void defineOutput(PrintModel ipw) {
         if (mc.oSize() >= 2) {
             if (mc.isOutputDelegate()) {
@@ -224,13 +234,14 @@ public class DelegateSelectDyn {
             }
         }
     }
+
     public void defineOptional(PrintModel ipw) {
-        int k=1;
+        int k = 1;
         cc.add("java.util.Set");
         cc.add("java.util.HashSet");
         ipw.printf("private final Set<String> options = new HashSet<>();%n");
-        for(Map.Entry<String,Map<Integer, SqlParam>> a: api.getAndParms().entrySet()) {
-            for( Map.Entry<Integer, SqlParam> e: a.getValue().entrySet()) {
+        for (Map.Entry<String, Map<Integer, SqlParam>> a : api.getAndParms().entrySet()) {
+            for (Map.Entry<Integer, SqlParam> e : a.getValue().entrySet()) {
                 ipw.printf("private %s opt%dp%d; // %s%n",
                         e.getValue().getType().getPrimitive(), k, e.getKey(), e.getValue().getName());
             }
@@ -240,13 +251,14 @@ public class DelegateSelectDyn {
 
     public void assignInput(PrintModel ipw, JdbcStatement jdbc) {
         int nSize = mc.nSize();
-        if (1<=nSize && nSize<=IMAX) {
+        if (1 <= nSize && nSize <= IMAX) {
             jdbc.getNMap().forEach((name, type) ->
                     ipw.printf("this.%1$s = %1$s;%n", name));
-        } else if (nSize>IMAX){
+        } else if (nSize > IMAX) {
             ipw.printf("this.i = i;%n");
         }
     }
+
     public void assignOutput(PrintModel ipw) {
         if (mc.oSize() >= 2) {
             if (mc.isOutputDelegate()) {
@@ -259,16 +271,16 @@ public class DelegateSelectDyn {
 
     public void declareInput(PrintModel ipw, @NotNull JdbcStatement jdbc) {
         int nSize = mc.nSize();
-        if (1<=nSize && nSize<=IMAX) {
+        if (1 <= nSize && nSize <= IMAX) {
             jdbc.getNMap().forEach((name, type) -> {
                 ipw.commaLn();
-                if (type.isScalar() || type.columns() <=1) {
+                if (type.isScalar() || type.columns() <= 1) {
                     ipw.printf("        final %s %s", type.getPrimitive(), name);
                 } else {
                     ipw.printf("        final List<%s> %s", type.getGeneric(), name);
                 }
             });
-        } else if (nSize>IMAX){
+        } else if (nSize > IMAX) {
             ipw.commaLn();
             if (mc.isInputDelegate()) {
                 ipw.printf("        final DI i");

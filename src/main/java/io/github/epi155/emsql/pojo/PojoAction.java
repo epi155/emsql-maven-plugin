@@ -16,6 +16,7 @@ public abstract class PojoAction extends SqlAction {
         ipw.printf("        final Connection c)%n", cName);
         ipw.printf("        throws SQLException {%n");
     }
+
     public void declareNewInstance(@NotNull PrintModel ipw, String cName) {
         ipw.printf("public static ");
         batchGenerics(ipw, cName);
@@ -31,7 +32,7 @@ public abstract class PojoAction extends SqlAction {
         ipw.printf(" * Template %s%n", this.getClass().getSimpleName());
         ipw.printf(" * <pre>%n");
         val lines = getExecSql().split("\n");
-        for(val line: lines) {
+        for (val line : lines) {
             ipw.printf(" * %s%n", line);
         }
         ipw.printf(" * </pre>%n");

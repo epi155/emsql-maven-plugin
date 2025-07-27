@@ -22,10 +22,10 @@ public class SqlSelectSingle extends SpringAction
     protected final DelegateSelectSimple delegateSelectSimple;
     @Getter
     @Setter
-    private InputModel input;
+    protected OutputModel output;
     @Getter
     @Setter
-    protected OutputModel output;
+    private InputModel input;
 
     public SqlSelectSingle() {
         super();
@@ -33,6 +33,7 @@ public class SqlSelectSingle extends SpringAction
         this.delegateSelectSignature = new DelegateSelectSignature(this);
         this.delegateSelectSimple = new DelegateSelectSimple(this);
     }
+
     @Override
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateSelectFields.sql(fields);
@@ -44,7 +45,7 @@ public class SqlSelectSingle extends SpringAction
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 1) {
-            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(", v.getType().getPrimitive(), name));
+            jdbc.getOMap().forEach((k, v) -> ipw.putf("%s %s(", v.getType().getPrimitive(), name));
         } else {
             if (mc.isOutputDelegate()) {
                 ipw.putf("void %s(", name);
@@ -54,7 +55,7 @@ public class SqlSelectSingle extends SpringAction
         }
 
         delegateSelectSimple.fetch(ipw, jdbc, kPrg);
-        if (mc.oSize()==1 || !mc.isOutputDelegate()) {
+        if (mc.oSize() == 1 || !mc.isOutputDelegate()) {
             ipw.orElse();
             ipw.printf("return o;%n");
         }

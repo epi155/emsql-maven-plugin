@@ -184,7 +184,7 @@ methods:
           :long11 
         from tlong
         where id_Long = :idLong
-        
+
   - methodName: call01
     perform: !CallProcedure
       output:

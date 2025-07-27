@@ -6,5 +6,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ComAreaLst implements ComAttribute {
-    /** DO NOT USE, reduces performance by 14% */ private boolean reflect;
+    /**
+     * DO NOT USE, reduces performance by 14%
+     */
+    private boolean reflect;
 }

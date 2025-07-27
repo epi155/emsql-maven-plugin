@@ -31,7 +31,7 @@ public class DelegateWrite {
             ipw.putf("void %s(", name);
         } else if (mc.oSize() == 1) {
             // oMap.get(1) may be NULL, the output parameter is NOT the first one
-            jdbc.getOMap().forEach((k,v) -> ipw.putf("%s %s(", v.getType().getPrimitive(), name));
+            jdbc.getOMap().forEach((k, v) -> ipw.putf("%s %s(", v.getType().getPrimitive(), name));
         } else {
             ipw.putf("O %s(", name);
         }
@@ -50,7 +50,7 @@ public class DelegateWrite {
         api.setQueryHints(ipw);
         ipw.printf("ps.execute();%n");
         api.getOutput(ipw, jdbc.getOMap());
-        if (mc.oSize()>0)
+        if (mc.oSize() > 0)
             ipw.printf("return o;%n");
         ipw.ends();
         ipw.ends();

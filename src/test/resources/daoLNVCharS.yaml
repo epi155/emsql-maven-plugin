@@ -184,7 +184,7 @@ methods:
           :varchar11 
         from tvarchar
         where id_LongNVarcharStream = :idLongNVarcharStream
-        
+
   - methodName: call01
     perform: !CallProcedure
       output:

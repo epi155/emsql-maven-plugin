@@ -10,10 +10,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DelegateUpdate {
-    private final ApiUpdate api;
     private static final String tmpl =
             "^UPDATE (\\w+) ((\\w+)\\s+)?SET (.*) WHERE (.*)$";
     private static final Pattern regx = Pattern.compile(tmpl, Pattern.CASE_INSENSITIVE);
+    private final ApiUpdate api;
 
     public DelegateUpdate(ApiUpdate api) {
         this.api = api;
@@ -27,11 +27,11 @@ public class DelegateUpdate {
             String sAlias = m.group(3);
             String sAlter = m.group(4);
             String sWhere = m.group(5);
-            String oText = "UPDATE " + sTable + (sAlias==null ? "" : " " + sAlias)+ " SET " + sAlter + " WHERE " + sWhere;
+            String oText = "UPDATE " + sTable + (sAlias == null ? "" : " " + sAlias) + " SET " + sAlter + " WHERE " + sWhere;
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, enableList);
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), Map.of());
         } else {
-            throw new InvalidQueryException("Invalid query format: "+ api.getExecSql());
+            throw new InvalidQueryException("Invalid query format: " + api.getExecSql());
         }
     }
 }

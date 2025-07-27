@@ -51,9 +51,9 @@ methods:
 
   - methodName: insert2
     perform: !InlineBatch
-#      output:
-#        fields:
-#          - idBool
+      #      output:
+      #        fields:
+      #          - idBool
       execSql: |
         begin 
           insert into tbool (

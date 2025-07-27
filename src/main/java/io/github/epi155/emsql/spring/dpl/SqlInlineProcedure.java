@@ -18,9 +18,11 @@ public class SqlInlineProcedure extends SpringAction
     @Setter
     @Getter
     private InputModel input;
-    @Setter @Getter
+    @Setter
+    @Getter
     private OutFieldsModel output;
-    @Setter @Getter
+    @Setter
+    @Getter
     private InOutFieldsModel inputOutput;
 
     public SqlInlineProcedure() {
@@ -33,6 +35,7 @@ public class SqlInlineProcedure extends SpringAction
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateInline.proceed(fields);
     }
+
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         delegateWrite.proceed(ipw, name, jdbc, kPrg);
     }

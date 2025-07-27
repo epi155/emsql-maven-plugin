@@ -44,48 +44,42 @@ import java.util.stream.Collectors;
 )
 @Slf4j
 public class SqlMojo extends AbstractMojo {
+    public static final ThreadLocal<MapContextImpl> mapContext = new ThreadLocal<>();
+    private final Set<String> classLogbook = new HashSet<>();
+    @Parameter(defaultValue = "${plugin}", readonly = true, required = true)
+    @Setter
+    protected org.apache.maven.plugin.descriptor.PluginDescriptor plugin;
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/emsql",
             property = "maven.emsql.generate-directory", required = true)
     @Setter
     private File generateDirectory;
-
     @Parameter(defaultValue = "${project.build.resources[0].directory}",
             property = "maven.emsql.config-directory", required = true)
     @Setter
     private File configDirectory;
-
     @Parameter(required = true)
     @Setter
     private String[] modules;
-
     @Parameter(defaultValue = "true",
             property = "maven.emsql.debug-code", required = true)
     @Setter
     private Boolean debugCode;
-
     /**
      * Set codeGenerator provider. Available values are: <b>Pojo</b>, <b>Spring</b> (case insensitive)
      */
     @Parameter(property = "maven.emsql.provider")
     @Setter
     private String provider;
-
     @Parameter(defaultValue = "false",
             property = "maven.emsql.java7", required = true)
     @Setter
     private boolean java7;
-
     @Parameter(property = "maven.emsql.parser-provider")
     @Setter
     private String parserProvider;
-
     @Parameter(defaultValue = "${project}", readonly = true)
     @Setter
     private MavenProject project;
-    @Parameter(defaultValue = "${plugin}", readonly = true, required = true)
-    @Setter
-    protected org.apache.maven.plugin.descriptor.PluginDescriptor plugin;
-
     /**
      * If set to true (default), adds target directory as a compile source root
      * of this Maven project.
@@ -94,7 +88,6 @@ public class SqlMojo extends AbstractMojo {
     @Parameter(defaultValue = "true", property = "maven.emsql.add-compile-source-root")
     @Setter
     private boolean addCompileSourceRoot = true;
-
     /**
      * If set to true, adds target directory as a test compile source root of
      * this Maven project. Default value is false.
@@ -103,9 +96,12 @@ public class SqlMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "maven.emsql.add-test-compile-source-root")
     @Setter
     private boolean addTestCompileSourceRoot = false;
-    private final Set<String> classLogbook = new HashSet<>();
 
-    public static final ThreadLocal<MapContextImpl> mapContext = new ThreadLocal<>();
+    private static void mkdir(String tmp) throws MojoExecutionException {
+        val f = new File(tmp);
+        if (!f.exists() && !f.mkdir())
+            throw new MojoExecutionException("Cannot create directory <" + tmp + ">");
+    }
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -163,7 +159,7 @@ public class SqlMojo extends AbstractMojo {
             return ProviderEnum.POJO;
         if (provider.equalsIgnoreCase(ProviderEnum.SPRING.name()))
             return ProviderEnum.SPRING;
-        throw new ProviderNotFoundException("Provider "+provider+" not found. Available providers: "+
+        throw new ProviderNotFoundException("Provider " + provider + " not found. Available providers: " +
                 Arrays.stream(ProviderEnum.values()).map(Enum::name).collect(Collectors.joining(","))
         );
     }
@@ -208,8 +204,8 @@ public class SqlMojo extends AbstractMojo {
     }
 
     private void generateApi(MojoContext pc, CodeFactory factory, DaoClassConfig api) throws MojoExecutionException, FileNotFoundException, InvalidQueryException {
-        val classFullName = api.getPackageName()+"."+api.getClassName();
-        if (! classLogbook.add(classFullName)) {
+        val classFullName = api.getPackageName() + "." + api.getClassName();
+        if (!classLogbook.add(classFullName)) {
             throw new MojoExecutionException("Class <" + classFullName + "> duplicated");
         }
         /*--------------------*/
@@ -217,13 +213,14 @@ public class SqlMojo extends AbstractMojo {
         /*--------------------*/
     }
 
-public void makeDirectory(@NotNull File base, @Nullable String packg) throws MojoExecutionException {
+    public void makeDirectory(@NotNull File base, @Nullable String packg) throws MojoExecutionException {
         if (!base.exists()) {
             log.debug("Source Directory <{}> does not exist, creating", base.getAbsolutePath());
             if (!base.mkdirs())
                 throw new MojoExecutionException("Error creating Source Directory <" + base.getName() + ">");
         }
-        if (!base.isDirectory()) throw new MojoExecutionException("Source Directory <" + base.getName() + "> is not a Directory");
+        if (!base.isDirectory())
+            throw new MojoExecutionException("Source Directory <" + base.getName() + "> is not a Directory");
         if (packg == null) return;
         StringTokenizer st = new StringTokenizer(packg, ".");
         String cwd = base.getAbsolutePath();
@@ -233,11 +230,6 @@ public void makeDirectory(@NotNull File base, @Nullable String packg) throws Moj
             mkdir(tmp);
             cwd = tmp;
         }
-    }
-    private static void mkdir(String tmp) throws MojoExecutionException {
-        val f = new File(tmp);
-        if (!f.exists() && !f.mkdir())
-            throw new MojoExecutionException("Cannot create directory <" + tmp + ">");
     }
 
 }

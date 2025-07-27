@@ -18,9 +18,11 @@ public class SqlCallProcedure extends SpringAction
     @Setter
     @Getter
     private InputModel input;
-    @Setter @Getter
+    @Setter
+    @Getter
     private OutFieldsModel output;
-    @Setter @Getter
+    @Setter
+    @Getter
     private InOutFieldsModel inputOutput;
 
     public SqlCallProcedure() {
@@ -28,7 +30,6 @@ public class SqlCallProcedure extends SpringAction
         this.delegateWrite = new DelegateWrite(this);
         this.delegateCall = new DelegateCall(this);
     }
-
 
 
     @Override

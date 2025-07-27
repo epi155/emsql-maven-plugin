@@ -120,7 +120,7 @@ public class SpringFactory extends BasicFactory {
         pw.printf("private final PlatformTransactionManager transactionManager;%n");
         cc.add("org.springframework.beans.factory.annotation.Autowired");
         pw.printf("@Autowired%n");
-        if (qualifier==null) {
+        if (qualifier == null) {
             pw.printf("public %s(DataSource dataSource, PlatformTransactionManager transactionManager) {%n", className);
         } else {
             cc.add("org.springframework.beans.factory.annotation.Qualifier");

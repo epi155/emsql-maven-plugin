@@ -12,6 +12,7 @@ public class TdMethod extends TypeDescription {
         super(MethodModel.class);
         this.factory = factory;
     }
+
     public Object newInstance(Node node) {
         return factory.newMethodModel();
     }

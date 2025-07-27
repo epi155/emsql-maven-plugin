@@ -21,16 +21,16 @@ public class DelegateInline {
         int k0 = uText.indexOf("DECLARE");
         int k1 = uText.indexOf("BEGIN");
         int k2 = uText.indexOf("END");
-        if (!(k1>=0 && k2>k1 && (k0<0 || k0<k1))) {
-            throw new InvalidQueryException("Invalid query format: "+ api.getExecSql());
+        if (!(k1 >= 0 && k2 > k1 && (k0 < 0 || k0 < k1))) {
+            throw new InvalidQueryException("Invalid query format: " + api.getExecSql());
         }
         Map<String, SqlDataType> inpFields = new HashMap<>();
         Map<String, SqlDataType> outFields = new HashMap<>();
-        fields.forEach((k,v) -> {
-            if (api.getOutput()!=null && api.getOutput().getFields().contains(k)) {
+        fields.forEach((k, v) -> {
+            if (api.getOutput() != null && api.getOutput().getFields().contains(k)) {
                 outFields.put(k, v);
             } else {
-                inpFields.put(k,v);
+                inpFields.put(k, v);
             }
         });
         return Tools.replacePlaceholder(nText, inpFields, outFields);

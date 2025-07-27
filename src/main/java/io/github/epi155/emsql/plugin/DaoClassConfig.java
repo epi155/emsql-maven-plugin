@@ -25,6 +25,7 @@ import static io.github.epi155.emsql.commons.Contexts.cc;
 @Setter
 @Slf4j
 public class DaoClassConfig {
+    private static final String DOT_JAVA = ".java";
     @Getter
     private String packageName;
     @Getter
@@ -33,16 +34,14 @@ public class DaoClassConfig {
     private Map<String, TypeModel> declare = new LinkedHashMap<>();
     private List<MethodModel> methods;
 
-    private static final String DOT_JAVA = ".java";
-
     public void create(MojoContext pc, CodeFactory factory) throws FileNotFoundException, InvalidQueryException {
         log.info("Creating {} ...", className);
         File srcMainJava = new File(pc.sourceDirectory);
         File pkgFolder = new File(srcMainJava, packageName.replace('.', File.separatorChar));
-        File clsFile = new File(pkgFolder, className+DOT_JAVA);
+        File clsFile = new File(pkgFolder, className + DOT_JAVA);
         factory.classContext(pc, declare);
-        if (qualifier!=null && cc instanceof SpringClassContext) {
-            ((SpringClassContext)cc).setQualifier(qualifier);
+        if (qualifier != null && cc instanceof SpringClassContext) {
+            ((SpringClassContext) cc).setQualifier(qualifier);
         }
         try (PrintWriter pw = new PrintWriter(clsFile)) {
             writePackage(pw, pc);

@@ -8,6 +8,12 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ComAreaStd implements InputModel, OutputModel {
-    /** DO NOT USE, reduces performance by 14% */ private boolean reflect;
-    /** ?? */ private boolean delegate;
+    /**
+     * DO NOT USE, reduces performance by 14%
+     */
+    private boolean reflect;
+    /**
+     * ??
+     */
+    private boolean delegate;
 }

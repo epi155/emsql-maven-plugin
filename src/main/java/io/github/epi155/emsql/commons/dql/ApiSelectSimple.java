@@ -11,8 +11,12 @@ import java.util.Map;
 
 public interface ApiSelectSimple extends InputAware, WhereInAware {
     void declareInput(PrintModel ipw, @NotNull JdbcStatement jdbc);
+
     void setQueryHints(PrintModel ipw);
+
     void debugAction(PrintModel ipw, String kPrg, JdbcStatement jdbc);
+
     void fetch(PrintModel ipw, Map<Integer, SqlParam> oMap);
+
     void declareOutput(PrintModel ipw);
 }

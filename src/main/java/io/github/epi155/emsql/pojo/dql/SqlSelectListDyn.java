@@ -22,10 +22,11 @@ public class SqlSelectListDyn extends PojoAction
     private final DelegateSelectDyn delegateSelectDyn;
     private final DelegateSelectDynFields delegateSelectFields;
     private final DelegateSelectSignature delegateSelectSignature;
-
+    @Getter
+    private final Map<String, Map<Integer, SqlParam>> andParms = new LinkedHashMap<>();
     @Setter
     @Getter
-    private Map<String,String> optionalAnd = new LinkedHashMap<>();
+    private Map<String, String> optionalAnd = new LinkedHashMap<>();
     @Getter
     @Setter
     private InputModel input;
@@ -34,9 +35,6 @@ public class SqlSelectListDyn extends PojoAction
     private OutputModel output;
     @Setter
     private Integer fetchSize;
-
-    @Getter
-    private final Map<String,Map<Integer, SqlParam>> andParms = new LinkedHashMap<>();
 
     public SqlSelectListDyn() {
         super();
@@ -49,6 +47,7 @@ public class SqlSelectListDyn extends PojoAction
     public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
         return delegateSelectFields.sql(fields);
     }
+
     @Override
     protected void customWrite(String kPrg, @NotNull PrintModel ipw) {
         delegateSelectDyn.customWrite(ipw, kPrg);
@@ -75,7 +74,7 @@ public class SqlSelectListDyn extends PojoAction
 
     private void returnBuilder(PrintModel ipw, JdbcStatement jdbc, String cName) {
         ipw.printf("return new %sBuilder<>(c", cName);
-        jdbc.getNMap().forEach((k,q) -> {
+        jdbc.getNMap().forEach((k, q) -> {
             ipw.commaLn();
             ipw.printf("%s", k);
         });
@@ -148,7 +147,7 @@ public class SqlSelectListDyn extends PojoAction
         ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
         ipw.more();
         if (mc.oSize() == 1) {
-            jdbc.getOMap().forEach((k,v) ->
+            jdbc.getOMap().forEach((k, v) ->
                     ipw.printf("List<%s> list = new ArrayList<>();%n", v.getType().getWrapper()));
         } else {
             ipw.printf("List<O> list = new ArrayList<>();%n");

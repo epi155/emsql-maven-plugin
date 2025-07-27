@@ -16,6 +16,7 @@ public class TdCallProcedure extends TypeDescription {
         substituteProperty("exec-sql", String.class, null, "setExecSql");
         substituteProperty("input-output", InOutFieldsModel.class, null, "setInputOutput");
     }
+
     public Object newInstance(Node node) {
         return factory.newCallProcedureModel();
     }

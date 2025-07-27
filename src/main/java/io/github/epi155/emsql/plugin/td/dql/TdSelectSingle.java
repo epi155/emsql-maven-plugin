@@ -14,6 +14,7 @@ public class TdSelectSingle extends TypeDescription {
 
         substituteProperty("exec-sql", String.class, null, "setExecSql");
     }
+
     public Object newInstance(Node node) {
         return factory.newSelectSingleModel();
     }

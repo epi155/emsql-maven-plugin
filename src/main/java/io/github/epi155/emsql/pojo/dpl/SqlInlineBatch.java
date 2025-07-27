@@ -18,12 +18,14 @@ public class SqlInlineBatch extends PojoBatchAction implements ApiInline, Inline
     @Setter
     @Getter
     private InputModel input;
-    @Setter @Getter
+    @Setter
+    @Getter
     private OutFieldsModel output;
-    @Setter @Getter
+    @Setter
+    @Getter
     private InOutFieldsModel inputOutput;
 
-    public SqlInlineBatch()   {
+    public SqlInlineBatch() {
         super();
         this.delegateInline = new DelegateInline(this);
     }
@@ -36,8 +38,8 @@ public class SqlInlineBatch extends PojoBatchAction implements ApiInline, Inline
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
-        if (nSize<=IMAX) {
-            cc.add("io.github.epi155.emsql.runtime.SqlInlineBatch"+nSize);
+        if (nSize <= IMAX) {
+            cc.add("io.github.epi155.emsql.runtime.SqlInlineBatch" + nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlInlineBatch1");
         }

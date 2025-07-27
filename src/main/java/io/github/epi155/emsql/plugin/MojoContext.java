@@ -43,7 +43,7 @@ public class MojoContext implements PluginContext {
         this.java7 = java7;
 
         ServiceLoader<ParserProvider> providers = ServiceLoader.load(ParserProvider.class);
-        if (parserName==null) {
+        if (parserName == null) {
             parser = providers.findFirst().map(ParserProvider::create).orElse(null);
         } else {
             parser = findByName(parserName, providers);
@@ -51,25 +51,16 @@ public class MojoContext implements PluginContext {
     }
 
     private static SqlParser findByName(String name, @NotNull Iterable<ParserProvider> providers) {
-        for (ParserProvider provider: providers) {
+        for (ParserProvider provider : providers) {
             if (name.equals(provider.name())) {
                 return provider.create();
             }
         }
-        throw new IllegalArgumentException("ParserProvider " + name+ " not found.");
-    }
-
-    public void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters) {
-        if (parser==null) return;
-        List<Mul> muls = replacer(parameters);
-        if (!muls.isEmpty()) {
-            query = expandQueryParameters(query, muls);
-        }
-        parser.validate(query, claz);
+        throw new IllegalArgumentException("ParserProvider " + name + " not found.");
     }
 
     private static String expandQueryParameters(String query, List<Mul> muls) {
-        for(Mul mul: muls) {
+        for (Mul mul : muls) {
             query = mul.replace(query);
         }
         return query;
@@ -77,7 +68,7 @@ public class MojoContext implements PluginContext {
 
     private static List<Mul> replacer(Map<Integer, SqlParam> parameters) {
         List<Mul> reps = new LinkedList<>();
-        parameters.forEach((k,v) -> {
+        parameters.forEach((k, v) -> {
             if (!v.getType().isScalar()) {
                 reps.add(new Mul(k, v.getType().columns()));
             }
@@ -85,8 +76,22 @@ public class MojoContext implements PluginContext {
         return reps;
     }
 
-    public void incClasses() { nmClasses++; }
-    public void incMethods() { nmMethods++; }
+    public void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters) {
+        if (parser == null) return;
+        List<Mul> muls = replacer(parameters);
+        if (!muls.isEmpty()) {
+            query = expandQueryParameters(query, muls);
+        }
+        parser.validate(query, claz);
+    }
+
+    public void incClasses() {
+        nmClasses++;
+    }
+
+    public void incMethods() {
+        nmMethods++;
+    }
 
     private static class Mul {
         private final int nth;
@@ -100,21 +105,21 @@ public class MojoContext implements PluginContext {
         public String replace(String query) {
             String placeholder = "[#" + nth + "]";
             int ks = query.indexOf(placeholder);
-            if (ks<0)
+            if (ks < 0)
                 return query;   // dead branch
             StringBuilder sb = new StringBuilder();
             sb.append(query, 0, ks);
-            if (cols==1) {
+            if (cols == 1) {
                 sb.append('?');
             } else {
                 sb.append('(');
-                for(int kc=1; kc<=cols; kc++) {
+                for (int kc = 1; kc <= cols; kc++) {
                     sb.append('?');
-                    if (kc< cols)sb.append(',');
+                    if (kc < cols) sb.append(',');
                 }
                 sb.append(')');
             }
-            sb.append(query.substring(ks+placeholder.length()));
+            sb.append(query.substring(ks + placeholder.length()));
             return sb.toString();
         }
     }

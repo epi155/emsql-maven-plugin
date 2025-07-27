@@ -18,6 +18,7 @@ public class TdSelectListDyn extends TypeDescription {
         substituteProperty("fetch-size", Integer.class, null, "setFetchSize");
         substituteProperty("optional-and", Map.class, null, "setOptionalAnd");
     }
+
     public Object newInstance(Node node) {
         return factory.newSelectListDynModel();
     }

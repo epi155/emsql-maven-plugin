@@ -12,6 +12,7 @@ public class TdOutput extends TypeDescription {
         super(OutputModel.class);
         this.factory = factory;
     }
+
     public Object newInstance(Node node) {
         return factory.newOutputModel();
     }

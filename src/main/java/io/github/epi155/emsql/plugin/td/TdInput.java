@@ -12,6 +12,7 @@ public class TdInput extends TypeDescription {
         super(InputModel.class);
         this.factory = factory;
     }
+
     public Object newInstance(Node node) {
         return factory.newInputModel();
     }

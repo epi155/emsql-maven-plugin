@@ -18,9 +18,11 @@ public class SqlInlineProcedure extends PojoAction
     @Setter
     @Getter
     private InputModel input;
-    @Setter @Getter
+    @Setter
+    @Getter
     private OutFieldsModel output;
-    @Setter @Getter
+    @Setter
+    @Getter
     private InOutFieldsModel inputOutput;
 
     public SqlInlineProcedure() {

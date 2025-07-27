@@ -23,13 +23,14 @@ public class IndentPrintWriter implements PrintModel {
         indent();
         pw.printf(format, objects);
     }
+
     @Override
     public void putf(String format, Object... objects) {
         pw.printf(format, objects);
     }
 
     private void indent() {
-        for(int k=0; k<indent; k++) {
+        for (int k = 0; k < indent; k++) {
             pw.print(tab);
         }
     }
@@ -46,19 +47,21 @@ public class IndentPrintWriter implements PrintModel {
 
     @Override
     public void less() {
-        if (indent>0) indent--;
+        if (indent > 0) indent--;
     }
+
     @Override
     public void ends() {
-        if (indent>0) {
+        if (indent > 0) {
             indent--;
             indent();
             pw.println("}");
         }
     }
+
     @Override
     public void orElse() {
-        if (indent>0) {
+        if (indent > 0) {
             indent--;
             indent();
             pw.println(ELSE);

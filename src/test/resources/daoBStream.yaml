@@ -189,10 +189,10 @@ methods:
 
   - methodName: call01
     perform: !CallProcedure
-#      output:
-#        fields:
-#          - binStream02
-#          - binStream12
+      #      output:
+      #        fields:
+      #          - binStream02
+      #          - binStream12
       execSql: |
         call solve(:binStream01, :binStream11, :binStream02, :binStream12)
 
@@ -202,9 +202,9 @@ methods:
         reflect: yes
       output:
         reflect: yes
-#        fields:
-#          - binStream02
-#          - binStream12
+      #        fields:
+      #          - binStream02
+      #          - binStream12
       execSql: |
         call solve(:binStream01, :binStream11,
                    :binStream03, :binStream13,

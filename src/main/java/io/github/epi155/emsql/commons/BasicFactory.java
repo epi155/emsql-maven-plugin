@@ -13,6 +13,7 @@ import static io.github.epi155.emsql.commons.Contexts.cc;
 @Slf4j
 public abstract class BasicFactory implements CodeFactory {
     private static final Map<String, SqlDataType> sqlMap;
+
     static {
         Map<String, SqlDataType> map = new HashMap<>();
         map.put("BOOL", SqlEnum.BooleanStd);
@@ -167,6 +168,7 @@ public abstract class BasicFactory implements CodeFactory {
     public OutFieldsModel newOutFieldsModel() {
         return new ComAreaDef();
     }
+
     @Override
     public InOutFieldsModel newInOutFieldsModel() {
         return new ComAreaDef();
@@ -175,30 +177,30 @@ public abstract class BasicFactory implements CodeFactory {
     @Override
     public SqlDataType getInstance(String value, MapContext mapContext) {
         SqlDataType kind = sqlMap.get(value.toUpperCase());
-        if (kind!=null) {
+        if (kind != null) {
             return kind;
         }
         if (value.startsWith("(") && value.endsWith(")")) {
-            value = value.substring(1, value.length()-1);
+            value = value.substring(1, value.length() - 1);
             val names = value.split(",");
             List<SqlParam> list = new ArrayList<>();
-            for(String name: names) {
+            for (String name : names) {
                 name = name.trim();
                 kind = (SqlDataType) mapContext.get(name);
                 if (kind == null)
-                    throw new IllegalArgumentException("Undefined field <"+name+">");
+                    throw new IllegalArgumentException("Undefined field <" + name + ">");
                 if (kind.isNullable())
-                    throw new IllegalArgumentException("Nullable field <"+value+">");
+                    throw new IllegalArgumentException("Nullable field <" + value + ">");
                 if (!kind.isScalar())
-                    throw new IllegalArgumentException("Not scalar field <"+value+">");
+                    throw new IllegalArgumentException("Not scalar field <" + value + ">");
                 list.add(new SqlParam(name, kind));
             }
             if (list.isEmpty())
-                throw new IllegalArgumentException("Invalid for list fields <"+value+">");
+                throw new IllegalArgumentException("Invalid for list fields <" + value + ">");
             SqlParam[] params = list.toArray(new SqlParam[0]);
             return new SqlVector(params);
         }
-        throw new IllegalArgumentException("Unknown SQL type <"+value+">");
+        throw new IllegalArgumentException("Unknown SQL type <" + value + ">");
     }
 
     @Override
@@ -206,7 +208,7 @@ public abstract class BasicFactory implements CodeFactory {
         Set<String> basket = new HashSet<>();
         classBegin(pw, className, cc.isDebug());
         int kMethod = 0;
-        for(val method: methods) {
+        for (val method : methods) {
             String methodName = method.getMethodName();
             log.info("- method {} ...", methodName);
             if (basket.contains(methodName)) {

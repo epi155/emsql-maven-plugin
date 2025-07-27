@@ -189,10 +189,10 @@ methods:
 
   - methodName: call01
     perform: !CallProcedure
-#      output:
-#        fields:
-#          - varBinary02
-#          - varBinary12
+      #      output:
+      #        fields:
+      #          - varBinary02
+      #          - varBinary12
       execSql: |
         call solve(:varBinary01, :varBinary11, :varBinary02, :varBinary12)
 
@@ -202,9 +202,9 @@ methods:
         reflect: yes
       output:
         reflect: yes
-#        fields:
-#          - varBinary02
-#          - varBinary12
+      #        fields:
+      #          - varBinary02
+      #          - varBinary12
       execSql: |
         call solve(:varBinary01, :varBinary11,
                    :varBinary03, :varBinary13,

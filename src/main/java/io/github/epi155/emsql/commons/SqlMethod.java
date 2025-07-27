@@ -15,10 +15,10 @@ import static io.github.epi155.emsql.commons.Contexts.mc;
 @Setter
 @Getter
 public class SqlMethod implements MethodModel {
+    private static final NumberFormat NF = new DecimalFormat("0000");
     private String methodName;
     private PerformModel perform;
 
-    private static final NumberFormat NF = new DecimalFormat("0000");
     public void writeCode(PrintModel ipw, int km) throws InvalidQueryException {
         mc = new MethodContextImpl(this);
         String kPrg = NF.format(km);

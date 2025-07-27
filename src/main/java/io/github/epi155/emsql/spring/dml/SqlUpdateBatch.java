@@ -34,7 +34,7 @@ public class SqlUpdateBatch extends SpringBatchAction implements ApiUpdate, Upda
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         int nSize = mc.nSize();
         if (isUnboxRequest(nSize)) {
-            cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch"+nSize);
+            cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch" + nSize);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch1");
         }
