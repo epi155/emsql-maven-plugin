@@ -7,6 +7,7 @@ import io.github.epi155.emsql.pojo.dpl.*;
 import io.github.epi155.emsql.pojo.dql.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -102,6 +103,11 @@ public class PojoFactory extends BasicFactory {
     @Override
     public InlineBatchModel newInlineBatchModel() {
         return new SqlInlineBatch();
+    }
+
+    @Override
+    protected void preCheck(List<MethodModel> methods) {
+        // nope
     }
 
     protected void classBegin(PrintModel pw, String className, boolean isDebug) {

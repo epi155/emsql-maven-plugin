@@ -206,6 +206,7 @@ public abstract class BasicFactory implements CodeFactory {
     @Override
     public Consumer<PrintWriter> createClass(PrintModel pw, String className, List<MethodModel> methods, Map<String, TypeModel> declare) throws InvalidQueryException {
         Set<String> basket = new HashSet<>();
+        preCheck(methods);
         classBegin(pw, className, cc.isDebug());
         int kMethod = 0;
         for (val method : methods) {
@@ -231,6 +232,8 @@ public abstract class BasicFactory implements CodeFactory {
         };
 
     }
+
+    protected abstract void preCheck(List<MethodModel> methods);
 
     protected abstract void classBegin(PrintModel pw, String className, boolean debug);
 }

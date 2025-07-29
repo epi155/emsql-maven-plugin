@@ -8,7 +8,7 @@ Very similar queries with the risk of errors and code duplication.
 
 This template allows you to define optional parameters that can be activated at runtime.
 This way, you only need to define one query.
-The actual query is constructed at runtime based on the optional parameters provided.
+The actual query is created at runtime based on the optional parameters provided.
 The method generated in this case does not return the list, but a builder that allows you to set optional parameters
 and finally get the list.
 
@@ -69,11 +69,11 @@ Generated DAO Builder method signature (body omitted):
 Example of client code:
 
 ~~~java
-        List<DtoCertificateList> certs = DaoU01.certificateList(c, 1, DtoCertificateList::new)
-                                            .isNotExpired(LocalDate.now())
-                                            .isNotRevoked()
-                                            .cnLike("%JOHN%")
-                                            .list();
+        List<DtoCertificate> certs = DaoU01.certificateList(c, 1, DtoCertificate::new)
+                                        .isNotExpired(LocalDate.now())
+                                        .isNotRevoked()
+                                        .cnLike("%JOHN%")
+                                        .list();
 ~~~
 
 

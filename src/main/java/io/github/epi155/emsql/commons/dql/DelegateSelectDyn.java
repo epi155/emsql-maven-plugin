@@ -137,13 +137,14 @@ public class DelegateSelectDyn {
     public void defineMethodArgBuilder(PrintModel ipw, String kPrg, String cName) {
         int k = 1;
         for (Map.Entry<String, String> a : api.getOptionalAnd().entrySet()) {
-            docMethod(ipw, a, k, cName);
-            ipw.printf("public %sBuilder<O> %s(", cName, a.getKey());
             Map<Integer, SqlParam> parms = api.getAndParms().get(a.getKey());
-            Map<OptArg, List<Integer>> pArg = writeArgument(ipw, parms, k);
+            Map<OptArg, List<Integer>> args = reorgParms(parms, k);
+            docMethod(ipw, a, k, cName, args);
+            ipw.printf("public %sBuilder<O> %s(", cName, a.getKey());
+            writeArgument(ipw, args);
             ipw.putf(") {%n");
             ipw.more();
-            writeAssign(ipw, pArg);
+            writeAssign(ipw, args);
             ipw.printf("options.add(Q_%s_OPT%04d);%n", kPrg, k);
             ipw.printf("return this;%n");
             ipw.ends();
@@ -151,7 +152,33 @@ public class DelegateSelectDyn {
         }
     }
 
-    private void docMethod(PrintModel ipw, Map.Entry<String, String> a, int k, String cName) {
+    private Map<OptArg, List<Integer>> reorgParms(Map<Integer, SqlParam> parms, int k) {
+        Map<OptArg, List<Integer>> args = new LinkedHashMap<>();
+        if (parms.isEmpty()) return args;
+        for (Map.Entry<Integer, SqlParam> e : parms.entrySet()) {
+            SqlParam qParm = e.getValue();
+            String name = qParm.getName();
+            OptArg oa = new OptArg(name, k);
+
+            List<Integer> aLst = args.computeIfAbsent(oa, ka -> {
+                reorgName(ka, args);    // set simpleName, ord
+                ka.setSql(qParm.getType());
+                return new ArrayList<>();
+            });
+
+//            List<Integer> aLst = args.get(oa);
+//            if (aLst == null) {
+//                reorgName(oa, args);
+//                oa.setSql(qParm.getType());
+//                aLst = new ArrayList<>();
+//                args.put(oa, aLst);
+//            }
+            aLst.add(e.getKey());
+        }
+        return args;
+    }
+
+    private void docMethod(PrintModel ipw, Map.Entry<String, String> a, int k, String cName, Map<OptArg, List<Integer>> args) {
         ipw.printf("/**%n");
         ipw.printf(" * Add condition <b>%s</b> (#%d)%n", a.getKey(), k);
         ipw.printf(" * <pre>%n");
@@ -162,46 +189,52 @@ public class DelegateSelectDyn {
         ipw.printf(" * </pre>%n");
         ipw.printf(" *%n");
 
-        Collection<SqlParam> parms = api.getAndParms().get(a.getKey()).values();
-        Set<String> doubleCheck = new HashSet<>();
-        int c = 0;
-        for (SqlParam p : parms) {
-            String name = p.getName();
-            if (!doubleCheck.contains(name)) {
-                doubleCheck.add(name);
-                ipw.printf(" * @param %1$s %1$s (parameter #%2$d)%n", name, ++c);
-            }
+        for(Map.Entry<OptArg, List<Integer>> arg: args.entrySet()) {
+            ipw.printf(" * @param %s %s (parameter #%s)%n", arg.getKey().normalizedName(), arg.getKey().getName(), listOf(arg.getValue()));
         }
+
         ipw.printf(" * @return %sBuilder%n", cName);
         ipw.printf(" */%n");
 
     }
 
-    private Map<OptArg, List<Integer>> writeArgument(PrintModel ipw, Map<Integer, SqlParam> parms, int k) {
-        Map<OptArg, List<Integer>> pArg = new LinkedHashMap<>();
-        if (parms.isEmpty()) return pArg;
-        int n = 0;
-        ipw.println();
-        for (Map.Entry<Integer, SqlParam> e : parms.entrySet()) {
-            SqlParam qParm = e.getValue();
-            String name = qParm.getName();
-            OptArg oa = new OptArg(name, k);
-            List<Integer> aLst = pArg.get(oa);
-            if (aLst == null) {
-                if (n++ > 0) ipw.commaLn();
-                ipw.printf("        final %s %s", qParm.getType().getPrimitive(), name);
-                aLst = new ArrayList<>();
-                pArg.put(oa, aLst);
-            }
-            aLst.add(e.getKey());
+    private String listOf(List<Integer> values) {
+        if (values==null || values.isEmpty()) return "[]";
+        if (values.size()==1) return String.valueOf(values.get(0));
+        StringBuilder sb=new StringBuilder("[");
+        int k=0;
+        for (int value: values) {
+            if (k++ > 0) sb.append(",");
+            sb.append(value);
         }
-        return pArg;
+        sb.append("]");
+        return sb.toString();
+    }
+
+    private void writeArgument(PrintModel ipw, Map<OptArg, List<Integer>> parms) {
+        if (parms.isEmpty()) return;
+        ipw.println();
+        ipw.commaReset();
+        for (OptArg e : parms.keySet()) {
+            ipw.commaLn();
+            ipw.printf("        final %s %s", e.getSql().getPrimitive(), e.normalizedName());
+        }
+    }
+
+    private void reorgName(OptArg oa, Map<OptArg, List<Integer>> pArg) {
+        String name = Tools.normalizeName(oa.getName());
+        oa.setSimpleName(name);
+        int k=1;
+        for(OptArg p: pArg.keySet()) {
+            if (name.equals(p.getSimpleName())) k++;
+        }
+        oa.setOrd(k);
     }
 
     private void writeAssign(PrintModel ipw, Map<OptArg, List<Integer>> pArg) {
         for (Map.Entry<OptArg, List<Integer>> a : pArg.entrySet()) {
             for (int i : a.getValue()) {
-                ipw.printf("this.opt%dp%d = %s;%n", a.getKey().getNdx(), i, a.getKey().getName());
+                ipw.printf("this.opt%dp%d = %s;%n", a.getKey().getNdx(), i, a.getKey().normalizedName());
             }
         }
     }

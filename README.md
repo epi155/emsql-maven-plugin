@@ -1,5 +1,6 @@
 # emsql-maven-plugin
-Generate DAO classes with JDBC code and DTO interfaces from YAML configuration files
+A Java-based tool that generates Java JDBC source code from YAML templates.
+Supports automatic code generation for DAO classes and DTO interfaces.
 
 ## <a id="1">1. Introduction</a>
 This plugin generate java class from one or more configuration

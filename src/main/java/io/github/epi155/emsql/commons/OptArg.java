@@ -1,11 +1,20 @@
 package io.github.epi155.emsql.commons;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import io.github.epi155.emsql.api.SqlDataType;
+import lombok.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"name", "ndx"})
+@RequiredArgsConstructor
 public class OptArg {
-    private String name;
-    private int ndx;
+    private final String name;
+    private final int ndx;
+    private String simpleName;
+    private int ord;
+    private SqlDataType sql;
+
+    public String normalizedName() {
+        return ord<=1 ? simpleName : simpleName + ord;
+    }
 }

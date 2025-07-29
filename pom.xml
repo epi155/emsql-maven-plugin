@@ -5,11 +5,15 @@
 
     <groupId>io.github.epi155</groupId>
     <artifactId>emsql-maven-plugin</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1-A1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>JDBC DAO code generator</name>
 
-    <description>Generate DAO classes with JDBC code and DTO interfaces from YAML configuration files</description>
+    <description>
+        A Java-based tool that generates Java JDBC source code from YAML templates.
+        Supports automatic code generation for DAO classes and DTO interfaces.
+    </description>
+
     <url>https://github.com/epi155/emsql-maven-plugin</url>
     <inceptionYear>2024</inceptionYear>
 

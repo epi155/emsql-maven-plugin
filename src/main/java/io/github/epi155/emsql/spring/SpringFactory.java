@@ -6,7 +6,9 @@ import io.github.epi155.emsql.spring.dml.*;
 import io.github.epi155.emsql.spring.dpl.*;
 import io.github.epi155.emsql.spring.dql.*;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -105,7 +107,19 @@ public class SpringFactory extends BasicFactory {
         return new SqlInlineBatch();
     }
 
-    protected void classBegin(PrintModel pw, String className, boolean isDebug) {
+    private static final int K_TRANSACTION_MANAGER = 1<<1;
+    @Override
+    protected void preCheck(List<MethodModel> methods) {
+        int flag = 0;
+        for(MethodModel method: methods) {
+            if (method.getPerform() instanceof SelectListDynModel) {
+                flag |= K_TRANSACTION_MANAGER;
+            }
+        }
+        ((SpringClassContext)cc).setFlag(flag);
+    }
+
+    protected void classBegin(@NotNull PrintModel pw, String className, boolean isDebug) {
         cc.add("org.springframework.stereotype.Repository");
         pw.printf("@Repository%n");
         pw.printf("public class %s {%n", className);
@@ -113,13 +127,37 @@ public class SpringFactory extends BasicFactory {
         if (isDebug) {
             pw.printf("private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(%s.class);%n", className);
         }
-        String qualifier = ((SpringClassContext) cc).getQualifier();
+        cc.add("org.springframework.beans.factory.annotation.Autowired");
         cc.add("javax.sql.DataSource");
         pw.printf("private final DataSource dataSource;%n");
+
+        if ((((SpringClassContext)cc).getFlag() & K_TRANSACTION_MANAGER) == 0) {
+            singleConstructor(pw, className);
+        } else {
+            doubleConstructor(pw, className);
+        }
+    }
+
+    private void singleConstructor(@NotNull PrintModel pw, String className) {
+        pw.printf("@Autowired%n");
+        String qualifier = ((SpringClassContext) cc).getQualifier();
+        if (qualifier == null) {
+            pw.printf("public %s(DataSource dataSource) {%n", className);
+        } else {
+            cc.add("org.springframework.beans.factory.annotation.Qualifier");
+            pw.printf("public %1$s(@Qualifier(\"%2$s\") DataSource dataSource) {%n", className, qualifier);
+        }
+        pw.more();
+        pw.printf("this.dataSource = dataSource;%n");
+        pw.ends();
+    }
+
+    private void doubleConstructor(@NotNull PrintModel pw, String className) {
         cc.add("org.springframework.transaction.PlatformTransactionManager");
         pw.printf("private final PlatformTransactionManager transactionManager;%n");
-        cc.add("org.springframework.beans.factory.annotation.Autowired");
+
         pw.printf("@Autowired%n");
+        String qualifier = ((SpringClassContext) cc).getQualifier();
         if (qualifier == null) {
             pw.printf("public %s(DataSource dataSource, PlatformTransactionManager transactionManager) {%n", className);
         } else {

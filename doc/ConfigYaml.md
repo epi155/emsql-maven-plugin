@@ -63,7 +63,7 @@ For model details refer to:
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.2) SelectOptional](SelectOptional.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.3) SelectList](SelectList.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.2.4) CursorForSelect](CursorForSelect.md)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[4.2.5) SelectListDyn](SelectListDyn.md) (since 1.1.0)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2.5) SelectListDyn](SelectListDyn.md) (since 1.1)<br/>
 4.3) Manipulation<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.3.1) Insert](insert.md)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[4.3.2) Update](update.md)<br/>
