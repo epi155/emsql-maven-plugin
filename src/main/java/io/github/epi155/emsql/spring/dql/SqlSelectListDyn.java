@@ -111,8 +111,8 @@ public class SqlSelectListDyn extends SpringAction
         ipw.printf("txAttr.setReadOnly(true);%n");
         // @Transactional(isolation = Isolation.DEFAULT)
         ipw.printf("txAttr.setIsolationLevel(TransactionDefinition.ISOLATION_DEFAULT);%n");
-        // @Transactional(rollbackFor = Exception.class)
-        ipw.printf("txAttr.setRollbackRules(Collections.singletonList(new RollbackRuleAttribute(Exception.class)));%n");
+        // @Transactional(rollbackFor = default {}) ! (RuntimeException | Error)
+        //ipw.printf("txAttr.setRollbackRules(Collections.singletonList(new RollbackRuleAttribute(Exception.class)));%n");
         ipw.println();
 
         // 2. Mappatura del metodo
@@ -196,7 +196,7 @@ public class SqlSelectListDyn extends SpringAction
          * The @Transactional annotation works if the class is created (and proxy-ed) by Spring.
          * In this case the *Builder class is created programmatically.
          */
-        ipw.printf("// @Transactional(readOnly=true)%n");
+        ipw.printf("// @Transactional(readOnly=true) :: implemented programmatically ::%n");
         ipw.printf("public List<O> list() throws SQLException {%n");
         ipw.more();
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
