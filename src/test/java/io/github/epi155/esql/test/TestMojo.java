@@ -79,6 +79,8 @@ class TestMojo {
             "rdSelect.yaml",
             "roSelect.yaml",
             "rrSelect.yaml",
+            "daoListD.yaml",
+            "daoCursorD.yaml",
     };
 
     @Test
@@ -101,8 +103,8 @@ class TestMojo {
         mojo.setDebugCode(true);
         mojo.setJava7(false);
         mojo.setConfigDirectory(new File("src/test/resources"));
-        mojo.setModules(new String[]{"daoListD.yaml"});
-        mojo.setProvider(ProviderEnum.SPRING.name());
+        mojo.setModules(new String[]{"daoCursorD.yaml"});
+        mojo.setProvider(ProviderEnum.POJO.name());
 
 
         File pomFile = new File("pom.xml");

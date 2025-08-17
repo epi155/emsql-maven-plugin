@@ -43,6 +43,11 @@ public class SpringFactory extends BasicFactory {
     }
 
     @Override
+    public CursorForSelectDynModel newCursorForSelectDynModel() {
+        return new SqlCursorForSelectDyn();
+    }
+
+    @Override
     public DeleteModel newDeleteModel() {
         return new SqlDelete();
     }

@@ -1,43 +1,35 @@
-## 4.2.5. SelectListDyn
+## 4.2.6. CursorForSelectDyn
 
+The CursorForSelectDyn template is designed for situations where you need to handle many objects one at a time and have optional filter parameters.
 
-In interactive applications, it's possible to have queries with filters that can be activated at the user's discretion.
-This leads to query proliferation.
-If I have 4 optional parameters, I have to prepare 2^4=16 queries.
-Very similar queries with the risk of errors and code duplication.
-
-This template allows you to define optional parameters that can be activated at runtime.
-This way, you only need to define one query.
-The actual query is created at runtime based on the optional parameters provided.
-The method generated in this case does not return the list, but a builder that allows you to set optional parameters
-and finally get the list.
-
-### Standard use
+### Standard use (Imperative)
 
 Template example
 
 ~~~yaml
-  - methodName: certificateList
-    perform: !SelectListDyn
+  - methodName: certificateCursor
+    perform: !CursorForSelectDyn
       input:              # optional
         reflect: false    # optional, default false
         delegate: false   # optional, default false
       output:             # optional
         reflect: false    # optional, default false
+        delegate: false   # optional, default false
       timeout: 5          # (seconds) optional, default null (system default)
       fetchSize: 2048     # optional, default null (system default)
+      mode: IP            # optional, default IP (Imperative), else FP (Functional)
       execSql: |
         select
           A.K_FINGERPRINT, C.K_FINGERPRINT_ISSUER, A.CNAME, A.CORG, A.CUNIT,
           C.NOT_BEFORE, C.NOT_AFTER, A.KEY_SIZE, A.KEY_ALGO, A.C_TYPE,
           C.SERIAL, C.CD_REVOKE, C.TS_REVOKE, C.USAGE_PAD, C.VERS,
-          B.CNAME, B.CORG, B.CUNIT, 
+          B.CNAME, B.CORG, B.CUNIT,
           C.ULTIMATE, C.R_COUNT, C.C_FINGERPRINT
         into
           :fingerprint, :fingerprintIssuer, :commonName, :organization, :orgUnit,
           :notBefore, :notAfter, :keySize, :keyAlgo, :cType,
           :serial, :cdRevoke, :tsRevoke, :usagePad, :vers,
-          :issuer.commonName, :issuer.organization, :issuer.orgUnit, 
+          :issuer.commonName, :issuer.organization, :issuer.orgUnit,
           :ultimate, :count, :cFingerprint
         from C01_CERT_BASE A
         join C05_CERT_BIND C on C.K_FINGERPRINT = A.K_FINGERPRINT
@@ -54,27 +46,51 @@ Template example
         isNotRenewed: C.ULTIMATE = 1
 ~~~
 
-`optionalAnd` is defined as `Map`,
-the value used as key will be used as method name to set corresponding parameters in builder.
-
-Generated DAO Builder method signature (body omitted):
+Generated DAO method signature (body omitted):
 
 ~~~java
-    public static <O extends CertificateListRS> CertificateListBuilder<O> certificateList(
+    public static <O extends CertificateCursorRS> CertificateCursorBuilder<O> certificateCursor(
             final Connection c,
             final int cType,
-            final Supplier<O> so);
+            final Supplier<O> so)
+            throws SQLException {
+        return new CertificateCursorBuilder<>(c,
+        cType,
+        so);
 ~~~
+
+The returned object allows you to add optional parameters and loop through the list similar to an iterator.
+Example of client code:
+
+~~~java
+        try(SqlCursor<DtoCertificate> crs = DaoU01.certificateCursor(c, 1, DtoCertificate::new)
+                                        .isNotExpired(LocalDate.now())
+                                        .isNotRevoked()
+                                        .cnLike("%JOHN%")
+                                        .open() ) {
+            while (crs.hasNext()) {
+                DtoCertificate cert = crs.fetchNext();
+                // consume cert ...
+            }
+        }   // close cursor (rs, ps)
+~~~
+
+### Standard use (Functional)
+
+Template example as above with `FP` instead of `IP`.
+
+Generated DAO method signature as above but with `forEach' instead of 'open'
 
 Example of client code:
 
 ~~~java
-        List<DtoCertificate> certs = DaoU01.certificateList(c, 1, DtoCertificate::new)
-                                        .isNotExpired(LocalDate.now())
-                                        .isNotRevoked()
-                                        .cnLike("%JOHN%")
-                                        .list();
+        DaoU01.certificateCursor(c, 1, DtoCertificate::new)
+                .isNotExpired(LocalDate.now())
+                .isNotRevoked()
+                .cnLike("%JOHN%")
+                .forEach(cert -> {
+                    // consume cert ...
+                });
 ~~~
 
-
-[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](CursorForSelect.md) [![Next](go-next.png)](CursorForSelectDyn.md)
+[![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](SelectListDyn.md) [![Next](go-next.png)](insert.md)

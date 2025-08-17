@@ -26,6 +26,8 @@ public interface CodeFactory {
 
     SelectListDynModel newSelectListDynModel();
 
+    CursorForSelectDynModel newCursorForSelectDynModel();
+
     DeleteModel newDeleteModel();
 
     InsertModel newInsertModel();
@@ -55,5 +57,4 @@ public interface CodeFactory {
     CallBatchModel newCallBatchModel();
 
     InlineBatchModel newInlineBatchModel();
-
 }
