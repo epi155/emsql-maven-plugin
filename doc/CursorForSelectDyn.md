@@ -71,11 +71,14 @@ Example of client code:
         }   // close cursor (rs, ps)
 ~~~
 
+For simplicity, the optional parameters were added immediately after the builder was created, and the cursor was opened once the optional parameters were added.
+In reality, the builder should be created first, then decide which optional parameters to add or not, and only at the end activate the try with resources command by opening the cursor.
+
 ### Standard use (Functional)
 
 Template example as above with `FP` instead of `IP`.
 
-Generated DAO method signature as above but with `forEach` instead of `open`
+Generated DAO method signature as above but with `forEach(Consumer<O>)` instead of `open()`
 
 Example of client code:
 
