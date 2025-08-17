@@ -5,8 +5,6 @@ import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dql.*;
-import io.github.epi155.emsql.pojo.PojoAction;
-import io.github.epi155.emsql.pojo.dql.DelegateSelectSignature;
 import io.github.epi155.emsql.spring.SpringAction;
 import lombok.Getter;
 import lombok.Setter;

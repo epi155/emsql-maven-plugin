@@ -2,7 +2,6 @@ package io.github.epi155.emsql.plugin.td.dql;
 
 import io.github.epi155.emsql.api.CodeFactory;
 import io.github.epi155.emsql.api.CursorForSelectDynModel;
-import io.github.epi155.emsql.api.CursorForSelectModel;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.nodes.Node;
 

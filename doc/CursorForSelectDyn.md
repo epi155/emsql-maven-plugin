@@ -46,17 +46,13 @@ Template example
         isNotRenewed: C.ULTIMATE = 1
 ~~~
 
-Generated DAO method signature (body omitted):
+Generated DAO Builder method signature (body omitted):
 
 ~~~java
     public static <O extends CertificateCursorRS> CertificateCursorBuilder<O> certificateCursor(
             final Connection c,
             final int cType,
-            final Supplier<O> so)
-            throws SQLException {
-        return new CertificateCursorBuilder<>(c,
-        cType,
-        so);
+            final Supplier<O> so);
 ~~~
 
 The returned object allows you to add optional parameters and loop through the list similar to an iterator.
@@ -64,10 +60,10 @@ Example of client code:
 
 ~~~java
         try(SqlCursor<DtoCertificate> crs = DaoU01.certificateCursor(c, 1, DtoCertificate::new)
-                                        .isNotExpired(LocalDate.now())
-                                        .isNotRevoked()
-                                        .cnLike("%JOHN%")
-                                        .open() ) {
+                .isNotExpired(LocalDate.now())
+                .isNotRevoked()
+                .cnLike("%JOHN%")
+                .open() ) {
             while (crs.hasNext()) {
                 DtoCertificate cert = crs.fetchNext();
                 // consume cert ...
@@ -79,7 +75,7 @@ Example of client code:
 
 Template example as above with `FP` instead of `IP`.
 
-Generated DAO method signature as above but with `forEach' instead of 'open'
+Generated DAO method signature as above but with `forEach` instead of `open`
 
 Example of client code:
 
