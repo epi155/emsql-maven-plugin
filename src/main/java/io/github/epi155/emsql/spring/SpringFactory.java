@@ -117,7 +117,9 @@ public class SpringFactory extends BasicFactory {
     protected void preCheck(List<MethodModel> methods) {
         int flag = 0;
         for(MethodModel method: methods) {
-            if (method.getPerform() instanceof SelectListDynModel) {
+            if (method.getPerform() instanceof SelectListDynModel ||
+                method.getPerform() instanceof CursorForSelectDynModel
+            ) {
                 flag |= K_TRANSACTION_MANAGER;
             }
         }

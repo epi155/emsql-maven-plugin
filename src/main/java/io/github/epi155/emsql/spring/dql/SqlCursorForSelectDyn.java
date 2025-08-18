@@ -55,6 +55,8 @@ public class SqlCursorForSelectDyn extends SpringAction
 
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+        cc.add("java.util.List");
+        cc.add("java.util.ArrayList");
         defineBuilder(ipw, jdbc, name, kPrg);
 
         signature(ipw, jdbc, name);
