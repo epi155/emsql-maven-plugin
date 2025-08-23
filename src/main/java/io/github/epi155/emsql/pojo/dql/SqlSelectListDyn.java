@@ -1,6 +1,7 @@
 package io.github.epi155.emsql.pojo.dql;
 
 import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.commons.DocUtils;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
 import io.github.epi155.emsql.commons.Tools;
@@ -121,11 +122,12 @@ public class SqlSelectListDyn extends PojoAction
         delegateSelectDyn.assignOutput(ipw);
         ipw.ends();
         delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName);
-        defineMethodList(ipw, jdbc, kPrg);
+        defineMethodList(ipw, jdbc, name, kPrg);
         ipw.ends();
     }
 
-    private void defineMethodList(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc, String kPrg) {
+    private void defineMethodList(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc, String name, String kPrg) {
+        DocUtils.docResultList(ipw, name);
         ipw.printf("public List<O> list() throws SQLException {%n");
         ipw.more();
         Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());

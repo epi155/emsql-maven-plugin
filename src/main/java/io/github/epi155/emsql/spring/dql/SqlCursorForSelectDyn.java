@@ -1,6 +1,7 @@
 package io.github.epi155.emsql.spring.dql;
 
 import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.commons.DocUtils;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
 import io.github.epi155.emsql.commons.Tools;
@@ -189,14 +190,15 @@ public class SqlCursorForSelectDyn extends SpringAction
         delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName);
 
         if (mode == ProgrammingModeEnum.Functional) {
-            defineForEach(ipw, jdbc, kPrg);
+            defineForEach(ipw, jdbc, name, kPrg);
         } else {
-            defineOpenCursor(ipw, jdbc, kPrg);
+            defineOpenCursor(ipw, jdbc, name, kPrg);
         }
         ipw.ends();
     }
 
-    private void defineForEach(PrintModel ipw, JdbcStatement jdbc, String kPrg) {
+    private void defineForEach(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
+        DocUtils.docCursorForEach(ipw, name);
         /*
          * L'annotazione @Transactional funziona se la classe è creata (e proxy-ata) da Spring.
          * In questo caso la classe *Builder è creata programmaticamente.
@@ -262,7 +264,8 @@ public class SqlCursorForSelectDyn extends SpringAction
         delegateSelectDyn.debugAction(ipw, kPrg, jdbcStatement);
     }
 
-    private void defineOpenCursor(PrintModel ipw, JdbcStatement jdbc, String kPrg) {
+    private void defineOpenCursor(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
+        DocUtils.docCursorOpen(ipw, name);
         /*
          * L'annotazione @Transactional funziona se la classe è creata (e proxy-ata) da Spring.
          * In questo caso la classe *Builder è creata programmaticamente.

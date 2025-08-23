@@ -1,6 +1,7 @@
 package io.github.epi155.emsql.pojo.dql;
 
 import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.commons.DocUtils;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
 import io.github.epi155.emsql.commons.Tools;
@@ -13,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static io.github.epi155.emsql.commons.Contexts.cc;
-import static io.github.epi155.emsql.commons.Contexts.mc;
+import static io.github.epi155.emsql.commons.Contexts.*;
 
 public class SqlCursorForSelectDyn extends PojoAction
         implements ApiSelectFields, ApiSelectDyn, ApiDocSignature,
@@ -123,14 +123,15 @@ public class SqlCursorForSelectDyn extends PojoAction
         delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName);
 
         if (mode == ProgrammingModeEnum.Functional) {
-            defineForEach(ipw, jdbc, kPrg);
+            defineForEach(ipw, jdbc, name, kPrg);
         } else {
-            defineOpenCursor(ipw, jdbc, kPrg);
+            defineOpenCursor(ipw, jdbc, name, kPrg);
         }
         ipw.ends();
     }
 
-    private void defineForEach(PrintModel ipw, JdbcStatement jdbc, String kPrg) {
+    private void defineForEach(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
+        DocUtils.docCursorForEach(ipw, name);
         ipw.printf("public void forEach(");
         declareOutputConsumer(ipw, jdbc);
         ipw.putf(") throws SQLException {%n");
@@ -187,7 +188,8 @@ public class SqlCursorForSelectDyn extends PojoAction
         delegateSelectDyn.debugAction(ipw, kPrg, jdbcStatement);
     }
 
-    private void defineOpenCursor(PrintModel ipw, JdbcStatement jdbc, String kPrg) {
+    private void defineOpenCursor(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
+        DocUtils.docCursorOpen(ipw, name);
         ipw.printf("public SqlCursor<O> open() throws SQLException {%n");
         ipw.more();
         ipw.printf("return new SqlCursor<O>() {%n");
@@ -242,4 +244,5 @@ public class SqlCursorForSelectDyn extends PojoAction
         ipw.less(); ipw.printf("};%n");// end new SqlCursor<O>
         ipw.ends(); // end open()
     }
+
 }
