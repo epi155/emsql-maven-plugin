@@ -78,7 +78,7 @@ In reality, the builder should be created first, then decide which optional para
 
 Template example as above with `FP` instead of `IP`.
 
-Generated DAO method signature as above but with `forEach(Consumer<O>)` instead of `open()`
+Generated DAO builder method signature as above but now builder completes with `forEach(Consumer<O>)` instead of `open()`
 
 Example of client code:
 
