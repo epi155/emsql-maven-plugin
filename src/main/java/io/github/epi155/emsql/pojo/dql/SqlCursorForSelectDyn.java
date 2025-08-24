@@ -28,6 +28,7 @@ public class SqlCursorForSelectDyn extends PojoAction
     @Getter
     @Setter
     private OutputModel output;
+    @Getter
     @Setter
     private Integer fetchSize;
     @Setter
@@ -137,32 +138,7 @@ public class SqlCursorForSelectDyn extends PojoAction
         ipw.putf(") throws SQLException {%n");
         ipw.more();
 
-        Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
-        if (notScalar.isEmpty()) {
-            ipw.printf("String query = EmSQL.buildQuery(Q_%1$s_ANTE, Q_%1$s_OPT_MAP, Q_%1$s_POST, options);%n", kPrg);
-        } else {
-            expandIn(ipw, notScalar, kPrg);
-            ipw.printf("String query = EmSQL.buildQuery(queryAnte, Q_%1$s_OPT_MAP, Q_%1$s_POST, options);%n", kPrg);
-        }
-
-        debugAction(ipw, kPrg, jdbc);
-
-        ipw.printf("try (PreparedStatement ps = c.prepareStatement(query)) {%n");
-        ipw.more();
-        setInput(ipw, jdbc);
-        delegateSelectDyn.setOptInput(ipw, kPrg);
-        if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
-        setQueryHints(ipw);
-        ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
-        ipw.more();
-        ipw.printf("while (rs.next()) {%n");
-        ipw.more();
-        fetch(ipw, jdbc.getOMap());
-        ipw.printf("co.accept(o);%n");
-        ipw.ends();
-        ipw.ends(); // end try (ResultSet rs)
-        ipw.ends(); // end try (PreparedStatement ps)
-        ipw.ends(); // end forEach
+        delegateSelectDyn.writeForEachCode(ipw, jdbc, kPrg);
     }
 
     private void declareOutputConsumer(PrintModel ipw, JdbcStatement jdbc) {
@@ -199,50 +175,6 @@ public class SqlCursorForSelectDyn extends PojoAction
         ipw.printf("{%n");  // ctor
         ipw.more();
 
-        Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
-        if (notScalar.isEmpty()) {
-            ipw.printf("String query = EmSQL.buildQuery(Q_%1$s_ANTE, Q_%1$s_OPT_MAP, Q_%1$s_POST, options);%n", kPrg);
-        } else {
-            expandIn(ipw, notScalar, kPrg);
-            ipw.printf("String query = EmSQL.buildQuery(queryAnte, Q_%1$s_OPT_MAP, Q_%1$s_POST, options);%n", kPrg);
-        }
-
-        debugAction(ipw, kPrg, jdbc);
-
-        ipw.printf("this.ps = c.prepareStatement(query);%n");
-        setInput(ipw, jdbc);
-        delegateSelectDyn.setOptInput(ipw, kPrg);
-        if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
-        setQueryHints(ipw);
-        ipw.printf("this.rs = ps.executeQuery();%n");
-
-        ipw.ends(); // end ctor
-
-        // hasNext
-        ipw.printf("@Override%n");
-        ipw.printf("public boolean hasNext() throws SQLException {%n");
-        ipw.more();
-        ipw.printf("return rs.next();%n");
-        ipw.ends();
-
-        // fetchNext
-        ipw.printf("@Override%n");
-        ipw.printf("public O fetchNext() throws SQLException {%n");
-        ipw.more();
-        fetch(ipw, jdbc.getOMap());
-        ipw.printf("return o;%n");
-        ipw.ends();
-
-        // close
-        ipw.printf("@Override%n");
-        ipw.printf("public void close() throws SQLException {%n");
-        ipw.more();
-        ipw.printf("if (rs != null) rs.close();%n");
-        ipw.printf("if (ps != null) ps.close();%n");
-        ipw.ends();
-
-        ipw.less(); ipw.printf("};%n");// end new SqlCursor<O>
-        ipw.ends(); // end open()
+        delegateSelectDyn.writeOpenCode(ipw, jdbc, kPrg);
     }
-
 }

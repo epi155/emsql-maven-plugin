@@ -36,6 +36,7 @@ public class SqlSelectListDyn extends SpringAction
     @Getter
     @Setter
     private OutputModel output;
+    @Getter
     @Setter
     private Integer fetchSize;
 
@@ -202,39 +203,8 @@ public class SqlSelectListDyn extends SpringAction
         ipw.printf("public List<O> list() throws SQLException {%n");
         ipw.more();
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
-        Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
-        if (notScalar.isEmpty()) {
-            ipw.printf("String query = EmSQL.buildQuery(Q_%1$s_ANTE, Q_%1$s_OPT_MAP, Q_%1$s_POST, options);%n", kPrg);
-        } else {
-            expandIn(ipw, notScalar, kPrg);
-            ipw.printf("String query = EmSQL.buildQuery(queryAnte, Q_%1$s_OPT_MAP, Q_%1$s_POST, options);%n", kPrg);
-        }
 
-        debugAction(ipw, kPrg, jdbc);
-
-        ipw.printf("try (PreparedStatement ps = c.prepareStatement(query)) {%n");
-        ipw.more();
-        setInput(ipw, jdbc);
-        delegateSelectDyn.setOptInput(ipw, kPrg);
-        if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
-        setQueryHints(ipw);
-        ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
-        ipw.more();
-        if (mc.oSize() == 1) {
-            jdbc.getOMap().forEach((k, v) ->
-                    ipw.printf("List<%s> list = new ArrayList<>();%n", v.getType().getWrapper()));
-        } else {
-            ipw.printf("List<O> list = new ArrayList<>();%n");
-        }
-        ipw.printf("while (rs.next()) {%n");
-        ipw.more();
-        fetch(ipw, jdbc.getOMap());
-        ipw.printf("list.add(o);%n");
-        ipw.ends();
-        ipw.printf("return list;%n");
-        ipw.ends(); // end try (ResultSet rs)
-        ipw.ends(); // end try (PreparedStatement ps)
-        ipw.ends(); // end list()
+        delegateSelectDyn.writeResultListCode(ipw, jdbc, kPrg);
     }
 
     @Override

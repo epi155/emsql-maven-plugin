@@ -7,16 +7,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public interface ApiSelectDyn {
-    Map<String, String> getOptionalAnd();
-
-    Map<String, Map<Integer, SqlParam>> getAndParms();
-
-    boolean isUnboxRequest(int size);
+public interface ApiCrsSelect {
     Integer getFetchSize();
-
+    // SqlAction
     Map<Integer, SqlParam> notScalar(@NotNull Map<Integer, SqlParam> parameters);
+    void expandIn(@NotNull PrintModel ipw, @NotNull Map<Integer, SqlParam> notScalar, String kPrg);
+    void debugAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement);
     void setInput(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc);
     void setQueryHints(PrintModel ipw);
     void fetch(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap);
+    void openQuery(PrintModel ipw, JdbcStatement jdbc, String kPrg);
 }

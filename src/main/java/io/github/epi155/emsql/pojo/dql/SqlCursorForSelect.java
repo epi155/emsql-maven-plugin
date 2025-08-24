@@ -4,7 +4,9 @@ import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
 import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.dql.ApiCrsSelect;
 import io.github.epi155.emsql.commons.dql.ApiSelectFields;
+import io.github.epi155.emsql.commons.dql.DelegateCrsSelect;
 import io.github.epi155.emsql.commons.dql.DelegateSelectFields;
 import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
@@ -15,14 +17,18 @@ import java.util.Map;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Contexts.mc;
 
-public class SqlCursorForSelect extends PojoAction implements ApiSelectFields, CursorForSelectModel {
+public class SqlCursorForSelect extends PojoAction
+        implements ApiSelectFields, ApiCrsSelect,
+        CursorForSelectModel {
     private final DelegateSelectFields delegateSelectFields;
+    private final DelegateCrsSelect delegateCrsSelect;
     @Getter
     @Setter
     private InputModel input;
     @Getter
     @Setter
     private OutputModel output;
+    @Getter
     @Setter
     private Integer fetchSize;
     @Setter
@@ -31,6 +37,7 @@ public class SqlCursorForSelect extends PojoAction implements ApiSelectFields, C
     public SqlCursorForSelect() {
         super();
         this.delegateSelectFields = new DelegateSelectFields(this);
+        this.delegateCrsSelect = new DelegateCrsSelect(this);
     }
 
     @Override
@@ -78,64 +85,8 @@ public class SqlCursorForSelect extends PojoAction implements ApiSelectFields, C
         declareInput(ipw, jdbc);
         declareOutput(ipw);
         ipw.more();
-        Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
-        if (!notScalar.isEmpty()) {
-            expandIn(ipw, notScalar, kPrg);
-        }
-        if (mc.isOutputDelegate()) {
-            ipw.printf("return new SqlDelegateCursor() {%n");
-        } else {
-            if (oSize == 1) {
-                ipw.printf("return new SqlCursor<%s>() {%n", oMap.get(1).getType().getWrapper());
-            } else {
-                ipw.printf("return new SqlCursor<O>() {%n");
-            }
-        }
-        ipw.more();
-        ipw.printf("private final ResultSet rs;%n");
-        ipw.printf("private final PreparedStatement ps;%n");
-        ipw.printf("{%n");
-        ipw.more();
-        debugAction(ipw, kPrg, jdbc);
-        if (notScalar.isEmpty()) {
-            ipw.printf("this.ps = c.prepareStatement(Q_%s);%n", kPrg);
-        } else {
-            ipw.printf("this.ps = c.prepareStatement(query);%n");
-        }
-        setInput(ipw, jdbc);
-        if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
-        setQueryHints(ipw);
-        ipw.printf("this.rs = ps.executeQuery();%n");
-        ipw.ends();
-        ipw.printf("@Override%n");
-        ipw.printf("public boolean hasNext() throws SQLException {%n");
-        ipw.more();
-        ipw.printf("return rs.next();%n");
-        ipw.ends();
-        ipw.printf("@Override%n");
-        if (mc.isOutputDelegate()) {
-            ipw.printf("public void fetchNext() throws SQLException {%n");
-        } else {
-            if (oSize == 1) {
-                ipw.printf("public %s fetchNext() throws SQLException {%n", oMap.get(1).getType().getWrapper());
-            } else {
-                ipw.printf("public O fetchNext() throws SQLException {%n");
-            }
-        }
-        ipw.more();
-        fetch(ipw, oMap);
-        if (!mc.isOutputDelegate())
-            ipw.printf("return o;%n");
-        ipw.ends();
-        ipw.printf("@Override%n");
-        ipw.printf("public void close() throws SQLException {%n");
-        ipw.more();
-        ipw.printf("if (rs != null) rs.close();%n");
-        ipw.printf("if (ps != null) ps.close();%n");
-        ipw.ends();
-        ipw.less();
-        ipw.printf("};%n"); // close anonymous class statement
-        ipw.ends();
+
+        delegateCrsSelect.writeOpenCode(ipw, jdbc, kPrg);
     }
 
 
@@ -157,26 +108,8 @@ public class SqlCursorForSelect extends PojoAction implements ApiSelectFields, C
         declareInput(ipw, jdbc);
         declareOutputUse(ipw, oMap.get(1).getType().getWrapper());
         ipw.more();
-        debugAction(ipw, kPrg, jdbc);
-        openQuery(ipw, jdbc, kPrg);
-        ipw.more();
-        setInput(ipw, jdbc);
-        if (fetchSize != null) ipw.printf("ps.setFetchSize(%d);%n", fetchSize);
-        setQueryHints(ipw);
-        ipw.printf("try (ResultSet rs = ps.executeQuery()) {%n");
-        ipw.more();
-        ipw.printf("while (rs.next()) {%n");
-        ipw.more();
-        fetch(ipw, oMap);
-        if (mc.isOutputDelegate()) {
-            ipw.printf("co.run();%n");
-        } else {
-            ipw.printf("co.accept(o);%n");
-        }
-        ipw.ends();
-        ipw.ends();
-        ipw.ends();
-        ipw.ends();
+
+        delegateCrsSelect.writeForEachCode(ipw, jdbc, kPrg);
     }
 
 }
