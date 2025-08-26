@@ -126,6 +126,7 @@ public class SqlCursorForSelectDyn extends PojoAction
         if (mode == ProgrammingModeEnum.Functional) {
             defineForEach(ipw, jdbc, name, kPrg);
         } else {
+            cc.add("io.github.epi155.emsql.runtime.SqlCursor");
             defineOpenCursor(ipw, jdbc, name, kPrg);
         }
         ipw.ends();

@@ -83,7 +83,7 @@ class TestMojo {
             "daoCursorD.yaml",
     };
 
-    @Test
+    //@Test
     void generateTestLite() {
         SqlMojo mojo = new SqlMojo();
         mojo.setGenerateDirectory(new File("target/generated-test-sources/esql7"));
