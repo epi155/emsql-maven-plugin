@@ -96,9 +96,9 @@ public class SqlCursorForSelectDyn extends SpringAction
         cc.add("org.springframework.transaction.interceptor.*");
 
         /*
-         * La classe *Builder, viene proxy-ata e viene aggiunta la transazionalità ai metodi "open()" e "forEach()".
+         * La classe *Builder, viene proxy-ata e viene aggiunta la transazionalità ai metodi "open()" o "forEach()".
          * ------------------------------------------------------------------------------------------------------------
-         * The *Builder class is proxy-ed and transactionality is added to the "open()" and "forEach()" methods.
+         * The *Builder class is proxy-ed and transactionality is added to the "open()" or "forEach()" methods.
          */
 
         ipw.printf("try {%n");
@@ -208,7 +208,8 @@ public class SqlCursorForSelectDyn extends SpringAction
          * The @Transactional annotation works if the class is created (and proxy-ed) by Spring.
          * In this case the *Builder class is created programmatically.
          */
-        ipw.printf("// @Transactional(readOnly=true, propagation=Propagation.MANDATORY) :: implemented programmatically ::%n");
+        cc.add("org.springframework.transaction.annotation.Transactional");
+        ipw.printf("@Transactional(readOnly=true, propagation=Propagation.MANDATORY) // implemented programmatically ::%n");
         ipw.printf("public void forEach(");
         declareOutputConsumer(ipw, jdbc);
         ipw.putf(") throws SQLException {%n");
@@ -250,7 +251,8 @@ public class SqlCursorForSelectDyn extends SpringAction
          * The @Transactional annotation works if the class is created (and proxy-ed) by Spring.
          * In this case the *Builder class is created programmatically.
          */
-        ipw.printf("// @Transactional(readOnly=true, propagation=Propagation.MANDATORY) :: implemented programmatically ::%n");
+        cc.add("org.springframework.transaction.annotation.Transactional");
+        ipw.printf("@Transactional(readOnly=true, propagation=Propagation.MANDATORY) // implemented programmatically ::%n");
         ipw.printf("public SqlCursor<O> open() throws SQLException {%n");
         ipw.more();
         ipw.printf("return new SqlCursor<O>() {%n");

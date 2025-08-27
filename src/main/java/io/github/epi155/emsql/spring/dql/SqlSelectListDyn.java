@@ -199,7 +199,8 @@ public class SqlSelectListDyn extends SpringAction
          * The @Transactional annotation works if the class is created (and proxy-ed) by Spring.
          * In this case the *Builder class is created programmatically.
          */
-        ipw.printf("// @Transactional(readOnly=true) :: implemented programmatically ::%n");
+        cc.add("org.springframework.transaction.annotation.Transactional");
+        ipw.printf("@Transactional(readOnly=true) // implemented programmatically ::%n");
         ipw.printf("public List<O> list() throws SQLException {%n");
         ipw.more();
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
