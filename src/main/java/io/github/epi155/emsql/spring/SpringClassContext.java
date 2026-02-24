@@ -23,7 +23,7 @@ public class SpringClassContext extends ClassContextImpl {
 
     @Override
     public void newLine(PrintModel ipw, boolean tune) {
-        if (tune || mc.nSize() > 0)
+        if (tune /*|| mc.nSize() > 0*/)
             ipw.putln();
     }
 }

@@ -115,7 +115,7 @@ public class SqlCursorForSelectDyn extends PojoAction
         ipw.printf("public %sBuilder(%n", cName);
         ipw.printf("        final Connection c");
         declareInput(ipw, jdbc);
-        declareOutput(ipw);
+        declareOutputPlain(ipw);
         ipw.more();
         ipw.printf("this.c = c;%n");
         delegateSelectDyn.assignInput(ipw, jdbc);

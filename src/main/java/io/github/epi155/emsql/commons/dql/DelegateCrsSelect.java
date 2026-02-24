@@ -72,7 +72,7 @@ public class DelegateCrsSelect {
         ipw.printf("public void close() throws SQLException {%n");
         ipw.more();
         ipw.printf("if (rs != null) rs.close();%n");
-        ipw.printf("if (ps != null) ps.close();%n");
+        ipw.printf("ps.close();%n");
         ipw.ends();
         ipw.less();
         ipw.printf("};%n"); // close anonymous class statement

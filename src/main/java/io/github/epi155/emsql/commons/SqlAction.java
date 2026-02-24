@@ -246,6 +246,19 @@ public abstract class SqlAction {
         ipw.printf("        throws SQLException {%n");
     }
 
+    public void declareOutputPlain(PrintModel ipw) {
+        if (mc.oSize() < 2) {
+            ipw.putf(") {%n");
+        } else {
+            ipw.commaLn();
+            if (mc.isOutputDelegate()) {
+                ipw.printf("        final DO o) {%n");
+            } else {
+                ipw.printf("        final %s<O> so) {%n", cc.supplier());
+            }
+        }
+    }
+
     public void declareOutputUse(@NotNull PrintModel ipw, String type) {
         ipw.commaLn();
         if (mc.oSize() > 1) {
@@ -703,7 +716,7 @@ public abstract class SqlAction {
 
     public void debugQuery(PrintModel ipw, String kPrg) {
         if (cc.isDebug()) {
-            ipw.printf("log.debug(\"BatchQuery: {}\", Q_%s);", kPrg);
+            ipw.printf("log.debug(\"BatchQuery: {}\", Q_%s);%n", kPrg);
         }
     }
 
@@ -716,7 +729,7 @@ public abstract class SqlAction {
             ipw.printf("SqlTrace.showQuery(Q_%s, ", kPrg);
             cc.traceParameterBegin(ipw);
             ipw.more();
-            ipw.printf("SqlArg[] args =  new SqlArg[]{%n");
+            ipw.printf("return new SqlArg[]{%n");
             ipw.more();
             val eol = new Eol(mc.iSize());
             if (isUnboxRequest(nSize)) {
@@ -740,7 +753,6 @@ public abstract class SqlAction {
             }
             ipw.less();
             ipw.printf("};%n");
-            ipw.printf("return args;%n");
             cc.traceParameterEnds(ipw);
             ipw.printf("});%n");
             ipw.ends();

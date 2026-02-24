@@ -184,8 +184,12 @@ public class SqlMojo extends AbstractMojo {
                 java7,
                 parserProvider
         );
+        if (modules == null) {
+            log.error("No modules provided.");
+            throw  new RuntimeException();
+        }
 
-        for (val module : modules) {
+        for (String module : modules) {
             log.info("Loading API from {}", module);
             File apiFile = new File(configDirectory, module);
             if (!apiFile.exists()) {

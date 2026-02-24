@@ -120,7 +120,7 @@ public class SqlCursorForSelectDyn extends SpringAction
         if (mode == ProgrammingModeEnum.Functional) {
             ipw.printf("Method method = %sBuilder.class.getMethod(\"forEach\", new Class[]{%s.class});%n", cName, cc.consumer());
         } else {
-            ipw.printf("Method method = %sBuilder.class.getMethod(\"open\", null);%n", cName);
+            ipw.printf("Method method = %sBuilder.class.getMethod(\"open\");%n", cName);
         }
         ipw.printf("MethodMapTransactionAttributeSource attrSource = new MethodMapTransactionAttributeSource();%n");
         ipw.printf("attrSource.addTransactionalMethod(method, txAttr);%n");
@@ -183,7 +183,7 @@ public class SqlCursorForSelectDyn extends SpringAction
         ipw.printf("public %sBuilder(%n", cName);
         ipw.commaReset();
         declareInput(ipw, jdbc);
-        declareOutput(ipw);
+        declareOutputPlain(ipw);
         ipw.more();
         delegateSelectDyn.assignInput(ipw, jdbc);
         delegateSelectDyn.assignOutput(ipw);

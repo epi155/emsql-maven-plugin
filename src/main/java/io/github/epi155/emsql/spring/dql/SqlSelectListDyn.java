@@ -118,7 +118,7 @@ public class SqlSelectListDyn extends SpringAction
         ipw.println();
 
         // 2. Mappatura del metodo
-        ipw.printf("Method method = %sBuilder.class.getMethod(\"list\", null);%n", cName);
+        ipw.printf("Method method = %sBuilder.class.getMethod(\"list\");%n", cName);
         ipw.printf("MethodMapTransactionAttributeSource attrSource = new MethodMapTransactionAttributeSource();%n");
         ipw.printf("attrSource.addTransactionalMethod(method, txAttr);%n");
 
@@ -180,7 +180,7 @@ public class SqlSelectListDyn extends SpringAction
         ipw.printf("public %sBuilder(%n", cName);   // public required by CGLIB
         ipw.commaReset();
         declareInput(ipw, jdbc);
-        declareOutput(ipw);
+        declareOutputPlain(ipw);
         ipw.more();
         delegateSelectDyn.assignInput(ipw, jdbc);
         delegateSelectDyn.assignOutput(ipw);
