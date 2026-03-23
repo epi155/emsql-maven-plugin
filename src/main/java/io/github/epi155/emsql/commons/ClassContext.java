@@ -44,4 +44,6 @@ public interface ClassContext {
     void newLine(PrintModel ipw, boolean tune);
 
     void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters);
+
+    Map<String, String> getDtoMap();
 }

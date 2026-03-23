@@ -4,6 +4,7 @@ import io.github.epi155.emsql.api.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +19,7 @@ import static io.github.epi155.emsql.commons.Tools.getterOf;
 @Getter
 @NoArgsConstructor
 @Setter
+@Slf4j
 public abstract class SqlAction {
     @NotNull
     private String execSql;
@@ -515,36 +517,41 @@ public abstract class SqlAction {
             ipw.ends();
             sp.forEach(p -> ipw.printf("public Builder%s" + RESPONSE + " %s(%s<%s> %2$s) { this.%2$s = %2$s; return this; }%n",
                     cMethodName, p.getName(), cc.consumer(), p.getType().getWrapper()));
-            ipw.ends();
-
+            ipw.ends(); // Builder
+            ipw.ends(); // Delegate
         } else {
+            String dup = checkDoubleInterface(cMethodName+RESPONSE, sp);
             docInterfaceRS(ipw, cMethodName, sp);
-            ipw.printf("public interface %s" + RESPONSE + " {%n", cMethodName);
-            ipw.more();
-            Map<String, List<SqlParam>> next = new LinkedHashMap<>();
-            for (val p : sp) {
-                String name = p.getName();
-                int kDot = name.indexOf('.');
-                if (kDot < 0) {
-                    String cName = capitalize(p.getName());
-                    String claz = p.getType().getPrimitive();
-                    ipw.printf("void set%s(%s s);%n", cName, claz);
-                } else {
-                    String ante = name.substring(0, kDot);
-                    String post = name.substring(kDot + 1);
-                    List<SqlParam> flds = next.computeIfAbsent(ante, k -> new ArrayList<>());
-                    flds.add(new SqlParam(post, p.getType()));
+            if (dup==null) {
+                ipw.printf("public interface %s" + RESPONSE + " {%n", cMethodName);
+                ipw.more();
+                Map<String, List<SqlParam>> next = new LinkedHashMap<>();
+                for (val p : sp) {
+                    String name = p.getName();
+                    int kDot = name.indexOf('.');
+                    if (kDot < 0) {
+                        String cName = capitalize(p.getName());
+                        String claz = p.getType().getPrimitive();
+                        ipw.printf("void set%s(%s s);%n", cName, claz);
+                    } else {
+                        String ante = name.substring(0, kDot);
+                        String post = name.substring(kDot + 1);
+                        List<SqlParam> flds = next.computeIfAbsent(ante, k -> new ArrayList<>());
+                        flds.add(new SqlParam(post, p.getType()));
+                    }
                 }
+                next.keySet().forEach(name -> {
+                    String cName = capitalize(name);
+                    String claz = cName + RESPONSE;
+                    ipw.printf("%s get%s();%n", claz, cName);
+                });
+                next.forEach((n, np) -> writeResponseInterface(ipw, capitalize(n), np));
+                ipw.ends();
+            } else {
+                ipw.printf("public interface %s" + RESPONSE + " extends %s {}%n", cMethodName, dup);
             }
-            next.keySet().forEach(name -> {
-                String cName = capitalize(name);
-                String claz = cName + RESPONSE;
-                ipw.printf("%s get%s();%n", claz, cName);
-            });
-            next.forEach((n, np) -> writeResponseInterface(ipw, capitalize(n), np));
-
         }
-        ipw.ends();
+//        ipw.ends();
     }
 
     public void docInput(PrintModel ipw, @NotNull JdbcStatement jdbc) {
@@ -758,6 +765,46 @@ public abstract class SqlAction {
             ipw.ends();
         }
     }
+    public void dumpAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
+        if (cc.isDebug()) {
+            cc.add("io.github.epi155.emsql.runtime.SqlArg");
+            int nSize = mc.nSize();
+            ipw.less();
+            ipw.printf("} catch (SQLException e) {%n");
+            ipw.more();
+            ipw.printf("SqlTrace.showCause(e, Q_%s, ", kPrg);
+            cc.traceParameterBegin(ipw);
+            ipw.more();
+            ipw.printf("return new SqlArg[]{%n");
+            ipw.more();
+            val eol = new Eol(mc.iSize());
+            if (isUnboxRequest(nSize)) {
+                jdbcStatement.getIMap().forEach((k, v) ->
+                        ipw.printf("new SqlArg(\"%1$s\", \"%2$s\", %1$s)%3$s%n", v.getName(), v.getType().getPrimitive(), eol.nl()));
+            } else {
+                Map<Integer, SqlParam> iMap = jdbcStatement.getIMap();
+                if (mc.isInputReflect()) {
+                    iMap.forEach((k, v) ->
+                            ipw.printf("new SqlArg(\"%1$s\", \"%2$s\", EmSQL.get(i, \"%1$s\", %3$s.class))%4$s%n",
+                                    v.getName(), v.getType().getPrimitive(), v.getType().getContainer(), eol.nl()));
+                } else if (mc.isInputDelegate()) {
+                    iMap.forEach((k, v) ->
+                            ipw.printf("new SqlArg(\"%1$s\", \"%2$s\", i.%1$s.get())%3$s%n",
+                                    v.getName(), v.getType().getPrimitive(), eol.nl()));
+                } else {
+                    iMap.forEach((k, v) ->
+                            ipw.printf("new SqlArg(\"%s\", \"%s\", i.%s())%s%n",
+                                    v.getName(), v.getType().getPrimitive(), getterOf(v), eol.nl()));
+                }
+            }
+            ipw.less();
+            ipw.printf("};%n");
+            cc.traceParameterEnds(ipw);
+            ipw.printf("});%n");
+            ipw.printf("throw e;%n");
+            ipw.ends();
+        }
+    }
 
     public void setQueryHints(PrintModel ipw) {
         if (timeout != null) ipw.printf("ps.setQueryTimeout(%d);%n", timeout);
@@ -816,4 +863,27 @@ public abstract class SqlAction {
             return --count > 0 ? "," : "";
         }
     }
+
+    private String checkDoubleInterface(String cMethodName, Collection<SqlParam> sp) {
+        Map<String, String> dto = cc.getDtoMap();
+        List<SqlParam> list = new ArrayList<>(sp);  // to list
+        list.sort(Comparator.comparing(SqlParam::getName)); // sort by name
+        String arguments = list.stream().map(it -> it.getName() + ": " + it.getType()).collect(Collectors.joining(", "));
+        String dup = dto.put(arguments, cMethodName);
+        if (dup != null) {
+            log.warn("** Duplicate Interface: {}(new) and {}(old) are equals", cMethodName, dup);
+        }
+//        String dup = dto.get(arguments);
+//        if (dup==null) {
+//            dto.put(arguments, cMethodName);
+//        } else {
+//            log.warn("** Duplicate Interface: {} and {} are equals", dup, cMethodName);
+//            if (dup.equals(cMethodName)) {
+//                log.error("**** Interface collision {}", cMethodName);
+//                return null;
+//            }
+//        }
+        return dup;
+    }
+
 }

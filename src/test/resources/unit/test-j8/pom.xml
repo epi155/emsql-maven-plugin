@@ -19,7 +19,7 @@
                 </executions>
                 <configuration>
                     <configDirectory>${project.basedir}/src/test/resources</configDirectory>
-                    <generateDirectory>${project.basedir}/target/generated-test-sources/emsql</generateDirectory>
+                    <generateDirectory>${project.basedir}/target/generated-test-sources/emsql-8p</generateDirectory>
                     <debugCode>true</debugCode>
                     <modules>
                         <module>daoArray.yaml</module>

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 public interface SqlDataType extends TypeModel {
+
     void psSet(PrintModel ipw, String source);
 
     void psSet(PrintModel ipw, String source, int k);

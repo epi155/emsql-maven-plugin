@@ -2,6 +2,7 @@ package io.github.epi155.emsql.pojo.dml;
 
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
+import io.github.epi155.emsql.commons.SqlAction;
 import io.github.epi155.emsql.commons.SqlParam;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dml.ApiWriteMethod;
@@ -43,7 +44,7 @@ public class DelegateWriteMethod {
         api.setQueryHints(ipw);
         api.debugAction(ipw, kPrg, jdbc);
         ipw.printf("return ps.executeUpdate();%n");
-        ipw.ends();
-        ipw.ends();
+        api.dumpAction(ipw, kPrg, jdbc);
+        ipw.ends(); // end method
     }
 }

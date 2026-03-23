@@ -415,7 +415,8 @@ public class DelegateSelectDyn {
         ipw.printf("co.accept(o);%n");
         ipw.ends();
         ipw.ends(); // end try (ResultSet rs)
-        ipw.ends(); // end try (PreparedStatement ps)
+//        ipw.ends(); // end try (PreparedStatement ps)
+        api.dumpAction(ipw, kPrg, jdbc);
         ipw.ends(); // end forEach
     }
 

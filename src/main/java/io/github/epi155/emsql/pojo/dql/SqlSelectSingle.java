@@ -41,7 +41,7 @@ public class SqlSelectSingle extends PojoAction
 
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
-        cc.add("io.github.epi155.emsql.runtime.SqlCode");
+        cc.add("io.github.epi155.emsql.runtime.SqlNoResultException");
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 1) {
@@ -61,10 +61,10 @@ public class SqlSelectSingle extends PojoAction
         }
         ipw.ends();
         ipw.orElse();
-        ipw.printf("throw SqlCode.P100.getInstance();%n");
+        ipw.printf("throw new SqlNoResultException();%n");
         ipw.ends();
         ipw.ends();
-        ipw.ends();
-        ipw.ends();
+        dumpAction(ipw, kPrg, jdbc);
+        ipw.ends(); // end method
     }
 }

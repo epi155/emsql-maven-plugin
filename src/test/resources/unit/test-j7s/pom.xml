@@ -21,7 +21,7 @@
                     <java7>true</java7>
                     <provider>Spring</provider>
                     <configDirectory>${project.basedir}/src/test/resources</configDirectory>
-                    <generateDirectory>${project.basedir}/target/generated-test-sources/emsql</generateDirectory>
+                    <generateDirectory>${project.basedir}/target/generated-test-sources/emsql-7s</generateDirectory>
                     <debugCode>true</debugCode>
                     <modules>
                         <module>daoArray.yaml</module>

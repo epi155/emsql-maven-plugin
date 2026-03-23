@@ -1,13 +1,14 @@
 package io.github.epi155.emsql.commons.dpl;
 
 import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.commons.DumpAware;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
 import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 
 import java.util.Map;
 
-public interface ApiWrite extends ApiDocSignature {
+public interface ApiWrite extends ApiDocSignature, DumpAware {
     void declareInput(PrintModel ipw, JdbcStatement jdbc);
 
     void declareOutput(PrintModel ipw);

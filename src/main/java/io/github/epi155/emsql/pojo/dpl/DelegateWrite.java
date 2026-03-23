@@ -47,7 +47,7 @@ public class DelegateWrite {
         api.getOutput(ipw, jdbc.getOMap());
         if (mc.oSize() > 0)
             ipw.printf("return o;%n");
-        ipw.ends();
-        ipw.ends();
+        api.dumpAction(ipw, kPrg, jdbc);
+        ipw.ends(); // end method
     }
 }

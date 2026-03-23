@@ -39,7 +39,7 @@ public class DaoClassConfig {
         File srcMainJava = new File(pc.sourceDirectory);
         File pkgFolder = new File(srcMainJava, packageName.replace('.', File.separatorChar));
         File clsFile = new File(pkgFolder, className + DOT_JAVA);
-        factory.classContext(pc, declare);
+        factory.classContext(pc, declare);  // init class context (cc)
         if (qualifier != null && cc instanceof SpringClassContext) {
             ((SpringClassContext) cc).setQualifier(qualifier);
         }

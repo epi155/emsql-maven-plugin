@@ -20,7 +20,7 @@
                 <configuration>
                     <java7>true</java7>
                     <configDirectory>${project.basedir}/src/test/resources</configDirectory>
-                    <generateDirectory>${project.basedir}/target/generated-test-sources/emsql</generateDirectory>
+                    <generateDirectory>${project.basedir}/target/generated-test-sources/emsql-7p</generateDirectory>
                     <debugCode>true</debugCode>
                     <modules>
                         <module>daoArray.yaml</module>

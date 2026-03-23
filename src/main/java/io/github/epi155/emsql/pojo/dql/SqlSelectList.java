@@ -74,7 +74,7 @@ public class SqlSelectList extends PojoAction implements ApiSelectFields, ApiDoc
         ipw.ends();
         ipw.printf("return list;%n");
         ipw.ends();
-        ipw.ends();
-        ipw.ends();
+        dumpAction(ipw, kPrg, jdbc);
+        ipw.ends(); // end method
     }
 }

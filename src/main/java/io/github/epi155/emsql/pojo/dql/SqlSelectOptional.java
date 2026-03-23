@@ -11,7 +11,6 @@ public class SqlSelectOptional extends SqlSelectSingle implements SelectOptional
 
     @Override
     public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
-        cc.add("io.github.epi155.emsql.runtime.SqlCode");
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 1) {
@@ -41,8 +40,8 @@ public class SqlSelectOptional extends SqlSelectSingle implements SelectOptional
         }
         ipw.ends();
         ipw.ends();
-        ipw.ends();
-        ipw.ends();
+        dumpAction(ipw, kPrg, jdbc);
+        ipw.ends(); // end method
 
     }
 }

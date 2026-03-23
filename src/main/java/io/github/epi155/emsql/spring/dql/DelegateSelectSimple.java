@@ -18,6 +18,7 @@ public class DelegateSelectSimple {
     }
 
     public void fetch(@NotNull PrintModel ipw, JdbcStatement jdbc, String kPrg) {
+        cc.add("io.github.epi155.emsql.runtime.SqlNonUniqueResultException");
         ipw.commaReset();
         api.declareInput(ipw, jdbc);
         api.declareOutput(ipw);
@@ -44,6 +45,6 @@ public class DelegateSelectSimple {
         api.fetch(ipw, jdbc.getOMap());
         ipw.printf("if (rs.next()) {%n");
         ipw.more();
-        ipw.printf("throw SqlCode.N811.getInstance();%n");
+        ipw.printf("throw new SqlNonUniqueResultException();%n");
     }
 }

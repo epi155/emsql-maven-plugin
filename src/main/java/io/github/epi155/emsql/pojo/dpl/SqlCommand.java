@@ -39,8 +39,8 @@ public class SqlCommand extends PojoAction implements CommandModel {
         setQueryHints(ipw);
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("st.execute(Q_%s);%n", kPrg);
-        ipw.ends();
-        ipw.ends();
+        dumpAction(ipw, kPrg, jdbc);
+        ipw.ends(); // end method
     }
 
     @Override

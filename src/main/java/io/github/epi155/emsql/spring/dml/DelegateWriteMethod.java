@@ -49,7 +49,7 @@ public class DelegateWriteMethod {
         api.setQueryHints(ipw);
         api.debugAction(ipw, kPrg, jdbc);
         ipw.printf("return ps.executeUpdate();%n");
-        ipw.ends();
-        ipw.ends();
+        api.dumpAction(ipw, kPrg, jdbc);
+        ipw.ends(); // end method
     }
 }

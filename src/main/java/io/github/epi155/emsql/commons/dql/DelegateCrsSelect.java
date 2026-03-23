@@ -38,6 +38,8 @@ public class DelegateCrsSelect {
         ipw.printf("{%n");
         ipw.more();
         api.debugAction(ipw, kPrg, jdbc);
+        ipw.printf("try {%n");
+        ipw.more();
         if (notScalar.isEmpty()) {
             ipw.printf("this.ps = c.prepareStatement(Q_%s);%n", kPrg);
         } else {
@@ -47,6 +49,7 @@ public class DelegateCrsSelect {
         if (api.getFetchSize() != null) ipw.printf("ps.setFetchSize(%d);%n", api.getFetchSize());
         api.setQueryHints(ipw);
         ipw.printf("this.rs = ps.executeQuery();%n");
+        api.dumpAction(ipw, kPrg, jdbc);
         ipw.ends();
         ipw.printf("@Override%n");
         ipw.printf("public boolean hasNext() throws SQLException {%n");
@@ -98,9 +101,10 @@ public class DelegateCrsSelect {
         } else {
             ipw.printf("co.accept(o);%n");
         }
-        ipw.ends();
-        ipw.ends();
-        ipw.ends();
-        ipw.ends();
+        ipw.ends(); // end while
+        ipw.ends(); // end executeQuery
+//        ipw.ends(); // end prepareStatement
+        api.dumpAction(ipw, kPrg, jdbc);
+        ipw.ends(); // end method
     }
 }

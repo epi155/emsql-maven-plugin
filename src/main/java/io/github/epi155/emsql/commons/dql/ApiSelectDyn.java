@@ -1,13 +1,14 @@
 package io.github.epi155.emsql.commons.dql;
 
 import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.commons.DumpAware;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public interface ApiSelectDyn {
+public interface ApiSelectDyn extends DumpAware {
     Map<String, String> getOptionalAnd();
 
     Map<String, Map<Integer, SqlParam>> getAndParms();

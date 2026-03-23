@@ -84,7 +84,7 @@ public class SqlInsertReturnGeneratedKeys extends PojoAction implements ApiDocSi
         ipw.printf("return %s.of(o);%n", cc.optional());
         ipw.ends();
         ipw.printf("return %s.empty();%n", cc.optional());
-        ipw.ends();
-        ipw.ends();
+        dumpAction(ipw, kPrg, jdbc);
+        ipw.ends(); // end method
     }
 }
