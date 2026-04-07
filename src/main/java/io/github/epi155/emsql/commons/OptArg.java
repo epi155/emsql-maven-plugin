@@ -1,7 +1,10 @@
 package io.github.epi155.emsql.commons;
 
 import io.github.epi155.emsql.api.SqlDataType;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter

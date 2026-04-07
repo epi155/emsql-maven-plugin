@@ -5,7 +5,6 @@ import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.api.TypeModel;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -31,12 +30,16 @@ public abstract class ClassContextImpl implements ClassContext {
     private final boolean java7;
     private final Map<String, TypeModel> inFields = new LinkedHashMap<>();
     private final PluginContext pc;
-    @Getter final private Map<String, String> dtoMap = new HashMap<>();
+    @Getter
+    private final Map<String, String> dtoMap = new HashMap<>();
+    @Getter
+    private final boolean autoPad;
 
     protected ClassContextImpl(PluginContext pc, Map<String, TypeModel> declare) {
         this.pc = pc;
         this.debug = pc.isDebug();
         this.java7 = pc.isJava7();
+        this.autoPad = pc.isAutoPad();
         this.fields = declare.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (SqlDataType) e.getValue()));
         importSet.add("java.sql.*");
         if (debug) {

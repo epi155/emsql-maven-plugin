@@ -2,14 +2,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>test</groupId>
     <artifactId>test-abc</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${version}</version>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>io.github.epi155</groupId>
                 <artifactId>emsql-maven-plugin</artifactId>
-                <version>1.1-A2-SNAPSHOT</version>
+                <version>1.1-A3-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <goals>
@@ -22,6 +22,7 @@
                     <configDirectory>${project.basedir}/src/test/resources</configDirectory>
                     <generateDirectory>${project.basedir}/target/generated-test-sources/emsql-7p</generateDirectory>
                     <debugCode>true</debugCode>
+                    <autoPad>true</autoPad>
                     <modules>
                         <module>daoArray.yaml</module>
                         <module>daoBatch.yaml</module>

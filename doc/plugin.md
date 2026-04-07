@@ -21,6 +21,7 @@ Plugin with all parameters with default values:
                 </modules>
                 <debugCode>true</debugCode>
                 <java7>false</java7>
+                <autoPad>false</autoPad>
                 <addCompileSourceRoot>true</addCompileSourceRoot>
                 <addTestCompileSourceRoot>false</addTestCompileSourceRoot>
                 <provider>POJO</provider>
@@ -48,6 +49,9 @@ is `${project.build.resources[0].directory}`, ie **`src/main/resources`**
 
 `java7` or property `maven.emsql.java7`
 : Indicates whether to generate code compatible with java-7, otherwise use java-8 features, the default value is **`false`**.
+
+`autoPad` or property `maven.emsql.auto-pad`
+: Indicate whether to pad string values when they refer to fields of type `CHAR(n)` as parameters in a `PreparedStatement`, the default value is **`false`**.
 
 `addCompileSourceRoot` or property `maven.emsql.add-compile-source-root`
 : If set to **true** (default), adds target directory as a compile source root of this Maven project.

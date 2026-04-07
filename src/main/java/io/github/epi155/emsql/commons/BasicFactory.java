@@ -1,12 +1,15 @@
 package io.github.epi155.emsql.commons;
 
 import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.types.*;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
@@ -16,136 +19,132 @@ public abstract class BasicFactory implements CodeFactory {
 
     static {
         Map<String, SqlDataType> map = new HashMap<>();
-        map.put("BOOL", SqlEnum.BooleanStd);
-        map.put("BOOLEAN", SqlEnum.BooleanStd);
-        map.put("BOOL?", SqlEnum.BooleanNil);
-        map.put("BOOLEAN?", SqlEnum.BooleanNil);
+        map.put("BOOL", BooleanStdType.INSTANCE);
+        map.put("BOOLEAN", BooleanStdType.INSTANCE);
+        map.put("BOOL?", BooleanNilType.INSTANCE);
+        map.put("BOOLEAN?", BooleanNilType.INSTANCE);
 
-        map.put("NUMBOOL", SqlEnum.NumBoolStd);
-        map.put("NUMBOOL?", SqlEnum.NumBoolNil);
+        map.put("NUMBOOL", NumBoolStdType.INSTANCE);
+        map.put("NUMBOOL?", NumBoolNilType.INSTANCE);
 
-        map.put("BYTE", SqlEnum.ByteStd);
-        map.put("BYTE?", SqlEnum.ByteNil);
+        map.put("BYTE", ByteStdType.INSTANCE);
+        map.put("BYTE?", ByteNilType.INSTANCE);
 
-        map.put("SHORT", SqlEnum.ShortStd);
-        map.put("SMALLINT", SqlEnum.ShortStd);
-        map.put("SHORT?", SqlEnum.ShortNil);
-        map.put("SMALLINT?", SqlEnum.ShortNil);
+        map.put("SHORT", ShortStdType.INSTANCE);
+        map.put("SMALLINT", ShortStdType.INSTANCE);
+        map.put("SHORT?", ShortNilType.INSTANCE);
+        map.put("SMALLINT?", ShortNilType.INSTANCE);
 
-        map.put("INT", SqlEnum.IntegerStd);
-        map.put("INTEGER", SqlEnum.IntegerStd);
-        map.put("INT?", SqlEnum.IntegerNil);
-        map.put("INTEGER?", SqlEnum.IntegerNil);
+        map.put("INT", IntegerStdType.INSTANCE);
+        map.put("INTEGER", IntegerStdType.INSTANCE);
+        map.put("INT?", IntegerNilType.INSTANCE);
+        map.put("INTEGER?", IntegerNilType.INSTANCE);
 
-        map.put("BIGINT", SqlEnum.LongStd);
-        map.put("BIGINTEGER", SqlEnum.LongStd);
-        map.put("LONG", SqlEnum.LongStd);
-        map.put("BIGSERIAL", SqlEnum.LongStd);
-        map.put("BIGINT?", SqlEnum.LongNil);
-        map.put("BIGINTEGER?", SqlEnum.LongNil);
-        map.put("LONG?", SqlEnum.LongNil);
+        map.put("BIGINT", LongStdType.INSTANCE);
+        map.put("BIGINTEGER", LongStdType.INSTANCE);
+        map.put("LONG", LongStdType.INSTANCE);
+        map.put("BIGSERIAL", LongStdType.INSTANCE);
+        map.put("BIGINT?", LongNilType.INSTANCE);
+        map.put("BIGINTEGER?", LongNilType.INSTANCE);
+        map.put("LONG?", LongNilType.INSTANCE);
 
-//        map.put("NUMERIC", SqlEnum.NumericStd);
-        map.put("NUMBER", SqlEnum.NumberStd);
-        map.put("DECIMAL", SqlEnum.DecimalStd);
-//        map.put("NUMERIC?", SqlEnum.NumericNil);
-        map.put("NUMBER?", SqlEnum.NumberNil);
-        map.put("DECIMAL?", SqlEnum.DecimalNil);
+        map.put("NUMBER", NumberStdType.INSTANCE);
+        map.put("DECIMAL", DecimalStdType.INSTANCE);
+        map.put("NUMBER?", NumberNilType.INSTANCE);
+        map.put("DECIMAL?", DecimalNilType.INSTANCE);
 
-        map.put("DOUBLE", SqlEnum.DoubleStd);
-        map.put("DOUBLE?", SqlEnum.DoubleNil);
+        map.put("DOUBLE", DoubleStdType.INSTANCE);
+        map.put("DOUBLE?", DoubleNilType.INSTANCE);
 
-        map.put("FLOAT", SqlEnum.FloatStd);
-        map.put("FLOAT?", SqlEnum.FloatNil);
+        map.put("FLOAT", FloatStdType.INSTANCE);
+        map.put("FLOAT?", FloatNilType.INSTANCE);
 
-        map.put("VARCHAR", SqlEnum.VarCharStd);
-        map.put("VARCHAR?", SqlEnum.VarCharNil);
+        map.put("VARCHAR", VarCharStdType.INSTANCE);
+        map.put("VARCHAR?", VarCharNilType.INSTANCE);
 
-        map.put("CHAR", SqlEnum.CharStd);
-        map.put("CHAR?", SqlEnum.CharNil);
+        map.put("CHAR", CharStdType.INSTANCE);
+        map.put("CHAR?", CharNilType.INSTANCE);
 
-        map.put("DATE", SqlEnum.DateStd);
-        map.put("DATE?", SqlEnum.DateNil);
+        map.put("DATE", DateStdType.INSTANCE);
+        map.put("DATE?", DateNilType.INSTANCE);
 
-        map.put("TIMESTAMP", SqlEnum.TimestampStd);
-        map.put("TIMESTAMP?", SqlEnum.TimestampNil);
+        map.put("TIMESTAMP", TimestampStdType.INSTANCE);
+        map.put("TIMESTAMP?", TimestampNilType.INSTANCE);
 
-        map.put("TIME", SqlEnum.TimeStd);
-        map.put("TIME?", SqlEnum.TimeNil);
+        map.put("TIME", TimeStdType.INSTANCE);
+        map.put("TIME?", TimeNilType.INSTANCE);
 
-        map.put("TIMESTAMPZ", SqlEnum.TimestampZStd);
-        map.put("TIMESTAMPZ?", SqlEnum.TimestampZNil);
+        map.put("TIMESTAMPZ", TimestampZStdType.INSTANCE);
+        map.put("TIMESTAMPZ?", TimestampZNilType.INSTANCE);
 
-        map.put("TIMEZ", SqlEnum.TimeZStd);
-        map.put("TIMEZ?", SqlEnum.TimeZNil);
+        map.put("TIMEZ", TimeZStdType.INSTANCE);
+        map.put("TIMEZ?", TimeZNilType.INSTANCE);
 
-        map.put("BINARY", SqlEnum.BinaryStd);
-        map.put("BINARY?", SqlEnum.BinaryNil);
+        map.put("BINARY", BinaryStdType.INSTANCE);
+        map.put("BINARY?", BinaryNilType.INSTANCE);
 
-        map.put("VARBINARY", SqlEnum.VarBinaryStd);
-        map.put("VARBINARY?", SqlEnum.VarBinaryNil);
+        map.put("VARBINARY", VarBinaryStdType.INSTANCE);
+        map.put("VARBINARY?", VarBinaryNilType.INSTANCE);
 
-        map.put("LOCALDATE", SqlEnum.LocalDateStd);
-        map.put("LDATE", SqlEnum.LocalDateStd);
-        map.put("LOCALDATE?", SqlEnum.LocalDateNil);
-        map.put("LDATE?", SqlEnum.LocalDateNil);
+        map.put("LOCALDATE", LocalDateStdType.INSTANCE);
+        map.put("LDATE", LocalDateStdType.INSTANCE);
+        map.put("LOCALDATE?", LocalDateNilType.INSTANCE);
+        map.put("LDATE?", LocalDateNilType.INSTANCE);
 
-        map.put("LOCALDATETIME", SqlEnum.LocalDateTimeStd);
-        map.put("LDATETIME", SqlEnum.LocalDateTimeStd);
-        map.put("LOCALDATETIME?", SqlEnum.LocalDateTimeNil);
-        map.put("LDATETIME?", SqlEnum.LocalDateTimeNil);
+        map.put("LOCALDATETIME", LocalDateTimeStdType.INSTANCE);
+        map.put("LDATETIME", LocalDateTimeStdType.INSTANCE);
+        map.put("LOCALDATETIME?", LocalDateTimeNilType.INSTANCE);
+        map.put("LDATETIME?", LocalDateTimeNilType.INSTANCE);
 
-        map.put("LOCALTIME", SqlEnum.LocalTimeStd);
-        map.put("LTIME", SqlEnum.LocalTimeStd);
-        map.put("LOCALTIME?", SqlEnum.LocalTimeNil);
-        map.put("LTIME?", SqlEnum.LocalTimeNil);
+        map.put("LOCALTIME", LocalTimeStdType.INSTANCE);
+        map.put("LTIME", LocalTimeStdType.INSTANCE);
+        map.put("LOCALTIME?", LocalTimeNilType.INSTANCE);
+        map.put("LTIME?", LocalTimeNilType.INSTANCE);
 
-        map.put("NVARCHAR", SqlEnum.NVarCharStd);
-        map.put("NVARCHAR?", SqlEnum.NVarCharNil);
-        map.put("NCHAR", SqlEnum.NCharStd);
-        map.put("NCHAR?", SqlEnum.NCharNil);
+        map.put("NVARCHAR", NVarCharStdType.INSTANCE);
+        map.put("NVARCHAR?", NVarCharNilType.INSTANCE);
+        map.put("NCHAR", NCharStdType.INSTANCE);
+        map.put("NCHAR?", NCharNilType.INSTANCE);
 
-        map.put("LONGVARBINARY", SqlEnum.LongVarBinaryStd);
-        map.put("LONGVARBINARY?", SqlEnum.LongVarBinaryNil);
-        map.put("LONGVARCHAR", SqlEnum.LongVarCharStd);
-        map.put("LONGVARCHAR?", SqlEnum.LongVarCharNil);
-        map.put("LONGNVARCHAR", SqlEnum.LongNVarCharStd);
-        map.put("LONGNVARCHAR?", SqlEnum.LongNVarCharNil);
+        map.put("LONGVARBINARY", LongVarBinaryStdType.INSTANCE);
+        map.put("LONGVARBINARY?", LongVarBinaryNilType.INSTANCE);
+        map.put("LONGVARCHAR", LongVarCharStdType.INSTANCE);
+        map.put("LONGVARCHAR?", LongVarCharNilType.INSTANCE);
+        map.put("LONGNVARCHAR", LongNVarCharStdType.INSTANCE);
+        map.put("LONGNVARCHAR?", LongNVarCharNilType.INSTANCE);
 
-        map.put("BLOB", SqlEnum.BlobStd);
-        map.put("BLOB?", SqlEnum.BlobNil);
-        map.put("CLOB", SqlEnum.ClobStd);
-        map.put("CLOB?", SqlEnum.ClobNil);
-        map.put("NCLOB", SqlEnum.NClobStd);
-        map.put("NCLOB?", SqlEnum.NClobNil);
+        map.put("BLOB", BlobStdType.INSTANCE);
+        map.put("BLOB?", BlobNilType.INSTANCE);
+        map.put("CLOB", ClobStdType.INSTANCE);
+        map.put("CLOB?", ClobNilType.INSTANCE);
+        map.put("NCLOB", NClobStdType.INSTANCE);
+        map.put("NCLOB?", NClobNilType.INSTANCE);
 
-        map.put("LONGVARCHARSTREAM", SqlEnum.LongVarCharStreamStd);
-        map.put("LONGVARCHARSTREAM?", SqlEnum.LongVarCharStreamNil);
-        map.put("LONGNVARCHARSTREAM", SqlEnum.LongNVarCharStreamStd);
-        map.put("LONGNVARCHARSTREAM?", SqlEnum.LongNVarCharStreamNil);
-        map.put("LONGVARBINARYSTREAM", SqlEnum.LongVarBinaryStreamStd);
-        map.put("LONGVARBINARYSTREAM?", SqlEnum.LongVarBinaryStreamNil);
+        map.put("LONGVARCHARSTREAM", LongVarCharStreamStdType.INSTANCE);
+        map.put("LONGVARCHARSTREAM?", LongVarCharStreamNilType.INSTANCE);
+        map.put("LONGNVARCHARSTREAM", LongNVarCharStreamStdType.INSTANCE);
+        map.put("LONGNVARCHARSTREAM?", LongNVarCharStreamNilType.INSTANCE);
+        map.put("LONGVARBINARYSTREAM", LongVarBinaryStreamStdType.INSTANCE);
+        map.put("LONGVARBINARYSTREAM?", LongVarBinaryStreamNilType.INSTANCE);
 
-        map.put("BLOBSTREAM", SqlEnum.BlobStreamStd);
-        map.put("BLOBSTREAM?", SqlEnum.BlobStreamNil);
-        map.put("CLOBSTREAM", SqlEnum.ClobStreamStd);
-        map.put("CLOBSTREAM?", SqlEnum.ClobStreamNil);
-        map.put("NCLOBSTREAM", SqlEnum.NClobStreamStd);
-        map.put("NCLOBSTREAM?", SqlEnum.NClobStreamNil);
+        map.put("BLOBSTREAM", BlobStreamStdType.INSTANCE);
+        map.put("BLOBSTREAM?", BlobStreamNilType.INSTANCE);
+        map.put("CLOBSTREAM", ClobStreamStdType.INSTANCE);
+        map.put("CLOBSTREAM?", ClobStreamNilType.INSTANCE);
+        map.put("NCLOBSTREAM", NClobStreamStdType.INSTANCE);
+        map.put("NCLOBSTREAM?", NClobStreamNilType.INSTANCE);
 
-        map.put("REF", SqlEnum.RefStd);
-        map.put("REF?", SqlEnum.RefNil);
-        map.put("ROWID", SqlEnum.RowIdStd);
-        map.put("ROWID?", SqlEnum.RowIdNil);
-        map.put("XML", SqlEnum.SQLXMLStd);
-        map.put("XML?", SqlEnum.SQLXMLNil);
-        map.put("URL", SqlEnum.URLStd);
-        map.put("URL?", SqlEnum.URLNil);
-        map.put("ARRAY", SqlEnum.ArrayStd);
-        map.put("ARRAY?", SqlEnum.ArrayNil);
+        map.put("REF", RefStdType.INSTANCE);
+        map.put("REF?", RefNilType.INSTANCE);
+        map.put("ROWID", RowIdStdType.INSTANCE);
+        map.put("ROWID?", RowIdNilType.INSTANCE);
+        map.put("XML", SQLXMLStdType.INSTANCE);
+        map.put("XML?", SQLXMLNilType.INSTANCE);
+        map.put("URL", URLStdType.INSTANCE);
+        map.put("URL?", URLNilType.INSTANCE);
+        map.put("ARRAY", ArrayStdType.INSTANCE);
+        map.put("ARRAY?", ArrayNilType.INSTANCE);
 
-        //---------------------------------------------------------
-//            new AbstractMap.SimpleEntry<>("(CHAR)", new SqlVector(SqlEnum.CharStd))
         sqlMap = Collections.unmodifiableMap(map);
     }
 
@@ -174,8 +173,20 @@ public abstract class BasicFactory implements CodeFactory {
         return new ComAreaDef();
     }
 
+    private static final Pattern FIX_CHAR = Pattern.compile("(CHAR[?]?)\\s*\\(\\s*(\\d+\\s*)\\)", Pattern.CASE_INSENSITIVE);
+
     @Override
     public SqlDataType getInstance(String value, MapContext mapContext) {
+        Matcher matcher = FIX_CHAR.matcher(value);
+        if (matcher.find()) {
+            String pic = matcher.group(1);
+            if (cc.isAutoPad()) {
+                int len = Integer.parseInt(matcher.group(2));
+                if ("CHAR".compareToIgnoreCase(pic)==0) return FixedCharStdType.getInstance(len);
+                if ("CHAR?".compareToIgnoreCase(pic)==0) return FixedCharNilType.getInstance(len);
+            }
+            value = pic;
+        }
         SqlDataType kind = sqlMap.get(value.toUpperCase());
         if (kind != null) {
             return kind;

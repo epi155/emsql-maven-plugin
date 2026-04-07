@@ -14,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static io.github.epi155.emsql.commons.Contexts.*;
+import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
 public class SqlCursorForSelectDyn extends PojoAction
         implements ApiSelectFields, ApiSelectDyn, ApiDocSignature,

@@ -17,6 +17,8 @@ public interface ClassContext {
 
     boolean isDebug();
 
+    boolean isAutoPad ();
+
     void writeImport(PrintWriter wr);
 
     void add(String s);

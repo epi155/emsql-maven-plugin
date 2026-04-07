@@ -10,6 +10,8 @@ public interface PluginContext {
 
     boolean isJava7();
 
+    boolean isAutoPad();
+
     void incMethods();
 
     void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters);

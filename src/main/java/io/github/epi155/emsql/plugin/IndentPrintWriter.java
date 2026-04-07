@@ -6,8 +6,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.CharBuffer;
 
-import static io.github.epi155.emsql.commons.Contexts.mc;
-
 public class IndentPrintWriter implements PrintModel {
     private static final String ELSE = "} else {";
     private final PrintWriter pw;

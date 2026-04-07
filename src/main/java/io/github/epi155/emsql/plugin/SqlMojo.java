@@ -70,10 +70,12 @@ public class SqlMojo extends AbstractMojo {
     @Parameter(property = "maven.emsql.provider")
     @Setter
     private String provider;
-    @Parameter(defaultValue = "false",
-            property = "maven.emsql.java7", required = true)
+    @Parameter(defaultValue = "false", property = "maven.emsql.java7", required = true)
     @Setter
     private boolean java7;
+    @Parameter(defaultValue = "false", property = "maven.emsql.auto-pad", required = true)
+    @Setter
+    private boolean autoPad;
     @Parameter(property = "maven.emsql.parser-provider")
     @Setter
     private String parserProvider;
@@ -182,6 +184,7 @@ public class SqlMojo extends AbstractMojo {
                 plugin.getVersion(),
                 debugCode,
                 java7,
+                autoPad,
                 parserProvider
         );
         if (modules == null) {

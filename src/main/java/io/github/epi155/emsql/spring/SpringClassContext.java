@@ -9,8 +9,6 @@ import lombok.Setter;
 
 import java.util.Map;
 
-import static io.github.epi155.emsql.commons.Contexts.mc;
-
 @Setter
 @Getter
 public class SpringClassContext extends ClassContextImpl {
