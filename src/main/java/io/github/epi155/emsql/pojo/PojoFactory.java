@@ -14,6 +14,10 @@ import static io.github.epi155.emsql.commons.Contexts.cc;
 
 @Slf4j
 public class PojoFactory extends BasicFactory {
+    public PojoFactory(boolean b) {
+        super(b);
+    }
+
     @Override
     public SelectSingleModel newSelectSingleModel() {
         return new SqlSelectSingle();

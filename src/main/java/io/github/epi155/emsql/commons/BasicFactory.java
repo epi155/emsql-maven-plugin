@@ -148,6 +148,12 @@ public abstract class BasicFactory implements CodeFactory {
         sqlMap = Collections.unmodifiableMap(map);
     }
 
+    private final boolean autoPad;
+
+    public BasicFactory(boolean autoPad) {
+        this.autoPad = autoPad;
+    }
+
     @Override
     public MethodModel newMethodModel() {
         return new SqlMethod();
@@ -180,7 +186,7 @@ public abstract class BasicFactory implements CodeFactory {
         Matcher matcher = FIX_CHAR.matcher(value);
         if (matcher.find()) {
             String pic = matcher.group(1);
-            if (cc.isAutoPad()) {
+            if (autoPad) {
                 int len = Integer.parseInt(matcher.group(2));
                 if ("CHAR".compareToIgnoreCase(pic)==0) return FixedCharStdType.getInstance(len);
                 if ("CHAR?".compareToIgnoreCase(pic)==0) return FixedCharNilType.getInstance(len);

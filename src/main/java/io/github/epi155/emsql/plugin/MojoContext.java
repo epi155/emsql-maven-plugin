@@ -22,7 +22,6 @@ public class MojoContext implements PluginContext {
     public final String version;
     public final boolean debug;
     public final boolean java7;
-    public final boolean autoPad;
     public final SqlParser parser;
     private int nmClasses = 0;
     private int nmMethods = 0;
@@ -34,7 +33,6 @@ public class MojoContext implements PluginContext {
             String version,
             boolean debug,
             boolean java7,
-            boolean autoPad,
             String parserName
     ) {
         this.sourceDirectory = sourceDirectory;
@@ -43,7 +41,6 @@ public class MojoContext implements PluginContext {
         this.version = version;
         this.debug = debug;
         this.java7 = java7;
-        this.autoPad = autoPad;
 
         ServiceLoader<ParserProvider> providers = ServiceLoader.load(ParserProvider.class);
         if (parserName == null) {

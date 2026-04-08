@@ -17,6 +17,10 @@ import static io.github.epi155.emsql.commons.Contexts.cc;
 public class SpringFactory extends BasicFactory {
 
 
+    public SpringFactory(boolean b) {
+        super(b);
+    }
+
     @Override
     public SelectSingleModel newSelectSingleModel() {
         return new SqlSelectSingle();

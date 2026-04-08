@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 @MojoTest
 @Slf4j
-public class TestJ8 {
+class TestJ8 {
 
     @Test
     @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8/pom.xml")

@@ -8,14 +8,14 @@ import io.github.epi155.emsql.spring.SpringFactory;
 public enum ProviderEnum implements CodeProvider {
     POJO {
         @Override
-        public CodeFactory getInstance() {
-            return new PojoFactory();
+        public CodeFactory getInstance(boolean b) {
+            return new PojoFactory(b);
         }
     },
     SPRING {
         @Override
-        public CodeFactory getInstance() {
-            return new SpringFactory();
+        public CodeFactory getInstance(boolean b) {
+            return new SpringFactory(b);
         }
     },
 }

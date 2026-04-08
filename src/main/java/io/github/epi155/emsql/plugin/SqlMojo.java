@@ -74,7 +74,6 @@ public class SqlMojo extends AbstractMojo {
     @Setter
     private boolean java7;
     @Parameter(defaultValue = "false", property = "maven.emsql.auto-pad", required = true)
-    @Setter
     private boolean autoPad;
     @Parameter(property = "maven.emsql.parser-provider")
     @Setter
@@ -110,7 +109,7 @@ public class SqlMojo extends AbstractMojo {
         Logger.getLogger("org.yaml.snakeyaml.introspector").setLevel(Level.SEVERE);
 
         CodeProvider codeProvider = getProvider();
-        CodeFactory factory = codeProvider.getInstance();
+        CodeFactory factory = codeProvider.getInstance(autoPad);
 
         Constructor c1 = new MyConstructor(mapContext);
         c1.addTypeDescription(new TdProgrammingModeEnum());
@@ -184,7 +183,6 @@ public class SqlMojo extends AbstractMojo {
                 plugin.getVersion(),
                 debugCode,
                 java7,
-                autoPad,
                 parserProvider
         );
         if (modules == null) {
