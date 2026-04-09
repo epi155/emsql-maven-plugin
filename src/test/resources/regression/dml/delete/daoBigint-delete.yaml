@@ -1,0 +1,9 @@
+packageName: com.example.emsql
+className: DaoBigintDelete
+declare:
+  id: int
+methods:
+  - methodName: delete
+    perform: !Delete
+      execSql: |
+        delete from t_bigint where id = :id

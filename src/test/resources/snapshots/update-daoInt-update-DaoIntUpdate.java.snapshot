@@ -1,0 +1,70 @@
+/*
+ * Code Generated at 2026-04-09T11:01:50.074263Z
+ * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
+ */
+package com.example.emsql;
+
+import io.github.epi155.emsql.runtime.EmSQL;
+import io.github.epi155.emsql.runtime.SqlArg;
+import io.github.epi155.emsql.runtime.SqlTrace;
+import java.sql.*;
+
+public class DaoIntUpdate {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DaoIntUpdate.class);
+    private DaoIntUpdate() {}
+
+    private static final String Q_0001 = "UPDATE t_int SET int_null = ?, int_not_null = ? WHERE id = ?";
+    /**
+     * Template SqlUpdate
+     * <pre>
+     * update t_int set int_null = :intNull, int_not_null = :intNotNull where id = :id
+     * </pre>
+     *
+     * @param c connection
+     * @param intNull :intNull (parameter #1)
+     * @param intNotNull :intNotNull (parameter #2)
+     * @param id :id (parameter #3)
+     * @throws SQLException SQL error
+     */
+    public static int update(
+            final Connection c,
+            final Integer intNull,
+            final int intNotNull,
+            final int id)
+            throws SQLException {
+        if (log.isDebugEnabled()) {
+            SqlTrace.showQuery(Q_0001, () -> {
+                return new SqlArg[]{
+                    new SqlArg("intNull", "Integer", intNull),
+                    new SqlArg("intNotNull", "int", intNotNull),
+                    new SqlArg("id", "int", id)
+                };
+            });
+        }
+        try (PreparedStatement ps = c.prepareStatement(Q_0001)) {
+            int ki=0;
+            EmSQL.setInt(ps, ++ki, intNull);
+            ps.setInt(++ki, intNotNull);
+            ps.setInt(++ki, id);
+            if (log.isDebugEnabled()) {
+                SqlTrace.showQuery(Q_0001, () -> {
+                    return new SqlArg[]{
+                        new SqlArg("intNull", "Integer", intNull),
+                        new SqlArg("intNotNull", "int", intNotNull),
+                        new SqlArg("id", "int", id)
+                    };
+                });
+            }
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            SqlTrace.showCause(e, Q_0001, () -> {
+                return new SqlArg[]{
+                    new SqlArg("intNull", "Integer", intNull),
+                    new SqlArg("intNotNull", "int", intNotNull),
+                    new SqlArg("id", "int", id)
+                };
+            });
+            throw e;
+        }
+    }
+}

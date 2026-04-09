@@ -2,20 +2,16 @@ package io.github.epi155.emsql.plugin.td.dml;
 
 import io.github.epi155.emsql.api.CodeFactory;
 import io.github.epi155.emsql.api.InsertModel;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.nodes.Node;
+import io.github.epi155.emsql.plugin.td.TdAbstract;
 
-public class TdInsert extends TypeDescription {
-    private final CodeFactory factory;
+public class TdInsert extends TdAbstract<InsertModel> {
 
     public TdInsert(CodeFactory factory) {
-        super(InsertModel.class, "!Insert");
-        this.factory = factory;
-
-        substituteProperty("exec-sql", String.class, null, "setExecSql");
+        super(InsertModel.class, "!Insert", factory);
     }
 
-    public Object newInstance(Node node) {
+    @Override
+    protected InsertModel createModelInstance() {
         return factory.newInsertModel();
     }
 }

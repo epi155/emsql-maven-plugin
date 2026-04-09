@@ -1,0 +1,14 @@
+packageName: com.example.emsql
+className: DaoDateSelectOptional
+declare:
+  id: int
+  dateNull: LocalDate?
+  dateNotNull: LocalDate
+methods:
+  - methodName: findById
+    perform: !SelectOptional
+      execSql: |
+        select date_null, date_not_null
+        into :dateNull, :dateNotNull
+        from t_date
+        where id = :id

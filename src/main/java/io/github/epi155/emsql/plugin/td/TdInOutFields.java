@@ -2,18 +2,15 @@ package io.github.epi155.emsql.plugin.td;
 
 import io.github.epi155.emsql.api.CodeFactory;
 import io.github.epi155.emsql.api.InOutFieldsModel;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.nodes.Node;
 
-public class TdInOutFields extends TypeDescription {
-    private final CodeFactory factory;
+public class TdInOutFields extends TdAbstract<InOutFieldsModel> {
 
     public TdInOutFields(CodeFactory factory) {
-        super(InOutFieldsModel.class);
-        this.factory = factory;
+        super(InOutFieldsModel.class, factory);
     }
 
-    public Object newInstance(Node node) {
+    @Override
+    protected InOutFieldsModel createModelInstance() {
         return factory.newInOutFieldsModel();
     }
 }

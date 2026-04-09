@@ -5,7 +5,6 @@ import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dml.ApiInsert;
 import io.github.epi155.emsql.commons.dml.DelegateInsert;
-import io.github.epi155.emsql.spring.SpringBatchAction;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -3,7 +3,7 @@ className: DaoChar
 declare:
   idChar: long
   char01: Char?
-  char02: Char?(5)
+  char02: Char(5)?
   char03: Char?
   char04: Char?
   char11: Char

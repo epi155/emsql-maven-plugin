@@ -37,8 +37,7 @@ public final class TimestampNilType implements SqlDataType {
 
     @Override
     public void rsGetValue(PrintModel ipw, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.putf("EmSQL.getTimestamp(rs,%d)", k);
+        ipw.putf("rs.getTimestamp(%d)", k);
     }
 
     @Override
@@ -63,7 +62,6 @@ public final class TimestampNilType implements SqlDataType {
 
     @Override
     public void csGetValue(PrintModel ipw, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.putf("EmSQL.getTimestamp(ps,%d)", k);
+        ipw.putf("ps.getTimestamp(%d)", k);
     }
 }

@@ -11,8 +11,10 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration tests for compilation of generated code
@@ -105,7 +107,7 @@ class CompilationTest {
             }
 
             // Verify compilation behavior
-            assertFalse(result.isSuccess(), "Compilation should fail due to missing runtime dependencies");
+            assertTrue(result.isSuccess(), "Compilation should succeed with runtime dependencies");
             
             // Test dependency validation (may fail due to missing runtime imports)
             boolean dependenciesValid = compilationTester.validateDependencies(generatedDir);
@@ -162,7 +164,7 @@ class CompilationTest {
                 log.info("Multi-file compilation result: {}", result.getMessage());
                 
                 // Verify compilation behavior
-                assertFalse(result.isSuccess(), "Compilation should fail due to missing runtime dependencies");
+                assertTrue(result.isSuccess(), "Compilation should succeed with runtime dependencies");
                 
                 if (!result.getDiagnostics().isEmpty()) {
                     log.info("Compilation diagnostics: {}", String.join("\n", result.getDiagnostics()));
@@ -201,33 +203,18 @@ class CompilationTest {
             // Test compilation and analyze error patterns
             CompilationTester.CompilationResult result = compilationTester.compileWithDiagnostics(generatedDir);
             
-            assertFalse(result.isSuccess(), "Should have compilation errors");
+            assertTrue(result.isSuccess(), "Compilation should succeed with runtime dependencies");
             
-            // Analyze error patterns if compilation failed
-            if (!result.isSuccess() && !result.getDiagnostics().isEmpty()) {
-                long runtimeDependencyErrors = result.getDiagnostics().stream()
-                    .filter(msg -> msg.contains("io.github.epi155.emsql.runtime"))
-                    .count();
-                
-                long packageNotFoundErrors = result.getDiagnostics().stream()
-                    .filter(msg -> msg.contains("package does not exist"))
-                    .count();
-                
-                long symbolNotFoundErrors = result.getDiagnostics().stream()
-                    .filter(msg -> msg.contains("cannot find symbol"))
-                    .count();
-                
-                log.info("Error pattern analysis:");
-                log.info("  Runtime dependency errors: {}", runtimeDependencyErrors);
-                log.info("  Package not found errors: {}", packageNotFoundErrors);
-                log.info("  Symbol not found errors: {}", symbolNotFoundErrors);
-                
-                // Verify error patterns are as expected
-                assertTrue(runtimeDependencyErrors > 0, "Should have runtime dependency errors");
-                assertTrue(packageNotFoundErrors > 0, "Should have package not found errors");
-                assertTrue(symbolNotFoundErrors > 0, "Should have symbol not found errors");
-            } else {
-                log.info("Compilation succeeded or no diagnostics available");
+            // Verify generated code is valid
+            if (result.isSuccess()) {
+                log.info("Compilation succeeded with runtime dependencies");
+                try (Stream<Path> paths = Files.walk(generatedDir.toPath())) {
+                    long generatedFiles = paths.filter(Files::isRegularFile)
+                            .filter(path -> path.toString().endsWith(".java"))
+                            .count();
+                    assertTrue(generatedFiles > 0, "Should have generated Java files");
+                    log.info("Generated {} Java files", generatedFiles);
+                }
             }
         });
     }

@@ -1,0 +1,65 @@
+/*
+ * Code Generated at 2026-04-09T11:01:51.159354Z
+ * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
+ */
+package com.example.emsql;
+
+import io.github.epi155.emsql.runtime.EmSQL;
+import io.github.epi155.emsql.runtime.SqlArg;
+import io.github.epi155.emsql.runtime.SqlTrace;
+import java.sql.*;
+
+public class DaoVarcharInsert {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DaoVarcharInsert.class);
+    private DaoVarcharInsert() {}
+
+    private static final String Q_0001 = "INSERT INTO t_varchar ( vc_null, vc_not_null ) VALUES ( ?, ? )";
+    /**
+     * Template SqlInsert
+     * <pre>
+     * insert into t_varchar (vc_null, vc_not_null)
+     * values (:vcNull, :vcNotNull)
+     * </pre>
+     *
+     * @param c connection
+     * @param vcNull :vcNull (parameter #1)
+     * @param vcNotNull :vcNotNull (parameter #2)
+     * @throws SQLException SQL error
+     */
+    public static int insert(
+            final Connection c,
+            final String vcNull,
+            final String vcNotNull)
+            throws SQLException {
+        if (log.isDebugEnabled()) {
+            SqlTrace.showQuery(Q_0001, () -> {
+                return new SqlArg[]{
+                    new SqlArg("vcNull", "String", vcNull),
+                    new SqlArg("vcNotNull", "String", vcNotNull)
+                };
+            });
+        }
+        try (PreparedStatement ps = c.prepareStatement(Q_0001)) {
+            int ki=0;
+            EmSQL.setVarchar(ps, ++ki, vcNull);
+            ps.setString(++ki, vcNotNull);
+            if (log.isDebugEnabled()) {
+                SqlTrace.showQuery(Q_0001, () -> {
+                    return new SqlArg[]{
+                        new SqlArg("vcNull", "String", vcNull),
+                        new SqlArg("vcNotNull", "String", vcNotNull)
+                    };
+                });
+            }
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            SqlTrace.showCause(e, Q_0001, () -> {
+                return new SqlArg[]{
+                    new SqlArg("vcNull", "String", vcNull),
+                    new SqlArg("vcNotNull", "String", vcNotNull)
+                };
+            });
+            throw e;
+        }
+    }
+}

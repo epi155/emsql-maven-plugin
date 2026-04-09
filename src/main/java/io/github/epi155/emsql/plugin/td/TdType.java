@@ -7,6 +7,10 @@ import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
+/**
+ * Specialized TD class that requires custom instantiation logic.
+ * Does not extend TdAbstract due to special handling of ScalarNode.
+ */
 public class TdType extends TypeDescription {
     private final CodeFactory factory;
 

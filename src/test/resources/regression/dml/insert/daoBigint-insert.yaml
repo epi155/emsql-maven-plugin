@@ -1,0 +1,12 @@
+packageName: com.example.emsql
+className: DaoBigintInsert
+declare:
+  id: int
+  bigintNull: Bigint?
+  bigintNotNull: Bigint
+methods:
+  - methodName: insert
+    perform: !Insert
+      execSql: |
+        insert into t_bigint (bigint_null, bigint_not_null)
+        values (:bigintNull, :bigintNotNull)

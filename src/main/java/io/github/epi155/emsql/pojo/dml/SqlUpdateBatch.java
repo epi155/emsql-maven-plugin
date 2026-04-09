@@ -5,7 +5,6 @@ import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dml.ApiUpdate;
 import io.github.epi155.emsql.commons.dml.DelegateUpdate;
-import io.github.epi155.emsql.pojo.PojoBatchAction;
 import lombok.Getter;
 import lombok.Setter;
 

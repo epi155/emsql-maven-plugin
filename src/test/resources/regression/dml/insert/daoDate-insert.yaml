@@ -1,0 +1,12 @@
+packageName: com.example.emsql
+className: DaoDateInsert
+declare:
+  id: int
+  dateNull: LocalDate?
+  dateNotNull: LocalDate
+methods:
+  - methodName: insert
+    perform: !Insert
+      execSql: |
+        insert into t_date (date_null, date_not_null)
+        values (:dateNull, :dateNotNull)

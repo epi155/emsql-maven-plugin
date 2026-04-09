@@ -1,11 +1,12 @@
-package io.github.epi155.emsql.spring;
+package io.github.epi155.emsql.pojo.dml;
 
+import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Setter;
 
 import static io.github.epi155.emsql.commons.Contexts.IMAX;
 
 @Setter
-public abstract class SpringBatchAction extends SpringAction {
+public abstract class PojoBatchAction extends PojoAction {
     protected int batchSize = 1024;
     private boolean force;
 

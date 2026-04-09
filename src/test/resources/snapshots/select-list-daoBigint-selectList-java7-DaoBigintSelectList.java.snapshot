@@ -1,0 +1,96 @@
+/*
+ * Code Generated at 2026-04-09T12:05:47.758427Z
+ * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
+ */
+package com.example.emsql;
+
+import io.github.epi155.emsql.runtime.ESupplier;
+import io.github.epi155.emsql.runtime.EmSQL;
+import io.github.epi155.emsql.runtime.SqlArg;
+import io.github.epi155.emsql.runtime.SqlTrace;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DaoBigintSelectList {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DaoBigintSelectList.class);
+    private DaoBigintSelectList() {}
+
+    private static final String Q_0001 = "SELECT bigint_null, bigint_not_null FROM t_bigint where id > ?";
+    /**
+     * Template SqlSelectList
+     * <pre>
+     * select bigint_null, bigint_not_null
+     * into :bigintNull, :bigintNotNull
+     * from t_bigint
+     * where id > :id
+     * </pre>
+     *
+     * @param c connection
+     * @param id :id (parameter #1)
+     * @param so output constructor
+     * @throws SQLException SQL error
+     */
+    public static <O extends FindAllRS> List<O> findAll(
+            final Connection c,
+            final int id,
+            final ESupplier<O> so)
+            throws SQLException {
+        if (log.isDebugEnabled()) {
+            SqlTrace.showQuery(Q_0001, new ESupplier<SqlArg[]>() {
+                @Override
+                public SqlArg[] get() {
+                    return new SqlArg[]{
+                        new SqlArg("id", "int", id)
+                    };
+                }
+            });
+        }
+        try (PreparedStatement ps = c.prepareStatement(Q_0001)) {
+            int ki=0;
+            ps.setInt(++ki, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<O> list = new ArrayList<>();
+                while (rs.next()) {
+                    O o = so.get();
+                    Long o1 = EmSQL.getLong(rs,1);
+                    o.setBigintNull(o1);
+                    long o2 = rs.getLong(2);
+                    o.setBigintNotNull(o2);
+                    if (log.isTraceEnabled()) {
+                        SqlTrace.showResult(
+                            new SqlArg("bigintNull", "Long", o1),
+                            new SqlArg("bigintNotNull", "long", o2)
+                        );
+                    }
+                    list.add(o);
+                }
+                return list;
+            }
+        } catch (SQLException e) {
+            SqlTrace.showCause(e, Q_0001, new ESupplier<SqlArg[]>() {
+                @Override
+                public SqlArg[] get() {
+                    return new SqlArg[]{
+                        new SqlArg("id", "int", id)
+                    };
+                }
+            });
+            throw e;
+        }
+    }
+    /**
+     * Example of DTO class using interface (setter)
+     *<pre>
+     *{@literal @}Data
+     * public class DtoFindAll implements FindAllRS {
+     *     private Long bigintNull;
+     *     private long bigintNotNull;
+     * }
+     *</pre>
+     */
+    public interface FindAllRS {
+        void setBigintNull(Long s);
+        void setBigintNotNull(long s);
+    }
+}

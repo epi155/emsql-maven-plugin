@@ -1,0 +1,11 @@
+packageName: com.example.emsql
+className: DaoDateUpdate
+declare:
+  id: int
+  dateNull: LocalDate?
+  dateNotNull: LocalDate
+methods:
+  - methodName: update
+    perform: !Update
+      execSql: |
+        update t_date set date_null = :dateNull, date_not_null = :dateNotNull where id = :id

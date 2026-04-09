@@ -1,0 +1,14 @@
+packageName: com.example.emsql
+className: DaoBigintSelectList
+declare:
+  id: int
+  bigintNull: Bigint?
+  bigintNotNull: Bigint
+methods:
+  - methodName: findAll
+    perform: !SelectList
+      execSql: |
+        select bigint_null, bigint_not_null
+        into :bigintNull, :bigintNotNull
+        from t_bigint
+        where id > :id

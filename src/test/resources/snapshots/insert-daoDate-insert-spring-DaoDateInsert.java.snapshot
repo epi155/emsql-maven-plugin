@@ -1,0 +1,75 @@
+/*
+ * Code Generated at 2026-04-09T12:05:45.772175Z
+ * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
+ */
+package com.example.emsql;
+
+import io.github.epi155.emsql.runtime.J8Time;
+import io.github.epi155.emsql.runtime.SqlArg;
+import io.github.epi155.emsql.runtime.SqlTrace;
+import java.sql.*;
+import java.time.LocalDate;
+import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+@Repository
+public class DaoDateInsert {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DaoDateInsert.class);
+    private final DataSource dataSource;
+    @Autowired
+    public DaoDateInsert(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    private static final String Q_0001 = "INSERT INTO t_date ( date_null, date_not_null ) VALUES ( ?, ? )";
+    /**
+     * Template SqlInsert
+     * <pre>
+     * insert into t_date (date_null, date_not_null)
+     * values (:dateNull, :dateNotNull)
+     * </pre>
+     *
+     * @param dateNull :dateNull (parameter #1)
+     * @param dateNotNull :dateNotNull (parameter #2)
+     * @throws SQLException SQL error
+     */
+    @Transactional
+    public int insert(            final LocalDate dateNull,
+            final LocalDate dateNotNull)
+            throws SQLException {
+        final Connection c = DataSourceUtils.getConnection(dataSource);
+        if (log.isDebugEnabled()) {
+            SqlTrace.showQuery(Q_0001, () -> {
+                return new SqlArg[]{
+                    new SqlArg("dateNull", "LocalDate", dateNull),
+                    new SqlArg("dateNotNull", "LocalDate", dateNotNull)
+                };
+            });
+        }
+        try (PreparedStatement ps = c.prepareStatement(Q_0001)) {
+            int ki=0;
+            J8Time.setDate(ps, ++ki, dateNull);
+            ps.setObject(++ki, dateNotNull);
+            if (log.isDebugEnabled()) {
+                SqlTrace.showQuery(Q_0001, () -> {
+                    return new SqlArg[]{
+                        new SqlArg("dateNull", "LocalDate", dateNull),
+                        new SqlArg("dateNotNull", "LocalDate", dateNotNull)
+                    };
+                });
+            }
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            SqlTrace.showCause(e, Q_0001, () -> {
+                return new SqlArg[]{
+                    new SqlArg("dateNull", "LocalDate", dateNull),
+                    new SqlArg("dateNotNull", "LocalDate", dateNotNull)
+                };
+            });
+            throw e;
+        }
+    }
+}

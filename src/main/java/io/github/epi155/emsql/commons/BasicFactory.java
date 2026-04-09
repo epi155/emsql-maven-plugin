@@ -179,19 +179,18 @@ public abstract class BasicFactory implements CodeFactory {
         return new ComAreaDef();
     }
 
-    private static final Pattern FIX_CHAR = Pattern.compile("(CHAR[?]?)\\s*\\(\\s*(\\d+\\s*)\\)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern FIX_CHAR = Pattern.compile("CHAR\\s*\\(\\s*(\\d+\\s*)\\)([?])?", Pattern.CASE_INSENSITIVE);
 
     @Override
     public SqlDataType getInstance(String value, MapContext mapContext) {
         Matcher matcher = FIX_CHAR.matcher(value);
         if (matcher.find()) {
-            String pic = matcher.group(1);
+            String idNil = matcher.group(2);
             if (autoPad) {
-                int len = Integer.parseInt(matcher.group(2));
-                if ("CHAR".compareToIgnoreCase(pic)==0) return FixedCharStdType.getInstance(len);
-                if ("CHAR?".compareToIgnoreCase(pic)==0) return FixedCharNilType.getInstance(len);
+                int len = Integer.parseInt(matcher.group(1));
+                return (idNil == null) ? FixedCharStdType.getInstance(len) :  FixedCharNilType.getInstance(len);
             }
-            value = pic;
+            value = (idNil == null) ? "CHAR" : "CHAR?";
         }
         SqlDataType kind = sqlMap.get(value.toUpperCase());
         if (kind != null) {

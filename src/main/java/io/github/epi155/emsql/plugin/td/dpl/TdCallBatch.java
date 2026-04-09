@@ -2,20 +2,16 @@ package io.github.epi155.emsql.plugin.td.dpl;
 
 import io.github.epi155.emsql.api.CallBatchModel;
 import io.github.epi155.emsql.api.CodeFactory;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.nodes.Node;
+import io.github.epi155.emsql.plugin.td.TdAbstract;
 
-public class TdCallBatch extends TypeDescription {
-    private final CodeFactory factory;
+public class TdCallBatch extends TdAbstract<CallBatchModel> {
 
     public TdCallBatch(CodeFactory factory) {
-        super(CallBatchModel.class, "!CallBatch");
-        this.factory = factory;
-
-        substituteProperty("exec-sql", String.class, null, "setExecSql");
+        super(CallBatchModel.class, "!CallBatch", factory);
     }
 
-    public Object newInstance(Node node) {
+    @Override
+    protected CallBatchModel createModelInstance() {
         return factory.newCallBatchModel();
     }
 }

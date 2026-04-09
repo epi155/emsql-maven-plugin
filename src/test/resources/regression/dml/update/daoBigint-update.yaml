@@ -1,0 +1,11 @@
+packageName: com.example.emsql
+className: DaoBigintUpdate
+declare:
+  id: int
+  bigintNull: Bigint?
+  bigintNotNull: Bigint
+methods:
+  - methodName: update
+    perform: !Update
+      execSql: |
+        update t_bigint set bigint_null = :bigintNull, bigint_not_null = :bigintNotNull where id = :id

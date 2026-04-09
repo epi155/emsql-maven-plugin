@@ -37,8 +37,7 @@ public final class DateNilType implements SqlDataType {
 
     @Override
     public void rsGetValue(PrintModel ipw, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.putf("EmSQL.getDate(rs,%d)", k);
+        ipw.putf("rs.getDate(%d)", k);
     }
 
     @Override
@@ -63,7 +62,6 @@ public final class DateNilType implements SqlDataType {
 
     @Override
     public void csGetValue(PrintModel ipw, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.putf("EmSQL.getDate(ps,%d)", k);
+        ipw.putf("ps.getDate(%d)", k);
     }
 }

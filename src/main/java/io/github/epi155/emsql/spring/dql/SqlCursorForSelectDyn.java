@@ -217,6 +217,7 @@ public class SqlCursorForSelectDyn extends SpringAction
         declareOutputConsumer(ipw, jdbc);
         ipw.putf(") throws SQLException {%n");
         ipw.more();
+        cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
 
         delegateSelectDyn.writeForEachCode(ipw, jdbc, kPrg);

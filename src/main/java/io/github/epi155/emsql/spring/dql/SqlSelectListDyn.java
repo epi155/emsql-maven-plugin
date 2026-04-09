@@ -203,6 +203,7 @@ public class SqlSelectListDyn extends SpringAction
         ipw.printf("@Transactional(readOnly=true) // implemented programmatically ::%n");
         ipw.printf("public List<O> list() throws SQLException {%n");
         ipw.more();
+        cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
 
         delegateSelectDyn.writeResultListCode(ipw, jdbc, kPrg);

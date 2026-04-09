@@ -1,0 +1,14 @@
+packageName: com.example.emsql
+className: DaoIntSelectSingle
+declare:
+  id: int
+  intNull: Int?
+  intNotNull: Int
+methods:
+  - methodName: findById
+    perform: !SelectSingle
+      execSql: |
+        select int_null, int_not_null
+        into :intNull, :intNotNull
+        from t_int
+        where id = :id

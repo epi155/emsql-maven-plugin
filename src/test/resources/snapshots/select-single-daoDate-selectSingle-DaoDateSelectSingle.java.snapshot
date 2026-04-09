@@ -1,0 +1,97 @@
+/*
+ * Code Generated at 2026-04-09T10:57:21.481872Z
+ * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
+ */
+package com.example.emsql;
+
+import io.github.epi155.emsql.runtime.J8Time;
+import io.github.epi155.emsql.runtime.SqlArg;
+import io.github.epi155.emsql.runtime.SqlNoResultException;
+import io.github.epi155.emsql.runtime.SqlNonUniqueResultException;
+import io.github.epi155.emsql.runtime.SqlTrace;
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.function.Supplier;
+
+public class DaoDateSelectSingle {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DaoDateSelectSingle.class);
+    private DaoDateSelectSingle() {}
+
+    private static final String Q_0001 = "SELECT date_null, date_not_null FROM t_date where id = ?";
+    /**
+     * Template SqlSelectSingle
+     * <pre>
+     * select date_null, date_not_null
+     * into :dateNull, :dateNotNull
+     * from t_date
+     * where id = :id
+     * </pre>
+     *
+     * @param c connection
+     * @param id :id (parameter #1)
+     * @param so output constructor
+     * @throws SQLException SQL error
+     */
+    public static <O extends FindByIdRS> O findById(
+            final Connection c,
+            final int id,
+            final Supplier<O> so)
+            throws SQLException {
+        if (log.isDebugEnabled()) {
+            SqlTrace.showQuery(Q_0001, () -> {
+                return new SqlArg[]{
+                    new SqlArg("id", "int", id)
+                };
+            });
+        }
+        try (PreparedStatement ps = c.prepareStatement(Q_0001)) {
+            int ki=0;
+            ps.setInt(++ki, id);
+            ps.setFetchSize(2);
+            ps.setMaxRows(2);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    O o = so.get();
+                    LocalDate o1 = rs.getObject(1, LocalDate.class);
+                    o.setDateNull(o1);
+                    LocalDate o2 = rs.getObject(2, LocalDate.class);
+                    o.setDateNotNull(o2);
+                    if (log.isTraceEnabled()) {
+                        SqlTrace.showResult(
+                            new SqlArg("dateNull", "LocalDate", o1),
+                            new SqlArg("dateNotNull", "LocalDate", o2)
+                        );
+                    }
+                    if (rs.next()) {
+                        throw new SqlNonUniqueResultException();
+                    } else {
+                        return o;
+                    }
+                } else {
+                    throw new SqlNoResultException();
+                }
+            }
+        } catch (SQLException e) {
+            SqlTrace.showCause(e, Q_0001, () -> {
+                return new SqlArg[]{
+                    new SqlArg("id", "int", id)
+                };
+            });
+            throw e;
+        }
+    }
+    /**
+     * Example of DTO class using interface (setter)
+     *<pre>
+     *{@literal @}Data
+     * public class DtoFindById implements FindByIdRS {
+     *     private LocalDate dateNull;
+     *     private LocalDate dateNotNull;
+     * }
+     *</pre>
+     */
+    public interface FindByIdRS {
+        void setDateNull(LocalDate s);
+        void setDateNotNull(LocalDate s);
+    }
+}

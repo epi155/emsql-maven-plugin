@@ -1,0 +1,12 @@
+packageName: com.example.emsql
+className: DaoIntInsert
+declare:
+  id: int
+  intNull: Int?
+  intNotNull: Int
+methods:
+  - methodName: insert
+    perform: !Insert
+      execSql: |
+        insert into t_int (int_null, int_not_null)
+        values (:intNull, :intNotNull)

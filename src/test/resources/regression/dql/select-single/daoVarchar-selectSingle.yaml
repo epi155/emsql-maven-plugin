@@ -1,0 +1,14 @@
+packageName: com.example.emsql
+className: DaoVarcharSelectSingle
+declare:
+  id: int
+  vcNull: VarChar?
+  vcNotNull: VarChar
+methods:
+  - methodName: findById
+    perform: !SelectSingle
+      execSql: |
+        select vc_null, vc_not_null
+        into :vcNull, :vcNotNull
+        from t_varchar
+        where id = :id

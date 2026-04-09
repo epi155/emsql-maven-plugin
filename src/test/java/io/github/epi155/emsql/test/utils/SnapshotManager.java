@@ -9,10 +9,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Utility class for managing snapshot testing and regression detection
@@ -70,8 +72,8 @@ public class SnapshotManager {
         }
 
         try {
-            String currentContent = Files.readString(generatedFile.toPath());
-            String snapshotContent = Files.readString(snapshotFile);
+            String currentContent = removeSignature(Files.readString(generatedFile.toPath()));
+            String snapshotContent = removeSignature(Files.readString(snapshotFile));
             
             if (currentContent.equals(snapshotContent)) {
                 return SnapshotComparison.success("Content matches snapshot");
@@ -236,6 +238,33 @@ public class SnapshotManager {
         } catch (Exception e) {
             return file.getPath();
         }
+    }
+
+    private String removeSignature(String content) {
+        String[] lines = content.split("\n");
+        StringBuilder result = new StringBuilder();
+        boolean skipSignature = false;
+
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+
+            if (!skipSignature && line.trim().equals("/*") &&
+                    i + 1 < lines.length && lines[i + 1].contains("Code Generated at")) {
+                skipSignature = true;
+                continue;
+            }
+
+            if (skipSignature && line.trim().equals("*/")) {
+                skipSignature = false;
+                continue;
+            }
+
+            if (!skipSignature) {
+                result.append(line).append("\n");
+            }
+        }
+
+        return result.toString();
     }
 
     private String createDiff(String expected, String actual) {

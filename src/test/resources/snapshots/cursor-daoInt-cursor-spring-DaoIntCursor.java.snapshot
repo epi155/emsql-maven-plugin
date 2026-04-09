@@ -1,0 +1,107 @@
+/*
+ * Code Generated at 2026-04-09T12:05:48.876130Z
+ * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
+ */
+package com.example.emsql;
+
+import io.github.epi155.emsql.runtime.EmSQL;
+import io.github.epi155.emsql.runtime.SqlArg;
+import io.github.epi155.emsql.runtime.SqlCursor;
+import io.github.epi155.emsql.runtime.SqlTrace;
+import java.sql.*;
+import java.util.function.Supplier;
+import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+@Repository
+public class DaoIntCursor {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DaoIntCursor.class);
+    private final DataSource dataSource;
+    @Autowired
+    public DaoIntCursor(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    private static final String Q_0001 = "SELECT int_null, int_not_null FROM t_int";
+    /**
+     * Template SqlCursorForSelect
+     * <pre>
+     * select int_null, int_not_null
+     * into :intNull, :intNotNull
+     * from t_int
+     * </pre>
+     *
+     * @param so output constructor
+     * @throws SQLException SQL error
+     */
+    @Transactional(readOnly=true, propagation=Propagation.MANDATORY)
+    public <O extends FetchAllRS> SqlCursor<O> openFetchAll(            final Supplier<O> so)
+            throws SQLException {
+        final Connection c = DataSourceUtils.getConnection(dataSource);
+        return new SqlCursor<O>() {
+            private final ResultSet rs;
+            private final PreparedStatement ps;
+            {
+                if (log.isDebugEnabled()) {
+                    SqlTrace.showQuery(Q_0001, () -> {
+                        return new SqlArg[]{
+                        };
+                    });
+                }
+                try {
+                    this.ps = c.prepareStatement(Q_0001);
+                    int ki=0;
+                    this.rs = ps.executeQuery();
+                } catch (SQLException e) {
+                    SqlTrace.showCause(e, Q_0001, () -> {
+                        return new SqlArg[]{
+                        };
+                    });
+                    throw e;
+                }
+            }
+            @Override
+            public boolean hasNext() throws SQLException {
+                return rs.next();
+            }
+            @Override
+            public O fetchNext() throws SQLException {
+                O o = so.get();
+                Integer o1 = EmSQL.getInt(rs,1);
+                o.setIntNull(o1);
+                int o2 = rs.getInt(2);
+                o.setIntNotNull(o2);
+                if (log.isTraceEnabled()) {
+                    SqlTrace.showResult(
+                        new SqlArg("intNull", "Integer", o1),
+                        new SqlArg("intNotNull", "int", o2)
+                    );
+                }
+                return o;
+            }
+            @Override
+            public void close() throws SQLException {
+                if (rs != null) rs.close();
+                ps.close();
+            }
+        };
+    }
+    /**
+     * Example of DTO class using interface (setter)
+     *<pre>
+     *{@literal @}Data
+     * public class DtoFetchAll implements FetchAllRS {
+     *     private Integer intNull;
+     *     private int intNotNull;
+     * }
+     *</pre>
+     */
+    public interface FetchAllRS {
+        void setIntNull(Integer s);
+        void setIntNotNull(int s);
+    }
+}

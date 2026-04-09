@@ -1,0 +1,11 @@
+packageName: com.example.emsql
+className: DaoVarcharUpdate
+declare:
+  id: int
+  vcNull: VarChar?
+  vcNotNull: VarChar
+methods:
+  - methodName: update
+    perform: !Update
+      execSql: |
+        update t_varchar set vc_null = :vcNull, vc_not_null = :vcNotNull where id = :id

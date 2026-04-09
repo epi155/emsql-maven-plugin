@@ -2,21 +2,21 @@ package io.github.epi155.emsql.plugin.td.dml;
 
 import io.github.epi155.emsql.api.CodeFactory;
 import io.github.epi155.emsql.api.DeleteBatchModel;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.nodes.Node;
+import io.github.epi155.emsql.plugin.td.TdAbstract;
 
-public class TdDeleteBatch extends TypeDescription {
-    private final CodeFactory factory;
+public class TdDeleteBatch extends TdAbstract<DeleteBatchModel> {
 
     public TdDeleteBatch(CodeFactory factory) {
-        super(DeleteBatchModel.class, "!DeleteBatch");
-        this.factory = factory;
-
-        substituteProperty("exec-sql", String.class, null, "setExecSql");
-        substituteProperty("batch-size", int.class, null, "setBatchSize");
+        super(DeleteBatchModel.class, "!DeleteBatch", factory);
     }
 
-    public Object newInstance(Node node) {
+    @Override
+    protected DeleteBatchModel createModelInstance() {
         return factory.newDeleteBatchModel();
+    }
+
+    @Override
+    protected void substituteAdditionalProperties() {
+        substituteProperty("batch-size", int.class, null, "setBatchSize");
     }
 }

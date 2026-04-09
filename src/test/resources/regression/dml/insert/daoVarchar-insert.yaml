@@ -1,0 +1,12 @@
+packageName: com.example.emsql
+className: DaoVarcharInsert
+declare:
+  id: int
+  vcNull: VarChar?
+  vcNotNull: VarChar
+methods:
+  - methodName: insert
+    perform: !Insert
+      execSql: |
+        insert into t_varchar (vc_null, vc_not_null)
+        values (:vcNull, :vcNotNull)

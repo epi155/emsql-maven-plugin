@@ -1,0 +1,75 @@
+/*
+ * Code Generated at 2026-04-09T12:05:47.145978Z
+ * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
+ */
+package com.example.emsql;
+
+import io.github.epi155.emsql.runtime.ESupplier;
+import io.github.epi155.emsql.runtime.EmSQL;
+import io.github.epi155.emsql.runtime.SqlArg;
+import io.github.epi155.emsql.runtime.SqlTrace;
+import java.sql.*;
+
+public class DaoIntInsert {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DaoIntInsert.class);
+    private DaoIntInsert() {}
+
+    private static final String Q_0001 = "INSERT INTO t_int ( int_null, int_not_null ) VALUES ( ?, ? )";
+    /**
+     * Template SqlInsert
+     * <pre>
+     * insert into t_int (int_null, int_not_null)
+     * values (:intNull, :intNotNull)
+     * </pre>
+     *
+     * @param c connection
+     * @param intNull :intNull (parameter #1)
+     * @param intNotNull :intNotNull (parameter #2)
+     * @throws SQLException SQL error
+     */
+    public static int insert(
+            final Connection c,
+            final Integer intNull,
+            final int intNotNull)
+            throws SQLException {
+        if (log.isDebugEnabled()) {
+            SqlTrace.showQuery(Q_0001, new ESupplier<SqlArg[]>() {
+                @Override
+                public SqlArg[] get() {
+                    return new SqlArg[]{
+                        new SqlArg("intNull", "Integer", intNull),
+                        new SqlArg("intNotNull", "int", intNotNull)
+                    };
+                }
+            });
+        }
+        try (PreparedStatement ps = c.prepareStatement(Q_0001)) {
+            int ki=0;
+            EmSQL.setInt(ps, ++ki, intNull);
+            ps.setInt(++ki, intNotNull);
+            if (log.isDebugEnabled()) {
+                SqlTrace.showQuery(Q_0001, new ESupplier<SqlArg[]>() {
+                    @Override
+                    public SqlArg[] get() {
+                        return new SqlArg[]{
+                            new SqlArg("intNull", "Integer", intNull),
+                            new SqlArg("intNotNull", "int", intNotNull)
+                        };
+                    }
+                });
+            }
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            SqlTrace.showCause(e, Q_0001, new ESupplier<SqlArg[]>() {
+                @Override
+                public SqlArg[] get() {
+                    return new SqlArg[]{
+                        new SqlArg("intNull", "Integer", intNull),
+                        new SqlArg("intNotNull", "int", intNotNull)
+                    };
+                }
+            });
+            throw e;
+        }
+    }
+}

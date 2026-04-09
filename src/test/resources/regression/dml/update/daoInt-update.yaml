@@ -1,0 +1,11 @@
+packageName: com.example.emsql
+className: DaoIntUpdate
+declare:
+  id: int
+  intNull: Int?
+  intNotNull: Int
+methods:
+  - methodName: update
+    perform: !Update
+      execSql: |
+        update t_int set int_null = :intNull, int_not_null = :intNotNull where id = :id

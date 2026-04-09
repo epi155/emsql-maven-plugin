@@ -2,20 +2,16 @@ package io.github.epi155.emsql.plugin.td.dpl;
 
 import io.github.epi155.emsql.api.CodeFactory;
 import io.github.epi155.emsql.api.CommandModel;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.nodes.Node;
+import io.github.epi155.emsql.plugin.td.TdAbstract;
 
-public class TdCommand extends TypeDescription {
-    private final CodeFactory factory;
+public class TdCommand extends TdAbstract<CommandModel> {
 
     public TdCommand(CodeFactory factory) {
-        super(CommandModel.class, "!Command");
-        this.factory = factory;
-        substituteProperty("exec-sql", String.class, null, "setExecSql");
+        super(CommandModel.class, "!Command", factory);
     }
 
     @Override
-    public Object newInstance(Node node) {
+    protected CommandModel createModelInstance() {
         return factory.newCommandModel();
     }
 }

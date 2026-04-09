@@ -5,7 +5,6 @@ import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dml.ApiDelete;
 import io.github.epi155.emsql.commons.dml.DelegateDelete;
-import io.github.epi155.emsql.spring.SpringBatchAction;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;

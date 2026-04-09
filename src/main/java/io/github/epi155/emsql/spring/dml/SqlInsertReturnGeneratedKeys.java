@@ -70,6 +70,8 @@ public class SqlInsertReturnGeneratedKeys extends SpringAction implements ApiDoc
         declareInput(ipw, jdbc);
         declareOutput(ipw);
         ipw.more();
+        cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
+        ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
         debugAction(ipw, kPrg, jdbc);
         ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s, Statement.RETURN_GENERATED_KEYS)) {%n", kPrg);
         ipw.more();

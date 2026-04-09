@@ -1,4 +1,4 @@
-package io.github.epi155.esql.test;
+package io.github.epi155.emsql.test;
 
 import io.github.epi155.emsql.plugin.SqlMojo;
 import lombok.extern.slf4j.Slf4j;
@@ -8,22 +8,21 @@ import org.junit.jupiter.api.Test;
 
 @MojoTest
 @Slf4j
-class TestJ8 {
+public class TestJ7 {
 
     @Test
-    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8/pom.xml")
-    void testJ8Pojo(SqlMojo mojo) throws Exception {
-        log.info("Testing java8 pojo ...");
+    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j7/pom.xml")
+    void testJ7Pojo(SqlMojo mojo) throws Exception {
+        log.info("Testing java7 pojo ...");
         mojo.execute();
         // qui puoi verificare il comportamento, ad esempio con log capturer
     }
 
     @Test
-    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8s/pom.xml")
-    void testJ8Spring(SqlMojo mojo) throws Exception {
-        log.info("Testing java8 spring ...");
+    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j7s/pom.xml")
+    void testJ7Spring(SqlMojo mojo) throws Exception {
+        log.info("Testing java7 spring ...");
         mojo.execute();
         // qui puoi verificare il comportamento, ad esempio con log capturer
     }
-
 }

@@ -2,21 +2,21 @@ package io.github.epi155.emsql.plugin.td.dml;
 
 import io.github.epi155.emsql.api.CodeFactory;
 import io.github.epi155.emsql.api.UpdateBatchModel;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.nodes.Node;
+import io.github.epi155.emsql.plugin.td.TdAbstract;
 
-public class TdUpdateBatch extends TypeDescription {
-    private final CodeFactory factory;
+public class TdUpdateBatch extends TdAbstract<UpdateBatchModel> {
 
     public TdUpdateBatch(CodeFactory factory) {
-        super(UpdateBatchModel.class, "!UpdateBatch");
-        this.factory = factory;
-
-        substituteProperty("exec-sql", String.class, null, "setExecSql");
-        substituteProperty("batch-size", int.class, null, "setBatchSize");
+        super(UpdateBatchModel.class, "!UpdateBatch", factory);
     }
 
-    public Object newInstance(Node node) {
+    @Override
+    protected UpdateBatchModel createModelInstance() {
         return factory.newUpdateBatchModel();
+    }
+
+    @Override
+    protected void substituteAdditionalProperties() {
+        substituteProperty("batch-size", int.class, null, "setBatchSize");
     }
 }
