@@ -131,7 +131,7 @@
         <dependency>
             <groupId>io.github.epi155</groupId>
             <artifactId>emsql-runtime</artifactId>
-            <version>${version}</version>
+            <version>1.1-A3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
