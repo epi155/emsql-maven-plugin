@@ -5,6 +5,7 @@ import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 
+import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Contexts.mc;
 
 public class DelegateSelectSignature {
@@ -22,7 +23,8 @@ public class DelegateSelectSignature {
         api.docOutput(ipw, jdbc.getOMap());
         api.docEnd(ipw);
 
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         ipw.printf("public static ");
-        api.declareGenerics(ipw, cName, jdbc.getTKeys());
+        api.declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
     }
 }

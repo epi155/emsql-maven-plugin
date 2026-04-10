@@ -100,9 +100,10 @@ public class SqlCursorForSelectDyn extends PojoAction
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
 
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         // class definition
         ipw.printf("public static class %sBuilder", cName);
-        declareGenerics(ipw, cName, jdbc.getTKeys());
+        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
 
         ipw.putf("{%n");
         ipw.more();

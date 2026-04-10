@@ -21,7 +21,7 @@ public abstract class PojoBatchAction extends PojoAction {
             int batchSize,
             String kPrg) {
         ipw.printf("public static class %s", name);
-        declareGenerics(ipw, name, jdbc.getTKeys());
+        declareGenerics(ipw, name, jdbc.getTKeys(), null);
         ipw.putf(" extends %s", eSqlObject);
         plainGenericsNew(ipw, jdbc);
         ipw.putf("{%n");

@@ -23,9 +23,10 @@ public class DelegateWrite {
         api.docEnd(ipw);
 
         cc.add("org.springframework.transaction.annotation.Transactional");
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         ipw.printf("@Transactional%n");
         ipw.printf("public ");
-        api.declareGenerics(ipw, cName, jdbc.getTKeys());
+        api.declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
 
         if (mc.oSize() == 0) {
             ipw.putf("void %s(", name);

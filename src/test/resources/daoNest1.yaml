@@ -1,0 +1,46 @@
+packageName: com.example.emsql
+className: DaoNest
+declare:
+  idPraticaApp: bigint
+  idPraticaCdm: int?
+  abi: int?
+  ibrKey: bigint?
+  idFile: int?
+  cdPosizione: varchar
+  tpPosizione: varchar
+  stato: varchar
+  errCount: int
+  label: varchar
+  categoria: varchar
+  idPraticaCdmOrig: int?
+  tsVers: localdatetime
+  p01.abi: int?
+  p01.ibrKey: long?
+  p01.idFile: int?
+  p01.cdPosizione: varchar
+  p01.tpPosizione: varchar
+  p01.stato: varchar
+  p01.errCount: int
+  p01.label: char
+  p01.categoria: char?
+  p01.idPraticaCdmOrig: long?
+  p02.ibrPrg: int
+  p01.idPraticaApp: long
+  p02.idFunzioneApp: long
+  p02.stato: varchar
+
+methods:
+  - methodName: selectPratica
+    perform: !SelectList
+      execSql: |
+        select
+          a.stato_pratica,
+          b.stato,
+          b.ibr_prg
+        into
+          :p01.stato,
+          :p02.stato,
+          :p02.ibrPrg
+        from p01 a
+        join p02 b on a.id_pratica_app = b.id_pratica_app
+        where a.id_pratica_cdm = :idPraticaCdm

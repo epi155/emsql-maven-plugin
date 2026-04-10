@@ -239,6 +239,7 @@ public abstract class BasicFactory implements CodeFactory {
                 cc.incMethods();
             }
         }
+        cc.writeResponseInterface(pw);
         cc.flush(pw);
         pw.ends(); // close class
 

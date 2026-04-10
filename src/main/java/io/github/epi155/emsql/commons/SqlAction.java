@@ -54,32 +54,6 @@ public abstract class SqlAction {
         ipw.printf(" */%n");
     }
 
-    public static void docInterfaceRS(PrintModel ipw, String methodName, Collection<SqlParam> map) {
-        ipw.printf("/**%n");
-        ipw.printf(" * Example of DTO class using interface (setter)%n");
-        ipw.printf(" *<pre>%n");
-        ipw.printf(" *{@literal @}Data%n");
-        ipw.printf(" * public class Dto%1$s implements %1$s%2$s {%n", methodName, RESPONSE);
-        Set<String> chld = new HashSet<>();
-        map.forEach(k -> {
-            String name = k.getName();
-            int kDot = name.indexOf('.');
-            if (kDot < 0) {
-                ipw.printf(" *     private %s %s;%n", k.getType().getPrimitive(), name);
-            } else {
-                String ante = name.substring(0, kDot);
-                String cName = capitalize(ante);
-                if (chld.add(cName)) {
-                    String claz = cName + RESPONSE;
-                    ipw.printf(" *     private Dto%s %s; // {@link #%s}%n", cName, ante, claz);
-                }
-            }
-        });
-        ipw.printf(" * }%n");
-        ipw.printf(" *</pre>%n");
-        ipw.printf(" */%n");
-    }
-
     public static Map<String, Map<String, SqlDataType>> throughGetter(PrintModel ipw, Map<String, SqlDataType> map) {
         ipw.more();
         Map<String, Map<String, SqlDataType>> next = new LinkedHashMap<>();
@@ -126,7 +100,7 @@ public abstract class SqlAction {
 
         String cName = capitalize(mc.getName());
         writeRequest(ipw, cName, jdbc.getNMap());
-        writeResponse(ipw, cName, jdbc.getOMap().values());
+//        writeResponse(ipw, cName, jdbc.getOMap().values());
         jdbc.flush();
 
         if (mc.isInputReflect() || mc.isOutputReflect()) {
@@ -481,78 +455,78 @@ public abstract class SqlAction {
         });
     }
 
-    public void writeResponse(PrintModel ipw, String cMethodName, @NotNull Collection<SqlParam> sp) throws InvalidQueryException {
-        if (sp.size() <= 1) return;
-        if (mc.isOutputReflect()) return;
-        if (mc.isOutputDelegate()) {
-            List<String> badNames = sp.stream().map(SqlParam::getName).filter(it -> it.contains(".")).collect(Collectors.toList());
-            if (!badNames.isEmpty()) {
-                throw new InvalidQueryException("Invalid names for delegate fields: " + String.join(",", badNames));
-            }
-        }
-        writeResponseInterface(ipw, cMethodName, sp);
-    }
+//    public void writeResponse(PrintModel ipw, String cMethodName, @NotNull Collection<SqlParam> sp) throws InvalidQueryException {
+//        if (sp.size() <= 1) return;
+//        if (mc.isOutputReflect()) return;
+//        if (mc.isOutputDelegate()) {
+//            List<String> badNames = sp.stream().map(SqlParam::getName).filter(it -> it.contains(".")).collect(Collectors.toList());
+//            if (!badNames.isEmpty()) {
+//                throw new InvalidQueryException("Invalid names for delegate fields: " + String.join(",", badNames));
+//            }
+//        }
+//        writeResponseInterface(ipw, cMethodName, sp);
+//    }
 
-    private void writeResponseInterface(PrintModel ipw, String cMethodName, Collection<SqlParam> sp) {
-        if (mc.isOutputDelegate()) {
-            ipw.printf("public static class Delegate%s" + RESPONSE + " {%n", cMethodName);
-            ipw.more();
-            sp.forEach(p -> {
-                String claz = p.getType().getWrapper();
-                ipw.printf("protected %s<%s> %s;%n", cc.consumer(), claz, p.getName());
-            });
-            ipw.printf("public static Builder%s" + RESPONSE + " builder() { return new Builder%1$s" + RESPONSE + "(); }%n", cMethodName);
-            ipw.printf("public static class Builder%s" + RESPONSE + " {%n", cMethodName);
-            ipw.more();
-            ipw.printf("private Builder%s" + RESPONSE + "() {}%n", cMethodName);
-            sp.forEach(p -> {
-                String claz = p.getType().getWrapper();
-                ipw.printf("private %s<%s> %s;%n", cc.consumer(), claz, p.getName());
-            });
-            ipw.printf("public Delegate%s" + RESPONSE + " build() {%n", cMethodName);
-            ipw.more();
-            ipw.printf("Delegate%s" + RESPONSE + " result = new Delegate%1$s" + RESPONSE + "();%n", cMethodName);
-            cc.delegateResponseFields(ipw, sp);
-            ipw.printf("return  result;%n");
-            ipw.ends();
-            sp.forEach(p -> ipw.printf("public Builder%s" + RESPONSE + " %s(%s<%s> %2$s) { this.%2$s = %2$s; return this; }%n",
-                    cMethodName, p.getName(), cc.consumer(), p.getType().getWrapper()));
-            ipw.ends(); // Builder
-            ipw.ends(); // Delegate
-        } else {
-            String dup = checkDoubleInterface(cMethodName+RESPONSE, sp);
-            docInterfaceRS(ipw, cMethodName, sp);
-            if (dup==null) {
-                ipw.printf("public interface %s" + RESPONSE + " {%n", cMethodName);
-                ipw.more();
-                Map<String, List<SqlParam>> next = new LinkedHashMap<>();
-                for (val p : sp) {
-                    String name = p.getName();
-                    int kDot = name.indexOf('.');
-                    if (kDot < 0) {
-                        String cName = capitalize(p.getName());
-                        String claz = p.getType().getPrimitive();
-                        ipw.printf("void set%s(%s s);%n", cName, claz);
-                    } else {
-                        String ante = name.substring(0, kDot);
-                        String post = name.substring(kDot + 1);
-                        List<SqlParam> flds = next.computeIfAbsent(ante, k -> new ArrayList<>());
-                        flds.add(new SqlParam(post, p.getType()));
-                    }
-                }
-                next.keySet().forEach(name -> {
-                    String cName = capitalize(name);
-                    String claz = cName + RESPONSE;
-                    ipw.printf("%s get%s();%n", claz, cName);
-                });
-                next.forEach((n, np) -> writeResponseInterface(ipw, capitalize(n), np));
-                ipw.ends();
-            } else {
-                ipw.printf("public interface %s" + RESPONSE + " extends %s {}%n", cMethodName, dup);
-            }
-        }
-//        ipw.ends();
-    }
+//    private void writeResponseInterface(PrintModel ipw, String cMethodName, Collection<SqlParam> sp) {
+//        if (mc.isOutputDelegate()) {
+//            ipw.printf("public static class Delegate%s" + RESPONSE + " {%n", cMethodName);
+//            ipw.more();
+//            sp.forEach(p -> {
+//                String claz = p.getType().getWrapper();
+//                ipw.printf("protected %s<%s> %s;%n", cc.consumer(), claz, p.getName());
+//            });
+//            ipw.printf("public static Builder%s" + RESPONSE + " builder() { return new Builder%1$s" + RESPONSE + "(); }%n", cMethodName);
+//            ipw.printf("public static class Builder%s" + RESPONSE + " {%n", cMethodName);
+//            ipw.more();
+//            ipw.printf("private Builder%s" + RESPONSE + "() {}%n", cMethodName);
+//            sp.forEach(p -> {
+//                String claz = p.getType().getWrapper();
+//                ipw.printf("private %s<%s> %s;%n", cc.consumer(), claz, p.getName());
+//            });
+//            ipw.printf("public Delegate%s" + RESPONSE + " build() {%n", cMethodName);
+//            ipw.more();
+//            ipw.printf("Delegate%s" + RESPONSE + " result = new Delegate%1$s" + RESPONSE + "();%n", cMethodName);
+//            cc.delegateResponseFields(ipw, sp);
+//            ipw.printf("return  result;%n");
+//            ipw.ends();
+//            sp.forEach(p -> ipw.printf("public Builder%s" + RESPONSE + " %s(%s<%s> %2$s) { this.%2$s = %2$s; return this; }%n",
+//                    cMethodName, p.getName(), cc.consumer(), p.getType().getWrapper()));
+//            ipw.ends(); // Builder
+//            ipw.ends(); // Delegate
+//        } else {
+//            //String dup = checkDoubleInterface(cMethodName+RESPONSE, sp);
+//            docInterfaceRS(ipw, cMethodName, sp);
+//            if (dup==null) {
+//                ipw.printf("public interface %s" + RESPONSE + " {%n", cMethodName);
+//                ipw.more();
+//                Map<String, List<SqlParam>> next = new LinkedHashMap<>();
+//                for (val p : sp) {
+//                    String name = p.getName();
+//                    int kDot = name.indexOf('.');
+//                    if (kDot < 0) {
+//                        String cName = capitalize(p.getName());
+//                        String claz = p.getType().getPrimitive();
+//                        ipw.printf("void set%s(%s s);%n", cName, claz);
+//                    } else {
+//                        String ante = name.substring(0, kDot);
+//                        String post = name.substring(kDot + 1);
+//                        List<SqlParam> flds = next.computeIfAbsent(ante, k -> new ArrayList<>());
+//                        flds.add(new SqlParam(post, p.getType()));
+//                    }
+//                }
+//                next.keySet().forEach(name -> {
+//                    String cName = capitalize(name);
+//                    String claz = cName + RESPONSE;
+//                    ipw.printf("%s get%s();%n", claz, cName);
+//                });
+//                next.forEach((n, np) -> writeResponseInterface(ipw, capitalize(n), np));
+//                ipw.ends();
+//            } else {
+//                ipw.printf("public interface %s" + RESPONSE + " extends %s {}%n", cMethodName, dup);
+//            }
+//        }
+////        ipw.ends();
+//    }
 
     public void docInput(PrintModel ipw, @NotNull JdbcStatement jdbc) {
         int nSize = mc.nSize();
@@ -586,7 +560,7 @@ public abstract class SqlAction {
         ipw.printf(" */%n");
     }
 
-    public void declareGenerics(PrintModel ipw, String cName, List<String> inFlds) {
+    public void declareGenerics(PrintModel ipw, String cName, List<String> inFlds, String oName) {
         if (mc.oSize() <= 1) {
             if (mc.nSize() > IMAX) {
                 if (mc.isInputReflect()) {
@@ -611,9 +585,9 @@ public abstract class SqlAction {
                 if (mc.isOutputReflect()) {
                     ipw.putf("<O");
                 } else if (mc.isOutputDelegate()) {
-                    ipw.putf("<DO extends Delegate%s" + RESPONSE, cName);
+                    ipw.putf("<DO extends Delegate%s", oName);
                 } else {
-                    ipw.putf("<O extends %s" + RESPONSE, cName);
+                    ipw.putf("<O extends %s", oName);
                 }
                 genericIn(ipw, inFlds, ",", null);
                 ipw.putf("> ");
@@ -862,28 +836,6 @@ public abstract class SqlAction {
         public String nl() {
             return --count > 0 ? "," : "";
         }
-    }
-
-    private String checkDoubleInterface(String cMethodName, Collection<SqlParam> sp) {
-        Map<String, String> dto = cc.getDtoMap();
-        List<SqlParam> list = new ArrayList<>(sp);  // to list
-        list.sort(Comparator.comparing(SqlParam::getName)); // sort by name
-        String arguments = list.stream().map(it -> it.getName() + ": " + it.getType()).collect(Collectors.joining(", "));
-        String dup = dto.put(arguments, cMethodName);
-        if (dup != null) {
-            log.warn("** Duplicate Interface: {}(new) and {}(old) are equals", cMethodName, dup);
-        }
-//        String dup = dto.get(arguments);
-//        if (dup==null) {
-//            dto.put(arguments, cMethodName);
-//        } else {
-//            log.warn("** Duplicate Interface: {} and {} are equals", dup, cMethodName);
-//            if (dup.equals(cMethodName)) {
-//                log.error("**** Interface collision {}", cMethodName);
-//                return null;
-//            }
-//        }
-        return dup;
     }
 
 }

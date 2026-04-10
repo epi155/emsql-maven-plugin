@@ -1,9 +1,6 @@
 package io.github.epi155.emsql.commons;
 
-import io.github.epi155.emsql.api.PluginContext;
-import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
-import io.github.epi155.emsql.api.TypeModel;
+import io.github.epi155.emsql.api.*;
 import lombok.Getter;
 
 import java.io.PrintWriter;
@@ -11,6 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.github.epi155.emsql.commons.Contexts.REQUEST;
+import static io.github.epi155.emsql.commons.Contexts.RESPONSE;
 import static io.github.epi155.emsql.commons.SqlAction.docInterfacePS;
 import static io.github.epi155.emsql.commons.Tools.capitalize;
 import static io.github.epi155.emsql.pojo.PojoAction.throughGetter;
@@ -30,8 +28,8 @@ public abstract class ClassContextImpl implements ClassContext {
     private final boolean java7;
     private final Map<String, TypeModel> inFields = new LinkedHashMap<>();
     private final PluginContext pc;
-    @Getter
     private final Map<String, String> dtoMap = new HashMap<>();
+    private final Map<String,InterfaceConstruct> iOuMap = new HashMap<>();
 
     protected ClassContextImpl(PluginContext pc, Map<String, TypeModel> declare) {
         this.pc = pc;
@@ -105,15 +103,6 @@ public abstract class ClassContextImpl implements ClassContext {
         }
     }
 
-    public void delegateResponseFields(PrintModel ipw, Collection<SqlParam> sp) {
-        if (java7) {
-            importSet.add(RUNTIME_EMSQL);
-            sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? EmSQL.<%s>getDummyConsumer() : %1$s;%n", p.getName(), p.getType().getWrapper()));
-        } else {
-            sp.forEach(p -> ipw.printf("result.%s = %1$s==null ? it -> {} : %1$s;%n", p.getName()));
-        }
-    }
-
     public void delegateRequestFields(PrintModel ipw, Map<String, SqlDataType> sp) {
         if (java7) {
             importSet.add(RUNTIME_EMSQL);
@@ -134,11 +123,10 @@ public abstract class ClassContextImpl implements ClassContext {
             importSet.add("java.util.function.Consumer");
             ipw.printf("        final Consumer<SqlStmtSetter> u");
         }
-
     }
 
-    public void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters) {
-        pc.validate(query, claz, parameters);
+    public void validate(String query, Class<? extends SqlAction> clazz, Map<Integer, SqlParam> parameters) {
+        pc.validate(query, clazz, parameters);
     }
 
     public void put(String key, TypeModel kind) {
@@ -164,4 +152,51 @@ public abstract class ClassContextImpl implements ClassContext {
     public void incMethods() {
         pc.incMethods();
     }
+
+    /**
+     *
+     * @param name       method name
+     * @param values     output fields
+     * @param isReflect     output fields by reflect (no interface)
+     * @param isDelegate    output fields delegate (setter reference)
+     * @return output interface name
+     */
+    public String outPrepare(String name, Collection<SqlParam> values, boolean isReflect, boolean isDelegate) {
+        if (isReflect) {
+            // do nothing
+            return null;
+        }
+        InterfaceConstruct ic = new InterfaceConstruct(values);
+        String prefix = isDelegate ? "S::" : "I::";
+
+        String cName = capitalize(name)+RESPONSE;
+        String arguments = prefix + ic.signature();
+
+        // 1. does it already exist?
+        String ifName = dtoMap.get(arguments);
+        if (ifName==null) {
+            // it's new
+            dtoMap.put(arguments, cName);
+            iOuMap.put(cName, ic);
+            return cName;
+        } else {
+            return ifName;
+        }
+    }
+    public void writeResponseInterface(PrintModel ipw) throws InvalidQueryException {
+        for(Map.Entry<String, String> ea: dtoMap.entrySet()) {
+            String args = ea.getKey();
+            String iName = ea.getValue();
+            InterfaceConstruct param = iOuMap.get(iName);
+
+            boolean isDelegate = args.startsWith("S::");
+            if (isDelegate) {
+                param.writeDelegate(ipw, iName, java7);
+            } else {
+                param.writeStandard(ipw, iName);
+            }
+
+        }
+    }
+
 }

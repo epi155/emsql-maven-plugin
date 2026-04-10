@@ -6,10 +6,14 @@ import io.github.epi155.emsql.commons.SqlAction;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
+import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
+
 public abstract class PojoAction extends SqlAction {
     public void declareNewInstance(@NotNull PrintModel ipw, String eSqlObject, @NotNull JdbcStatement jdbc, String cName) {
+        String oName = cc.outPrepare(cName, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         ipw.printf("public static ");
-        declareGenerics(ipw, cName, jdbc.getTKeys());
+        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
         ipw.putf("%s", eSqlObject);
         plainGenericsNew(ipw, jdbc);
         ipw.putf(" new%s(%n", cName);

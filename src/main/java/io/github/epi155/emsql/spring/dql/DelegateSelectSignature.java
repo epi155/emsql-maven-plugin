@@ -24,8 +24,9 @@ public class DelegateSelectSignature {
         api.docEnd(ipw);
 
         cc.add("org.springframework.transaction.annotation.Transactional");
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         ipw.printf("@Transactional(readOnly=true)%n");
         ipw.printf("public ");
-        api.declareGenerics(ipw, cName, jdbc.getTKeys());
+        api.declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
     }
 }

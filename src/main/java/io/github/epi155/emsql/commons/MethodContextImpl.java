@@ -25,11 +25,11 @@ public class MethodContextImpl implements MethodContext {
         this.name = sqlMethod.getMethodName();
         val perform = sqlMethod.getPerform();
         val input = perform.getInput();
-        val outout = perform.getOutput();
+        val output = perform.getOutput();
         this.inputReflect = input != null && input.isReflect();
         this.inputDelegate = input != null && input.isDelegate();
-        this.outputReflect = outout != null && outout.isReflect();
-        this.outputDelegate = outout != null && outout.isDelegate();
+        this.outputReflect = output != null && output.isReflect();
+        this.outputDelegate = output != null && output.isDelegate();
     }
 
     public MethodContextImpl oSize(Integer size) {

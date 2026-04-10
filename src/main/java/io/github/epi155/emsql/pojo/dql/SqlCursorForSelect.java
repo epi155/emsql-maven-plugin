@@ -65,8 +65,9 @@ public class SqlCursorForSelect extends PojoAction
         docEnd(ipw);
         String cName = Tools.capitalize(name);
 
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         ipw.printf("public static ");
-        declareGenerics(ipw, cName, jdbc.getTKeys());
+        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getWrapper();
             cc.add("io.github.epi155.emsql.runtime.SqlCursor");
@@ -100,8 +101,9 @@ public class SqlCursorForSelect extends PojoAction
         docEnd(ipw);
         String cName = Tools.capitalize(name);
 
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         ipw.printf("public static ");
-        declareGenerics(ipw, cName, jdbc.getTKeys());
+        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
 
         ipw.putf("void loop%1$s(%n", cName);
         ipw.printf("        final Connection c");

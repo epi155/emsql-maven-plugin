@@ -16,5 +16,5 @@ public interface ApiDocSignature {
 
     void docEnd(PrintModel ipw);
 
-    void declareGenerics(PrintModel ipw, String cName, List<String> in);
+    void declareGenerics(PrintModel ipw, String cName, List<String> in, String oName);
 }

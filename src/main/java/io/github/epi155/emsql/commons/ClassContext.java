@@ -1,5 +1,6 @@
 package io.github.epi155.emsql.commons;
 
+import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.api.TypeModel;
@@ -37,13 +38,14 @@ public interface ClassContext {
 
     void delegateRequestFields(PrintModel ipw, Map<String, SqlDataType> sp);
 
-    void delegateResponseFields(PrintModel ipw, Collection<SqlParam> sp);
-
     String optional();
 
     void newLine(PrintModel ipw, boolean tune);
 
     void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters);
 
-    Map<String, String> getDtoMap();
+    String outPrepare(String name, Collection<SqlParam> values, boolean isReflect, boolean isDelegate);
+
+    void writeResponseInterface(PrintModel pw)  throws InvalidQueryException;
+//    Map<String, String> getDtoMap();
 }

@@ -68,8 +68,9 @@ public class SqlCursorForSelect extends SpringAction
         cc.add("org.springframework.transaction.annotation.Transactional");
         cc.add("org.springframework.transaction.annotation.Propagation");
         ipw.printf("@Transactional(readOnly=true, propagation=Propagation.MANDATORY)%n");
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         ipw.printf("public ");
-        declareGenerics(ipw, cName, jdbc.getTKeys());
+        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getWrapper();
             cc.add("io.github.epi155.emsql.runtime.SqlCursor");
@@ -106,9 +107,10 @@ public class SqlCursorForSelect extends SpringAction
         String cName = Tools.capitalize(name);
 
         cc.add("org.springframework.transaction.annotation.Transactional");
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         ipw.printf("@Transactional(readOnly=true)%n");
         ipw.printf("public ");
-        declareGenerics(ipw, cName, jdbc.getTKeys());
+        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
 
         ipw.putf("void loop%1$s(%n", cName);
         ipw.commaReset();

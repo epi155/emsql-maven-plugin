@@ -26,7 +26,7 @@ public class DelegateWriteMethod {
         cc.add("org.springframework.transaction.annotation.Transactional");
         ipw.printf("@Transactional%n");
         ipw.printf("public ");
-        api.declareGenerics(ipw, cName, jdbc.getTKeys());
+        api.declareGenerics(ipw, cName, jdbc.getTKeys(), null);
         ipw.putf("int %s(", name);
         ipw.commaReset();
 

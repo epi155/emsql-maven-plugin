@@ -17,6 +17,13 @@ class TestJ8 {
         mojo.execute();
         // qui puoi verificare il comportamento, ad esempio con log capturer
     }
+    @Test
+    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8/pom-nest.xml")
+    void testNestJ8Pojo(SqlMojo mojo) throws Exception {
+        log.info("Testing nest java8 pojo ...");
+        mojo.execute();
+        // qui puoi verificare il comportamento, ad esempio con log capturer
+    }
 
     @Test
     @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8s/pom.xml")

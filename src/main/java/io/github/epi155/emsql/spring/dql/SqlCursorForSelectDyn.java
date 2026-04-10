@@ -85,8 +85,9 @@ public class SqlCursorForSelectDyn extends SpringAction
         docOutput(ipw, jdbc.getOMap());
         docEnd(ipw);
 
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         ipw.printf("public ");
-        declareGenerics(ipw, cName, jdbc.getTKeys());
+        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
     }
 
     private void returnBuilder(PrintModel ipw, JdbcStatement jdbc, String cName) {
@@ -171,9 +172,10 @@ public class SqlCursorForSelectDyn extends SpringAction
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
 
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
         // class definition
         ipw.printf("public class %sBuilder", cName);
-        declareGenerics(ipw, cName, jdbc.getTKeys());
+        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
 
         ipw.putf("{%n");
         ipw.more();
