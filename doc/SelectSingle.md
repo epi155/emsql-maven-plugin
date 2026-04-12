@@ -28,7 +28,6 @@ methods:
       output:             # optional
         reflect: false    # optional, default false
         delegate: false   # optional, default false
-        altName: IUser    # optional custom output interface name
       timeout: 5          # (seconds) optional, default null (system default)
       execSql: |
         select

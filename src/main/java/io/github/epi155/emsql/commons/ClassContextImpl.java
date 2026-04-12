@@ -2,6 +2,7 @@ package io.github.epi155.emsql.commons;
 
 import io.github.epi155.emsql.api.*;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -13,6 +14,7 @@ import static io.github.epi155.emsql.commons.SqlAction.docInterfacePS;
 import static io.github.epi155.emsql.commons.Tools.capitalize;
 import static io.github.epi155.emsql.pojo.PojoAction.throughGetter;
 
+@Slf4j
 public abstract class ClassContextImpl implements ClassContext {
     public static final String RUNTIME_EMSQL = "io.github.epi155.emsql.runtime.EmSQL";
     public static final String RUNTIME_J8TIME = "io.github.epi155.emsql.runtime.J8Time";
@@ -180,6 +182,7 @@ public abstract class ClassContextImpl implements ClassContext {
             iOuMap.put(cName, ic);
             return cName;
         } else {
+            log.info("Interface with the same existing signature, use {} instead of {}\n", ifName, cName);
             return ifName;
         }
     }

@@ -192,6 +192,16 @@ public class SqlMojo extends AbstractMojo {
 
         for (String module : modules) {
             log.info("Loading API from {}", module);
+            
+            // Path traversal protection
+            if (module.contains("..") || 
+                module.startsWith("/") || 
+                module.contains(File.separator + File.separator) ||
+                (File.separatorChar != '/' && module.contains("\\..\\"))) {
+                log.warn("Invalid module name (path traversal attempt): {}", module);
+                continue; // Skip this module
+            }
+            
             File apiFile = new File(configDirectory, module);
             if (!apiFile.exists()) {
                 log.warn("Setting {} does not exist, ignored.", module);
