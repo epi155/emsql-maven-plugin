@@ -18,11 +18,6 @@ public final class URLStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public java.util.Collection<String> requires() {
         return Set.of("java.net.URL");
     }

@@ -52,7 +52,7 @@ public class SqlCommand extends SpringAction implements CommandModel {
     @Override
     public void declareNextClass(
             PrintModel ipw,
-            String name,
+            String cName,
             String eSqlObject,
             JdbcStatement jdbc,
             int batchSize,

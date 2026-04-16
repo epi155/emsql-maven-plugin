@@ -39,7 +39,7 @@ public class SqlCallBatch extends SpringBatchAction
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         int nSize = mc.nSize();
         if (isUnboxRequest(nSize)) {
             cc.add("io.github.epi155.emsql.runtime.SqlCallBatch" + nSize);
@@ -50,7 +50,8 @@ public class SqlCallBatch extends SpringBatchAction
         docBegin(ipw);
         docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, cName);
+        String iName = cc.inPrepare(cName, jdbc.getIMap().values(), mc);
+        declareNewInstance(ipw, cName, iName);
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");

@@ -16,11 +16,6 @@ public final class NumBoolStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public String getterPrefix() {
         return "is";
     }

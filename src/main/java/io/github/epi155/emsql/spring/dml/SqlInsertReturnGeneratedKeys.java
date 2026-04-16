@@ -57,7 +57,7 @@ public class SqlInsertReturnGeneratedKeys extends SpringAction implements ApiDoc
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 1) {

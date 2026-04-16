@@ -30,7 +30,7 @@ public class SqlDelete extends PojoAction implements ApiWriteMethod, ApiDelete, 
         return delegateDelete.proceed(fields, true);
     }
 
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         delegateWriteMethod.proceed(ipw, name, jdbc, kPrg);
     }
 

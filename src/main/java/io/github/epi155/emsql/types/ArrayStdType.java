@@ -16,11 +16,6 @@ public final class ArrayStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public void psSet(PrintModel ipw, String source) {
         ipw.printf("ps.setArray(++ki, %s);%n", source);
     }

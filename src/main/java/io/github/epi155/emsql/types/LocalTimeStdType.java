@@ -19,11 +19,6 @@ public final class LocalTimeStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public java.util.Collection<String> requires() {
         return java.util.Set.of("java.time.LocalTime");
     }

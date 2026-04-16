@@ -24,6 +24,27 @@ class TestJ8 {
         mojo.execute();
         // qui puoi verificare il comportamento, ad esempio con log capturer
     }
+    @Test
+    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8/pom-xsel.xml")
+    void testXSelJ8Pojo(SqlMojo mojo) throws Exception {
+        log.info("Testing xSel java8 pojo ...");
+        mojo.execute();
+        // qui puoi verificare il comportamento, ad esempio con log capturer
+    }
+    @Test
+    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8/pom-force.xml")
+    void testForceJ8Pojo(SqlMojo mojo) throws Exception {
+        log.info("Testing force java8 pojo ...");
+        mojo.execute();
+        // qui puoi verificare il comportamento, ad esempio con log capturer
+    }
+    @Test
+    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8/pom-c-fp.xml")
+    void testFpJ8Pojo(SqlMojo mojo) throws Exception {
+        log.info("Testing FP cursor java8 pojo ...");
+        mojo.execute();
+        // qui puoi verificare il comportamento, ad esempio con log capturer
+    }
 
     @Test
     @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8s/pom.xml")

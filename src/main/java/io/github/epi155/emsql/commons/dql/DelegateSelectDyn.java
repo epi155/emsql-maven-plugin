@@ -169,13 +169,6 @@ public class DelegateSelectDyn {
                 return new ArrayList<>();
             });
 
-//            List<Integer> aLst = args.get(oa);
-//            if (aLst == null) {
-//                reorgName(oa, args);
-//                oa.setSql(qParm.getType());
-//                aLst = new ArrayList<>();
-//                args.put(oa, aLst);
-//            }
             aLst.add(e.getKey());
         }
         return args;
@@ -418,7 +411,6 @@ public class DelegateSelectDyn {
         ipw.printf("co.accept(o);%n");
         ipw.ends();
         ipw.ends(); // end try (ResultSet rs)
-//        ipw.ends(); // end try (PreparedStatement ps)
         api.dumpAction(ipw, kPrg, jdbc);
         ipw.ends(); // end forEach
     }

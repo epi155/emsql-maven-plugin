@@ -215,8 +215,9 @@ public class SqlMojo extends AbstractMojo {
                 /*--------------------------*/
             }
         }
-        log.info("Total classes ...: {}", pc.getNmClasses());
-        log.info("Total methods ...: {}", pc.getNmMethods());
+        log.info("Total classes ......: {}", pc.getNmClasses());
+        log.info("Total methods ......: {}", pc.getNmMethods());
+        log.info("Total interfaces ...: {}", pc.getNmInterfaces());
     }
 
     private void generateApi(MojoContext pc, CodeFactory factory, DaoClassConfig api) throws MojoExecutionException, FileNotFoundException, InvalidQueryException {

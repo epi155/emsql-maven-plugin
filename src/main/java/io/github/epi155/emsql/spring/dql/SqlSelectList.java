@@ -38,7 +38,7 @@ public class SqlSelectList extends SpringAction implements ApiSelectFields, ApiD
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         cc.add("java.util.List");
         cc.add("java.util.ArrayList");
         delegateSelectSignature.signature(ipw, jdbc, name);

@@ -9,7 +9,8 @@ import org.apache.commons.text.StringEscapeUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.github.epi155.emsql.commons.Contexts.*;
+import static io.github.epi155.emsql.commons.Contexts.IMAX;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
 @Getter
 public class JdbcStatement implements JdbcMap {
@@ -68,11 +69,6 @@ public class JdbcStatement implements JdbcMap {
             }
         }
         return in;
-    }
-
-    public void flush() {
-        if (mc.isInputReflect()) return;
-        tKeys.forEach(key -> cc.put(key, nMap.get(key)));
     }
 
     public void writeQuery(String kPrg, PrintModel ipw) {

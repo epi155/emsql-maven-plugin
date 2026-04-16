@@ -3,18 +3,13 @@ package io.github.epi155.emsql.commons;
 import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
-import io.github.epi155.emsql.api.TypeModel;
 
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Map;
 
 public interface ClassContext {
-    void put(String key, TypeModel type);
-
     void incMethods();
-
-    void flush(PrintModel pw);
 
     boolean isDebug();
 
@@ -36,16 +31,17 @@ public interface ClassContext {
 
     String consumer();
 
-    void delegateRequestFields(PrintModel ipw, Map<String, SqlDataType> sp);
-
     String optional();
 
-    void newLine(PrintModel ipw, boolean tune);
+    default void newLine(PrintModel ipw, boolean tune) {
+    }
 
     void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters);
 
-    String outPrepare(String name, Collection<SqlParam> values, boolean isReflect, boolean isDelegate);
+    String inPrepare(String name, Collection<SqlParam> values, InputMask mask) throws InvalidQueryException;
+    String outPrepare(String name, Collection<SqlParam> values, OutputMask mask) throws InvalidQueryException;
 
-    void writeResponseInterface(PrintModel pw)  throws InvalidQueryException;
-//    Map<String, String> getDtoMap();
+    void writeInterfaces(PrintModel pw)  throws InvalidQueryException;
+
+    String deduplicate(String name, InterfaceWriter iw);
 }

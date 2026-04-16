@@ -15,7 +15,7 @@ public interface ApiWriteMethod extends InputAware, WhereInAware, DumpAware {
 
     void docEnd(PrintModel ipw);
 
-    void declareGenerics(PrintModel ipw, String cName, List<String> in, String oName);
+    void declareGenerics(PrintModel ipw, List<String> in, String iName, String oName);
 
     void declareInput(PrintModel ipw, JdbcStatement jdbc);
 

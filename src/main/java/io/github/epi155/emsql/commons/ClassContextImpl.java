@@ -8,11 +8,8 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.github.epi155.emsql.commons.Contexts.REQUEST;
-import static io.github.epi155.emsql.commons.Contexts.RESPONSE;
-import static io.github.epi155.emsql.commons.SqlAction.docInterfacePS;
+import static io.github.epi155.emsql.commons.Contexts.*;
 import static io.github.epi155.emsql.commons.Tools.capitalize;
-import static io.github.epi155.emsql.pojo.PojoAction.throughGetter;
 
 @Slf4j
 public abstract class ClassContextImpl implements ClassContext {
@@ -28,10 +25,9 @@ public abstract class ClassContextImpl implements ClassContext {
     @Getter
     private final Map<String, SqlDataType> fields;
     private final boolean java7;
-    private final Map<String, TypeModel> inFields = new LinkedHashMap<>();
     private final PluginContext pc;
     private final Map<String, String> dtoMap = new HashMap<>();
-    private final Map<String,InterfaceConstruct> iOuMap = new HashMap<>();
+    private final Map<String, InterfaceWriter> ifMap = new HashMap<>();
 
     protected ClassContextImpl(PluginContext pc, Map<String, TypeModel> declare) {
         this.pc = pc;
@@ -105,15 +101,6 @@ public abstract class ClassContextImpl implements ClassContext {
         }
     }
 
-    public void delegateRequestFields(PrintModel ipw, Map<String, SqlDataType> sp) {
-        if (java7) {
-            importSet.add(RUNTIME_EMSQL);
-            sp.forEach((name, type) -> ipw.printf("result.%s = %1$s==null ? EmSQL.<%s>getDummySupplier() : %1$s;%n", name, type.getWrapper()));
-        } else {
-            sp.forEach((name, type) -> ipw.printf("result.%s = %1$s==null ? () -> null : %1$s;%n", name));
-        }
-    }
-
     public void declareTuner(PrintModel ipw) {
         ipw.commaLn();
         importSet.add("io.github.epi155.emsql.runtime.SqlStmtSetter");
@@ -131,26 +118,6 @@ public abstract class ClassContextImpl implements ClassContext {
         pc.validate(query, clazz, parameters);
     }
 
-    public void put(String key, TypeModel kind) {
-        inFields.putIfAbsent(key, kind);
-    }
-
-    public void flush(PrintModel ipw) {
-        inFields.forEach((name, kind) -> {
-            if (kind.columns() > 1) {
-                writeInFieldInterface(ipw, capitalize(name), kind.toMap());
-            }
-        });
-    }
-
-    private void writeInFieldInterface(PrintModel ipw, String hiName, Map<String, SqlDataType> map) {
-        docInterfacePS(ipw, hiName, map);
-        ipw.printf("public interface %s" + REQUEST + " {%n", hiName);
-        Map<String, Map<String, SqlDataType>> next = throughGetter(ipw, map);
-        next.forEach((n, np) -> writeInFieldInterface(ipw, capitalize(n), np));
-        ipw.ends();
-    }
-
     public void incMethods() {
         pc.incMethods();
     }
@@ -159,46 +126,68 @@ public abstract class ClassContextImpl implements ClassContext {
      *
      * @param name       method name
      * @param values     output fields
-     * @param isReflect     output fields by reflect (no interface)
-     * @param isDelegate    output fields delegate (setter reference)
+     * @param mask       output fields mask (reflect/delegate)
      * @return output interface name
      */
-    public String outPrepare(String name, Collection<SqlParam> values, boolean isReflect, boolean isDelegate) {
-        if (isReflect) {
+    public String outPrepare(String name, Collection<SqlParam> values, OutputMask mask) throws InvalidQueryException {
+        Optional<String> oResult = mc.oFind(name);
+        if (oResult.isPresent())
+            return oResult.get();
+        if (mask.isOutputReflect() || values.size() <= 1) {
             // do nothing
             return null;
         }
-        InterfaceConstruct ic = new InterfaceConstruct(values);
-        String prefix = isDelegate ? "S::" : "I::";
+        InterfaceWriter ic = new InterfaceRS(name, values, mask.isOutputDelegate());
+        String result = deduplicate(capitalize(name)+RESPONSE, ic);
+        mc.oRegister(name, result);
+        return result;
+    }
 
-        String cName = capitalize(name)+RESPONSE;
-        String arguments = prefix + ic.signature();
-
-        // 1. does it already exist?
+    public String deduplicate(String name, InterfaceWriter ic) {
+        String arguments = ic.signature();
         String ifName = dtoMap.get(arguments);
         if (ifName==null) {
             // it's new
-            dtoMap.put(arguments, cName);
-            iOuMap.put(cName, ic);
-            return cName;
+            dtoMap.put(arguments, name);
+            ifMap.put(name, ic);
+            return name;
         } else {
-            log.info("Interface with the same existing signature, use {} instead of {}\n", ifName, cName);
+            if (ifName.equals(name)) {
+                log.info("{} interface already registered", ifName);
+            } else {
+                log.info("Interface with the same existing signature, use {} instead of {}", ifName, name);
+            }
             return ifName;
         }
     }
-    public void writeResponseInterface(PrintModel ipw) throws InvalidQueryException {
-        for(Map.Entry<String, String> ea: dtoMap.entrySet()) {
-            String args = ea.getKey();
-            String iName = ea.getValue();
-            InterfaceConstruct param = iOuMap.get(iName);
 
-            boolean isDelegate = args.startsWith("S::");
-            if (isDelegate) {
+    public String inPrepare(String name, Collection<SqlParam> values, InputMask mask) throws InvalidQueryException {
+        Optional<String> oResult = mc.iFind(name);
+        if (oResult.isPresent())
+            return oResult.get();
+        if (mask.isInputReflect() || (values.size() <= IMAX && !mask.isInputForce()) || values.size() <= 1  ) {
+            // WARNING !!
+            // WHERE (foo, bar) IN ( List<FooBar> ) -- need interface !!!
+            InterfacePS.registerTensor(name, values);
+            return null;
+        }
+        InterfaceWriter ic = new InterfacePS(name, values, mask.isInputDelegate());
+        String result = deduplicate(capitalize(name)+REQUEST, ic);
+        mc.iRegister(name, result);
+        return result;
+    }
+
+    public void writeInterfaces(PrintModel ipw) throws InvalidQueryException {
+        for(Map.Entry<String, InterfaceWriter> np: ifMap.entrySet()) {
+            String iName = np.getKey();
+            InterfaceWriter param = np.getValue();
+
+            if (param.isDelegate()) {
                 param.writeDelegate(ipw, iName, java7);
             } else {
                 param.writeStandard(ipw, iName);
             }
-
+            pc.incInterfaces();
         }
     }
 

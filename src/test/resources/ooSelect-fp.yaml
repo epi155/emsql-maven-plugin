@@ -1,0 +1,29 @@
+packageName: com.example.emsql
+className: OoSelect
+declare:
+  idCertificate: long
+  commonName: varchar
+  locality: varchar
+  organization: varchar
+  organizationUnit: varchar
+  organizationsUnit: ( organizationUnit )
+  organizations: ( organization, organizationUnit )
+  state: char
+  tsMin: timestamp
+  tsMax: timestamp
+methods:
+
+  - methodName: select24
+    perform: !CursorForSelect
+      mode: FP
+      execSql: |
+        select
+          common_name
+        into
+          :commonName
+        from certificate
+        where locality = :locality
+        and ( organization, organization_unit ) in ( :organizations )
+        and not_before >= :tsMin
+        and not_after <= :tsMax
+

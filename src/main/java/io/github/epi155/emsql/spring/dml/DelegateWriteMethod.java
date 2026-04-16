@@ -1,14 +1,15 @@
 package io.github.epi155.emsql.spring.dml;
 
+import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
-import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dml.ApiWriteMethod;
 
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
+import static io.github.epi155.emsql.commons.Contexts.mc;
 
 public class DelegateWriteMethod {
     private final ApiWriteMethod api;
@@ -17,8 +18,7 @@ public class DelegateWriteMethod {
         this.api = api;
     }
 
-    public void proceed(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
-        String cName = Tools.capitalize(name);
+    public void proceed(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         api.docBegin(ipw);
         api.docInput(ipw, jdbc);
         api.docEnd(ipw);
@@ -26,7 +26,9 @@ public class DelegateWriteMethod {
         cc.add("org.springframework.transaction.annotation.Transactional");
         ipw.printf("@Transactional%n");
         ipw.printf("public ");
-        api.declareGenerics(ipw, cName, jdbc.getTKeys(), null);
+        String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
+        api.declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
         ipw.putf("int %s(", name);
         ipw.commaReset();
 

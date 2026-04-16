@@ -40,7 +40,7 @@ public class SqlSelectSingle extends SpringAction
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         cc.add("io.github.epi155.emsql.runtime.SqlNoResultException");
         delegateSelectSignature.signature(ipw, jdbc, name);
 

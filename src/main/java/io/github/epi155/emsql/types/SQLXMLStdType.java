@@ -16,11 +16,6 @@ public final class SQLXMLStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public void psSet(PrintModel ipw, String source) {
         ipw.printf("ps.setSQLXML(++ki, %s);%n", source);
     }

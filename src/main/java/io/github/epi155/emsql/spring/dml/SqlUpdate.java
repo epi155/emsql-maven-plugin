@@ -30,7 +30,7 @@ public class SqlUpdate extends SpringAction implements ApiWriteMethod, ApiUpdate
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         delegateWriteMethod.proceed(ipw, name, jdbc, kPrg);
     }
 }

@@ -30,7 +30,7 @@ public class SqlInsertBatch extends PojoBatchAction implements ApiInsert, Insert
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         int nSize = mc.nSize();
         if (isUnboxRequest(nSize)) {
             cc.add("io.github.epi155.emsql.runtime.SqlInsertBatch" + nSize);
@@ -41,7 +41,8 @@ public class SqlInsertBatch extends PojoBatchAction implements ApiInsert, Insert
         docBegin(ipw);
         docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, cName);
+        String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
+        declareNewInstance(ipw, cName, iName);
         ipw.more();
         debugQuery(ipw, kPrg);
         ipw.printf("final PreparedStatement ps = c.prepareStatement(Q_%s);%n", kPrg);

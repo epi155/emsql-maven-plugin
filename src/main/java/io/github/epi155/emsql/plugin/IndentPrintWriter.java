@@ -85,7 +85,6 @@ public class IndentPrintWriter implements PrintModel {
     public void commaLn() {
         if (firstComma) {
             firstComma = false;
-            //if (mc.nSize()==0) pw.println();
         } else {
             pw.println(",");
         }

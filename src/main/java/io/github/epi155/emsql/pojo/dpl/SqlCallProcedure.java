@@ -36,7 +36,7 @@ public class SqlCallProcedure extends PojoAction
         return delegateCall.proceed(fields);
     }
 
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         delegatewriteMethod.proceed(ipw, name, jdbc, kPrg);
     }
 

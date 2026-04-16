@@ -37,7 +37,7 @@ public class SqlCallProcedure extends SpringAction
         return delegateCall.proceed(fields);
     }
 
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         delegateWrite.proceed(ipw, name, jdbc, kPrg);
     }
 

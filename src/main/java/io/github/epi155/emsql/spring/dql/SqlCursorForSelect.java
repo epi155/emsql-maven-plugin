@@ -46,7 +46,7 @@ public class SqlCursorForSelect extends SpringAction
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
 
         if (mode == ProgrammingModeEnum.Functional) {
             writeFunctional(ipw, name, jdbc, kPrg);
@@ -55,7 +55,7 @@ public class SqlCursorForSelect extends SpringAction
         }
     }
 
-    private void writeImperative(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    private void writeImperative(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
@@ -68,9 +68,10 @@ public class SqlCursorForSelect extends SpringAction
         cc.add("org.springframework.transaction.annotation.Transactional");
         cc.add("org.springframework.transaction.annotation.Propagation");
         ipw.printf("@Transactional(readOnly=true, propagation=Propagation.MANDATORY)%n");
-        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
+        String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         ipw.printf("public ");
-        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
+        declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getWrapper();
             cc.add("io.github.epi155.emsql.runtime.SqlCursor");
@@ -96,7 +97,7 @@ public class SqlCursorForSelect extends SpringAction
     }
 
 
-    private void writeFunctional(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    private void writeFunctional(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
@@ -107,10 +108,11 @@ public class SqlCursorForSelect extends SpringAction
         String cName = Tools.capitalize(name);
 
         cc.add("org.springframework.transaction.annotation.Transactional");
-        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
+        String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         ipw.printf("@Transactional(readOnly=true)%n");
         ipw.printf("public ");
-        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
+        declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
 
         ipw.putf("void loop%1$s(%n", cName);
         ipw.commaReset();

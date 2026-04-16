@@ -1,0 +1,22 @@
+packageName: com.example.emsql
+className: DaoBatchF
+declare:
+  idBool: long
+  bool01: Bool?
+  bool02: Bool?
+  bool03: Bool?
+  bool04: Bool?
+  bool11: Bool
+  bool12: Bool
+  bool13: Bool
+  bool14: Bool
+methods:
+  - methodName: queue05
+    perform: !UpdateBatch
+      force: true
+      execSql: |
+        update tbool
+        set bool04 = true
+        where bool14 = :bool14
+        and   bool03 = :bool03
+

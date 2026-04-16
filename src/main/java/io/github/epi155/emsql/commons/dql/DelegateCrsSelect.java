@@ -103,7 +103,6 @@ public class DelegateCrsSelect {
         }
         ipw.ends(); // end while
         ipw.ends(); // end executeQuery
-//        ipw.ends(); // end prepareStatement
         api.dumpAction(ipw, kPrg, jdbc);
         ipw.ends(); // end method
     }

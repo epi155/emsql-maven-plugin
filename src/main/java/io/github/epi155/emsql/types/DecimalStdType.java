@@ -19,11 +19,6 @@ public final class DecimalStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public Collection<String> requires() {
         return Set.of("java.math.BigDecimal");
     }

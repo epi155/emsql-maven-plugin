@@ -1,8 +1,8 @@
 package io.github.epi155.emsql.pojo.dql;
 
+import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -15,16 +15,16 @@ public class DelegateSelectSignature {
         this.api = api;
     }
 
-    public void signature(PrintModel ipw, JdbcStatement jdbc, String name) {
+    public void signature(PrintModel ipw, JdbcStatement jdbc, String name) throws InvalidQueryException {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
-        String cName = Tools.capitalize(name);
         api.docBegin(ipw);
         api.docInput(ipw, jdbc);
         api.docOutput(ipw, jdbc.getOMap());
         api.docEnd(ipw);
 
-        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
+        String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         ipw.printf("public static ");
-        api.declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
+        api.declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
     }
 }

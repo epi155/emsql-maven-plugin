@@ -105,7 +105,6 @@ public class SqlParam {
     }
 
     public void getValue(PrintModel ipw, int k) {
-//        ipw.printf("return ");
         ipw.printf("%s o = ", type.getPrimitive());
         type.csGetValue(ipw, k);
         ipw.putf(";%n");

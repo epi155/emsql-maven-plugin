@@ -1,13 +1,13 @@
 package io.github.epi155.emsql.commons;
 
-public interface MethodContext {
+import java.util.Optional;
+
+public interface MethodContext extends InputMask, OutputMask {
     MethodContext oSize(Integer size);
 
     MethodContext iSize(Integer size);
 
     MethodContext nSize(Integer size);
-
-    boolean isInputReflect();
 
     Integer nSize();
 
@@ -15,11 +15,13 @@ public interface MethodContext {
 
     Integer oSize();
 
-    boolean isInputDelegate();
-
-    boolean isOutputReflect();
-
-    boolean isOutputDelegate();
-
     String getName();
+
+    Optional<String> iFind(String name);
+
+    void iRegister(String name, String result);
+
+    Optional<String> oFind(String name);
+
+    void oRegister(String name, String result);
 }

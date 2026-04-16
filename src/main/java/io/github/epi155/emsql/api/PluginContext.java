@@ -11,6 +11,7 @@ public interface PluginContext {
     boolean isJava7();
 
     void incMethods();
+    void incInterfaces();
 
     void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters);
 }

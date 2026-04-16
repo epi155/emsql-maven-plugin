@@ -1,5 +1,6 @@
 package io.github.epi155.emsql.spring.dql;
 
+import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SelectOptionalModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
@@ -11,7 +12,7 @@ import static io.github.epi155.emsql.commons.Contexts.mc;
 public class SqlSelectOptional extends SqlSelectSingle implements SelectOptionalModel {
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         delegateSelectSignature.signature(ipw, jdbc, name);
 
         if (mc.oSize() == 1) {

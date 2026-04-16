@@ -1,0 +1,50 @@
+packageName: com.example.emsql
+className: DaoSelectX
+declare:
+  idBool: long
+  bool01: Bool?
+  bool02: Bool?
+  bool03: Bool?
+  bool04: Bool?
+  bool10: Bool
+  bool11: Bool
+  bool12: Bool
+  bool13: Bool
+  bool14: Bool
+  bools0: ( bool10 )
+  bools1: ( bool11, bool12 )
+  bools2: ( bool13, bool14 )
+  nmCount: int
+methods:
+  - methodName: find01
+    perform: !SelectSingle
+      timeout: 5
+      execSql: |
+        select
+          bool02
+        into
+          :bool02
+        from tbool
+        where bool01 = :bool01
+        and   bool04 = :bool04
+        and   bool10 in ( :bools0 )
+        and   (bool11, bool12) in ( :bools1 )
+        and   (bool13, bool14) in ( :bools2 )
+
+
+  - methodName: tryFind01
+    perform: !SelectOptional
+      timeout: 5
+      execSql: |
+        select
+          bool02
+        into
+          :bool02
+        from tbool
+        where bool01 = :bool01
+        and   bool04 = :bool04
+        and   bool10 in ( :bools0 )
+        and   (bool11, bool12) in ( :bools1 )
+        and   (bool13, bool14) in ( :bools2 )
+
+

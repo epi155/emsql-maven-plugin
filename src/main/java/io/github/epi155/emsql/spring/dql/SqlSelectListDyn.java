@@ -57,7 +57,7 @@ public class SqlSelectListDyn extends SpringAction
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         cc.add("java.util.List");
         cc.add("java.util.ArrayList");
         defineBuilder(ipw, jdbc, name, kPrg);
@@ -75,17 +75,17 @@ public class SqlSelectListDyn extends SpringAction
         ipw.ends();
     }
 
-    private void signature(PrintModel ipw, JdbcStatement jdbc, String name) {
+    private void signature(PrintModel ipw, JdbcStatement jdbc, String name) throws InvalidQueryException {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
-        String cName = Tools.capitalize(name);
         docBegin(ipw);
         docInput(ipw, jdbc);
         docOutput(ipw, jdbc.getOMap());
         docEnd(ipw);
 
-        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
+        String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         ipw.printf("public ");
-        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
+        declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
     }
 
     private void returnBuilder(PrintModel ipw, JdbcStatement jdbc, String cName) {
@@ -162,14 +162,15 @@ public class SqlSelectListDyn extends SpringAction
         delegateSelectDyn.docEnd(ipw);
     }
 
-    public void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
+    public void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) throws InvalidQueryException {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
 
-        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
+        String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         // class definition
         ipw.printf("public class %sBuilder", cName);
-        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
+        declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
 
         ipw.putf("{%n");
         ipw.more();

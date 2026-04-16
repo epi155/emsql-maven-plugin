@@ -16,11 +16,6 @@ public final class RefStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public void psSet(PrintModel ipw, String source) {
         ipw.printf("ps.setRef(++ki, %s);%n", source);
     }

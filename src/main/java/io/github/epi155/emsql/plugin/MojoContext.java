@@ -25,6 +25,7 @@ public class MojoContext implements PluginContext {
     public final SqlParser parser;
     private int nmClasses = 0;
     private int nmMethods = 0;
+    private int nmInterfaces = 0;
 
     public MojoContext(
             @NonNull String sourceDirectory,
@@ -91,6 +92,9 @@ public class MojoContext implements PluginContext {
 
     public void incMethods() {
         nmMethods++;
+    }
+    public void incInterfaces() {
+        nmInterfaces++;
     }
 
     private static class Mul {

@@ -30,7 +30,7 @@ public class SqlUpdateBatch extends SpringBatchAction implements ApiUpdate, Upda
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         int nSize = mc.nSize();
         if (isUnboxRequest(nSize)) {
             cc.add("io.github.epi155.emsql.runtime.SqlUpdateBatch" + nSize);
@@ -41,7 +41,8 @@ public class SqlUpdateBatch extends SpringBatchAction implements ApiUpdate, Upda
         docBegin(ipw);
         docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, cName);
+        String iName = cc.inPrepare(cName, jdbc.getIMap().values(), mc);
+        declareNewInstance(ipw, cName, iName);
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");

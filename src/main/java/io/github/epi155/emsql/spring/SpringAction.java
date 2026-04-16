@@ -8,13 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
 public abstract class SpringAction extends SqlAction {
-    public void declareNewInstance(@NotNull PrintModel ipw, String cName) {
+    public void declareNewInstance(@NotNull PrintModel ipw, String cName, String iName) {
         cc.add("org.springframework.transaction.annotation.Transactional");
         cc.add("org.springframework.transaction.annotation.Propagation");
         ipw.printf("@Transactional(propagation=Propagation.MANDATORY)%n");
         ipw.printf("public ");
-        batchGenerics(ipw, cName);
-//        declareGenerics(ipw, cName, jdbc.getTKeys());
+        batchGenerics(ipw, iName);
         ipw.putf("%s", cName);
         genericsNew(ipw);
         ipw.putf(" new%s()%n", cName);

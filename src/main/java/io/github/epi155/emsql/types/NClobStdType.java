@@ -16,11 +16,6 @@ public final class NClobStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public void psSet(PrintModel ipw, String source) {
         ipw.printf("ps.setNClob(++ki, %s);%n", source);
     }

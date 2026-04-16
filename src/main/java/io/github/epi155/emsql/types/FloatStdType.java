@@ -16,11 +16,6 @@ public final class FloatStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public void psSet(PrintModel ipw, String source) {
         ipw.printf("ps.setFloat(++ki, %s);%n", source);
     }

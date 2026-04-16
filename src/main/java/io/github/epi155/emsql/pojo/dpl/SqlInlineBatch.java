@@ -36,7 +36,7 @@ public class SqlInlineBatch extends PojoBatchAction implements ApiInline, Inline
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         int nSize = mc.nSize();
         if (nSize <= IMAX) {
             cc.add("io.github.epi155.emsql.runtime.SqlInlineBatch" + nSize);
@@ -47,7 +47,8 @@ public class SqlInlineBatch extends PojoBatchAction implements ApiInline, Inline
         docBegin(ipw);
         docInput(ipw, jdbc);
         docEnd(ipw);
-        declareNewInstance(ipw, cName);
+        String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
+        declareNewInstance(ipw, cName, iName);
         ipw.more();
         debugQuery(ipw, kPrg);
         ipw.printf("final CallableStatement ps = c.prepareCall(Q_%s);%n", kPrg);

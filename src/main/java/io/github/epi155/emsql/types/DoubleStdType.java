@@ -16,11 +16,6 @@ public final class DoubleStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public void psSet(PrintModel ipw, String source) {
         ipw.printf("ps.setDouble(++ki, %s);%n", source);
     }

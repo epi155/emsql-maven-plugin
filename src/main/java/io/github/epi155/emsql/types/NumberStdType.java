@@ -21,11 +21,6 @@ public final class NumberStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public Collection<String> requires() {
         return Set.of("java.math.BigInteger");
     }

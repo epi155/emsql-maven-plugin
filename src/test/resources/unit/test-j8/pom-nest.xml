@@ -23,8 +23,8 @@
                     <debugCode>true</debugCode>
                     <autoPad>true</autoPad>
                     <modules>
-                        <module>rdSelect-dlg.yaml</module>
-<!--                        <module>daoNest.yaml</module>-->
+<!--                        <module>rdSelect-dlg.yaml</module>-->
+                        <module>daoNest1.yaml</module>
                     </modules>
                     <addCompileSourceRoot>false</addCompileSourceRoot>
                     <addTestCompileSourceRoot>false</addTestCompileSourceRoot>

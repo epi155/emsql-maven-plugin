@@ -16,11 +16,6 @@ public final class NCharStdType implements SqlDataType {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public void psSet(PrintModel ipw, String source) {
         ipw.printf("ps.setNString(++ki, %s);%n", source);
     }

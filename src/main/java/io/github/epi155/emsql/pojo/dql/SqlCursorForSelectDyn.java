@@ -58,7 +58,7 @@ public class SqlCursorForSelectDyn extends PojoAction
     }
 
     @Override
-    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
+    public void writeMethod(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
         defineBuilder(ipw, jdbc, name, kPrg);
 
         delegateSelectSignature.signature(ipw, jdbc, name);
@@ -96,14 +96,15 @@ public class SqlCursorForSelectDyn extends PojoAction
         delegateSelectDyn.docEnd(ipw);
     }
 
-    private void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
+    private void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) throws InvalidQueryException {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
 
-        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc.isOutputReflect(), mc.isOutputDelegate());
+        String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         // class definition
         ipw.printf("public static class %sBuilder", cName);
-        declareGenerics(ipw, cName, jdbc.getTKeys(), oName);
+        declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
 
         ipw.putf("{%n");
         ipw.more();

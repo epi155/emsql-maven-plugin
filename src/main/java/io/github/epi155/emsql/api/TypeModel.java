@@ -7,7 +7,7 @@ public interface TypeModel {
         throw new IllegalStateException();
     }
 
-    default <T extends TypeModel> Map<String, T> toMap() {
+    default <T extends SqlDataType> Map<String, T> toMap() {
         throw new IllegalStateException();
     }
 
