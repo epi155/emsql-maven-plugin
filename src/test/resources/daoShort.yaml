@@ -35,22 +35,7 @@ methods:
           :short11,
           :short12 
         )
-  - methodName: insert02R
-    perform: !Insert
-      input:
-        reflect: yes
-      execSql: |
-        insert into tshort (
-          short01,
-          short02,
-          short11,
-          short12
-        ) values (
-          :short01,
-          :short02,
-          :short11,
-          :short12 
-        )
+  
   - methodName: insert02K
     perform: !InlineProcedure
       execSql: |
@@ -137,20 +122,7 @@ methods:
         from tshort
         where id_Short = :idShort
 
-  - methodName: findShortAnyD
-    perform: !SelectOptional
-      output:
-        delegate: yes
-      execSql: |
-        select
-          short01,
-          short11
-        into
-          :short01,
-          :short11 
-        from tshort
-        where id_Short = :idShort
-
+  
   - methodName: findShortAny01
     perform: !SelectOptional
       execSql: |
@@ -171,20 +143,7 @@ methods:
         from tshort
         where short12 = :short12
 
-  - methodName: findShortAnyR
-    perform: !SelectOptional
-      output:
-        reflect: yes
-      execSql: |
-        select
-          short01,
-          short11
-        into
-          :short01,
-          :short11 
-        from tshort
-        where id_Short = :idShort
-
+  
   - methodName: call01
     perform: !CallProcedure
       output:
@@ -194,17 +153,4 @@ methods:
       execSql: |
         call solve(:short01, :short11, :short02, :short12)
 
-  - methodName: call02
-    perform: !CallProcedure
-      input:
-        reflect: yes
-      output:
-        reflect: yes
-        fields:
-          - short02
-          - short12
-      execSql: |
-        call solve(:short01, :short11, 
-                   :short03, :short13,
-                   :short04, :short14,
-                   :short02, :short12)
+  

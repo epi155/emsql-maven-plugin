@@ -71,15 +71,7 @@
                         <module>daoVChar.yaml</module>
                         <module>daoVNChar.yaml</module>
                         <module>daoXml.yaml</module>
-                        <module>ddSelect.yaml</module>
-                        <module>doSelect.yaml</module>
-                        <module>drSelect.yaml</module>
-                        <module>odSelect.yaml</module>
                         <module>ooSelect.yaml</module>
-                        <module>orSelect.yaml</module>
-                        <module>rdSelect.yaml</module>
-                        <module>roSelect.yaml</module>
-                        <module>rrSelect.yaml</module>
                         <module>daoTimeZ.yaml</module>
                         <module>daoTsZ.yaml</module>
                         <module>daoDyn.yaml</module>

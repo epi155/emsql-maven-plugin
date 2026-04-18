@@ -53,50 +53,7 @@ methods:
         and   bool03 = :bool03
         and   bool13 = :bool13
 
-  - methodName: cursor04
-    perform: !CursorForSelect
-      input:
-        delegate: yes
-      output:
-        delegate: yes
-      timeout: 5
-      execSql: |
-        select 
-          bool01,
-          bool11
-        into
-          :bool01,
-          :bool11 
-        from tbool
-        where bool02 = :bool02
-        and   bool12 = :bool12
-        and   bool03 = :bool03
-        and   bool13 = :bool13
-
-  - methodName: cursor05
-    perform: !CursorForSelect
-      input:
-        reflect: yes
-      output:
-        reflect: yes
-      execSql: |
-        select 
-          bool01,
-          bool11
-        into
-          :bool01,
-          :bool11 
-        from tbool
-        where bool02 = :bool02
-        and   bool12 = :bool12
-        and   bool03 = :bool03
-        and   bool13 = :bool13
-
-  - methodName: cursor05
-    perform: !CursorForSelect
-      execSql: |
-        -- dummy duplicate method 
-
+  
   - methodName: cursor06
     perform: !CursorForSelect
       execSql: |

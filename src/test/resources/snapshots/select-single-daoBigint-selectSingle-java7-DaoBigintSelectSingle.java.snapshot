@@ -1,5 +1,5 @@
 /*
- * Code Generated at 2026-04-09T12:05:15.843102Z
+ * Code Generated at 2026-04-17T10:02:17.785037Z
  * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
  */
 package com.example.emsql;
@@ -66,8 +66,6 @@ public class DaoBigintSelectSingle {
                     }
                     if (rs.next()) {
                         throw new SqlNonUniqueResultException();
-                    } else {
-                        return o;
                     }
                 } else {
                     throw new SqlNoResultException();

@@ -82,11 +82,7 @@ public class SqlSelectListDyn extends PojoAction
         });
         if (mc.oSize() >= 2) {
             ipw.commaLn();
-            if (mc.isOutputDelegate()) {
-                ipw.printf("o");
-            } else {
-                ipw.printf("so");
-            }
+            ipw.printf("so");
         }
         ipw.putf(");%n");
     }

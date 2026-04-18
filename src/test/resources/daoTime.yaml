@@ -36,22 +36,7 @@ methods:
           :time11,
           :time12 
         )
-  - methodName: insert02R
-    perform: !Insert
-      input:
-        reflect: yes
-      execSql: |
-        insert into ttime (
-          time01,
-          time02,
-          time11,
-          time12
-        ) values (
-          :time01,
-          :time02,
-          :time11,
-          :time12 
-        )
+  
   - methodName: insert02K
     perform: !InlineProcedure
       execSql: |
@@ -139,20 +124,7 @@ methods:
         from ttime
         where id_Time = :idTime
 
-  - methodName: findTimeAnyD
-    perform: !SelectOptional
-      output:
-        delegate: yes
-      execSql: |
-        select
-          time01,
-          time11
-        into
-          :time01,
-          :time11 
-        from ttime
-        where id_Time = :idTime
-
+  
   - methodName: findTimeAny01
     perform: !SelectOptional
       execSql: |
@@ -173,20 +145,7 @@ methods:
         from ttime
         where time12 = :time12
 
-  - methodName: findTimeAnyR
-    perform: !SelectOptional
-      output:
-        reflect: yes
-      execSql: |
-        select
-          time01,
-          time11
-        into
-          :time01,
-          :time11 
-        from ttime
-        where id_Time = :idTime
-
+  
   - methodName: call01
     perform: !CallProcedure
       output:
@@ -196,17 +155,4 @@ methods:
       execSql: |
         call solve(:time01, :time11, :time02, :time12)
 
-  - methodName: call02
-    perform: !CallProcedure
-      input:
-        reflect: yes
-      output:
-        reflect: yes
-        fields:
-          - time02
-          - time12
-      execSql: |
-        call solve(:time01, :time11, 
-                   :time03, :time13,
-                   :time04, :time14,
-                   :time02, :time12)
+  

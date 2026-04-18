@@ -31,8 +31,6 @@ declare:
 methods:
   - methodName: salvaPraticaDeep
     perform: !InlineProcedure
-      input:
-        reflect: no
       output:
         fields:
           - p01.idPraticaApp

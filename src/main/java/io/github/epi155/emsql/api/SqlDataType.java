@@ -13,22 +13,10 @@ public interface SqlDataType extends TypeModel {
 
     void xPsPush(PrintModel ipw, String orig, String name, int k);
 
-    default void psPush(PrintModel ipw, String name) {
-        xPsPush(ipw, "i", name);
-    }
-
-    default void psPush(PrintModel ipw, String name, int k) {
-        xPsPush(ipw, "i", name, k);
-    }
-
     String getPrimitive();
 
     default String getWrapper() {
         return getPrimitive();
-    }
-
-    default String getContainer() {
-        return getWrapper();
     }
 
     default boolean isNullable() {

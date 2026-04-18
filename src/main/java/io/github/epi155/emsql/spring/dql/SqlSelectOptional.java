@@ -18,28 +18,16 @@ public class SqlSelectOptional extends SqlSelectSingle implements SelectOptional
         if (mc.oSize() == 1) {
             jdbc.getOMap().forEach((k, v) -> ipw.putf("%s<%s> %s(", cc.optional(), v.getType().getWrapper(), name));
         } else {
-            if (mc.isOutputDelegate()) {
-                ipw.putf("boolean %s(", name);
-            } else {
-                ipw.putf("%s<O> %s(", cc.optional(), name);
-            }
+            ipw.putf("%s<O> %s(", cc.optional(), name);
         }
 
         delegateSelectSimple.fetch(ipw, jdbc, kPrg);
         ipw.orElse();
-        if (mc.isOutputDelegate()) {
-            ipw.printf("return true;%n");
-        } else {
-            ipw.printf("return %s.of(o);%n", cc.optional());
-        }
+        ipw.printf("return %s.of(o);%n", cc.optional());
         ipw.ends();
         ipw.orElse();
         ipw.printf("log.debug(\"*** NoResult ***\");%n");
-        if (mc.isOutputDelegate()) {
-            ipw.printf("return false;%n");
-        } else {
-            ipw.printf("return %s.empty();%n", cc.optional());
-        }
+        ipw.printf("return %s.empty();%n", cc.optional());
         ipw.ends();
         ipw.ends();
         dumpAction(ipw, kPrg, jdbc);

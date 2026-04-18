@@ -38,42 +38,7 @@ methods:
         group by abi
         order by 1 desc
 
-  - methodName: select03
-    perform: !SelectList
-      input:
-        delegate: yes
-      execSql: |
-        select
-          count(*),
-          abi
-        into
-          :count,
-          :abi 
-        from j01
-        where abi = ( :abis )
-        and circ = :circ
-        and dtEmis between :dtMin and :dtMax
-        group by abi
-        order by 1 desc
-
-  - methodName: select04
-    perform: !SelectList
-      input:
-        reflect: yes
-      execSql: |
-        select
-          count(*),
-          abi
-        into
-          :count,
-          :abi 
-        from j01
-        where abi = ( :abis )
-        and circ = :circ
-        and dtEmis between :dtMin and :dtMax
-        group by abi
-        order by 1 desc
-
+  
   - methodName: select05
     perform: !SelectListDyn
       execSql: |

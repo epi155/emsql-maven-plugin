@@ -150,7 +150,7 @@ public abstract class BasicFactory implements CodeFactory {
 
     private final boolean autoPad;
 
-    public BasicFactory(boolean autoPad) {
+    protected BasicFactory(boolean autoPad) {
         this.autoPad = autoPad;
     }
 
@@ -161,12 +161,12 @@ public abstract class BasicFactory implements CodeFactory {
 
     @Override
     public InputModel newInputModel() {
-        return new ComAreaStd();
+        return new ComAreaDef();
     }
 
     @Override
     public OutputModel newOutputModel() {
-        return new ComAreaStd();
+        return new ComAreaDef();
     }
 
     @Override

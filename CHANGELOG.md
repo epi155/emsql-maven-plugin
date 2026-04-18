@@ -6,10 +6,10 @@
 - new *SelectListDyn* template with optional AND conditions in the WHERE clause
 - added new `CHAR(n)` sql types for `autoPad`:
 
-| Field Type|JDBC Type|java type|
-|-----------|---------|---------|
-|CHAR(n)    | CHAR    | String |
-|CHAR(n)?   | CHAR    | String |
+| Field Type | JDBC Type | java type |
+|------------|-----------|-----------|
+| CHAR(n)    | CHAR      | String    |
+| CHAR(n)?   | CHAR      | String    |
 
 - deduplicate interfaces
 
@@ -28,12 +28,12 @@
 ### Added
 - added new java8 sql types:
 
-| Field Type|JDBC Type|java type|
-|-----------|---------|---------|
-|TIMEZ       | TIME_WITH_TIMEZONE (NOT NULL)| OffsetTime |
-|TIMEZ?      | TIME_WITH_TIMEZONE (NULL)| OffsetTime |
-|TIMESTAMPZ  | TIMESTAMP_WITH_TIMEZONE (NOT NULL)| OffsetDateTime |
-|TIMESTAMPZ? | TIMESTAMP_WITH_TIMEZONE (NULL)| OffsetDateTime |
+| Field Type  | JDBC Type                          | java type      |
+|-------------|------------------------------------|----------------|
+| TIMEZ       | TIME_WITH_TIMEZONE (NOT NULL)      | OffsetTime     |
+| TIMEZ?      | TIME_WITH_TIMEZONE (NULL)          | OffsetTime     |
+| TIMESTAMPZ  | TIMESTAMP_WITH_TIMEZONE (NOT NULL) | OffsetDateTime |
+| TIMESTAMPZ? | TIMESTAMP_WITH_TIMEZONE (NULL)     | OffsetDateTime |
 
 - added `qualifier` configuration field to root level, to select datasource (SPRING provider)
 

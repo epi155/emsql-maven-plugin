@@ -23,29 +23,7 @@ methods:
         and   bool12 = :bool12
         and   bool13 = :bool13
 
-  - methodName: queue02
-    perform: !UpdateBatch
-      batchSize: 250
-      input:
-        delegate: yes
-      execSql: |
-        update tbool
-        set bool01 = :bool01,
-            bool11 = :bool11,
-            bool04 = :bool04,
-            bool14 = :bool14
-        where bool02 = :bool02
-        and   bool03 = :bool03
-        and   bool12 = :bool12
-        and   bool13 = :bool13
-
-  #  - methodName: queue03
-  #    perform: !UpdateBatch
-  #      execSql: |
-  #        update tbool
-  #        set bool04 = true
-  #        where bool14 is null
-
+  
   - methodName: queue04
     perform: !UpdateBatch
       timeout: 5

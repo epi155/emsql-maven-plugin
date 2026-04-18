@@ -47,18 +47,12 @@ public class SqlSelectSingle extends PojoAction
         if (mc.oSize() == 1) {
             jdbc.getOMap().forEach((k, v) -> ipw.putf("%s %s(%n", v.getType().getPrimitive(), name));
         } else {
-            if (mc.isOutputDelegate()) {
-                ipw.putf("void %s(%n", name);
-            } else {
-                ipw.putf("O %s(%n", name);
-            }
+            ipw.putf("O %s(%n", name);
         }
 
         delegateSelectSimple.fetch(ipw, jdbc, kPrg);
-        if (mc.oSize() == 1 || !mc.isOutputDelegate()) {
-            ipw.orElse();
-            ipw.printf("return o;%n");
-        }
+        ipw.orElse();
+        ipw.printf("return o;%n");
         ipw.ends();
         ipw.orElse();
         ipw.printf("throw new SqlNoResultException();%n");

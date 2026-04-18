@@ -70,19 +70,9 @@ public class DelegateSelectDyn {
                     ipw.printf("args.add(new SqlArg(\"%1$s\", \"%2$s\", %1$s));%n", v.getName(), v.getType().getPrimitive()));
         } else {
             Map<Integer, SqlParam> iMap = jdbcStatement.getIMap();
-            if (mc.isInputReflect()) {
-                iMap.forEach((k, v) ->
-                        ipw.printf("args.add(new SqlArg(\"%1$s\", \"%2$s\", EmSQL.get(i, \"%1$s\", %3$s.class)));%n",
-                                v.getName(), v.getType().getPrimitive(), v.getType().getContainer()));
-            } else if (mc.isInputDelegate()) {
-                iMap.forEach((k, v) ->
-                        ipw.printf("args.add(new SqlArg(\"%1$s\", \"%2$s\", i.%1$s.get()));%n",
-                                v.getName(), v.getType().getPrimitive()));
-            } else {
-                iMap.forEach((k, v) ->
-                        ipw.printf("args.add(new SqlArg(\"%s\", \"%s\", i.%s()));%n",
-                                v.getName(), v.getType().getPrimitive(), getterOf(v)));
-            }
+            iMap.forEach((k, v) ->
+                    ipw.printf("args.add(new SqlArg(\"%s\", \"%s\", i.%s()));%n",
+                            v.getName(), v.getType().getPrimitive(), getterOf(v)));
         }
     }
 
@@ -124,14 +114,7 @@ public class DelegateSelectDyn {
         if (mc.nSize() <= IMAX) {
             notScalar.forEach((k, v) -> ipw.printf(", new EmSQL.Mul(%d, %s.size(), %d)%n", k, v.getName(), v.getType().columns()));
         } else {
-            if (mc.isInputReflect()) {
-                cc.add("java.util.List");
-                notScalar.forEach((k, v) -> ipw.printf(", new EmSQL.Mul(%d, EmSQL.get(i, \"%s\", List.class).size(), %d)%n", k, v.getName(), v.getType().columns()));
-            } else if (mc.isInputDelegate()) {
-                notScalar.forEach((k, v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s.get().size(), %d)%n", k, v.getName(), v.getType().columns()));
-            } else {
-                notScalar.forEach((k, v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s().size(), %d)%n", k, getterOf(v), v.getType().columns()));
-            }
+            notScalar.forEach((k, v) -> ipw.printf(", new EmSQL.Mul(%d, i.%s().size(), %d)%n", k, getterOf(v), v.getType().columns()));
         }
         ipw.less();
         ipw.printf(");%n", kPrg);
@@ -246,21 +229,13 @@ public class DelegateSelectDyn {
                 }
             });
         } else if (nSize > IMAX) {
-            if (mc.isInputDelegate()) {
-                ipw.printf("private final DI i;%n");
-            } else {
-                ipw.printf("private final I i;%n");
-            }
+            ipw.printf("private final I i;%n");
         }
     }
 
     public void defineOutput(PrintModel ipw) {
         if (mc.oSize() >= 2) {
-            if (mc.isOutputDelegate()) {
-                ipw.printf("private final DO o;%n");
-            } else {
-                ipw.printf("private final %s<O> so;%n", cc.supplier());
-            }
+            ipw.printf("private final %s<O> so;%n", cc.supplier());
         }
     }
 
@@ -290,11 +265,7 @@ public class DelegateSelectDyn {
 
     public void assignOutput(PrintModel ipw) {
         if (mc.oSize() >= 2) {
-            if (mc.isOutputDelegate()) {
-                ipw.printf("this.o = o;%n");
-            } else {
-                ipw.printf("this.so = so;%n");
-            }
+            ipw.printf("this.so = so;%n");
         }
     }
 
@@ -311,11 +282,7 @@ public class DelegateSelectDyn {
             });
         } else if (nSize > IMAX) {
             ipw.commaLn();
-            if (mc.isInputDelegate()) {
-                ipw.printf("        final DI i");
-            } else {
-                ipw.printf("        final I i");
-            }
+            ipw.printf("        final I i");
         }
     }
 
@@ -324,11 +291,7 @@ public class DelegateSelectDyn {
             ipw.putf(") {%n");
         } else {
             ipw.commaLn();
-            if (mc.isOutputDelegate()) {
-                ipw.printf("        final DO o) {%n");
-            } else {
-                ipw.printf("        final %s<O> so) {%n", cc.supplier());
-            }
+            ipw.printf("        final %s<O> so) {%n", cc.supplier());
         }
     }
 

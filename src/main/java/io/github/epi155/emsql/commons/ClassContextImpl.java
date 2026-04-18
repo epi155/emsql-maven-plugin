@@ -133,11 +133,10 @@ public abstract class ClassContextImpl implements ClassContext {
         Optional<String> oResult = mc.oFind(name);
         if (oResult.isPresent())
             return oResult.get();
-        if (mask.isOutputReflect() || values.size() <= 1) {
-            // do nothing
+        if (values.size() <= 1) {
             return null;
         }
-        InterfaceWriter ic = new InterfaceRS(name, values, mask.isOutputDelegate());
+        InterfaceWriter ic = new InterfaceRS(name, values);
         String result = deduplicate(capitalize(name)+RESPONSE, ic);
         mc.oRegister(name, result);
         return result;
@@ -165,28 +164,22 @@ public abstract class ClassContextImpl implements ClassContext {
         Optional<String> oResult = mc.iFind(name);
         if (oResult.isPresent())
             return oResult.get();
-        if (mask.isInputReflect() || (values.size() <= IMAX && !mask.isInputForce()) || values.size() <= 1  ) {
-            // WARNING !!
-            // WHERE (foo, bar) IN ( List<FooBar> ) -- need interface !!!
+        if ((values.size() <= IMAX && !mask.isInputForce()) || values.size() <= 1  ) {
             InterfacePS.registerTensor(name, values);
             return null;
         }
-        InterfaceWriter ic = new InterfacePS(name, values, mask.isInputDelegate());
+        InterfaceWriter ic = new InterfacePS(name, values);
         String result = deduplicate(capitalize(name)+REQUEST, ic);
         mc.iRegister(name, result);
         return result;
     }
 
-    public void writeInterfaces(PrintModel ipw) throws InvalidQueryException {
+    public void writeInterfaces(PrintModel ipw) {
         for(Map.Entry<String, InterfaceWriter> np: ifMap.entrySet()) {
             String iName = np.getKey();
             InterfaceWriter param = np.getValue();
 
-            if (param.isDelegate()) {
-                param.writeDelegate(ipw, iName, java7);
-            } else {
-                param.writeStandard(ipw, iName);
-            }
+            param.writeStandard(ipw, iName);
             pc.incInterfaces();
         }
     }

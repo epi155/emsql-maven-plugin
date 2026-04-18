@@ -77,13 +77,8 @@ public class SqlCursorForSelect extends SpringAction
             cc.add("io.github.epi155.emsql.runtime.SqlCursor");
             ipw.putf("SqlCursor<%s> open%s(", oType, cName);
         } else {
-            if (mc.isOutputDelegate()) {
-                cc.add("io.github.epi155.emsql.runtime.SqlDelegateCursor");
-                ipw.putf("SqlDelegateCursor open%s(", cName);
-            } else {
-                cc.add("io.github.epi155.emsql.runtime.SqlCursor");
-                ipw.putf("SqlCursor<O> open%s(", cName);
-            }
+            cc.add("io.github.epi155.emsql.runtime.SqlCursor");
+            ipw.putf("SqlCursor<O> open%s(", cName);
         }
         ipw.commaReset();
 

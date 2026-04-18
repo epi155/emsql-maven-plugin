@@ -74,13 +74,8 @@ public class SqlCursorForSelect extends PojoAction
             cc.add("io.github.epi155.emsql.runtime.SqlCursor");
             ipw.putf("SqlCursor<%s> open%s(%n", oType, cName);
         } else {
-            if (mc.isOutputDelegate()) {
-                cc.add("io.github.epi155.emsql.runtime.SqlDelegateCursor");
-                ipw.putf("SqlDelegateCursor open%s(%n", cName);
-            } else {
-                cc.add("io.github.epi155.emsql.runtime.SqlCursor");
-                ipw.putf("SqlCursor<O> open%s(%n", cName);
-            }
+            cc.add("io.github.epi155.emsql.runtime.SqlCursor");
+            ipw.putf("SqlCursor<O> open%s(%n", cName);
         }
 
         ipw.printf("        final Connection c");

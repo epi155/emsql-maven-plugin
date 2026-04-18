@@ -36,22 +36,7 @@ methods:
           :TimeZ11,
           :TimeZ12 
         )
-  - methodName: insert02R
-    perform: !Insert
-      input:
-        reflect: yes
-      execSql: |
-        insert into tTimeZ (
-          TimeZ01,
-          TimeZ02,
-          TimeZ11,
-          TimeZ12
-        ) values (
-          :TimeZ01,
-          :TimeZ02,
-          :TimeZ11,
-          :TimeZ12 
-        )
+  
   - methodName: insert02K
     perform: !InlineProcedure
       execSql: |
@@ -139,20 +124,7 @@ methods:
         from tTimeZ
         where id_TimeZ = :idTimeZ
 
-  - methodName: findTimeZAnyD
-    perform: !SelectOptional
-      output:
-        delegate: yes
-      execSql: |
-        select
-          TimeZ01,
-          TimeZ11
-        into
-          :TimeZ01,
-          :TimeZ11 
-        from tTimeZ
-        where id_TimeZ = :idTimeZ
-
+  
   - methodName: findTimeZAny01
     perform: !SelectOptional
       execSql: |
@@ -173,20 +145,7 @@ methods:
         from tTimeZ
         where TimeZ12 = :TimeZ12
 
-  - methodName: findTimeZAnyR
-    perform: !SelectOptional
-      output:
-        reflect: yes
-      execSql: |
-        select
-          TimeZ01,
-          TimeZ11
-        into
-          :TimeZ01,
-          :TimeZ11 
-        from tTimeZ
-        where id_TimeZ = :idTimeZ
-
+  
   - methodName: call01
     perform: !CallProcedure
       output:
@@ -196,17 +155,4 @@ methods:
       execSql: |
         call solve(:TimeZ01, :TimeZ11, :TimeZ02, :TimeZ12)
 
-  - methodName: call02
-    perform: !CallProcedure
-      input:
-        reflect: yes
-      output:
-        reflect: yes
-        fields:
-          - TimeZ02
-          - TimeZ12
-      execSql: |
-        call solve(:TimeZ01, :TimeZ11, 
-                   :TimeZ03, :TimeZ13,
-                   :TimeZ04, :TimeZ14,
-                   :TimeZ02, :TimeZ12)
+  

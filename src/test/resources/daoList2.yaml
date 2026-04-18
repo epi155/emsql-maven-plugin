@@ -19,30 +19,8 @@ methods:
         from p01
         where (abi, ibr_key) = ( :keys )
 
-  - methodName: select02
-    perform: !SelectList
-      input:
-        reflect: yes
-      execSql: |
-        select
-          id_pratica
-        into
-          :idPratica
-        from p01
-        where (abi, ibr_key) = ( :keys )
-
-  - methodName: select03
-    perform: !SelectList
-      input:
-        delegate: yes
-      execSql: |
-        select
-          id_pratica
-        into
-          :idPratica
-        from p01
-        where (abi, ibr_key) = ( :keys )
-
+  
+  
   - methodName: select11
     perform: !SelectList
       execSql: |
@@ -55,30 +33,5 @@ methods:
         and circ = :circ
         and dtEmis between :dtMin and :dtMax
 
-  - methodName: select12
-    perform: !SelectList
-      input:
-        reflect: yes
-      execSql: |
-        select
-          id_pratica
-        into
-          :idPratica
-        from p01
-        where (abi, ibr_key) = ( :keys )
-        and circ = :circ
-        and dtEmis between :dtMin and :dtMax
-
-  - methodName: select13
-    perform: !SelectList
-      input:
-        delegate: yes
-      execSql: |
-        select
-          id_pratica
-        into
-          :idPratica
-        from p01
-        where (abi, ibr_key) = ( :keys )
-        and circ = :circ
-        and dtEmis between :dtMin and :dtMax
+  
+  

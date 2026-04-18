@@ -94,11 +94,6 @@ public class SqlVector implements SqlDataType {
     }
 
     @Override
-    public String getContainer() {
-        return "List";
-    }
-
-    @Override
     public boolean isScalar() {
         return false;
     }

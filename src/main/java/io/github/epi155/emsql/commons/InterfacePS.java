@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.commons;
 
-import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
 import lombok.AllArgsConstructor;
@@ -9,16 +8,13 @@ import lombok.Getter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.Contexts.REQUEST;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Tools.capitalize;
 
 public class InterfacePS implements InterfaceWriter {
-    @Getter
-    private final boolean delegate;
 
-    public static void registerTensor(String name, Collection<SqlParam> values) throws InvalidQueryException {
+    public static void registerTensor(String name, Collection<SqlParam> values) {
         for(SqlParam value: values) {
             String pName = value.getName();
             SqlDataType pType = value.getType();
@@ -37,7 +33,7 @@ public class InterfacePS implements InterfaceWriter {
                      * }                                !!
                      */
                     List<SqlParam> inParms = pMap.entrySet().stream().map(e -> new SqlParam(e.getKey(), e.getValue())).collect(Collectors.toList());
-                    InterfaceWriter iw = new InterfacePS(name, inParms, false);
+                    InterfaceWriter iw = new InterfacePS(name, inParms);
                     cc.deduplicate(capitalize(pName)+REQUEST, iw);
                 }
             }
@@ -50,7 +46,6 @@ public class InterfacePS implements InterfaceWriter {
         protected abstract void writeDocField(PrintModel pw);
         protected abstract void writeFieldGetter(PrintModel pw);
         protected abstract String primitive();
-        protected String wrapper() { throw new IllegalStateException(); }
 
         protected boolean isScalar() { return true; }
         protected int columns() { return 0; }
@@ -77,8 +72,6 @@ public class InterfacePS implements InterfaceWriter {
         @Override
         protected String primitive() { return type.getPrimitive(); }
 
-        @Override
-        protected String wrapper() { return type.getWrapper(); }
     }
     private static class VectType extends TypePS {
         private final SqlDataType type;
@@ -102,7 +95,11 @@ public class InterfacePS implements InterfaceWriter {
         protected String primitive() {
             return "["+type.getPrimitive()+"]";
         }
+
+        @Override
         protected boolean isScalar() { return false; }
+
+        @Override
         protected int columns() { return 1; }
     }
     private static class TensType extends TypePS {
@@ -131,8 +128,14 @@ public class InterfacePS implements InterfaceWriter {
         protected String primitive() {
             return "["+type+"]";
         }
+
+        @Override
         protected boolean isScalar() { return false; }
+
+        @Override
         protected int columns() { return cols; }
+
+        @Override
         protected String generic() { return "L"+n;  }
     }
     private static class NestType extends TypePS {
@@ -156,14 +159,11 @@ public class InterfacePS implements InterfaceWriter {
         @Override
         protected String primitive() { return type; }
 
-        @Override
-        protected String wrapper() { return type; }
     }
 
     private final List<TypePS> main = new LinkedList<>();
 
-    public InterfacePS(String name, Collection<SqlParam> values, boolean isDelegate) throws InvalidQueryException {
-        this.delegate = isDelegate;
+    public InterfacePS(String name, Collection<SqlParam> values) {
         Map<String, Collection<SqlParam>> next = new LinkedHashMap<>();
         int kOrd = 0;
         for(SqlParam value: values) {
@@ -180,100 +180,36 @@ public class InterfacePS implements InterfaceWriter {
                     flds.add(new SqlParam(post, value.getType()));
                 }
             } else {
-                if (isDelegate)
-                    throw new InvalidQueryException("Invalid names for delegate fields: " + pName);
                 Map<String, SqlDataType> pMap = pType.toMap();
                 int cols = pMap.size();
                 if (cols == 1) {
-                    // VectType
-                    /*
-                     * bools1: ( bool11 )
-                     * and   (bool11) in ( :bools1 )
-                     * List<Boolean> getBools1();        // getter
-                     */
                     SqlDataType kType = pMap.values().iterator().next();
                     main.add(new VectType(pName, kType));
                 } else {
-                    // TensType
-                    /*
-                     * bools1: ( bool11, bool12 )
-                     * and   (bool11, bool12) in ( :bools1 )
-                     * List<L1> getBools1();        // getter
-                     * public interface Bools1PS {      !!
-                     *    boolean isBool11();           !!
-                     *    boolean isBool12();           !!
-                     * }                                !!
-                     */
                     List<SqlParam> inParms = pMap.entrySet().stream().map(e -> new SqlParam(e.getKey(), e.getValue())).collect(Collectors.toList());
-                    InterfaceWriter iw = new InterfacePS(name, inParms, false);
+                    InterfaceWriter iw = new InterfacePS(name, inParms);
                     String kName = cc.deduplicate(capitalize(pName)+REQUEST, iw);
                     main.add(new TensType(kName, pName, ++kOrd, cols));
                 }
             }
         }
         if (!next.isEmpty()) {
-            if (isDelegate)
-                throw new InvalidQueryException("Invalid names for delegate fields: " + String.join(",", next.keySet()));
-            /*
-             * a.foo    -- varchar / String
-             * a.bar    -- int / int
-             * b.foo    -- varchar / String
-             * b.bar    -- int / int
-             * interface MethodAPS {
-             *   void getFoo(String foo);
-             *   void getBar(int bar);
-             * }
-             * interface MethodPS {
-             *   MethodAPS getA();
-             *   MethodAPS getB();
-             * }
-             */
             for (Map.Entry<String, Collection<SqlParam>> ee : next.entrySet()) {
                 String oName = ee.getKey();
                 String fullName = name + capitalize(oName);
-                InterfaceWriter iw = new InterfacePS(fullName, ee.getValue(), false);
+                InterfaceWriter iw = new InterfacePS(fullName, ee.getValue());
                 String kName = cc.deduplicate(capitalize(fullName) + REQUEST, iw);
-                main.add(new NestType(kName, oName)); // new NestType(MethodARS, a)
+                main.add(new NestType(kName, oName));
             }
         }
     }
 
-    @Override
     public String signature() {
         List<TypePS> ordMain = new ArrayList<>(main);
         ordMain.sort(Comparator.comparing(TypePS::getName));
         List<String> arguments = new ArrayList<>();
         ordMain.forEach(it-> arguments.add(it.name+": "+it.primitive()));
-        return (delegate ? "G" : "I") + "::" + REQUEST + "::" + String.join(", ", arguments);
-    }
-
-    @Override
-    public void writeDelegate(PrintModel ipw, String iName, boolean java7) {
-        ipw.printf("public static class Delegate%s%s {%n", iName, generics(false));
-        ipw.more();
-        ipw.printf("private Delegate%s" + "() {}%n", iName);
-        main.forEach(ps -> {
-            String claz = ps.wrapper();
-            ipw.printf("protected %s<%s> %s;%n", cc.supplier(), claz, ps.name);
-        });
-        ipw.printf("public static Builder%s builder() { return new Builder%1$s(); }%n", iName);
-        ipw.printf("public static class Builder%s%s {%n", iName, generics(false));
-        ipw.more();
-        ipw.printf("private Builder%s() {}%n", iName);
-        main.forEach(ps -> {
-            String claz = ps.wrapper();
-            ipw.printf("private %s<%s> %s;%n", cc.supplier(), claz, ps.name);
-        });
-        ipw.printf("public Delegate%s build() {%n", iName);
-        ipw.more();
-        ipw.printf("Delegate%s result = new Delegate%1$s();%n", iName);
-        delegateRequestFields(ipw, java7);
-        ipw.printf("return  result;%n");
-        ipw.ends();
-        main.forEach(ps -> ipw.printf("public Builder%s %s(%s<%s> %2$s) { this.%2$s = %2$s; return this; }%n",
-                iName, ps.name, cc.supplier(), ps.wrapper()));
-        ipw.ends(); // Builder
-        ipw.ends(); // Delegate
+        return "I" + "::" + REQUEST + "::" + String.join(", ", arguments);
     }
 
     private String generics(boolean isDoc) {
@@ -288,15 +224,6 @@ public class InterfacePS implements InterfaceWriter {
             return "&lt;" + String.join(", ", generics) + "&gt";
         } else {
             return "<" + String.join(", ", generics) + ">";
-        }
-    }
-
-    private void delegateRequestFields(PrintModel ipw, boolean java7) {
-        if (java7) {
-            cc.add(RUNTIME_EMSQL);
-            main.forEach(it -> ipw.printf("result.%s = %1$s==null ? EmSQL.<%s>getDummySupplier() : %1$s;%n", it.name, it.wrapper()));
-        } else {
-            main.forEach(it -> ipw.printf("result.%s = %1$s==null ? () -> null : %1$s;%n", it.name));
         }
     }
 

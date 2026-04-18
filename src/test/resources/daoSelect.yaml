@@ -15,10 +15,6 @@ methods:
   - methodName: select01
     perform: !SelectSingle
       timeout: 5
-      input:
-        delegate: no
-      output:
-        delegate: no
       execSql: |
         select
           bool01,
@@ -31,33 +27,10 @@ methods:
         from tbool
         where bool12 = :bool12 
 
-  - methodName: select11
-    perform: !SelectSingle
-      timeout: 5
-      tune: yes
-      input:
-        delegate: no
-      output:
-        delegate: yes
-      execSql: |
-        select
-          bool01,
-          bool11,
-          bool02
-        into
-          :bool01,
-          :bool11,
-          :bool02
-        from tbool
-        where bool12 = :bool12 
-
+  
   - methodName: select02
     perform: !SelectOptional
       timeout: 5
-      input:
-        delegate: no
-      output:
-        delegate: no
       execSql: |
         select
           bool01,
@@ -84,10 +57,6 @@ methods:
     perform: !SelectList
       fetchSize: 256
       timeout: 5
-      input:
-        delegate: no
-      output:
-        reflect: no
       execSql: |
         select
           bool01,

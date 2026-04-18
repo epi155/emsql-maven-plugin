@@ -138,11 +138,7 @@ public class SqlSelectListDyn extends SpringAction
         if (mc.oSize() >= 2) {
             if (c > 0) ipw.commaLn();
             else ipw.println();
-            if (mc.isOutputDelegate()) {
-                ipw.printf("        o");
-            } else {
-                ipw.printf("        so");
-            }
+            ipw.printf("        so");
         }
         ipw.putf(");%n");
 

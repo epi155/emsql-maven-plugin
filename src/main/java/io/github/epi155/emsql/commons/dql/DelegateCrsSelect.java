@@ -6,8 +6,6 @@ import io.github.epi155.emsql.commons.SqlParam;
 
 import java.util.Map;
 
-import static io.github.epi155.emsql.commons.Contexts.mc;
-
 public class DelegateCrsSelect {
     private final ApiCrsSelect api;
 
@@ -23,14 +21,10 @@ public class DelegateCrsSelect {
         if (!notScalar.isEmpty()) {
             api.expandIn(ipw, notScalar, kPrg);
         }
-        if (mc.isOutputDelegate()) {
-            ipw.printf("return new SqlDelegateCursor() {%n");
+        if (oSize == 1) {
+            ipw.printf("return new SqlCursor<%s>() {%n", oMap.get(1).getType().getWrapper());
         } else {
-            if (oSize == 1) {
-                ipw.printf("return new SqlCursor<%s>() {%n", oMap.get(1).getType().getWrapper());
-            } else {
-                ipw.printf("return new SqlCursor<O>() {%n");
-            }
+            ipw.printf("return new SqlCursor<O>() {%n");
         }
         ipw.more();
         ipw.printf("private final ResultSet rs;%n");
@@ -57,19 +51,14 @@ public class DelegateCrsSelect {
         ipw.printf("return rs.next();%n");
         ipw.ends();
         ipw.printf("@Override%n");
-        if (mc.isOutputDelegate()) {
-            ipw.printf("public void fetchNext() throws SQLException {%n");
+        if (oSize == 1) {
+            ipw.printf("public %s fetchNext() throws SQLException {%n", oMap.get(1).getType().getWrapper());
         } else {
-            if (oSize == 1) {
-                ipw.printf("public %s fetchNext() throws SQLException {%n", oMap.get(1).getType().getWrapper());
-            } else {
-                ipw.printf("public O fetchNext() throws SQLException {%n");
-            }
+            ipw.printf("public O fetchNext() throws SQLException {%n");
         }
         ipw.more();
         api.fetch(ipw, oMap);
-        if (!mc.isOutputDelegate())
-            ipw.printf("return o;%n");
+        ipw.printf("return o;%n");
         ipw.ends();
         ipw.printf("@Override%n");
         ipw.printf("public void close() throws SQLException {%n");
@@ -96,11 +85,7 @@ public class DelegateCrsSelect {
         ipw.printf("while (rs.next()) {%n");
         ipw.more();
         api.fetch(ipw, oMap);
-        if (mc.isOutputDelegate()) {
-            ipw.printf("co.run();%n");
-        } else {
-            ipw.printf("co.accept(o);%n");
-        }
+        ipw.printf("co.accept(o);%n");
         ipw.ends(); // end while
         ipw.ends(); // end executeQuery
         api.dumpAction(ipw, kPrg, jdbc);

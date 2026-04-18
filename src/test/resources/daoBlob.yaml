@@ -36,22 +36,7 @@ methods:
           :Blob11,
           :Blob12 
         )
-  - methodName: insert02R
-    perform: !Insert
-      input:
-        reflect: yes
-      execSql: |
-        insert into tBlob (
-          Blob01,
-          Blob02,
-          Blob11,
-          Blob12
-        ) values (
-          :Blob01,
-          :Blob02,
-          :Blob11,
-          :Blob12 
-        )
+  
   - methodName: insert02K
     perform: !InlineProcedure
       execSql: |
@@ -139,20 +124,7 @@ methods:
         from tBlob
         where id_Blob = :idBlob
 
-  - methodName: findBlobAnyD
-    perform: !SelectOptional
-      output:
-        delegate: yes
-      execSql: |
-        select
-          Blob01,
-          Blob11
-        into
-          :Blob01,
-          :Blob11 
-        from tBlob
-        where id_Blob = :idBlob
-
+  
   - methodName: findBlobAny01
     perform: !SelectOptional
       execSql: |
@@ -173,20 +145,7 @@ methods:
         from tBlob
         where Blob12 = :Blob12
 
-  - methodName: findBlobAnyR
-    perform: !SelectOptional
-      output:
-        reflect: yes
-      execSql: |
-        select
-          Blob01,
-          Blob11
-        into
-          :Blob01,
-          :Blob11 
-        from tBlob
-        where id_Blob = :idBlob
-
+  
   - methodName: call01
     perform: !CallProcedure
       output:
@@ -196,17 +155,4 @@ methods:
       execSql: |
         call solve(:Blob01, :Blob11, :Blob02, :Blob12)
 
-  - methodName: call02
-    perform: !CallProcedure
-      input:
-        reflect: yes
-      output:
-        reflect: yes
-        fields:
-          - Blob02
-          - Blob12
-      execSql: |
-        call solve(:Blob01, :Blob11, 
-                   :Blob03, :Blob13,
-                   :Blob04, :Blob14,
-                   :Blob02, :Blob12)
+  

@@ -144,11 +144,7 @@ public class SqlCursorForSelectDyn extends SpringAction
         if (mc.oSize() >= 2) {
             if (c > 0) ipw.commaLn();
             else ipw.println();
-            if (mc.isOutputDelegate()) {
-                ipw.printf("        o");
-            } else {
-                ipw.printf("        so");
-            }
+            ipw.printf("        so");
         }
         ipw.putf(");%n");
 
@@ -230,17 +226,9 @@ public class SqlCursorForSelectDyn extends SpringAction
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
         String type = oMap.get(1).getType().getWrapper();
         if (mc.oSize() > 1) {
-            if (mc.isOutputDelegate()) {
-                ipw.putf("Runnable co");
-            } else {
-                ipw.putf("%s<O> co", cc.consumer());
-            }
+            ipw.putf("%s<O> co", cc.consumer());
         } else {
-            if (mc.isOutputDelegate()) {
-                ipw.putf("Runnable co");
-            } else {
-                ipw.putf("%s<%s> co", cc.consumer(), type);
-            }
+            ipw.putf("%s<%s> co", cc.consumer(), type);
         }
     }
 

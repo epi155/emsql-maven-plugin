@@ -9,7 +9,7 @@
             <plugin>
                 <groupId>io.github.epi155</groupId>
                 <artifactId>emsql-maven-plugin</artifactId>
-                <version>${version}</version>
+                <version>1.1-A3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -24,7 +24,7 @@
                     <autoPad>true</autoPad>
                     <modules>
 <!--                        <module>rdSelect-dlg.yaml</module>-->
-                        <module>daoNest1.yaml</module>
+                        <module>daoNest2.yaml</module>
                     </modules>
                     <addCompileSourceRoot>false</addCompileSourceRoot>
                     <addTestCompileSourceRoot>false</addTestCompileSourceRoot>

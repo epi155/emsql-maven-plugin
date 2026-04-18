@@ -1,5 +1,5 @@
 /*
- * Code Generated at 2026-04-09T10:57:21.268221Z
+ * Code Generated at 2026-04-17T10:02:13.310414Z
  * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
  */
 package com.example.emsql;
@@ -62,8 +62,6 @@ public class DaoVarcharSelectSingle {
                     }
                     if (rs.next()) {
                         throw new SqlNonUniqueResultException();
-                    } else {
-                        return o;
                     }
                 } else {
                     throw new SqlNoResultException();

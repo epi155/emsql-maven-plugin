@@ -36,22 +36,7 @@ methods:
           :varBinary11,
           :varBinary12 
         )
-  - methodName: insert02R
-    perform: !Insert
-      input:
-        reflect: yes
-      execSql: |
-        insert into tvarBinary (
-          varBinary01,
-          varBinary02,
-          varBinary11,
-          varBinary12
-        ) values (
-          :varBinary01,
-          :varBinary02,
-          :varBinary11,
-          :varBinary12 
-        )
+  
   - methodName: insert02K
     perform: !InlineProcedure
       execSql: |
@@ -139,20 +124,7 @@ methods:
         from tvarBinary
         where id_VarBinary = :idVarBinary
 
-  - methodName: findVarBinaryAnyD
-    perform: !SelectOptional
-      output:
-        delegate: yes
-      execSql: |
-        select
-          varBinary01,
-          varBinary11
-        into
-          :varBinary01,
-          :varBinary11 
-        from tvarBinary
-        where id_VarBinary = :idVarBinary
-
+  
   - methodName: findVarBinaryAny01
     perform: !SelectOptional
       execSql: |
@@ -173,20 +145,7 @@ methods:
         from tvarBinary
         where varBinary12 = :varBinary12
 
-  - methodName: findVarBinaryAnyR
-    perform: !SelectOptional
-      output:
-        reflect: yes
-      execSql: |
-        select
-          varBinary01,
-          varBinary11
-        into
-          :varBinary01,
-          :varBinary11 
-        from tvarBinary
-        where id_VarBinary = :idVarBinary
-
+  
   - methodName: call01
     perform: !CallProcedure
       output:
@@ -196,17 +155,4 @@ methods:
       execSql: |
         call solve(:varBinary01, :varBinary11, :varBinary02, :varBinary12)
 
-  - methodName: call02
-    perform: !CallProcedure
-      input:
-        reflect: yes
-      output:
-        reflect: yes
-        fields:
-          - varBinary02
-          - varBinary12
-      execSql: |
-        call solve(:varBinary01, :varBinary11, 
-                   :varBinary03, :varBinary13,
-                   :varBinary04, :varBinary14,
-                   :varBinary02, :varBinary12)
+  
