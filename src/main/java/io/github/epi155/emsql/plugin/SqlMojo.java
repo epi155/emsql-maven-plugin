@@ -45,6 +45,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SqlMojo extends AbstractMojo {
     public static final ThreadLocal<MapContextImpl> mapContext = new ThreadLocal<>();
+    private static final String DASH_UP = ",-----------------------------------------------------";
+    private static final String DASH_DN = "`-----------------------------------------------------";
     private final Set<String> classLogbook = new HashSet<>();
     @Parameter(defaultValue = "${plugin}", readonly = true, required = true)
     @Setter
@@ -115,8 +117,6 @@ public class SqlMojo extends AbstractMojo {
         c1.addTypeDescription(new TdProgrammingModeEnum());
         c1.addTypeDescription(new TdType(factory));
         c1.addTypeDescription(new TdMethod(factory));
-        c1.addTypeDescription(new TdInput(factory));
-        c1.addTypeDescription(new TdOutput(factory));
         c1.addTypeDescription(new TdOutFields(factory));
         c1.addTypeDescription(new TdInOutFields(factory));
         c1.addTypeDescription(new TdSelectOptional(factory));
@@ -191,8 +191,10 @@ public class SqlMojo extends AbstractMojo {
         }
 
         for (String module : modules) {
-            log.info("Loading API from {}", module);
-            
+            log.info(DASH_UP);
+            log.info("| Reading DAO from {}", module);
+            log.info(DASH_DN);
+
             // Path traversal protection
             if (module.contains("..") || 
                 module.startsWith("/") || 

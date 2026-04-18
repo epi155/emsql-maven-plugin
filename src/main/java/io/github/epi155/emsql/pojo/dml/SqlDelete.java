@@ -1,22 +1,20 @@
 package io.github.epi155.emsql.pojo.dml;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.DeleteModel;
+import io.github.epi155.emsql.api.InvalidQueryException;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.dml.ApiDelete;
 import io.github.epi155.emsql.commons.dml.ApiWriteMethod;
 import io.github.epi155.emsql.commons.dml.DelegateDelete;
 import io.github.epi155.emsql.pojo.PojoAction;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Map;
 
 public class SqlDelete extends PojoAction implements ApiWriteMethod, ApiDelete, DeleteModel {
     private final DelegateWriteMethod delegateWriteMethod;
     private final DelegateDelete delegateDelete;
-    @Setter
-    @Getter
-    private InputModel input;
 
 
     public SqlDelete() {

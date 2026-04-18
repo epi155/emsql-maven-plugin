@@ -19,13 +19,10 @@ public class SqlInlineBatch extends SpringBatchAction
     private final DelegateInline delegateInline;
     @Setter
     @Getter
-    private InputModel input;
+    private FieldsModel output;
     @Setter
     @Getter
-    private OutFieldsModel output;
-    @Setter
-    @Getter
-    private InOutFieldsModel inputOutput;
+    private FieldsModel inputOutput;
 
     public SqlInlineBatch() {
         super();

@@ -8,13 +8,9 @@ import java.util.function.Consumer;
 public interface CodeFactory {
     MethodModel newMethodModel();
 
-    InputModel newInputModel();
+    FieldsModel newOutFieldsModel();
 
-    OutputModel newOutputModel();
-
-    OutFieldsModel newOutFieldsModel();
-
-    InOutFieldsModel newInOutFieldsModel();
+    FieldsModel newInOutFieldsModel();
 
     SelectSingleModel newSelectSingleModel();
 

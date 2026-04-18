@@ -9,9 +9,6 @@ Template example
 ~~~yaml
   - methodName: updateUser
     perform: !Update
-      input:              # optional
-        reflect: false    # optional, default false
-        delegate: false   # optional, default false
       timeout: 5          # (seconds) optional, default null (system default)
       execSql: |
         update u01_user
@@ -36,9 +33,5 @@ Example of client code:
 ~~~java
         int nmUpdate = DaoU01.updateUser(c,  user);
 ~~~
-
-### Delegate input:
-
-see [Insert](insert.md#delegate-input)
 
 [![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](insert.md) [![Next](go-next.png)](delete.md)

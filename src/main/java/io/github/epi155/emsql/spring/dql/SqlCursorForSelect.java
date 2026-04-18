@@ -24,12 +24,6 @@ public class SqlCursorForSelect extends SpringAction
     private final DelegateCrsSelect delegateCrsSelect;
     @Getter
     @Setter
-    private InputModel input;
-    @Getter
-    @Setter
-    private OutputModel output;
-    @Getter
-    @Setter
     private Integer fetchSize;
     @Setter
     private ProgrammingModeEnum mode = ProgrammingModeEnum.Imperative;

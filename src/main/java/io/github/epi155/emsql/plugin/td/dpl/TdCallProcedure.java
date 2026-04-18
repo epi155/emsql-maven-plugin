@@ -2,7 +2,7 @@ package io.github.epi155.emsql.plugin.td.dpl;
 
 import io.github.epi155.emsql.api.CallProcedureModel;
 import io.github.epi155.emsql.api.CodeFactory;
-import io.github.epi155.emsql.api.InOutFieldsModel;
+import io.github.epi155.emsql.api.FieldsModel;
 import io.github.epi155.emsql.plugin.td.TdAbstract;
 
 public class TdCallProcedure extends TdAbstract<CallProcedureModel> {
@@ -18,6 +18,6 @@ public class TdCallProcedure extends TdAbstract<CallProcedureModel> {
 
     @Override
     protected void substituteAdditionalProperties() {
-        substituteProperty("input-output", InOutFieldsModel.class, null, "setInputOutput");
+        substituteProperty("input-output", FieldsModel.class, null, "setInputOutput");
     }
 }

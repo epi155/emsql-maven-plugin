@@ -9,12 +9,6 @@ Template example
 ~~~yaml
   - methodName: certificateCursor
     perform: !CursorForSelectDyn
-      input:              # optional
-        reflect: false    # optional, default false
-        delegate: false   # optional, default false
-      output:             # optional
-        reflect: false    # optional, default false
-        delegate: false   # optional, default false
       timeout: 5          # (seconds) optional, default null (system default)
       fetchSize: 2048     # optional, default null (system default)
       mode: IP            # optional, default IP (Imperative), else FP (Functional)

@@ -9,9 +9,6 @@ Template example
 ~~~yaml
   - methodName: deleteUser
     perform: !Delete
-      input:              # optional
-        reflect: false    # optional, default false
-        delegate: false   # optional, default false
       timeout: 5          # (seconds) optional, default null (system default)
       execSql: |
         delete from u01_user
@@ -35,9 +32,5 @@ Example of client code:
 ~~~java
         int nmDelete = DaoU01.deleteUser(c, user);
 ~~~
-
-### Delegate input
-
-see [Insert](insert.md#delegate)
 
 [![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](update.md) [![Next](go-next.png)](insertBatch.md)

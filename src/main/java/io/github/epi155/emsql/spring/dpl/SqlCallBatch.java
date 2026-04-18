@@ -20,13 +20,10 @@ public class SqlCallBatch extends SpringBatchAction
     private final DelegateCall delegateCall;
     @Setter
     @Getter
-    private InputModel input;
+    private FieldsModel output;
     @Setter
     @Getter
-    private OutFieldsModel output;
-    @Setter
-    @Getter
-    private InOutFieldsModel inputOutput;
+    private FieldsModel inputOutput;
 
     public SqlCallBatch() {
         super();

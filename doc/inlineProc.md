@@ -12,12 +12,7 @@ Template example (oracle database)
 ~~~yaml
   - methodName: addError
     perform: !InlineProcedure
-      input:              # optional
-        reflect: false    # optional, default false
-        delegate: false   # optional, default false
       output:             # optional
-        reflect: false    # optional, default false
-        delegate: false   # optional, default false
         fields:           # output fields
           - ...           # field name
       timeout: 5          # (seconds) optional, default null (system default)

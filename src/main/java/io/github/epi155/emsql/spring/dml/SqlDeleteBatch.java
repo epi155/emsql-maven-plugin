@@ -1,12 +1,13 @@
 package io.github.epi155.emsql.spring.dml;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.DeleteBatchModel;
+import io.github.epi155.emsql.api.InvalidQueryException;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dml.ApiDelete;
 import io.github.epi155.emsql.commons.dml.DelegateDelete;
-import lombok.Getter;
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -16,9 +17,6 @@ import static io.github.epi155.emsql.commons.Contexts.mc;
 
 public class SqlDeleteBatch extends SpringBatchAction implements ApiDelete, DeleteBatchModel {
     private final DelegateDelete delegateDelete;
-    @Getter
-    @Setter
-    private InputModel input;
 
     public SqlDeleteBatch() {
         super();

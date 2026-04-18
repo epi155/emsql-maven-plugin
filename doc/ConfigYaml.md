@@ -96,55 +96,6 @@ all models have the parameters in common: `timeout` (optional) the time, in seco
 
 each model has its own dedicated set of parameters.
 
-
-
-### Reflect Input/Output values
-
-In general the `reflecŧ` flag is present in the input and output parameters
-
-~~~yaml
-  - methodName:   # String
-    perform:      # SqlAction
-      input:
-        reflect:        # boolean
-      output:
-        reflect:        # boolean
-~~~
-
-If the reflect flag is activated, DTO interfaces are not generated. Input and
-output class fields are handled using java reflection.
-In this way it is also possible to access structured objects (`:foo.bar` becomes
-`getFoo().getBar()` or `getFoo().setBar()` depending on whether it is an input or
-output); in the case of output parameters, intermediate nodes are also created
-if they are null; in the case of input parameters the nodes are traversed in
-safe-call mode, as in kotlin `foo?.bar`, if `getFoo()` returns `null`,
-it does not attempt to call `getBar()` causing a NullPointer, but returns `null` as a value
-
-Although reflect reduces the code you need to write, it should be handled with care.
-A first contraindication is that any errors only appear during code execution,
-obviously accessing the fields indirectly with java reflecion is less
-efficient (slower) than accessing them directly,
-
-There are no examples using reflect in the template examples.
-The code is identical to the standard one with generics that do not extend any interfaces.
-
-### Delegate Input/Output values
-
-In general the `delegate` flag is present in the input and output parameters
-
-~~~yaml
-  - methodName:   # String
-    perform:      # SqlAction
-      input:
-        delegate:       # boolean
-      output:
-        delegate:       # boolean
-~~~
-
-If the delegate flag is enabled, DTO interfaces with direct getters and setters are replaced with DTO classes with references to getter and setter methods. The corresponding builder is also created together with the DTO classes to simplify the setting of the values references
-
-The concept of delegated parameter is a bit convoluted, in the details of the various models there is an example of the use of delegated parameters in input and output.
-
 ### Logging
 
 It is possible to log the executed query, the input parameters and the output parameters.

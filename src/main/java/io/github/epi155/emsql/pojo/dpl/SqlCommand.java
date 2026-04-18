@@ -1,6 +1,9 @@
 package io.github.epi155.emsql.pojo.dpl;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.CommandModel;
+import io.github.epi155.emsql.api.InvalidQueryException;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.pojo.PojoAction;
@@ -11,11 +14,6 @@ import java.util.Map;
 public class SqlCommand extends PojoAction implements CommandModel {
     public SqlCommand() {
         super();
-    }
-
-    @Override
-    public InputModel getInput() {
-        return null;
     }
 
     @Override

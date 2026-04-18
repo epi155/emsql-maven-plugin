@@ -1,9 +1,9 @@
 package io.github.epi155.emsql.api;
 
 public interface InlineProcedureModel extends PerformModel {
-    void setInput(InputModel it);
-
-    void setOutput(OutFieldsModel it);
+    default void setOutput(FieldsModel it) {
+        throw new UnsupportedOperationException();
+    }
 
     void setExecSql(String it);
 

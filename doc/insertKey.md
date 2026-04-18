@@ -14,9 +14,6 @@ Template example
 ~~~yaml
   - methodName: saveUser
     perform: !InsertReturnKeys
-      input:              # optional
-        reflect: false    # optional, default false
-        delegate: false   # optional, default false
       timeout: 5          # (seconds) optional, default null (system default)
       output:
         fields:
@@ -55,10 +52,5 @@ Example of client code:
 ~~~java
         Optional<Long> oIdUser = DaoU01.saveUser(c, user);
 ~~~
-
-### Delegate input
-
-see [Insert](insert.md#delegate)
-
 
 [![Up](go-up.png)](ConfigYaml.md) [![Next](go-previous.png)](deleteBatch.md) [![Next](go-next.png)](callProc.md)

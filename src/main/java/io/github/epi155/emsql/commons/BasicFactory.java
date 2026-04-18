@@ -160,22 +160,12 @@ public abstract class BasicFactory implements CodeFactory {
     }
 
     @Override
-    public InputModel newInputModel() {
+    public FieldsModel newOutFieldsModel() {
         return new ComAreaDef();
     }
 
     @Override
-    public OutputModel newOutputModel() {
-        return new ComAreaDef();
-    }
-
-    @Override
-    public OutFieldsModel newOutFieldsModel() {
-        return new ComAreaDef();
-    }
-
-    @Override
-    public InOutFieldsModel newInOutFieldsModel() {
+    public FieldsModel newInOutFieldsModel() {
         return new ComAreaDef();
     }
 

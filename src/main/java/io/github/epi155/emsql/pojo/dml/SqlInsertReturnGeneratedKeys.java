@@ -26,10 +26,7 @@ public class SqlInsertReturnGeneratedKeys extends PojoAction implements ApiDocSi
     private final DelegateSelectSignature delegateSelectSignature;
     @Setter
     @Getter
-    private InputModel input;
-    @Setter
-    @Getter
-    private OutFieldsModel output;
+    private FieldsModel output;
     public SqlInsertReturnGeneratedKeys() {
         super();
         this.delegateSelectSignature = new DelegateSelectSignature(this);

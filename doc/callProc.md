@@ -11,17 +11,10 @@ Template example
 ~~~yaml
   - methodName: book
     perform: !CallProcedure
-      input:              # optional
-        reflect: false    # optional, default false
-        delegate: false   # optional, default false
       output:             # optional
-        reflect: false    # optional, default false
-        delegate: false   # optional, default false
         fields:           # output fields
           - ...           # field name
       input-output:       # optional
-        reflect: false    # optional, default false
-        delegate: false   # optional, default false
         fields:           # input-output fields
           - qty           # field name
       timeout: 5          # (seconds) optional, default null (system default)

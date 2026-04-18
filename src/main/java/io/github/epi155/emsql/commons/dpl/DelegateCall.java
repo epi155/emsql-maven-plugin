@@ -1,8 +1,7 @@
 package io.github.epi155.emsql.commons.dpl;
 
-import io.github.epi155.emsql.api.InOutFieldsModel;
+import io.github.epi155.emsql.api.FieldsModel;
 import io.github.epi155.emsql.api.InvalidQueryException;
-import io.github.epi155.emsql.api.OutFieldsModel;
 import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
@@ -29,8 +28,8 @@ public class DelegateCall {
             Map<String, SqlDataType> inpFields = new HashMap<>();
             Map<String, SqlDataType> outFields = new HashMap<>();
             Map<String, SqlDataType> ioFields = new HashMap<>();
-            OutFieldsModel output = api.getOutput();
-            InOutFieldsModel inputOutput = api.getInputOutput();
+            FieldsModel output = api.getOutput();
+            FieldsModel inputOutput = api.getInputOutput();
 
             fields.forEach((k, v) -> {
                 if (inputOutput != null && inputOutput.getFields().contains(k)) {

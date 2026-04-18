@@ -1,6 +1,9 @@
 package io.github.epi155.emsql.pojo.dql;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.InvalidQueryException;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SelectListDynModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.DocUtils;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
@@ -28,12 +31,6 @@ public class SqlSelectListDyn extends PojoAction
     @Setter
     @Getter
     private Map<String, String> optionalAnd = new LinkedHashMap<>();
-    @Getter
-    @Setter
-    private InputModel input;
-    @Getter
-    @Setter
-    private OutputModel output;
     @Getter
     @Setter
     private Integer fetchSize;

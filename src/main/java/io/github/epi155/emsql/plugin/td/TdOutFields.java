@@ -1,16 +1,16 @@
 package io.github.epi155.emsql.plugin.td;
 
 import io.github.epi155.emsql.api.CodeFactory;
-import io.github.epi155.emsql.api.OutFieldsModel;
+import io.github.epi155.emsql.api.FieldsModel;
 
-public class TdOutFields extends TdAbstract<OutFieldsModel> {
+public class TdOutFields extends TdAbstract<FieldsModel> {
 
     public TdOutFields(CodeFactory factory) {
-        super(OutFieldsModel.class, factory);
+        super(FieldsModel.class, factory);
     }
 
     @Override
-    protected OutFieldsModel createModelInstance() {
+    protected FieldsModel createModelInstance() {
         return factory.newOutFieldsModel();
     }
 }

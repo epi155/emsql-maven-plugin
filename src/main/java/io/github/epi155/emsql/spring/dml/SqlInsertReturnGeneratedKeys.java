@@ -26,10 +26,7 @@ public class SqlInsertReturnGeneratedKeys extends SpringAction implements ApiDoc
     private final DelegateSelectSignature delegateSelectSignature;
     @Setter
     @Getter
-    private InputModel input;
-    @Setter
-    @Getter
-    private OutFieldsModel output;
+    private FieldsModel output;
     public SqlInsertReturnGeneratedKeys() {
         super();
         this.delegateSelectSignature = new DelegateSelectSignature(this);

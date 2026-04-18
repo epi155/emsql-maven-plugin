@@ -17,13 +17,10 @@ public class SqlCallProcedure extends PojoAction
     private final DelegateWrite delegatewriteMethod;
     @Setter
     @Getter
-    private InputModel input;
+    private FieldsModel output;
     @Setter
     @Getter
-    private OutFieldsModel output;
-    @Setter
-    @Getter
-    private InOutFieldsModel inputOutput;
+    private FieldsModel inputOutput;
 
     public SqlCallProcedure() {
         super();

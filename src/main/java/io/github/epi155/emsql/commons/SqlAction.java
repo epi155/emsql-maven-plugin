@@ -1,6 +1,8 @@
 package io.github.epi155.emsql.commons;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.InvalidQueryException;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,12 +32,6 @@ public abstract class SqlAction {
      */
     private Integer timeout;
     private boolean tune;
-
-    public abstract InputModel getInput();
-
-    public OutputModel getOutput() {
-        return null;
-    }
 
     public abstract JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException;
 

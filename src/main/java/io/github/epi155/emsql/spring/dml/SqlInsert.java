@@ -1,22 +1,20 @@
 package io.github.epi155.emsql.spring.dml;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.InsertModel;
+import io.github.epi155.emsql.api.InvalidQueryException;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.dml.ApiInsert;
 import io.github.epi155.emsql.commons.dml.ApiWriteMethod;
 import io.github.epi155.emsql.commons.dml.DelegateInsert;
 import io.github.epi155.emsql.spring.SpringAction;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Map;
 
 public class SqlInsert extends SpringAction implements ApiWriteMethod, ApiInsert, InsertModel {
     private final DelegateWriteMethod delegateWriteMethod;
     private final DelegateInsert delegateInsert;
-    @Setter
-    @Getter
-    private InputModel input;
 
     public SqlInsert() {
         super();

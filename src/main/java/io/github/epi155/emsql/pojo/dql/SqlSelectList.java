@@ -1,12 +1,14 @@
 package io.github.epi155.emsql.pojo.dql;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.InvalidQueryException;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SelectListModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 import io.github.epi155.emsql.commons.dql.ApiSelectFields;
 import io.github.epi155.emsql.commons.dql.DelegateSelectFields;
 import io.github.epi155.emsql.pojo.PojoAction;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Map;
@@ -17,12 +19,6 @@ import static io.github.epi155.emsql.commons.Contexts.mc;
 public class SqlSelectList extends PojoAction implements ApiSelectFields, ApiDocSignature, SelectListModel {
     private final DelegateSelectFields delegateSelectFields;
     private final DelegateSelectSignature delegateSelectSignature;
-    @Getter
-    @Setter
-    private InputModel input;
-    @Getter
-    @Setter
-    private OutputModel output;
     @Setter
     private Integer fetchSize;
 
