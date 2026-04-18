@@ -1,9 +1,9 @@
 package io.github.epi155.emsql.commons.dpl;
 
-import io.github.epi155.emsql.api.FieldsModel;
+import java.util.List;
 
 public interface ApiInline {
     String getExecSql();
 
-    FieldsModel getOutput();
+    List<String> getOutFields();
 }

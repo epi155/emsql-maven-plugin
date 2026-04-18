@@ -146,10 +146,9 @@ methods:
   
   - methodName: call01
     perform: !CallProcedure
-      output:
-        fields:
-          - char02
-          - char12
+      outFields:
+        - char02
+        - char12
       execSql: |
         call solve(:char01, :char11, :char02, :char12)
 

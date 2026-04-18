@@ -8,6 +8,7 @@ import io.github.epi155.emsql.commons.dpl.DelegateInline;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.*;
@@ -19,10 +20,10 @@ public class SqlInlineBatch extends SpringBatchAction
     private final DelegateInline delegateInline;
     @Setter
     @Getter
-    private FieldsModel output;
-    @Setter
-    @Getter
-    private FieldsModel inputOutput;
+    private List<String> outFields;
+//    @Setter
+//    @Getter
+//    private FieldsModel inputOutput;
 
     public SqlInlineBatch() {
         super();

@@ -11,11 +11,9 @@ Template example
 ~~~yaml
   - methodName: book
     perform: !CallProcedure
-      output:             # optional
-        fields:           # output fields
-          - ...           # field name
-      input-output:       # optional
-        fields:           # input-output fields
+      outFields:          # output fields
+        - ...             # field name
+      inOutFields:        # input-output fields
           - qty           # field name
       timeout: 5          # (seconds) optional, default null (system default)
       execSql: |

@@ -15,9 +15,8 @@ Template example
   - methodName: saveUser
     perform: !InsertReturnKeys
       timeout: 5          # (seconds) optional, default null (system default)
-      output:
-        fields:
-          - idUser
+      outFields:
+        - idUser
       execSql: |
         insert into u01_user (
           SURNAME,

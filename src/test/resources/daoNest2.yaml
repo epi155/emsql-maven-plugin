@@ -31,10 +31,9 @@ declare:
 methods:
   - methodName: salvaPraticaDeep
     perform: !InlineProcedure
-      output:
-        fields:
-          - p01.idPraticaApp
-          - p02.idFunzioneApp
+      outFields:
+        - p01.idPraticaApp
+        - p02.idFunzioneApp
       execSql: |
         delclare 
           id01 number
@@ -87,4 +86,3 @@ methods:
           set :p01.idPraticaApp = id01;
           set :p02.idFunzioneApp = id02;
         end;
-

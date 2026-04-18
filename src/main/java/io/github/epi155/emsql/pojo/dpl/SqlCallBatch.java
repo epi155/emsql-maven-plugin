@@ -8,6 +8,7 @@ import io.github.epi155.emsql.commons.dpl.DelegateCall;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -19,10 +20,10 @@ public class SqlCallBatch extends PojoBatchAction
 
     @Setter
     @Getter
-    private FieldsModel output;
+    private List<String> outFields;
     @Setter
     @Getter
-    private FieldsModel inputOutput;
+    private List<String> inOutFields;
 
     public SqlCallBatch() {
         super();

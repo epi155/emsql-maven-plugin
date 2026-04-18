@@ -9,6 +9,7 @@ import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 
 public class SqlInlineProcedure extends PojoAction
@@ -17,10 +18,10 @@ public class SqlInlineProcedure extends PojoAction
     private final DelegateInline delegateInline;
     @Setter
     @Getter
-    private FieldsModel output;
-    @Setter
-    @Getter
-    private FieldsModel inputOutput;
+    private List<String> outFields;
+//    @Setter
+//    @Getter
+//    private FieldsModel inputOutput;
 
     public SqlInlineProcedure() {
         super();

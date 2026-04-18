@@ -17,9 +17,8 @@ declare:
 methods:
   - methodName: prenota
     perform: !CallProcedure
-      input-output:
-        fields:
-          - qty
+      inOutFields:
+        - qty
       execSql: |
         call PRENOTA_EWL(:abi, :posi, :circ, :aff, :cpp, :qty, :agen)
 
@@ -30,9 +29,8 @@ methods:
 
   - methodName: insert
     perform: !InlineProcedure
-      output:
-        fields:
-          - idBool
+      outFields:
+        - idBool
       execSql: |
         begin 
           insert into tbool (
@@ -51,9 +49,6 @@ methods:
 
   - methodName: insert2
     perform: !InlineBatch
-      #      output:
-      #        fields:
-      #          - idBool
       execSql: |
         begin 
           insert into tbool (
@@ -67,4 +62,4 @@ methods:
             :bool11,
             :bool12
           )
-        end; 
+        end;

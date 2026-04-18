@@ -1,12 +1,13 @@
 package io.github.epi155.emsql.commons.dpl;
 
-import io.github.epi155.emsql.api.FieldsModel;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface ApiCall {
     @NotNull String getExecSql();
 
-    FieldsModel getInputOutput();
+    List<String> getInOutFields();
 
-    FieldsModel getOutput();
+    List<String> getOutFields();
 }

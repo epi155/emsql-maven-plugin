@@ -12,9 +12,8 @@ Template example (oracle database)
 ~~~yaml
   - methodName: addError
     perform: !InlineProcedure
-      output:             # optional
-        fields:           # output fields
-          - ...           # field name
+      outFields:          # output fields
+        - ...             # field name
       timeout: 5          # (seconds) optional, default null (system default)
       execSql: |
         declare

@@ -148,10 +148,9 @@ methods:
   
   - methodName: call01
     perform: !CallProcedure
-      output:
-        fields:
-          - binary02
-          - binary12
+      outFields:
+        - binary02
+        - binary12
       execSql: |
         call solve(:binary01, :binary11, :binary02, :binary12)
 

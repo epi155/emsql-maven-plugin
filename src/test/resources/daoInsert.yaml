@@ -38,9 +38,8 @@ methods:
 
   - methodName: insert02
     perform: !InsertReturnKeys
-      output:
-        fields:
-          - idBool
+      outFields:
+        - idBool
       execSql: |
         insert into tbool (
           bool01,
@@ -57,10 +56,9 @@ methods:
   - methodName: insert22
     perform: !InsertReturnKeys
       timeout: 5
-      output:
-        fields:
-          - idBool
-          - bool14
+      outFields:
+        - idBool
+        - bool14
       execSql: |
         insert into tbool (
           bool01,

@@ -152,10 +152,9 @@ methods:
   
   - methodName: call01
     perform: !CallProcedure
-      output:
-        fields:
-          - date02
-          - date12
+      outFields:
+        - date02
+        - date12
       execSql: |
         call solve(:date01, :date11, :date02, :date12)
 

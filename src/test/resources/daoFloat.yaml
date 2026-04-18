@@ -148,10 +148,9 @@ methods:
   
   - methodName: call01
     perform: !CallProcedure
-      output:
-        fields:
-          - float02
-          - float12
+      outFields:
+        - float02
+        - float12
       execSql: |
         call solve(:float01, :float11, :float02, :float12)
 

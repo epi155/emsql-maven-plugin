@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.val;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,7 +27,7 @@ public class SqlInsertReturnGeneratedKeys extends SpringAction implements ApiDoc
     private final DelegateSelectSignature delegateSelectSignature;
     @Setter
     @Getter
-    private FieldsModel output;
+    private List<String> outFields;
     public SqlInsertReturnGeneratedKeys() {
         super();
         this.delegateSelectSignature = new DelegateSelectSignature(this);
@@ -44,7 +45,7 @@ public class SqlInsertReturnGeneratedKeys extends SpringAction implements ApiDoc
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, true);
             Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
             int k = 0;
-            for (val e : output.getFields()) {
+            for (val e : outFields) {
                 oMap.put(++k, new SqlParam(e, fields.get(e)));
             }
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);

@@ -146,10 +146,9 @@ methods:
   
   - methodName: call01
     perform: !CallProcedure
-      output:
-        fields:
-          - timestamp02
-          - timestamp12
+      outFields:
+        - timestamp02
+        - timestamp12
       execSql: |
         call solve(:timestamp01, :timestamp11, :timestamp02, :timestamp12)
 

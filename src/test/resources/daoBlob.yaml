@@ -148,10 +148,9 @@ methods:
   
   - methodName: call01
     perform: !CallProcedure
-      output:
-        fields:
-          - Blob02
-          - Blob12
+      outFields:
+        - Blob02
+        - Blob12
       execSql: |
         call solve(:Blob01, :Blob11, :Blob02, :Blob12)
 

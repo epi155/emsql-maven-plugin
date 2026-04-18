@@ -148,10 +148,9 @@ methods:
   
   - methodName: call01
     perform: !CallProcedure
-      output:
-        fields:
-          - bool02
-          - bool12
+      outFields:
+        - bool02
+        - bool12
       execSql: |
         call solve(:bool01, :bool11, :bool02, :bool12)
 

@@ -1,9 +1,9 @@
 package io.github.epi155.emsql.api;
 
+import java.util.List;
+
 public interface InsertReturnGeneratedKeysModel extends PerformModel {
-    default void setOutput(FieldsModel it) {
-        throw new UnsupportedOperationException();
-    }
+    void setOutFields(List<String> fields);
 
     void setExecSql(String it);
 

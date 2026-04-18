@@ -31,10 +31,9 @@ declare:
 methods:
   - methodName: salvaPraticaDeep
     perform: !InlineProcedure
-      output:
-        fields:
-          - p01.idPraticaApp
-          - p02.idFunzioneApp
+      outFields:
+        - p01.idPraticaApp
+        - p02.idFunzioneApp
       execSql: |
         delclare 
           id01 number

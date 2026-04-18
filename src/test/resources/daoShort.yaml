@@ -146,10 +146,9 @@ methods:
   
   - methodName: call01
     perform: !CallProcedure
-      output:
-        fields:
-          - short02
-          - short12
+      outFields:
+        - short02
+        - short12
       execSql: |
         call solve(:short01, :short11, :short02, :short12)
 

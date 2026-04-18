@@ -27,7 +27,7 @@ public class DelegateInline {
         Map<String, SqlDataType> inpFields = new HashMap<>();
         Map<String, SqlDataType> outFields = new HashMap<>();
         fields.forEach((k, v) -> {
-            if (api.getOutput() != null && api.getOutput().getFields().contains(k)) {
+            if (api.getOutFields() != null && api.getOutFields().contains(k)) {
                 outFields.put(k, v);
             } else {
                 inpFields.put(k, v);

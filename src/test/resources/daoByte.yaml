@@ -148,10 +148,9 @@ methods:
   
   - methodName: call01
     perform: !CallProcedure
-      output:
-        fields:
-          - byte02
-          - byte12
+      outFields:
+        - byte02
+        - byte12
       execSql: |
         call solve(:byte01, :byte11, :byte02, :byte12)
 

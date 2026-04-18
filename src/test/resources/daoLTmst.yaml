@@ -146,10 +146,9 @@ methods:
   
   - methodName: call01
     perform: !CallProcedure
-      output:
-        fields:
-          - localDateTime02
-          - localDateTime12
+      outFields:
+        - localDateTime02
+        - localDateTime12
       execSql: |
         call solve(:localDateTime01, :localDateTime11, :localDateTime02, :localDateTime12)
 
