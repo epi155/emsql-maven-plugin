@@ -40,22 +40,7 @@ public final class ArrayNilType implements SqlDataType {
         ipw.putf("rs.getArray(%d)", k);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setArray(ps, ++ki, EmSQL.get(%s, \"%s\", Array.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setArray(ps, %d, EmSQL.get(%s, \"%s\", Array.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.ARRAY);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

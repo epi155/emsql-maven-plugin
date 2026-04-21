@@ -47,7 +47,8 @@ public class DelegateSelectDyn {
     public void debugAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
         if (cc.isDebug()) {
             cc.add("io.github.epi155.emsql.runtime.SqlArg");
-            ipw.printf("if (log.isDebugEnabled()) {%n");
+            cc.add("java.util.List");
+            cc.add("java.util.ArrayList");
             ipw.more();
             ipw.printf("SqlTrace.showQuery(query, ");
             cc.traceParameterBegin(ipw);
@@ -59,7 +60,7 @@ public class DelegateSelectDyn {
             ipw.printf("return args.toArray(new SqlArg[0]);%n");
             cc.traceParameterEnds(ipw);
             ipw.printf("});%n");
-            ipw.ends();
+            ipw.less();
         }
     }
 

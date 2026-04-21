@@ -9,15 +9,9 @@ public interface SqlDataType extends TypeModel {
 
     void psSet(PrintModel ipw, String source, int k);
 
-    void xPsPush(PrintModel ipw, String orig, String name);
-
-    void xPsPush(PrintModel ipw, String orig, String name, int k);
-
     String getPrimitive();
 
-    default String getWrapper() {
-        return getPrimitive();
-    }
+    String getWrapper();
 
     default boolean isNullable() {
         return false;
@@ -27,26 +21,11 @@ public interface SqlDataType extends TypeModel {
         return Set.of();
     }
 
-    /*
-     * methods for obtaining output values,
-     * not usable for extended data types,
-     * overridden for standard data types
-     */
-    default void rsGetValue(PrintModel ipw, int k) {
-        throw new IllegalStateException();
-    }
+    void rsGetValue(PrintModel ipw, int k);
 
-    default void csGetValue(PrintModel ipw, int k) {
-        throw new IllegalStateException();
-    }
+    void csGetValue(PrintModel ipw, int k);
 
-    default void registerOut(PrintModel ipw) {
-        throw new IllegalStateException();
-    }
-
-    default void registerOut(PrintModel ipw, int k) {
-        throw new IllegalStateException();
-    }
+    void registerOut(PrintModel ipw, int k);
 
     /*
      * methods for extended data type,

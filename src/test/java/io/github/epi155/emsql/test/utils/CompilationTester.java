@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CompilationTester {
 
     private final JavaCompiler compiler;
-    private final List<String> classpath;
     private final List<String> options;
 
     public CompilationTester() {
@@ -30,8 +29,8 @@ public class CompilationTester {
         if (compiler == null) {
             throw new IllegalStateException("Java compiler not available. Are you running with JRE instead of JDK?");
         }
-        
-        this.classpath = determineClasspath();
+
+        List<String> classpath = determineClasspath();
         this.options = Arrays.asList("-classpath", String.join(File.pathSeparator, classpath));
         
         log.debug("Initialized CompilationTester with classpath: {}", classpath);
@@ -119,7 +118,7 @@ public class CompilationTester {
             StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
             
             Iterable<? extends JavaFileObject> compilationUnits = 
-                fileManager.getJavaFileObjectsFromFiles(Arrays.asList(javaFile));
+                fileManager.getJavaFileObjectsFromFiles(List.of(javaFile));
 
             JavaCompiler.CompilationTask task = compiler.getTask(
                 null, fileManager, null, compileOptions, null, compilationUnits);

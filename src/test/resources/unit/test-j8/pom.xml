@@ -35,6 +35,7 @@
                         <module>daoClob.yaml</module>
                         <module>daoCStream.yaml</module>
                         <module>daoCursor.yaml</module>
+                        <module>daoCursorD.yaml</module>
                         <module>daoDate.yaml</module>
                         <module>daoDelete.yaml</module>
                         <module>daoDouble.yaml</module>

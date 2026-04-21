@@ -41,21 +41,6 @@ public final class TimeNilType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("EmSQL.setTime(ps, ++ki, EmSQL.get(%s, \"%s\", Time.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("EmSQL.setTime(ps, %d, EmSQL.get(%s, \"%s\", Time.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.TIME);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.TIME);%n", k);
     }

@@ -1,0 +1,3 @@
+io.github.epi155.emsql.test.parser.FakeProvider
+io.github.epi155.emsql.test.parser.JSqlProvider
+io.github.epi155.emsql.test.parser.JooqProvider

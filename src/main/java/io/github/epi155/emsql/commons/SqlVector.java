@@ -7,7 +7,7 @@ import lombok.val;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static io.github.epi155.emsql.commons.Contexts.*;
+import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Tools.getterOf;
 
 public class SqlVector implements SqlDataType {
@@ -50,36 +50,6 @@ public class SqlVector implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        if (params.length == 1) {
-            ipw.printf("for (%1$s e%3$s: (List<%2$s>) EmSQL.get(%3$s, \"%4$s\", List.class)) {%n",
-                    params[0].getType().getPrimitive(), params[0].getType().getWrapper(), orig, name);
-            ipw.more();
-            for (val param : params) {
-                param.getType().psSet(ipw, "e" + orig);
-            }
-            ipw.ends();
-        } else {
-            if (mc.nSize() > IMAX) {
-                ipw.printf("for (L%d e%s: (List<L%1$d>) EmSQL.get(%2$s, \"%3$s\", List.class)) {%n", id, orig, name);
-            } else {
-                ipw.printf("for (L%d e%s: %s) {%n", id, orig, name);
-            }
-            ipw.more();
-            for (val param : params) {
-                param.getType().xPsPush(ipw, "e" + orig, param.getName());
-            }
-            ipw.ends();
-        }
-
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        throw new IllegalStateException();
-    }
-
-    @Override
     public String getGeneric() {
         return "L" + id;
     }
@@ -91,6 +61,26 @@ public class SqlVector implements SqlDataType {
         } else {
             return "List<L" + id + ">";
         }
+    }
+
+    @Override
+    public String getWrapper() {
+        return getPrimitive();
+    }
+
+    @Override
+    public void rsGetValue(PrintModel ipw, int k) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void csGetValue(PrintModel ipw, int k) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void registerOut(PrintModel ipw, int k) {
+        throw new IllegalStateException();
     }
 
     @Override

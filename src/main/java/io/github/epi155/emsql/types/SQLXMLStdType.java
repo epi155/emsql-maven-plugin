@@ -31,21 +31,6 @@ public final class SQLXMLStdType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("ps.setSQLXML(++ki, EmSQL.get(%s, \"%s\", SQLXML.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("ps.setSQLXML(%d, EmSQL.get(%s, \"%s\", SQLXML.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.SQLXML);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.SQLXML);%n", k);
     }

@@ -7,7 +7,7 @@ declare:
   char03: Char?
   char04: Char?
   char11: Char
-  char12: Char
+  char12: Char(5)
   char13: Char
   char14: Char
 methods:
@@ -115,10 +115,14 @@ methods:
       execSql: |
         select
           char01,
-          char11
+          char02,
+          char11,
+          char12
         into
           :char01,
-          :char11 
+          :char02,
+          :char11, 
+          :char12 
         from tchar
         where id_Char = :idChar
 

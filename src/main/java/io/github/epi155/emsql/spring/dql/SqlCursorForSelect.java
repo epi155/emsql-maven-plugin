@@ -49,7 +49,7 @@ public class SqlCursorForSelect extends SpringAction
         }
     }
 
-    private void writeImperative(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
+    private void writeImperative(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
@@ -86,7 +86,7 @@ public class SqlCursorForSelect extends SpringAction
     }
 
 
-    private void writeFunctional(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
+    private void writeFunctional(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         Map<Integer, SqlParam> oMap = jdbc.getOMap();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");

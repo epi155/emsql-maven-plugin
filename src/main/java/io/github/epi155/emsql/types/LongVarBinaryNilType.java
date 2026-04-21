@@ -45,22 +45,7 @@ public final class LongVarBinaryNilType implements SqlDataType {
         ipw.printf("EmSQL.setLongVarBinary(ps, %d, %s);%n", k, source);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setLongVarBinary(ps, ++ki, EmSQL.get(%s, \"%s\", byte[].class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setLongVarBinary(ps, %d, EmSQL.get(%s, \"%s\", byte[].class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.LONGVARBINARY);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

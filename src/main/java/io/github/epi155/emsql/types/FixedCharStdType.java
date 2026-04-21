@@ -35,15 +35,5 @@ public class FixedCharStdType extends CharStdType {
         ipw.printf("ps.setString(%d, EmSQL.rpads(%s, %d));%n", k, source, length);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("ps.setString(++ki, EmSQL.rpads(EmSQL.get(%s, \"%s\", String.class), %d));%n", orig, name, length);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("ps.setString(%d, EmSQL.rpads(EmSQL.get(%s, \"%s\", String.class), %d));%n", k, orig, name, length);
-    }
 }

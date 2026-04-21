@@ -8,10 +8,6 @@ import java.util.function.Consumer;
 public interface CodeFactory {
     MethodModel newMethodModel();
 
-    FieldsModel newOutFieldsModel();
-
-    FieldsModel newInOutFieldsModel();
-
     SelectSingleModel newSelectSingleModel();
 
     SelectOptionalModel newSelectOptionalModel();

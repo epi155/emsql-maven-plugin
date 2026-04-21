@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.commons;
 
-import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
 
@@ -38,10 +37,10 @@ public interface ClassContext {
 
     void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters);
 
-    String inPrepare(String name, Collection<SqlParam> values, InputMask mask) throws InvalidQueryException;
-    String outPrepare(String name, Collection<SqlParam> values, OutputMask mask) throws InvalidQueryException;
+    String inPrepare(String name, Collection<SqlParam> values, InputMask mask);
+    String outPrepare(String name, Collection<SqlParam> values, OutputMask mask);
 
-    void writeInterfaces(PrintModel pw)  throws InvalidQueryException;
+    void writeInterfaces(PrintModel pw);
 
     String deduplicate(String name, InterfaceWriter iw);
 }

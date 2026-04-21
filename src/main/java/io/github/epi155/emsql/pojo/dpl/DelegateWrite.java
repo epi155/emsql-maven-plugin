@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.pojo.dpl;
 
-import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.dpl.ApiWrite;
@@ -15,7 +14,7 @@ public class DelegateWrite {
         this.api = api;
     }
 
-    public void proceed(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
+    public void proceed(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         api.docBegin(ipw);
         api.docInput(ipw, jdbc);
         api.docOutput(ipw, jdbc.getOMap());

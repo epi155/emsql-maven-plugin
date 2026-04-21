@@ -40,22 +40,7 @@ public final class BlobNilType implements SqlDataType {
         ipw.putf("rs.getBlob(%d)", k);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setBlob(ps, ++ki, EmSQL.get(%s, \"%s\", Blob.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setBlob(ps, %d, EmSQL.get(%s, \"%s\", Blob.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.BLOB);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

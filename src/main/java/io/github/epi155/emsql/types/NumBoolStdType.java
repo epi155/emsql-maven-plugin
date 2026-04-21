@@ -36,21 +36,6 @@ public final class NumBoolStdType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("ps.setByte(++ki, (byte) (EmSQL.get(%s, \"%s\", Boolean.class) ? 1 : 0));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("ps.setByte(%d, (byte) (EmSQL.get(%s, \"%s\", Boolean.class) ? 1 : 0));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.TINYINT);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.TINYINT);%n", k);
     }

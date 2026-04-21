@@ -63,7 +63,7 @@ class CompilationTest {
     }
 
     @Test
-    void testBasicCompilationWorkflow() throws Exception {
+    void testBasicCompilationWorkflow() {
         TestResourceManager.withCleanup(manager -> {
             // Create test setup
             File testDir = manager.createTempDirectory("compilation-test");
@@ -95,7 +95,7 @@ class CompilationTest {
 
             // Verify generated files
             assertTrue(generatedDir.exists(), "Generated directory should exist");
-            assertTrue(Files.list(generatedDir.toPath()).count() > 0, "Should have generated files");
+            assertTrue(Files.list(generatedDir.toPath()).findAny().isPresent(), "Should have generated files");
 
             // Test compilation to output directory
             CompilationTester.CompilationResult result = compilationTester.compileDirectory(generatedDir, compiledDir);
@@ -118,7 +118,7 @@ class CompilationTest {
     }
 
     @Test
-    void testCompilationWithMultipleFiles() throws Exception {
+    void testCompilationWithMultipleFiles() {
         TestResourceManager.withCleanup(manager -> {
             // Create test setup with multiple YAML files
             File testDir = manager.createTempDirectory("multi-compilation-test");
@@ -176,7 +176,7 @@ class CompilationTest {
     }
 
     @Test
-    void testCompilationErrorPatterns() throws Exception {
+    void testCompilationErrorPatterns() {
         TestResourceManager.withCleanup(manager -> {
             File testDir = manager.createTempDirectory("error-pattern-test");
             manager.createMinimalTestConfig(testDir);
@@ -220,7 +220,7 @@ class CompilationTest {
     }
 
     @Test
-    void testCompilationWithClasspathValidation() throws Exception {
+    void testCompilationWithClasspathValidation() {
         CompilationTester tester = new CompilationTester();
         
         // Test that the compilation tester can properly determine classpath

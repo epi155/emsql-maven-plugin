@@ -40,22 +40,7 @@ public final class NClobNilType implements SqlDataType {
         ipw.putf("rs.getNClob(%d)", k);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setNClob(ps, ++ki, EmSQL.get(%s, \"%s\", NClob.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setNClob(ps, %d, EmSQL.get(%s, \"%s\", NClob.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.NCLOB);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

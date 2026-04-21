@@ -216,7 +216,7 @@ class DqlRegressionTest {
         runRegressionTest(testCase, DML_DIR, false, true);
     }
 
-    private void runRegressionTest(String testCase, String baseDir, boolean java7, boolean spring) throws Exception {
+    private void runRegressionTest(String testCase, String baseDir, boolean java7, boolean spring) {
         String yamlFile = testCase + ".yaml";
         String variant = (java7 ? "-java7" : "") + (spring ? "-spring" : "");
         String snapshotName = testCase.replace("/", "-") + variant;

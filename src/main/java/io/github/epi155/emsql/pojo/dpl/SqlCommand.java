@@ -1,7 +1,6 @@
 package io.github.epi155.emsql.pojo.dpl;
 
 import io.github.epi155.emsql.api.CommandModel;
-import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcStatement;
@@ -17,7 +16,7 @@ public class SqlCommand extends PojoAction implements CommandModel {
     }
 
     @Override
-    public JdbcStatement sql(Map<String, SqlDataType> fields) throws InvalidQueryException {
+    public JdbcStatement sql(Map<String, SqlDataType> fields) {
         String nText = Tools.oneLine(getExecSql());
         return Tools.replacePlaceholder(nText, Collections.emptyMap(), Collections.emptyMap());
     }

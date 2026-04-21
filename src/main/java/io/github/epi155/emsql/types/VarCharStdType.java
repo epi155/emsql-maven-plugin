@@ -31,21 +31,6 @@ public final class VarCharStdType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("ps.setString(++ki, EmSQL.get(%s, \"%s\", String.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("ps.setString(%d, EmSQL.get(%s, \"%s\", String.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.VARCHAR);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.VARCHAR);%n", k);
     }

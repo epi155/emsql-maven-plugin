@@ -38,21 +38,6 @@ public final class URLStdType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("ps.setURL(++ki, EmSQL.get(%s, \"%s\", URL.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("ps.setURL(%d, EmSQL.get(%s, \"%s\", URL.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.DATALINK);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.DATALINK);%n", k);
     }

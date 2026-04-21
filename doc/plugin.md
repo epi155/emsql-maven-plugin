@@ -25,6 +25,7 @@ Plugin with all parameters with default values:
                 <addCompileSourceRoot>true</addCompileSourceRoot>
                 <addTestCompileSourceRoot>false</addTestCompileSourceRoot>
                 <provider>POJO</provider>
+                <parserProvider/>
             </configuration>
         </execution>
     </executions>

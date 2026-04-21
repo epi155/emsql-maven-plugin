@@ -1,6 +1,9 @@
 package io.github.epi155.emsql.commons;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.PluginContext;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.TypeModel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -129,7 +132,7 @@ public abstract class ClassContextImpl implements ClassContext {
      * @param mask       output fields mask (reflect/delegate)
      * @return output interface name
      */
-    public String outPrepare(String name, Collection<SqlParam> values, OutputMask mask) throws InvalidQueryException {
+    public String outPrepare(String name, Collection<SqlParam> values, OutputMask mask) {
         Optional<String> oResult = mc.oFind(name);
         if (oResult.isPresent())
             return oResult.get();
@@ -160,7 +163,7 @@ public abstract class ClassContextImpl implements ClassContext {
         }
     }
 
-    public String inPrepare(String name, Collection<SqlParam> values, InputMask mask) throws InvalidQueryException {
+    public String inPrepare(String name, Collection<SqlParam> values, InputMask mask) {
         Optional<String> oResult = mc.iFind(name);
         if (oResult.isPresent())
             return oResult.get();

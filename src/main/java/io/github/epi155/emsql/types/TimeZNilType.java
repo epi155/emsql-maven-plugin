@@ -4,7 +4,6 @@ import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
 import lombok.Getter;
 
-import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_J8TIME;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
@@ -46,22 +45,7 @@ public final class TimeZNilType implements SqlDataType {
         ipw.printf("J8Time.setOffsetTime(ps, %d, %s);%n", k, source);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("J8Time.setOffsetTime(ps, ++ki, EmSQL.get(%s, \"%s\", OffsetTime.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("J8Time.setOffsetTime(ps, %d, EmSQL.get(%s, \"%s\", OffsetTime.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.TIME_WITH_TIMEZONE);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

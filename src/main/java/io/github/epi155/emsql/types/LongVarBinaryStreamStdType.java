@@ -38,21 +38,6 @@ public final class LongVarBinaryStreamStdType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("ps.setBinaryStream(++ki, EmSQL.get(%s, \"%s\", InputStream.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("ps.setBinaryStream(%d, EmSQL.get(%s, \"%s\", InputStream.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.LONGVARBINARY);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.LONGVARBINARY);%n", k);
     }

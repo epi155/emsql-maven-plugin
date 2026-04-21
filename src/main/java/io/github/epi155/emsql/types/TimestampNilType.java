@@ -41,21 +41,6 @@ public final class TimestampNilType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("EmSQL.setTimestamp(ps, ++ki, EmSQL.get(%s, \"%s\", Timestamp.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("EmSQL.setTimestamp(ps, %d, EmSQL.get(%s, \"%s\", Timestamp.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.TIMESTAMP);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.TIMESTAMP);%n", k);
     }

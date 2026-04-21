@@ -42,21 +42,6 @@ public final class FloatNilType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("EmSQL.setFloat(ps, ++ki, EmSQL.get(%s, \"%s\", Float.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("EmSQL.setFloat(ps, %d, EmSQL.get(%s, \"%s\", Float.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.REAL);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.REAL);%n", k);
     }

@@ -29,7 +29,7 @@ class SnapshotTest {
     }
 
     @Test
-    void testMinimalConfigurationSnapshot() throws Exception {
+    void testMinimalConfigurationSnapshot() {
         TestResourceManager.withCleanup(manager -> {
             // Create minimal test setup
             File testDir = manager.createTempDirectory("snapshot-test");
@@ -85,7 +85,7 @@ class SnapshotTest {
     }
 
     @Test
-    void testSnapshotManagerFunctionality() throws Exception {
+    void testSnapshotManagerFunctionality() {
         TestResourceManager.withCleanup(manager -> {
             // Test snapshot manager functionality
             File testDir = manager.createTempDirectory("snapshot-manager-test");
@@ -150,7 +150,7 @@ class SnapshotTest {
     }
 
     @Test
-    void testRegressionDetection() throws Exception {
+    void testRegressionDetection() {
         TestResourceManager.withCleanup(manager -> {
             File testDir = manager.createTempDirectory("regression-test");
             manager.createMinimalTestConfig(testDir);

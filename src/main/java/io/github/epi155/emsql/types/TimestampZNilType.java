@@ -4,7 +4,6 @@ import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
 import lombok.Getter;
 
-import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_J8TIME;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
@@ -44,25 +43,6 @@ public final class TimestampZNilType implements SqlDataType {
     public void psSet(PrintModel ipw, String source, int k) {
         cc.add(RUNTIME_J8TIME);
         ipw.printf("J8Time.setOffsetDateTime(ps, %d, %s);%n", k, source);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        cc.add(RUNTIME_J8TIME);
-        ipw.printf("J8Time.setOffsetDateTime(ps, ++ki, EmSQL.get(%s, \"%s\", OffsetDateTime.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        cc.add(RUNTIME_J8TIME);
-        ipw.printf("J8Time.setOffsetDateTime(ps, %d, EmSQL.get(%s, \"%s\", OffsetDateTime.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.TIMESTAMP_WITH_TIMEZONE);%n");
     }
 
     @Override

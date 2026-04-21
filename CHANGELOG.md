@@ -13,6 +13,10 @@
 
 - deduplicate interfaces
 
+### Remove
+- Removed support for *reflect* (too fragile) and *delegate* (unnecessarily complex)
+
+
 ## [1.0.3] - 2025-05-08
 
 ### Added

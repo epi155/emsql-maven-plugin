@@ -36,21 +36,6 @@ public final class TimestampZStdType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("ps.setObject(++ki, EmSQL.get(%s, \"%s\", OffsetDateTime.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("ps.setObject(%d, EmSQL.get(%s, \"%s\", OffsetDateTime.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.TIMESTAMP_WITH_TIMEZONE);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.TIMESTAMP_WITH_TIMEZONE);%n", k);
     }

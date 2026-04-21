@@ -43,25 +43,6 @@ public final class NumberStdType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add("java.math.BigDecimal");
-        cc.add("io.github.epi155.emsql.runtime.EmSQL");
-        ipw.printf("ps.setBigDecimal(++ki, new BigDecimal(EmSQL.get(%s, \"%s\", BigInteger.class)));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add("java.math.BigDecimal");
-        cc.add("io.github.epi155.emsql.runtime.EmSQL");
-        ipw.printf("ps.setBigDecimal(%d, new BigDecimal(EmSQL.get(%s, \"%s\", BigInteger.class)));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.NUMERIC);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.NUMERIC);%n", k);
     }

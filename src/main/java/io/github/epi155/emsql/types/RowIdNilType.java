@@ -40,22 +40,7 @@ public final class RowIdNilType implements SqlDataType {
         ipw.putf("rs.getRowId(%d)", k);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setRowId(ps, ++ki, EmSQL.get(%s, \"%s\", RowId.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setRowId(ps, %d, EmSQL.get(%s, \"%s\", RowId.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.ROWID);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

@@ -7,6 +7,7 @@ import io.github.epi155.emsql.spi.ParserProvider;
 import io.github.epi155.emsql.spi.SqlParser;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 @Getter
+@Slf4j
 public class MojoContext implements PluginContext {
     public final String sourceDirectory;
     public final String group;
@@ -44,7 +46,7 @@ public class MojoContext implements PluginContext {
         this.java7 = java7;
 
         ServiceLoader<ParserProvider> providers = ServiceLoader.load(ParserProvider.class);
-        if (parserName == null) {
+        if (parserName == null || parserName.isEmpty()) {
             parser = providers.findFirst().map(ParserProvider::create).orElse(null);
         } else {
             parser = findByName(parserName, providers);
@@ -54,6 +56,7 @@ public class MojoContext implements PluginContext {
     private static SqlParser findByName(String name, @NotNull Iterable<ParserProvider> providers) {
         for (ParserProvider provider : providers) {
             if (name.equals(provider.name())) {
+                log.info("Parsing queries using {}", name);
                 return provider.create();
             }
         }

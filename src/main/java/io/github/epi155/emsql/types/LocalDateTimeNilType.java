@@ -4,9 +4,7 @@ import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
 import lombok.Getter;
 
-import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_J8TIME;
-import static io.github.epi155.emsql.commons.Contexts.cc;
 
 public final class LocalDateTimeNilType implements SqlDataType {
     public static final LocalDateTimeNilType INSTANCE = new LocalDateTimeNilType();
@@ -44,22 +42,7 @@ public final class LocalDateTimeNilType implements SqlDataType {
         LocalDateTimeStdType.INSTANCE.rsGetValue(ipw, k);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("J8Time.setTimestamp(ps, ++ki, EmSQL.get(%s, \"%s\", LocalDateTime.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("J8Time.setTimestamp(ps, %d, EmSQL.get(%s, \"%s\", LocalDateTime.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.TIMESTAMP);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

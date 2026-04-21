@@ -40,22 +40,7 @@ public class CharNilType implements SqlDataType {
         ipw.putf("rs.getString(%d)", k);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setChar(ps, ++ki, EmSQL.get(%s, \"%s\", String.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setChar(ps, %d, EmSQL.get(%s, \"%s\", String.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.CHAR);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

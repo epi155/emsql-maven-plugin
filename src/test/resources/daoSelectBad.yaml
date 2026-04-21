@@ -1,0 +1,25 @@
+packageName: com.example.emsql
+className: DaoSelect
+declare:
+  idBool: long
+  bool01: Bool?
+  bool02: Bool?
+  bool03: Bool?
+  bool04: Bool?
+  bool11: Bool
+  bool12: Bool
+  bool13: Bool
+  bool14: Bool
+  nmCount: int
+methods:
+  - methodName: select01Ko
+    perform: !SelectSingle
+      timeout: 5
+      execSql: |
+        select
+          bool01, bool11,, bool02
+        into
+          :bool01, :bool11, :bool02
+        from tbool
+        where bool12 = :bool12 
+

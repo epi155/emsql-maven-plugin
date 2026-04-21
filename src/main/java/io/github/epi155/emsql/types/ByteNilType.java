@@ -42,21 +42,6 @@ public final class ByteNilType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("EmSQL.setByte(ps, ++ki, EmSQL.get(%s, \"%s\", Byte.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("EmSQL.setByte(ps, %d, EmSQL.get(%s, \"%s\", Byte.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.TINYINT);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.TINYINT);%n", k);
     }

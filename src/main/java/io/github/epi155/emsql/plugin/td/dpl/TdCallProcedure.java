@@ -15,8 +15,4 @@ public class TdCallProcedure extends TdAbstract<CallProcedureModel> {
         return factory.newCallProcedureModel();
     }
 
-//    @Override
-//    protected void substituteAdditionalProperties() {
-//        substituteProperty("input-output", FieldsModel.class, null, "setInputOutput");
-//    }
 }

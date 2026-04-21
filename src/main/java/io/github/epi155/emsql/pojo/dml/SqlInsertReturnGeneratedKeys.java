@@ -1,6 +1,9 @@
 package io.github.epi155.emsql.pojo.dml;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.InsertReturnGeneratedKeysModel;
+import io.github.epi155.emsql.api.InvalidQueryException;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.SqlParam;
 import io.github.epi155.emsql.commons.Tools;

@@ -52,22 +52,7 @@ public final class BlobStreamNilType implements SqlDataType {
         ipw.printf("EmSQL.setBlobStream(ps, %d, %s);%n", k, source);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setBlobStream(ps, ++ki, EmSQL.get(%s, \"%s\", InputStream.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setBlobStream(ps, %d, EmSQL.get(%s, \"%s\", InputStream.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.BLOB);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

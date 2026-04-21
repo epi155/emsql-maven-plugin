@@ -40,22 +40,7 @@ public final class RefNilType implements SqlDataType {
         ipw.putf("rs.getRef(%d)", k);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setRef(ps, ++ki, EmSQL.get(%s, \"%s\", Ref.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setRef(ps, %d, EmSQL.get(%s, \"%s\", Ref.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.REF);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

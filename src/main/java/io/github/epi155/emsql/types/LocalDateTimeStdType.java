@@ -4,9 +4,6 @@ import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
 import lombok.Getter;
 
-import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
-import static io.github.epi155.emsql.commons.Contexts.cc;
-
 public final class LocalDateTimeStdType implements SqlDataType {
     public static final LocalDateTimeStdType INSTANCE = new LocalDateTimeStdType();
 
@@ -38,22 +35,7 @@ public final class LocalDateTimeStdType implements SqlDataType {
         ipw.putf("rs.getObject(%d, LocalDateTime.class)", k);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("ps.setObject(++ki, EmSQL.get(%s, \"%s\", LocalDateTime.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("ps.setObject(%d, EmSQL.get(%s, \"%s\", LocalDateTime.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.TIMESTAMP);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

@@ -1,6 +1,9 @@
 package io.github.epi155.emsql.spring.dpl;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.InlineBatchModel;
+import io.github.epi155.emsql.api.InvalidQueryException;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dpl.ApiInline;
@@ -21,9 +24,6 @@ public class SqlInlineBatch extends SpringBatchAction
     @Setter
     @Getter
     private List<String> outFields;
-//    @Setter
-//    @Getter
-//    private FieldsModel inputOutput;
 
     public SqlInlineBatch() {
         super();

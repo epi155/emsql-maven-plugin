@@ -40,22 +40,7 @@ public final class LongVarCharNilType implements SqlDataType {
         ipw.putf("rs.getString(%d)", k);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setLongVarChar(ps, ++ki, EmSQL.get(%s, \"%s\", String.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setLongVarChar(ps, %d, EmSQL.get(%s, \"%s\", String.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.LONGVARCHAR);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

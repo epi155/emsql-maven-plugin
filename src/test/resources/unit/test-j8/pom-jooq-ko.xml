@@ -1,0 +1,35 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>test</groupId>
+    <artifactId>test-abc</artifactId>
+    <version>1.1-A3-SNAPSHOT</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.github.epi155</groupId>
+                <artifactId>emsql-maven-plugin</artifactId>
+                <version>${version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <configDirectory>${project.basedir}/src/test/resources</configDirectory>
+                    <generateDirectory>${project.basedir}/target/generated-test-sources/emsql-8p</generateDirectory>
+                    <debugCode>true</debugCode>
+                    <autoPad>true</autoPad>
+                    <modules>
+                        <module>daoSelectBad.yaml</module>
+                    </modules>
+                    <addCompileSourceRoot>false</addCompileSourceRoot>
+                    <addTestCompileSourceRoot>false</addTestCompileSourceRoot>
+                    <parserProvider>JOOQ</parserProvider>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

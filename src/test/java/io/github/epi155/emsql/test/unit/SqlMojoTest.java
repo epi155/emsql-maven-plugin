@@ -26,7 +26,7 @@ class SqlMojoTest {
 
     @Test
     @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8/pom.xml")
-    void testJava8PojoGeneration(SqlMojo mojo) throws Exception {
+    void testJava8PojoGeneration(SqlMojo mojo) {
         log.info("Testing Java 8 POJO generation with validation...");
 
         // Execute the plugin
@@ -61,7 +61,7 @@ class SqlMojoTest {
 
     @Test
     @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8s/pom.xml")
-    void testJava8SpringGeneration(SqlMojo mojo) throws Exception {
+    void testJava8SpringGeneration(SqlMojo mojo) {
         log.info("Testing Java 8 Spring generation with validation...");
 
         // Execute the plugin
@@ -89,7 +89,7 @@ class SqlMojoTest {
 
     @Test
     @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j7/pom.xml")
-    void testJava7PojoGeneration(SqlMojo mojo) throws Exception {
+    void testJava7PojoGeneration(SqlMojo mojo) {
         log.info("Testing Java 7 POJO generation with validation...");
 
         // Execute the plugin
@@ -114,7 +114,7 @@ class SqlMojoTest {
 
     @Test
     @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j7s/pom.xml")
-    void testJava7SpringGeneration(SqlMojo mojo) throws Exception {
+    void testJava7SpringGeneration(SqlMojo mojo) {
         log.info("Testing Java 7 Spring generation with validation...");
 
         // Execute the plugin
@@ -139,7 +139,7 @@ class SqlMojoTest {
     }
 
     @Test
-    void testMinimalConfiguration() throws Exception {
+    void testMinimalConfiguration() {
         TestResourceManager.withCleanup(manager -> {
             // Create minimal test setup
             File testDir = manager.createTempDirectory("minimal-test");

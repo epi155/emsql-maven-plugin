@@ -27,8 +27,6 @@ public class DelegateCall {
             Map<String, SqlDataType> inpFields = new HashMap<>();
             Map<String, SqlDataType> outFields = new HashMap<>();
             Map<String, SqlDataType> ioFields = new HashMap<>();
-//            FieldsModel output = api.getOutput();
-//            FieldsModel inputOutput = api.getInputOutput();
 
             fields.forEach((k, v) -> {
                 if (api.getInOutFields() != null && api.getInOutFields().contains(k)) {

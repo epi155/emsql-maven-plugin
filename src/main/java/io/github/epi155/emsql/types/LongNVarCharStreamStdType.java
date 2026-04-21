@@ -38,21 +38,6 @@ public final class LongNVarCharStreamStdType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("ps.setNCharacterStream(++ki, EmSQL.get(%s, \"%s\", Reader.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("ps.setNCharacterStream(%d, EmSQL.get(%s, \"%s\", Reader.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.LONGNVARCHAR);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.LONGNVARCHAR);%n", k);
     }

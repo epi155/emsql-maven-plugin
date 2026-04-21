@@ -42,21 +42,6 @@ public final class LongNilType implements SqlDataType {
     }
 
     @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        ipw.printf("EmSQL.setLong(ps, ++ki, EmSQL.get(%s, \"%s\", Long.class));%n", orig, name);
-    }
-
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        ipw.printf("EmSQL.setLong(ps, %d, EmSQL.get(%s, \"%s\", Long.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.BIGINT);%n");
-    }
-
-    @Override
     public void registerOut(PrintModel ipw, int k) {
         ipw.printf("ps.registerOutParameter(%d, Types.BIGINT);%n", k);
     }

@@ -1,6 +1,9 @@
 package io.github.epi155.emsql.pojo.dpl;
 
-import io.github.epi155.emsql.api.*;
+import io.github.epi155.emsql.api.InlineProcedureModel;
+import io.github.epi155.emsql.api.InvalidQueryException;
+import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.dpl.ApiInline;
 import io.github.epi155.emsql.commons.dpl.ApiWrite;
@@ -19,9 +22,6 @@ public class SqlInlineProcedure extends PojoAction
     @Setter
     @Getter
     private List<String> outFields;
-//    @Setter
-//    @Getter
-//    private FieldsModel inputOutput;
 
     public SqlInlineProcedure() {
         super();

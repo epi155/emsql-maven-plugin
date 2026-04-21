@@ -46,22 +46,7 @@ public final class NumberNilType implements SqlDataType {
         ipw.putf("EmSQL.toBigInteger(rs.getBigDecimal(%d))", k);
     }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setBigInteger(ps, ++ki, EmSQL.get(%s, \"%s\", BigInteger.class));%n", orig, name);
-    }
 
-    @Override
-    public void xPsPush(PrintModel ipw, String orig, String name, int k) {
-        cc.add(RUNTIME_EMSQL);
-        ipw.printf("EmSQL.setBigInteger(ps, %d, EmSQL.get(%s, \"%s\", BigInteger.class));%n", k, orig, name);
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw) {
-        ipw.printf("ps.registerOutParameter(++ki, Types.NUMERIC);%n");
-    }
 
     @Override
     public void registerOut(PrintModel ipw, int k) {

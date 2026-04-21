@@ -18,134 +18,113 @@ public abstract class BasicFactory implements CodeFactory {
     private static final Map<String, SqlDataType> sqlMap;
 
     static {
-        Map<String, SqlDataType> map = new HashMap<>();
-        map.put("BOOL", BooleanStdType.INSTANCE);
-        map.put("BOOLEAN", BooleanStdType.INSTANCE);
-        map.put("BOOL?", BooleanNilType.INSTANCE);
-        map.put("BOOLEAN?", BooleanNilType.INSTANCE);
 
-        map.put("NUMBOOL", NumBoolStdType.INSTANCE);
-        map.put("NUMBOOL?", NumBoolNilType.INSTANCE);
-
-        map.put("BYTE", ByteStdType.INSTANCE);
-        map.put("BYTE?", ByteNilType.INSTANCE);
-
-        map.put("SHORT", ShortStdType.INSTANCE);
-        map.put("SMALLINT", ShortStdType.INSTANCE);
-        map.put("SHORT?", ShortNilType.INSTANCE);
-        map.put("SMALLINT?", ShortNilType.INSTANCE);
-
-        map.put("INT", IntegerStdType.INSTANCE);
-        map.put("INTEGER", IntegerStdType.INSTANCE);
-        map.put("INT?", IntegerNilType.INSTANCE);
-        map.put("INTEGER?", IntegerNilType.INSTANCE);
-
-        map.put("BIGINT", LongStdType.INSTANCE);
-        map.put("BIGINTEGER", LongStdType.INSTANCE);
-        map.put("LONG", LongStdType.INSTANCE);
-        map.put("BIGSERIAL", LongStdType.INSTANCE);
-        map.put("BIGINT?", LongNilType.INSTANCE);
-        map.put("BIGINTEGER?", LongNilType.INSTANCE);
-        map.put("LONG?", LongNilType.INSTANCE);
-
-        map.put("NUMBER", NumberStdType.INSTANCE);
-        map.put("DECIMAL", DecimalStdType.INSTANCE);
-        map.put("NUMBER?", NumberNilType.INSTANCE);
-        map.put("DECIMAL?", DecimalNilType.INSTANCE);
-
-        map.put("DOUBLE", DoubleStdType.INSTANCE);
-        map.put("DOUBLE?", DoubleNilType.INSTANCE);
-
-        map.put("FLOAT", FloatStdType.INSTANCE);
-        map.put("FLOAT?", FloatNilType.INSTANCE);
-
-        map.put("VARCHAR", VarCharStdType.INSTANCE);
-        map.put("VARCHAR?", VarCharNilType.INSTANCE);
-
-        map.put("CHAR", CharStdType.INSTANCE);
-        map.put("CHAR?", CharNilType.INSTANCE);
-
-        map.put("DATE", DateStdType.INSTANCE);
-        map.put("DATE?", DateNilType.INSTANCE);
-
-        map.put("TIMESTAMP", TimestampStdType.INSTANCE);
-        map.put("TIMESTAMP?", TimestampNilType.INSTANCE);
-
-        map.put("TIME", TimeStdType.INSTANCE);
-        map.put("TIME?", TimeNilType.INSTANCE);
-
-        map.put("TIMESTAMPZ", TimestampZStdType.INSTANCE);
-        map.put("TIMESTAMPZ?", TimestampZNilType.INSTANCE);
-
-        map.put("TIMEZ", TimeZStdType.INSTANCE);
-        map.put("TIMEZ?", TimeZNilType.INSTANCE);
-
-        map.put("BINARY", BinaryStdType.INSTANCE);
-        map.put("BINARY?", BinaryNilType.INSTANCE);
-
-        map.put("VARBINARY", VarBinaryStdType.INSTANCE);
-        map.put("VARBINARY?", VarBinaryNilType.INSTANCE);
-
-        map.put("LOCALDATE", LocalDateStdType.INSTANCE);
-        map.put("LDATE", LocalDateStdType.INSTANCE);
-        map.put("LOCALDATE?", LocalDateNilType.INSTANCE);
-        map.put("LDATE?", LocalDateNilType.INSTANCE);
-
-        map.put("LOCALDATETIME", LocalDateTimeStdType.INSTANCE);
-        map.put("LDATETIME", LocalDateTimeStdType.INSTANCE);
-        map.put("LOCALDATETIME?", LocalDateTimeNilType.INSTANCE);
-        map.put("LDATETIME?", LocalDateTimeNilType.INSTANCE);
-
-        map.put("LOCALTIME", LocalTimeStdType.INSTANCE);
-        map.put("LTIME", LocalTimeStdType.INSTANCE);
-        map.put("LOCALTIME?", LocalTimeNilType.INSTANCE);
-        map.put("LTIME?", LocalTimeNilType.INSTANCE);
-
-        map.put("NVARCHAR", NVarCharStdType.INSTANCE);
-        map.put("NVARCHAR?", NVarCharNilType.INSTANCE);
-        map.put("NCHAR", NCharStdType.INSTANCE);
-        map.put("NCHAR?", NCharNilType.INSTANCE);
-
-        map.put("LONGVARBINARY", LongVarBinaryStdType.INSTANCE);
-        map.put("LONGVARBINARY?", LongVarBinaryNilType.INSTANCE);
-        map.put("LONGVARCHAR", LongVarCharStdType.INSTANCE);
-        map.put("LONGVARCHAR?", LongVarCharNilType.INSTANCE);
-        map.put("LONGNVARCHAR", LongNVarCharStdType.INSTANCE);
-        map.put("LONGNVARCHAR?", LongNVarCharNilType.INSTANCE);
-
-        map.put("BLOB", BlobStdType.INSTANCE);
-        map.put("BLOB?", BlobNilType.INSTANCE);
-        map.put("CLOB", ClobStdType.INSTANCE);
-        map.put("CLOB?", ClobNilType.INSTANCE);
-        map.put("NCLOB", NClobStdType.INSTANCE);
-        map.put("NCLOB?", NClobNilType.INSTANCE);
-
-        map.put("LONGVARCHARSTREAM", LongVarCharStreamStdType.INSTANCE);
-        map.put("LONGVARCHARSTREAM?", LongVarCharStreamNilType.INSTANCE);
-        map.put("LONGNVARCHARSTREAM", LongNVarCharStreamStdType.INSTANCE);
-        map.put("LONGNVARCHARSTREAM?", LongNVarCharStreamNilType.INSTANCE);
-        map.put("LONGVARBINARYSTREAM", LongVarBinaryStreamStdType.INSTANCE);
-        map.put("LONGVARBINARYSTREAM?", LongVarBinaryStreamNilType.INSTANCE);
-
-        map.put("BLOBSTREAM", BlobStreamStdType.INSTANCE);
-        map.put("BLOBSTREAM?", BlobStreamNilType.INSTANCE);
-        map.put("CLOBSTREAM", ClobStreamStdType.INSTANCE);
-        map.put("CLOBSTREAM?", ClobStreamNilType.INSTANCE);
-        map.put("NCLOBSTREAM", NClobStreamStdType.INSTANCE);
-        map.put("NCLOBSTREAM?", NClobStreamNilType.INSTANCE);
-
-        map.put("REF", RefStdType.INSTANCE);
-        map.put("REF?", RefNilType.INSTANCE);
-        map.put("ROWID", RowIdStdType.INSTANCE);
-        map.put("ROWID?", RowIdNilType.INSTANCE);
-        map.put("XML", SQLXMLStdType.INSTANCE);
-        map.put("XML?", SQLXMLNilType.INSTANCE);
-        map.put("URL", URLStdType.INSTANCE);
-        map.put("URL?", URLNilType.INSTANCE);
-        map.put("ARRAY", ArrayStdType.INSTANCE);
-        map.put("ARRAY?", ArrayNilType.INSTANCE);
-
-        sqlMap = Collections.unmodifiableMap(map);
+        sqlMap = Map.<String, SqlDataType>ofEntries(    //
+                Map.entry("BOOL", BooleanStdType.INSTANCE), //
+                Map.entry("BOOLEAN", BooleanStdType.INSTANCE),  //
+                Map.entry("BOOL?", BooleanNilType.INSTANCE),    //
+                Map.entry("BOOLEAN?", BooleanNilType.INSTANCE), //
+                Map.entry("NUMBOOL", NumBoolStdType.INSTANCE),  //
+                Map.entry("NUMBOOL?", NumBoolNilType.INSTANCE), //
+                // numeric types
+                Map.entry("BYTE", ByteStdType.INSTANCE),    //
+                Map.entry("BYTE?", ByteNilType.INSTANCE),   //
+                Map.entry("SHORT", ShortStdType.INSTANCE),  //
+                Map.entry("SMALLINT", ShortStdType.INSTANCE),   //
+                Map.entry("SHORT?", ShortNilType.INSTANCE), //
+                Map.entry("SMALLINT?", ShortNilType.INSTANCE),  //
+                Map.entry("INT", IntegerStdType.INSTANCE),  //
+                Map.entry("INTEGER", IntegerStdType.INSTANCE),  //
+                Map.entry("INT?", IntegerNilType.INSTANCE), //
+                Map.entry("INTEGER?", IntegerNilType.INSTANCE), //
+                Map.entry("BIGINT", LongStdType.INSTANCE),  //
+                Map.entry("BIGINTEGER", LongStdType.INSTANCE),  //
+                Map.entry("LONG", LongStdType.INSTANCE),    //
+                Map.entry("BIGSERIAL", LongStdType.INSTANCE),   //
+                Map.entry("BIGINT?", LongNilType.INSTANCE), //
+                Map.entry("BIGINTEGER?", LongNilType.INSTANCE), //
+                Map.entry("LONG?", LongNilType.INSTANCE),   //
+                Map.entry("NUMBER", NumberStdType.INSTANCE),    //
+                Map.entry("DECIMAL", DecimalStdType.INSTANCE),  //
+                Map.entry("NUMBER?", NumberNilType.INSTANCE),   //
+                Map.entry("DECIMAL?", DecimalNilType.INSTANCE), //
+                Map.entry("DOUBLE", DoubleStdType.INSTANCE),    //
+                Map.entry("DOUBLE?", DoubleNilType.INSTANCE),   //
+                Map.entry("FLOAT", FloatStdType.INSTANCE),  //
+                Map.entry("FLOAT?", FloatNilType.INSTANCE), //
+                // date/time types
+                Map.entry("DATE", DateStdType.INSTANCE),    //
+                Map.entry("DATE?", DateNilType.INSTANCE),   //
+                Map.entry("TIMESTAMP", TimestampStdType.INSTANCE),  //
+                Map.entry("TIMESTAMP?", TimestampNilType.INSTANCE), //
+                Map.entry("TIME", TimeStdType.INSTANCE),    //
+                Map.entry("TIME?", TimeNilType.INSTANCE),   //
+                Map.entry("TIMESTAMPZ", TimestampZStdType.INSTANCE),    //
+                Map.entry("TIMESTAMPZ?", TimestampZNilType.INSTANCE),   //
+                Map.entry("TIMEZ", TimeZStdType.INSTANCE),  //
+                Map.entry("TIMEZ?", TimeZNilType.INSTANCE), //
+                Map.entry("LOCALDATE", LocalDateStdType.INSTANCE),  //
+                Map.entry("LDATE", LocalDateStdType.INSTANCE),  //
+                Map.entry("LOCALDATE?", LocalDateNilType.INSTANCE), //
+                Map.entry("LDATE?", LocalDateNilType.INSTANCE), //
+                Map.entry("LOCALDATETIME", LocalDateTimeStdType.INSTANCE),  //
+                Map.entry("LDATETIME", LocalDateTimeStdType.INSTANCE),  //
+                Map.entry("LOCALDATETIME?", LocalDateTimeNilType.INSTANCE), //
+                Map.entry("LDATETIME?", LocalDateTimeNilType.INSTANCE), //
+                Map.entry("LOCALTIME", LocalTimeStdType.INSTANCE),  //
+                Map.entry("LTIME", LocalTimeStdType.INSTANCE),  //
+                Map.entry("LOCALTIME?", LocalTimeNilType.INSTANCE), //
+                Map.entry("LTIME?", LocalTimeNilType.INSTANCE), //
+                // char types
+                Map.entry("CHAR", CharStdType.INSTANCE),    //
+                Map.entry("CHAR?", CharNilType.INSTANCE),   //
+                Map.entry("VARCHAR", VarCharStdType.INSTANCE),  //
+                Map.entry("VARCHAR?", VarCharNilType.INSTANCE), //
+                Map.entry("LONGVARCHAR", LongVarCharStdType.INSTANCE),  //
+                Map.entry("LONGVARCHAR?", LongVarCharNilType.INSTANCE), //
+                Map.entry("CLOB", ClobStdType.INSTANCE),    //
+                Map.entry("CLOB?", ClobNilType.INSTANCE),   //
+                Map.entry("LONGVARCHARSTREAM", LongVarCharStreamStdType.INSTANCE),  //
+                Map.entry("LONGVARCHARSTREAM?", LongVarCharStreamNilType.INSTANCE), //
+                Map.entry("CLOBSTREAM", ClobStreamStdType.INSTANCE),    //
+                Map.entry("CLOBSTREAM?", ClobStreamNilType.INSTANCE),   //
+                // binary types
+                Map.entry("BINARY", BinaryStdType.INSTANCE),    //
+                Map.entry("BINARY?", BinaryNilType.INSTANCE),   //
+                Map.entry("VARBINARY", VarBinaryStdType.INSTANCE),  //
+                Map.entry("VARBINARY?", VarBinaryNilType.INSTANCE), //
+                Map.entry("LONGVARBINARY", LongVarBinaryStdType.INSTANCE),  //
+                Map.entry("LONGVARBINARY?", LongVarBinaryNilType.INSTANCE), //
+                Map.entry("BLOB", BlobStdType.INSTANCE),    //
+                Map.entry("BLOB?", BlobNilType.INSTANCE),   //
+                Map.entry("LONGVARBINARYSTREAM", LongVarBinaryStreamStdType.INSTANCE),  //
+                Map.entry("LONGVARBINARYSTREAM?", LongVarBinaryStreamNilType.INSTANCE), //
+                Map.entry("BLOBSTREAM", BlobStreamStdType.INSTANCE),    //
+                Map.entry("BLOBSTREAM?", BlobStreamNilType.INSTANCE),   //
+                // national char types
+                Map.entry("NCHAR", NCharStdType.INSTANCE),  //
+                Map.entry("NCHAR?", NCharNilType.INSTANCE), //
+                Map.entry("NVARCHAR", NVarCharStdType.INSTANCE),    //
+                Map.entry("NVARCHAR?", NVarCharNilType.INSTANCE),   //
+                Map.entry("LONGNVARCHAR", LongNVarCharStdType.INSTANCE),    //
+                Map.entry("LONGNVARCHAR?", LongNVarCharNilType.INSTANCE),   //
+                Map.entry("NCLOB", NClobStdType.INSTANCE),  //
+                Map.entry("NCLOB?", NClobNilType.INSTANCE), //
+                Map.entry("LONGNVARCHARSTREAM", LongNVarCharStreamStdType.INSTANCE),    //
+                Map.entry("LONGNVARCHARSTREAM?", LongNVarCharStreamNilType.INSTANCE),   //
+                Map.entry("NCLOBSTREAM", NClobStreamStdType.INSTANCE),  //
+                Map.entry("NCLOBSTREAM?", NClobStreamNilType.INSTANCE), //
+                // other types
+                Map.entry("REF", RefStdType.INSTANCE),  //
+                Map.entry("REF?", RefNilType.INSTANCE), //
+                Map.entry("ROWID", RowIdStdType.INSTANCE),  //
+                Map.entry("ROWID?", RowIdNilType.INSTANCE), //
+                Map.entry("XML", SQLXMLStdType.INSTANCE),   //
+                Map.entry("XML?", SQLXMLNilType.INSTANCE),  //
+                Map.entry("URL", URLStdType.INSTANCE),  //
+                Map.entry("URL?", URLNilType.INSTANCE), //
+                Map.entry("ARRAY", ArrayStdType.INSTANCE),  //
+                Map.entry("ARRAY?", ArrayNilType.INSTANCE));    //
     }
 
     private final boolean autoPad;
@@ -157,16 +136,6 @@ public abstract class BasicFactory implements CodeFactory {
     @Override
     public MethodModel newMethodModel() {
         return new SqlMethod();
-    }
-
-    @Override
-    public FieldsModel newOutFieldsModel() {
-        return new ComAreaDef();
-    }
-
-    @Override
-    public FieldsModel newInOutFieldsModel() {
-        return new ComAreaDef();
     }
 
     private static final Pattern FIX_CHAR = Pattern.compile("CHAR\\s*\\(\\s*(\\d+\\s*)\\)([?])?", Pattern.CASE_INSENSITIVE);
