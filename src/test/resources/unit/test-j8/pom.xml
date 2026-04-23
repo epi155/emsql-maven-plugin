@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>test</groupId>
     <artifactId>test-abc</artifactId>
-    <version>1.1-A3-SNAPSHOT</version>
+    <version>1.1-A4-SNAPSHOT</version>
 
     <build>
         <plugins>
@@ -60,6 +60,7 @@
                         <module>daoNCStream.yaml</module>
                         <module>daoNest.yaml</module>
                         <module>daoNumb.yaml</module>
+                        <module>daoDeci.yaml</module>
                         <module>daoProc.yaml</module>
                         <module>daoRef.yaml</module>
                         <module>daoRow.yaml</module>

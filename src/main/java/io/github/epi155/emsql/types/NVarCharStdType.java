@@ -1,10 +1,10 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
-public final class NVarCharStdType implements SqlDataType {
+public final class NVarCharStdType implements SqlScalarType {
     public static final NVarCharStdType INSTANCE = new NVarCharStdType();
 
     @Getter

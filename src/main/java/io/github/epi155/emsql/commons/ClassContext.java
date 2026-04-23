@@ -38,7 +38,7 @@ public interface ClassContext {
     void validate(String query, Class<? extends SqlAction> claz, Map<Integer, SqlParam> parameters);
 
     String inPrepare(String name, Collection<SqlParam> values, InputMask mask);
-    String outPrepare(String name, Collection<SqlParam> values, OutputMask mask);
+    String outPrepare(String name, Collection<SqlOutParam> values, OutputMask mask);
 
     void writeInterfaces(PrintModel pw);
 

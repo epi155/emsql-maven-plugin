@@ -1,12 +1,12 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import java.util.Set;
 
-public final class LongVarCharStreamStdType implements SqlDataType {
+public final class LongVarCharStreamStdType implements SqlScalarType {
     public static final LongVarCharStreamStdType INSTANCE = new LongVarCharStreamStdType();
 
     @Getter

@@ -15,11 +15,11 @@ import static io.github.epi155.emsql.commons.Contexts.cc;
 
 @Slf4j
 public abstract class BasicFactory implements CodeFactory {
-    private static final Map<String, SqlDataType> sqlMap;
+    private static final Map<String, SqlScalarType> sqlMap;
 
     static {
 
-        sqlMap = Map.<String, SqlDataType>ofEntries(    //
+        sqlMap = Map.<String, SqlScalarType>ofEntries(    //
                 Map.entry("BOOL", BooleanStdType.INSTANCE), //
                 Map.entry("BOOLEAN", BooleanStdType.INSTANCE),  //
                 Map.entry("BOOL?", BooleanNilType.INSTANCE),    //
@@ -151,7 +151,7 @@ public abstract class BasicFactory implements CodeFactory {
             }
             value = (idNil == null) ? "CHAR" : "CHAR?";
         }
-        SqlDataType kind = sqlMap.get(value.toUpperCase());
+        SqlScalarType kind = sqlMap.get(value.toUpperCase());
         if (kind != null) {
             return kind;
         }
@@ -161,12 +161,12 @@ public abstract class BasicFactory implements CodeFactory {
             List<SqlParam> list = new ArrayList<>();
             for (String name : names) {
                 name = name.trim();
-                kind = (SqlDataType) mapContext.get(name);
+                kind = (SqlScalarType) mapContext.get(name);
                 if (kind == null)
                     throw new IllegalArgumentException("Undefined field <" + name + ">");
-                if (kind.isNullable())
+                if (kind instanceof SqlNullType)
                     throw new IllegalArgumentException("Nullable field <" + value + ">");
-                if (!kind.isScalar())
+                if (kind instanceof SqlVectorType)
                     throw new IllegalArgumentException("Not scalar field <" + value + ">");
                 list.add(new SqlParam(name, kind));
             }

@@ -10,7 +10,7 @@ import java.util.Map;
 public class JdbcDynStatement extends JdbcStatement {
     private final String textPost;
 
-    public JdbcDynStatement(String text, Map<Integer, SqlParam> iMap, Map<Integer, SqlParam> oMap, String post) {
+    public JdbcDynStatement(String text, Map<Integer, SqlParam> iMap, Map<Integer, SqlOutParam> oMap, String post) {
         super(text, iMap, oMap);
         this.textPost = post;
     }

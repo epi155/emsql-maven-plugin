@@ -1,6 +1,7 @@
 package io.github.epi155.emsql.plugin;
 
 import io.github.epi155.emsql.api.PluginContext;
+import io.github.epi155.emsql.api.SqlVectorType;
 import io.github.epi155.emsql.commons.SqlAction;
 import io.github.epi155.emsql.commons.SqlParam;
 import io.github.epi155.emsql.spi.ParserProvider;
@@ -73,8 +74,8 @@ public class MojoContext implements PluginContext {
     private static List<Mul> replacer(Map<Integer, SqlParam> parameters) {
         List<Mul> reps = new LinkedList<>();
         parameters.forEach((k, v) -> {
-            if (!v.getType().isScalar()) {
-                reps.add(new Mul(k, v.getType().columns()));
+            if (v.getType() instanceof SqlVectorType) {
+                reps.add(new Mul(k, ((SqlVectorType) v.getType()).columns()));
             }
         });
         return reps;

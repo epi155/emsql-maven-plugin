@@ -35,7 +35,7 @@ methods:
         - p01.idPraticaApp
         - p02.idFunzioneApp
       execSql: |
-        delclare 
+        declare 
           id01 number
           id02 number
         begin

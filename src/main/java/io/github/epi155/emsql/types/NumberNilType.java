@@ -1,13 +1,13 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
-public final class NumberNilType implements SqlDataType {
+public final class NumberNilType implements SqlScalarType, SqlNullType {
     public static final NumberNilType INSTANCE = new NumberNilType();
 
     @Getter
@@ -18,10 +18,6 @@ public final class NumberNilType implements SqlDataType {
     private NumberNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
 
     @Override
     public java.util.Collection<String> requires() {

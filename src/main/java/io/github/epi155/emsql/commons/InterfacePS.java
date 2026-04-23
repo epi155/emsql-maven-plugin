@@ -2,6 +2,7 @@ package io.github.epi155.emsql.commons;
 
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlVectorType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,8 +19,8 @@ public class InterfacePS implements InterfaceWriter {
         for(SqlParam value: values) {
             String pName = value.getName();
             SqlDataType pType = value.getType();
-            if (!pType.isScalar()) {
-                Map<String, SqlDataType> pMap = pType.toMap();
+            if (pType instanceof SqlVectorType) {
+                Map<String, SqlDataType> pMap = ((SqlVectorType) pType).toMap();
                 int cols = pMap.size();
                 if (cols > 1) {
                     // TensType
@@ -47,9 +48,14 @@ public class InterfacePS implements InterfaceWriter {
         protected abstract void writeFieldGetter(PrintModel pw);
         protected abstract String primitive();
 
-        protected boolean isScalar() { return true; }
-        protected int columns() { return 0; }
-        protected String generic() { throw new IllegalStateException();  }
+//        protected boolean isScalar() { return true; }
+//        protected int columns() { return 0; }
+//        protected String generic() { throw new IllegalStateException();  }
+    }
+    private abstract static class MorePS extends TypePS {
+        protected MorePS(String name) { super(name); }
+//        protected abstract int columns();
+        protected abstract String generic();
     }
     private static class BaseType extends TypePS {
         private final SqlDataType type;
@@ -96,13 +102,10 @@ public class InterfacePS implements InterfaceWriter {
             return "["+type.getPrimitive()+"]";
         }
 
-        @Override
-        protected boolean isScalar() { return false; }
-
-        @Override
-        protected int columns() { return 1; }
+//        @Override
+//        protected int columns() { return 1; }
     }
-    private static class TensType extends TypePS {
+    private static class TensType extends MorePS {
         private final String type;
         private final int n;
         private final int cols;
@@ -129,11 +132,8 @@ public class InterfacePS implements InterfaceWriter {
             return "["+type+"]";
         }
 
-        @Override
-        protected boolean isScalar() { return false; }
-
-        @Override
-        protected int columns() { return cols; }
+//        @Override
+//        protected int columns() { return cols; }
 
         @Override
         protected String generic() { return "L"+n;  }
@@ -169,18 +169,8 @@ public class InterfacePS implements InterfaceWriter {
         for(SqlParam value: values) {
             String pName = value.getName();
             SqlDataType pType = value.getType();
-            if (pType.isScalar()) {
-                int kDot = pName.indexOf('.');
-                if (kDot < 0) {
-                    main.add(new BaseType(pName, value.getType()));
-                } else {
-                    String ante = pName.substring(0, kDot);
-                    String post = pName.substring(kDot + 1);
-                    Collection<SqlParam> flds = next.computeIfAbsent(ante, k -> new ArrayList<>());
-                    flds.add(new SqlParam(post, value.getType()));
-                }
-            } else {
-                Map<String, SqlDataType> pMap = pType.toMap();
+            if (pType instanceof SqlVectorType) {
+                Map<String, SqlDataType> pMap = ((SqlVectorType) pType).toMap();
                 int cols = pMap.size();
                 if (cols == 1) {
                     SqlDataType kType = pMap.values().iterator().next();
@@ -190,6 +180,16 @@ public class InterfacePS implements InterfaceWriter {
                     InterfaceWriter iw = new InterfacePS(name, inParms);
                     String kName = cc.deduplicate(capitalize(pName)+REQUEST, iw);
                     main.add(new TensType(kName, pName, ++kOrd, cols));
+                }
+            } else {
+                int kDot = pName.indexOf('.');
+                if (kDot < 0) {
+                    main.add(new BaseType(pName, value.getType()));
+                } else {
+                    String ante = pName.substring(0, kDot);
+                    String post = pName.substring(kDot + 1);
+                    Collection<SqlParam> flds = next.computeIfAbsent(ante, k -> new ArrayList<>());
+                    flds.add(new SqlParam(post, value.getType()));
                 }
             }
         }
@@ -214,7 +214,8 @@ public class InterfacePS implements InterfaceWriter {
 
     private String generics(boolean isDoc) {
         List<String> generics = main.stream()
-                .filter(it -> !it.isScalar() && it.columns() > 1)
+                .filter(it -> it instanceof MorePS)
+                .map(it -> (MorePS)it)
                 .map(it -> (isDoc) ?
                         String.format("Dto%s", capitalize(it.name)) :
                         String.format("%s extends %s%s", it.generic(), capitalize(it.name), REQUEST))

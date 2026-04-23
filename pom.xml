@@ -246,26 +246,26 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.27.0</version>
-                <configuration>
-                    <linkXRef>false</linkXRef>
-                    <inputEncoding>utf-8</inputEncoding>
-                    <minimumTokens>100</minimumTokens>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>aggregate</id>
-                        <goals>
-                            <goal>aggregate-pmd</goal>
-                            <goal>aggregate-cpd</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-pmd-plugin</artifactId>-->
+<!--                <version>3.27.0</version>-->
+<!--                <configuration>-->
+<!--                    <linkXRef>false</linkXRef>-->
+<!--                    <inputEncoding>utf-8</inputEncoding>-->
+<!--                    <minimumTokens>100</minimumTokens>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>aggregate</id>-->
+<!--                        <goals>-->
+<!--                            <goal>aggregate-pmd</goal>-->
+<!--                            <goal>aggregate-cpd</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>prepare-package</phase>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

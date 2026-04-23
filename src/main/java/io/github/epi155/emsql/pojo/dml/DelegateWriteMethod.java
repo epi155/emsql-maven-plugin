@@ -1,9 +1,8 @@
 package io.github.epi155.emsql.pojo.dml;
 
-import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.SqlMulti;
 import io.github.epi155.emsql.commons.dml.ApiWriteMethod;
 
 import java.util.Map;
@@ -18,7 +17,7 @@ public class DelegateWriteMethod {
         this.api = api;
     }
 
-    public void proceed(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) throws InvalidQueryException {
+    public void proceed(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
         api.docBegin(ipw);
         api.docInput(ipw, jdbc);
         api.docEnd(ipw);
@@ -35,7 +34,7 @@ public class DelegateWriteMethod {
         ipw.printf("        throws SQLException {%n");
         ipw.more();
         api.debugAction(ipw, kPrg, jdbc);
-        Map<Integer, SqlParam> notScalar = api.notScalar(jdbc.getIMap());
+        Map<Integer, SqlMulti> notScalar = api.notScalar(jdbc.getIMap());
         if (notScalar.isEmpty()) {
             ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         } else {

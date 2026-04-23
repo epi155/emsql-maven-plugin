@@ -1,11 +1,8 @@
 package io.github.epi155.emsql.pojo.dml;
 
-import io.github.epi155.emsql.api.InsertReturnGeneratedKeysModel;
-import io.github.epi155.emsql.api.InvalidQueryException;
-import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.SqlOutParam;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dql.ApiDocSignature;
 import io.github.epi155.emsql.pojo.PojoAction;
@@ -46,10 +43,15 @@ public class SqlInsertReturnGeneratedKeys extends PojoAction implements ApiDocSi
             String sParms = m.group(3).trim();
             String oText = "INSERT INTO " + sTable + " ( " + sCols + " ) VALUES ( " + sParms + " )";
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, true);
-            Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
+            Map<Integer, SqlOutParam> oMap = new LinkedHashMap<>();
             int k = 0;
-            for (val e : outFields) {
-                oMap.put(++k, new SqlParam(e, fields.get(e)));
+            for (val name : outFields) {
+                SqlDataType type = fields.get(name);
+                if (type instanceof SqlScalarType) {
+                    oMap.put(++k, new SqlOutParam(name, (SqlScalarType) type));
+                } else {
+                    throw new InvalidQueryException("Invalid query parameter: " + name);
+                }
             }
             return new JdbcStatement(iStmt.getText(), iStmt.getMap(), oMap);
         } else {

@@ -1,13 +1,13 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
-public final class NVarCharNilType implements SqlDataType {
+public final class NVarCharNilType implements SqlScalarType, SqlNullType {
     public static final NVarCharNilType INSTANCE = new NVarCharNilType();
 
     @Getter
@@ -18,12 +18,6 @@ public final class NVarCharNilType implements SqlDataType {
     private NVarCharNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public void rsGetValue(PrintModel ipw, int k) {
         ipw.putf("rs.getNString(%d)", k);
     }

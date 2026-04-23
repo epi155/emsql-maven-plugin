@@ -1,0 +1,83 @@
+/*
+ * Code Generated at 2026-04-23T09:35:03.766861Z
+ * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A4-SNAPSHOT
+ */
+package com.example.emsql;
+
+import io.github.epi155.emsql.runtime.EmSQL;
+import io.github.epi155.emsql.runtime.SqlArg;
+import io.github.epi155.emsql.runtime.SqlTrace;
+import java.sql.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+public class DaoIntCursor {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DaoIntCursor.class);
+    private DaoIntCursor() {}
+
+    private static final String Q_0001 = "SELECT int_null, int_not_null FROM t_int";
+    /**
+     * Template SqlCursorForSelect
+     * <pre>
+     * select int_null, int_not_null
+     * into :intNull, :intNotNull
+     * from t_int
+     * </pre>
+     *
+     * @param c connection
+     * @param so output constructor
+     * @param co output consumer
+     * @throws SQLException SQL error
+     */
+    public static <O extends FetchAllRS> void loopFetchAll(
+            final Connection c,
+            Supplier<O> so,
+            Consumer<O> co)
+            throws SQLException {
+        if (log.isDebugEnabled()) {
+            SqlTrace.showQuery(Q_0001, () -> {
+                return new SqlArg[]{
+                };
+            });
+        }
+        try (PreparedStatement ps = c.prepareStatement(Q_0001)) {
+            int ki=0;
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    O o = so.get();
+                    Integer o1 = EmSQL.getInt(rs,1);
+                    o.setIntNull(o1);
+                    int o2 = rs.getInt(2);
+                    o.setIntNotNull(o2);
+                    if (log.isTraceEnabled()) {
+                        SqlTrace.showResult(
+                            new SqlArg("intNull", "Integer", o1),
+                            new SqlArg("intNotNull", "int", o2)
+                        );
+                    }
+                    co.accept(o);
+                }
+            }
+        } catch (SQLException e) {
+            SqlTrace.showCause(e, Q_0001, () -> {
+                return new SqlArg[]{
+                };
+            });
+            throw e;
+        }
+    }
+    /**
+     * Example of DTO class using interface (setter)
+     *<pre>
+     *{@literal @}Data
+     * public class DtoFetchAll implements FetchAllRS {
+     *     private Integer intNull;
+     *     private int intNotNull;
+     * }
+     *</pre>
+     */
+    public interface FetchAllRS {
+        void setIntNull(Integer s);
+        void setIntNotNull(int s);
+    }
+}

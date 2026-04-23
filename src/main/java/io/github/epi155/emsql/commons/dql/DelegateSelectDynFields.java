@@ -4,7 +4,7 @@ import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.commons.JdbcDynStatement;
 import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.SqlOutParam;
 import io.github.epi155.emsql.commons.Tools;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +31,7 @@ public class DelegateSelectDynFields {
             String sPost = m.group(6);
             String oText = "SELECT " + sFld + " FROM " + sTables;
             Tools.SqlStatement iStmt = Tools.replacePlaceholder(oText, fields, true);
-            @NotNull Map<Integer, SqlParam> oMap = Tools.mapPlaceholder(sInto, fields);
+            @NotNull Map<Integer, SqlOutParam> oMap = Tools.mapPlaceholder(sInto, fields);
             return new JdbcDynStatement(iStmt.getText(), iStmt.getMap(), oMap, sPost);
         } else {
             throw new InvalidQueryException("Invalid query format: " + api.getExecSql());

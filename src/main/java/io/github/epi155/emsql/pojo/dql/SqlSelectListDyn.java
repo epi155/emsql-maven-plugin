@@ -4,10 +4,7 @@ import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SelectListDynModel;
 import io.github.epi155.emsql.api.SqlDataType;
-import io.github.epi155.emsql.commons.DocUtils;
-import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.SqlParam;
-import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.*;
 import io.github.epi155.emsql.commons.dql.*;
 import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
@@ -136,7 +133,7 @@ public class SqlSelectListDyn extends PojoAction
     }
 
     @Override
-    public void expandIn(@NotNull PrintModel ipw, @NotNull Map<Integer, SqlParam> notScalar, String kPrg) {
+    public void expandIn(@NotNull PrintModel ipw, @NotNull Map<Integer, SqlMulti> notScalar, String kPrg) {
         delegateSelectDyn.expandIn(ipw, notScalar, kPrg);
     }
 

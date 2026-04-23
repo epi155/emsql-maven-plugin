@@ -1,0 +1,38 @@
+packageName: com.example.emsql
+className: DaoP01
+declare:
+  idPraticaApp: bigint
+  idPraticaCdm: int?
+  abi: int?
+  ibrKey: bigint?
+  idFile: int?
+  cdPosizione: varchar
+  tpPosizione: varchar
+  stato: varchar
+  errCount: int
+  label: varchar
+  categoria: varchar
+  idPraticaCdmOrig: int?
+  tsVers: localdatetime
+  p01.abi: int?
+  p01.ibrKey: long?
+  p01.idFile: int?
+  p01.cdPosizione: varchar
+  p01.tpPosizione: varchar
+  p01.stato: varchar
+  p01.errCount: int
+  p01.label: char
+  p01.categoria: char?
+  p01.idPraticaCdmOrig: long?
+  p02.ibrPrg: int
+  p01.idPraticaApp: long
+  p02.idFunzioneApp: long
+  p02.stato: varchar
+methods:
+  - methodName: prenota
+    perform: !CallProcedure
+      outFields:
+        - p01.idPraticaApp
+        - p02.idFunzioneApp
+      execSql: |
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit

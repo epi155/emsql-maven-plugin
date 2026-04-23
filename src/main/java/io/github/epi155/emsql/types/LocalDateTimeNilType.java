@@ -1,12 +1,12 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_J8TIME;
 
-public final class LocalDateTimeNilType implements SqlDataType {
+public final class LocalDateTimeNilType implements SqlScalarType, SqlNullType {
     public static final LocalDateTimeNilType INSTANCE = new LocalDateTimeNilType();
 
     @Getter
@@ -17,12 +17,6 @@ public final class LocalDateTimeNilType implements SqlDataType {
     private LocalDateTimeNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public java.util.Collection<String> requires() {
         return java.util.Set.of("java.time.LocalDateTime", RUNTIME_J8TIME);
     }

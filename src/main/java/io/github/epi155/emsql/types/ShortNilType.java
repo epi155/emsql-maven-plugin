@@ -1,13 +1,13 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
-public final class ShortNilType implements SqlDataType {
+public final class ShortNilType implements SqlScalarType, SqlNullType {
     public static final ShortNilType INSTANCE = new ShortNilType();
 
     @Getter
@@ -18,10 +18,6 @@ public final class ShortNilType implements SqlDataType {
     private ShortNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
 
     @Override
     public void psSet(PrintModel ipw, String source) {

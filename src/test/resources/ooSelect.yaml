@@ -1,5 +1,6 @@
 packageName: com.example.emsql
 className: OoSelect
+qualifier: ds1
 declare:
   idCertificate: long
   commonName: varchar

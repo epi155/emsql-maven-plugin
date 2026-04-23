@@ -7,17 +7,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Tools.getterOf;
-import static io.github.epi155.emsql.commons.Tools.setterOf;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @ToString
 public class SqlParam {
-    private final String name;
-    private final SqlDataType type;
+    protected final String name;
+    protected final SqlDataType type;
 
     public void setParameter(PrintModel ipw) {
         String source = String.format("i.%s()", getterOf(this));
@@ -37,45 +35,5 @@ public class SqlParam {
         type.psSet(ipw, name, k);
     }
 
-    public void fetchParameter(PrintModel ipw, int k) {
-        if (cc.isDebug()) {
-            ipw.printf("%s o%d = ", type.getPrimitive(), k);
-            type.rsGetValue(ipw, k);
-            ipw.putf(";%n");
-            ipw.printf("o.%s(o%d);%n", setterOf(name), k);
-        } else {
-            ipw.printf("o.%s(", setterOf(name));
-            type.rsGetValue(ipw, k);
-            ipw.putf(");%n");
-        }
-    }
 
-    public void fetchValue(PrintModel ipw, int k) {
-        ipw.printf("%s o = ", type.getPrimitive());
-        type.rsGetValue(ipw, k);
-        ipw.putf(";%n");
-    }
-
-    public void registerOutParms(PrintModel ipw, int k) {
-        type.registerOut(ipw, k);
-    }
-
-    public void getValue(PrintModel ipw, int k) {
-        ipw.printf("%s o = ", type.getPrimitive());
-        type.csGetValue(ipw, k);
-        ipw.putf(";%n");
-    }
-
-    public void getParameter(PrintModel ipw, int k) {
-        if (cc.isDebug()) {
-            ipw.printf("%s o%d = ", type.getPrimitive(), k);
-            type.csGetValue(ipw, k);
-            ipw.putf(";%n");
-            ipw.printf("o.%s(o%d);%n", setterOf(name), k);
-        } else {
-            ipw.printf("o.%s(", setterOf(name));
-            type.csGetValue(ipw, k);
-            ipw.putf(");%n");
-        }
-    }
 }

@@ -14,6 +14,7 @@ import java.util.Optional;
 public class MethodContextImpl implements MethodContext {
     private final String name;
     private final boolean inputForce;
+    @Setter
     @Accessors(fluent = true)
     private Integer oSize;
     @Setter
@@ -31,12 +32,12 @@ public class MethodContextImpl implements MethodContext {
         this.inputForce = perform instanceof ForceAware && ((ForceAware) perform).isForce();
     }
 
-    public MethodContextImpl oSize(Integer size) {
-        if (oSize == null && size != null) {
-            oSize = size;
-        }
-        return this;
-    }
+//    public MethodContextImpl oSize(int size) {
+//        if (oSize == null) {
+//            oSize = size;
+//        }
+//        return this;
+//    }
 
     @Override
     public Optional<String> iFind(String name) {

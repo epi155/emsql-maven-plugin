@@ -1,6 +1,6 @@
 /*
- * Code Generated at 2026-04-17T10:02:12.954996Z
- * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
+ * Code Generated at 2026-04-23T10:18:40.494502Z
+ * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A4-SNAPSHOT
  */
 package com.example.emsql;
 
@@ -63,6 +63,8 @@ public class DaoIntSelectSingle {
                     }
                     if (rs.next()) {
                         throw new SqlNonUniqueResultException();
+                    } else {
+                        return o;
                     }
                 } else {
                     throw new SqlNoResultException();

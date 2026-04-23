@@ -7,5 +7,5 @@ import java.util.Map;
 public interface InputAware {
     void setInput(PrintModel ipw, JdbcStatement jdbc);
 
-    Map<Integer, SqlParam> notScalar(Map<Integer, SqlParam> parameters);
+    Map<Integer, SqlMulti> notScalar(Map<Integer, SqlParam> parameters);
 }

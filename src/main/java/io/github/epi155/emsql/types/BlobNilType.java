@@ -1,13 +1,13 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
-public final class BlobNilType implements SqlDataType {
+public final class BlobNilType implements SqlScalarType, SqlNullType {
     public static final BlobNilType INSTANCE = new BlobNilType();
 
     @Getter
@@ -18,12 +18,6 @@ public final class BlobNilType implements SqlDataType {
     private BlobNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public void psSet(PrintModel ipw, String source) {
         cc.add(RUNTIME_EMSQL);
         ipw.printf("EmSQL.setBlob(ps, ++ki, %s);%n", source);

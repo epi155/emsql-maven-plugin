@@ -154,7 +154,7 @@ class SqlMojoTest {
             org.apache.maven.plugin.descriptor.PluginDescriptor pluginDescriptor = new org.apache.maven.plugin.descriptor.PluginDescriptor();
             pluginDescriptor.setGroupId("io.github.epi155");
             pluginDescriptor.setArtifactId("emsql-maven-plugin");
-            pluginDescriptor.setVersion("1.1-A3-SNAPSHOT");
+            pluginDescriptor.setVersion("1.1-A4-SNAPSHOT");
             mojo.setPlugin(pluginDescriptor);
             
             mojo.setConfigDirectory(testDir);

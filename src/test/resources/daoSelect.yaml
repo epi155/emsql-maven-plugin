@@ -15,6 +15,7 @@ methods:
   - methodName: select01
     perform: !SelectSingle
       timeout: 5
+      tune: true
       execSql: |
         select
           bool01,

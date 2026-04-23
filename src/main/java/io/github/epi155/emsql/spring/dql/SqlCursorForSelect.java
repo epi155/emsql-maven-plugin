@@ -2,7 +2,7 @@ package io.github.epi155.emsql.spring.dql;
 
 import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.SqlOutParam;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dql.ApiCrsSelect;
 import io.github.epi155.emsql.commons.dql.ApiSelectFields;
@@ -50,7 +50,7 @@ public class SqlCursorForSelect extends SpringAction
     }
 
     private void writeImperative(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
-        Map<Integer, SqlParam> oMap = jdbc.getOMap();
+        Map<Integer, SqlOutParam> oMap = jdbc.getOMap();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
@@ -69,10 +69,10 @@ public class SqlCursorForSelect extends SpringAction
         if (oSize == 1) {
             String oType = oMap.get(1).getType().getWrapper();
             cc.add("io.github.epi155.emsql.runtime.SqlCursor");
-            ipw.putf("SqlCursor<%s> open%s(", oType, cName);
+            ipw.putf("SqlCursor<%s> open%s(%n", oType, cName);
         } else {
             cc.add("io.github.epi155.emsql.runtime.SqlCursor");
-            ipw.putf("SqlCursor<O> open%s(", cName);
+            ipw.putf("SqlCursor<O> open%s(%n", cName);
         }
         ipw.commaReset();
 
@@ -87,7 +87,7 @@ public class SqlCursorForSelect extends SpringAction
 
 
     private void writeFunctional(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
-        Map<Integer, SqlParam> oMap = jdbc.getOMap();
+        Map<Integer, SqlOutParam> oMap = jdbc.getOMap();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);

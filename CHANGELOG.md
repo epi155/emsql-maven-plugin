@@ -3,7 +3,7 @@
 ## [1.1.0] -
 
 ### Added
-- new *SelectListDyn* template with optional AND conditions in the WHERE clause
+- new *SelectListDyn* template with optional AND conditions in the WHERE clause (since A1)
 - added new `CHAR(n)` sql types for `autoPad`:
 
 | Field Type | JDBC Type | java type |
@@ -11,10 +11,17 @@
 | CHAR(n)    | CHAR      | String    |
 | CHAR(n)?   | CHAR      | String    |
 
-- deduplicate interfaces
+(since A3)
+
+- added more tests (since A3) and many more (since A4)
+
+### Changed
+- changed access java8 date/time types via `getObject` instead of `getXXX` (since A2)
+- refactored SqlEnum to be more flexible and support multiple java types (since A3)
+- deduplicate interfaces (since A4)
 
 ### Remove
-- Removed support for *reflect* (too fragile) and *delegate* (unnecessarily complex)
+- Removed support for *reflect* (too fragile) and *delegate* (unnecessarily complex) (since A4)
 
 
 ## [1.0.3] - 2025-05-08

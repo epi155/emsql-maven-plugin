@@ -1,146 +1,157 @@
 packageName: com.example.emsql
-className: DaoNumeric
+className: DaoNumber
 declare:
-  idNumeric: long
-  numeric01: Number?
-  numeric02: Decimal?
-  numeric03: Number?
-  numeric04: Decimal?
-  numeric11: Number
-  numeric12: Decimal
-  numeric13: Number
-  numeric14: Decimal
+  idNumber: long
+  number01: Number?
+  number02: Number?
+  number03: Number?
+  number04: Number?
+  number11: Number
+  number12: Number
+  number13: Number
+  number14: Number
 methods:
   - methodName: insert01
     perform: !Insert
       execSql: |
-        insert into tnumeric (
-          numeric01,
-          numeric11
+        insert into tnumber (
+          number01,
+          number11
         ) values (
-          :numeric01,
-          :numeric11 
+          :number01,
+          :number11 
         )
   - methodName: insert02
     perform: !Insert
+      timeout: 5
       execSql: |
-        insert into tnumeric (
-          numeric01,
-          numeric02,
-          numeric11,
-          numeric12
+        insert into tnumber (
+          number01,
+          number02,
+          number11,
+          number12
         ) values (
-          :numeric01,
-          :numeric02,
-          :numeric11,
-          :numeric12 
+          :number01,
+          :number02,
+          :number11,
+          :number12 
         )
   
   - methodName: insert02K
     perform: !InlineProcedure
       execSql: |
         begin
-        insert into tnumeric (
-          numeric01,
-          numeric02,
-          numeric11,
-          numeric12
+        insert into tnumber (
+          number01,
+          number02,
+          number11,
+          number12
         ) values (
-          :numeric01,
-          :numeric02,
-          :numeric11,
-          :numeric12 
+          :number01,
+          :number02,
+          :number11,
+          :number12 
         ) 
-        returning numeric13 into :numeric13;
+        returning number13 into :number13;
         end;
 
   - methodName: insert12K
     perform: !InlineProcedure
       execSql: |
         begin
-        insert into tnumeric (
-          numeric01,
-          numeric02,
-          numeric11,
-          numeric12
+        insert into tnumber (
+          number01,
+          number02,
+          number11,
+          number12
         ) values (
-          :numeric01,
-          :numeric02,
-          :numeric11,
-          :numeric12 
+          :number01,
+          :number02,
+          :number11,
+          :number12 
         ) 
-        returning numeric03 into :numeric03;
+        returning number03 into :number03;
         end;
 
   - methodName: insert02K2
     perform: !InlineProcedure
+      timeout: 5
       execSql: |
         begin
-        insert into tnumeric (
-          numeric01,
-          numeric02,
-          numeric11,
-          numeric12
+        insert into tnumber (
+          number01,
+          number02,
+          number11,
+          number12
         ) values (
-          :numeric01,
-          :numeric02,
-          :numeric11,
-          :numeric12 
+          :number01,
+          :number02,
+          :number11,
+          :number12 
         ) 
-        returning numeric13, numeric14 
-        into :numeric13, :numeric14;
+        returning number13, number14 
+        into :number13, :number14;
         end;
 
   - methodName: insert12K2
     perform: !InlineProcedure
       execSql: |
         begin
-        insert into tnumeric (
-          numeric01,
-          numeric02,
-          numeric11,
-          numeric12
+        insert into tnumber (
+          number01,
+          number02,
+          number11,
+          number12
         ) values (
-          :numeric01,
-          :numeric02,
-          :numeric11,
-          :numeric12 
+          :number01,
+          :number02,
+          :number11,
+          :number12 
         ) 
-        returning numeric03, numeric04 
-        into :numeric03, :numeric04;
+        returning number03, number04 
+        into :number03, :number04;
         end;
 
-  - methodName: findNumericAny
+  - methodName: findNumberAny
     perform: !SelectOptional
       execSql: |
         select
-          numeric01,
-          numeric11
+          number01,
+          number11
         into
-          :numeric01,
-          :numeric11 
-        from tnumeric
-        where id_Numeric = :idNumeric
+          :number01,
+          :number11 
+        from tnumber
+        where id_Number = :idNumber
 
   
-  - methodName: findNumericAny01
+  - methodName: findNumberAny01
     perform: !SelectOptional
       execSql: |
         select
-          numeric01
+          number01
         into
-          :numeric01
-        from tnumeric
-        where numeric02 = :numeric02
+          :number01
+        from tnumber
+        where number02 = :number02
 
-  - methodName: findNumericAny11
+  - methodName: findNumberAny11
     perform: !SelectOptional
       execSql: |
         select
-          numeric11
+          number11
         into
-          :numeric11
-        from tnumeric
-        where numeric12 = :numeric12
+          :number11
+        from tnumber
+        where number12 = :number12
+
+  
+  - methodName: call01
+    perform: !CallProcedure
+      outFields:
+        - number02
+        - number12
+      execSql: |
+        call solve(:number01, :number11, :number02, :number12)
 
   

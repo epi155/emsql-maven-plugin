@@ -1,5 +1,6 @@
 packageName: com.example.emsql
 className: DaoDyn
+qualifier: ds2
 declare:
   id: BigSerial
   fingerprint: CHAR

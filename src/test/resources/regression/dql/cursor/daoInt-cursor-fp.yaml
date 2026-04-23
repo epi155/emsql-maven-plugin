@@ -1,0 +1,14 @@
+packageName: com.example.emsql
+className: DaoIntCursor
+declare:
+  id: int
+  intNull: Int?
+  intNotNull: Int
+methods:
+  - methodName: fetchAll
+    perform: !CursorForSelect
+      mode: FP
+      execSql: |
+        select int_null, int_not_null
+        into :intNull, :intNotNull
+        from t_int

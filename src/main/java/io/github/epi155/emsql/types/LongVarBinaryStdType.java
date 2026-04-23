@@ -1,10 +1,10 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
-public final class LongVarBinaryStdType implements SqlDataType {
+public final class LongVarBinaryStdType implements SqlScalarType {
     public static final LongVarBinaryStdType INSTANCE = new LongVarBinaryStdType();
 
     @Getter

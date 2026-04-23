@@ -63,9 +63,9 @@ class InterfaceRS implements InterfaceWriter {
     private final List<TypeRS> main = new LinkedList<>();
 
 
-    InterfaceRS(String name, Collection<SqlParam> values) {
-        Map<String, Collection<SqlParam>> next = new LinkedHashMap<>();
-        for(SqlParam value: values) {
+    InterfaceRS(String name, Collection<SqlOutParam> values) {
+        Map<String, Collection<SqlOutParam>> next = new LinkedHashMap<>();
+        for(SqlOutParam value: values) {
             String pName = value.getName();
             int kDot = pName.indexOf('.');
             if (kDot < 0) {
@@ -73,12 +73,12 @@ class InterfaceRS implements InterfaceWriter {
             } else {
                 String ante = pName.substring(0, kDot);
                 String post = pName.substring(kDot + 1);
-                Collection<SqlParam> flds = next.computeIfAbsent(ante, k -> new ArrayList<>());
-                flds.add(new SqlParam(post, value.getType()));
+                Collection<SqlOutParam> flds = next.computeIfAbsent(ante, k -> new ArrayList<>());
+                flds.add(new SqlOutParam(post, value.getType()));
             }
         }
         if (!next.isEmpty()) {
-            for(Map.Entry<String, Collection<SqlParam>> ee: next.entrySet()) {
+            for(Map.Entry<String, Collection<SqlOutParam>> ee: next.entrySet()) {
                 String oName = ee.getKey();
                 String fullName = name + capitalize(oName);
                 InterfaceWriter iw = new InterfaceRS(fullName, ee.getValue());

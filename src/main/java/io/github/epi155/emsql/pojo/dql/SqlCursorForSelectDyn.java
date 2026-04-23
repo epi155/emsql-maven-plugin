@@ -1,10 +1,7 @@
 package io.github.epi155.emsql.pojo.dql;
 
 import io.github.epi155.emsql.api.*;
-import io.github.epi155.emsql.commons.DocUtils;
-import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.SqlParam;
-import io.github.epi155.emsql.commons.Tools;
+import io.github.epi155.emsql.commons.*;
 import io.github.epi155.emsql.commons.dql.*;
 import io.github.epi155.emsql.pojo.PojoAction;
 import lombok.Getter;
@@ -136,7 +133,7 @@ public class SqlCursorForSelectDyn extends PojoAction
     }
 
     private void declareOutputConsumer(PrintModel ipw, JdbcStatement jdbc) {
-        Map<Integer, SqlParam> oMap = jdbc.getOMap();
+        Map<Integer, SqlOutParam> oMap = jdbc.getOMap();
         String type = oMap.get(1).getType().getWrapper();
         if (mc.oSize() > 1) {
             ipw.putf("%s<O> co", cc.consumer());
@@ -148,6 +145,10 @@ public class SqlCursorForSelectDyn extends PojoAction
     @Override
     public void debugAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
         delegateSelectDyn.debugAction(ipw, kPrg, jdbcStatement);
+    }
+    @Override
+    public void dumpAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
+        delegateSelectDyn.dumpAction(ipw, kPrg, jdbcStatement);
     }
 
     private void defineOpenCursor(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {

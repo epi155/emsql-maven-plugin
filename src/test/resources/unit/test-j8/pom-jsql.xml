@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>test</groupId>
     <artifactId>test-abc</artifactId>
-    <version>1.1-A3-SNAPSHOT</version>
+    <version>1.1-A4-SNAPSHOT</version>
 
     <build>
         <plugins>

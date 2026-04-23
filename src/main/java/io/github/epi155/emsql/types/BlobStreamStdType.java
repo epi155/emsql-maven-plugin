@@ -1,12 +1,12 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import java.util.Set;
 
-public final class BlobStreamStdType implements SqlDataType {
+public final class BlobStreamStdType implements SqlScalarType {
     public static final BlobStreamStdType INSTANCE = new BlobStreamStdType();
 
     @Getter
@@ -44,6 +44,6 @@ public final class BlobStreamStdType implements SqlDataType {
 
     @Override
     public void csGetValue(PrintModel ipw, int k) {
-        throw new IllegalArgumentException("Output BinaryStream not present in CallableStatement");
+        ipw.putf("ps.getBlob(%d).getBinaryStream()", k);
     }
 }

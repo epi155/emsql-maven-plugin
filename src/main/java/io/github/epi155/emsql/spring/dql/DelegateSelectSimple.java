@@ -2,7 +2,7 @@ package io.github.epi155.emsql.spring.dql;
 
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.SqlMulti;
 import io.github.epi155.emsql.commons.dql.ApiSelectSimple;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ public class DelegateSelectSimple {
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
         api.debugAction(ipw, kPrg, jdbc);
-        Map<Integer, SqlParam> notScalar = api.notScalar(jdbc.getIMap());
+        Map<Integer, SqlMulti> notScalar = api.notScalar(jdbc.getIMap());
         if (notScalar.isEmpty()) {
             ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         } else {

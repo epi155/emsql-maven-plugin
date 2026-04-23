@@ -1,9 +1,7 @@
 package io.github.epi155.emsql.commons.dql;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.commons.DumpAware;
-import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -16,8 +14,8 @@ public interface ApiSelectDyn extends DumpAware {
     boolean isUnboxRequest(int size);
     Integer getFetchSize();
 
-    Map<Integer, SqlParam> notScalar(@NotNull Map<Integer, SqlParam> parameters);
+    Map<Integer, SqlMulti> notScalar(@NotNull Map<Integer, SqlParam> parameters);
     void setInput(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc);
     void setQueryHints(PrintModel ipw);
-    void fetch(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap);
+    void fetch(PrintModel ipw, @NotNull Map<Integer, SqlOutParam> oMap);
 }

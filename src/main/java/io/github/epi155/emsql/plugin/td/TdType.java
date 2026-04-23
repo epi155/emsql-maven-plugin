@@ -21,11 +21,9 @@ public class TdType extends TypeDescription {
 
     @Override
     public Object newInstance(Node node) {
-        if (node instanceof ScalarNode) {
-            ScalarNode sNode = (ScalarNode) node;
-            String value = sNode.getValue();
-            return factory.getInstance(value, SqlMojo.mapContext.get());
-        }
-        return null;
+        // called by ConstructScalar
+        ScalarNode sNode = (ScalarNode) node;
+        String value = sNode.getValue();
+        return factory.getInstance(value, SqlMojo.mapContext.get());
     }
 }

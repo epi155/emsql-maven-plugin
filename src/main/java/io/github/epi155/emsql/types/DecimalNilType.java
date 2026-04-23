@@ -1,12 +1,12 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import java.util.Collection;
 
-public final class DecimalNilType implements SqlDataType {
+public final class DecimalNilType implements SqlScalarType, SqlNullType {
     public static final DecimalNilType INSTANCE = new DecimalNilType();
 
     @Getter
@@ -17,12 +17,6 @@ public final class DecimalNilType implements SqlDataType {
     private DecimalNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public Collection<String> requires() {
         return DecimalStdType.INSTANCE.requires();
     }

@@ -5,5 +5,5 @@ import java.util.Map;
 public interface JdbcMap {
     Map<Integer, SqlParam> getIMap();
 
-    Map<Integer, SqlParam> getOMap();
+    Map<Integer, SqlOutParam> getOMap();
 }

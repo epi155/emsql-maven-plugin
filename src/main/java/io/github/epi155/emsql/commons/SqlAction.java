@@ -3,6 +3,7 @@ package io.github.epi155.emsql.commons;
 import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlVectorType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -65,11 +66,11 @@ public abstract class SqlAction {
         if (1 <= nSize && nSize <= IMAX) {
             jdbc.getNMap().forEach((name, type) -> {
                 ipw.commaLn();
-                if (type.isScalar() || type.columns() <= 1) {
-                    ipw.printf("        final %s %s", type.getPrimitive(), name);
-                } else {
+                if (type instanceof SqlVectorType && ((SqlVectorType) type).columns() > 1) {
                     cc.add("java.util.List");
-                    ipw.printf("        final List<%s> %s", type.getGeneric(), name);
+                    ipw.printf("        final List<%s> %s", ((SqlVectorType) type).getGeneric(), name);
+                } else {
+                    ipw.printf("        final %s %s", type.getPrimitive(), name);
                 }
             });
         } else if (nSize > IMAX) {
@@ -163,7 +164,7 @@ public abstract class SqlAction {
         ipw.printf("        throws SQLException {%n");
     }
 
-    public void fetch(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap) {
+    public void fetch(PrintModel ipw, @NotNull Map<Integer, SqlOutParam> oMap) {
         val eol = new Eol(mc.oSize());
         if (oMap.size() > 1) {
             ipw.printf("O o = so.get();%n");
@@ -195,7 +196,7 @@ public abstract class SqlAction {
         }
     }
 
-    public void getOutput(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap) {
+    public void getOutput(PrintModel ipw, @NotNull Map<Integer, SqlOutParam> oMap) {
         val eol = new Eol(mc.oSize());
         if (oMap.size() > 1) {
             ipw.printf("O o = so.get();%n");
@@ -248,7 +249,7 @@ public abstract class SqlAction {
         }
     }
 
-    public void registerOutAbs(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap) {
+    public void registerOutAbs(PrintModel ipw, @NotNull Map<Integer, SqlOutParam> oMap) {
         oMap.forEach((k, s) -> s.registerOutParms(ipw, k));
     }
 
@@ -270,13 +271,13 @@ public abstract class SqlAction {
         }
     }
 
-    public void docOutput(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap) {
+    public void docOutput(PrintModel ipw, @NotNull Map<Integer, SqlOutParam> oMap) {
         if (oMap.size() > 1) {
             ipw.printf(" * @param so output constructor%n");
         }
     }
 
-    public void docOutputUse(PrintModel ipw, @NotNull Map<Integer, SqlParam> oMap) {
+    public void docOutputUse(PrintModel ipw, @NotNull Map<Integer, SqlOutParam> oMap) {
         if (oMap.size() > 1) {
             ipw.printf(" * @param so output constructor%n");
         }
@@ -421,17 +422,17 @@ public abstract class SqlAction {
         if (tune) ipw.printf("u.accept(new SqlStmtSetImpl(ps));%n");
     }
 
-    public Map<Integer, SqlParam> notScalar(@NotNull Map<Integer, SqlParam> parameters) {
-        Map<Integer, SqlParam> notScalar = new LinkedHashMap<>();
+    public Map<Integer, SqlMulti> notScalar(@NotNull Map<Integer, SqlParam> parameters) {
+        Map<Integer, SqlMulti> notScalar = new LinkedHashMap<>();
         parameters.forEach((k, v) -> {
-            if (!v.getType().isScalar()) {
-                notScalar.put(k, v);
+            if (v.getType() instanceof SqlVectorType) {
+                notScalar.put(k, new SqlMulti(v.getName(), (SqlVectorType) v.getType()));
             }
         });
         return notScalar;
     }
 
-    public void expandIn(@NotNull PrintModel ipw, @NotNull Map<Integer, SqlParam> notScalar, String kPrg) {
+    public void expandIn(@NotNull PrintModel ipw, @NotNull Map<Integer, SqlMulti> notScalar, String kPrg) {
         cc.add(ClassContextImpl.RUNTIME_EMSQL);
         ipw.printf("final String query = EmSQL.expandQueryParameters(Q_%s%n", kPrg);
         ipw.more();
@@ -445,7 +446,7 @@ public abstract class SqlAction {
     }
 
     public void openQuery(PrintModel ipw, JdbcStatement jdbc, String kPrg) {
-        Map<Integer, SqlParam> notScalar = notScalar(jdbc.getIMap());
+        Map<Integer, SqlMulti> notScalar = notScalar(jdbc.getIMap());
         if (notScalar.isEmpty()) {
             ipw.printf("try (PreparedStatement ps = c.prepareStatement(Q_%s)) {%n", kPrg);
         } else {

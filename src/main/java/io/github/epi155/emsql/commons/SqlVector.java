@@ -2,6 +2,7 @@ package io.github.epi155.emsql.commons;
 
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlVectorType;
 import lombok.val;
 
 import java.util.LinkedHashMap;
@@ -10,7 +11,7 @@ import java.util.Map;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 import static io.github.epi155.emsql.commons.Tools.getterOf;
 
-public class SqlVector implements SqlDataType {
+public class SqlVector implements SqlVectorType {
 
     private final SqlParam[] params;
     private int id;
@@ -22,6 +23,11 @@ public class SqlVector implements SqlDataType {
     @Override
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public String getWrapper() {
+        return getPrimitive();
     }
 
     @Override
@@ -46,6 +52,7 @@ public class SqlVector implements SqlDataType {
 
     @Override
     public void psSet(PrintModel ipw, String source, int k) {
+        // dead branch - Exception in Tools$1MapStore.push
         throw new IllegalStateException();
     }
 
@@ -64,36 +71,10 @@ public class SqlVector implements SqlDataType {
     }
 
     @Override
-    public String getWrapper() {
-        return getPrimitive();
-    }
-
-    @Override
-    public void rsGetValue(PrintModel ipw, int k) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public void csGetValue(PrintModel ipw, int k) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public void registerOut(PrintModel ipw, int k) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean isScalar() {
-        return false;
-    }
-
-    @Override
     public int columns() {
         return params.length;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<String, SqlDataType> toMap() {
         Map<String, SqlDataType> map = new LinkedHashMap<>();

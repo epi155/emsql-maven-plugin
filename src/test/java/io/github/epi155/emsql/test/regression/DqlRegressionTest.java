@@ -62,6 +62,12 @@ class DqlRegressionTest {
         );
     }
 
+    static Stream<String> cursorFpTestCases() {
+        return Stream.of(
+            "cursor/daoInt-cursor-fp"
+        );
+    }
+
     static Stream<String> insertTestCases() {
         return Stream.of(
             "insert/daoInt-insert",
@@ -109,6 +115,12 @@ class DqlRegressionTest {
     @ParameterizedTest
     @MethodSource("cursorTestCases")
     void testCursorRegression(String testCase) throws Exception {
+        runRegressionTest(testCase, DQL_DIR, false, false);
+    }
+
+    @ParameterizedTest
+    @MethodSource("cursorFpTestCases")
+    void testCursorFpRegression(String testCase) throws Exception {
         runRegressionTest(testCase, DQL_DIR, false, false);
     }
 
@@ -243,7 +255,7 @@ class DqlRegressionTest {
             org.apache.maven.plugin.descriptor.PluginDescriptor pluginDescriptor = new org.apache.maven.plugin.descriptor.PluginDescriptor();
             pluginDescriptor.setGroupId("io.github.epi155");
             pluginDescriptor.setArtifactId("emsql-maven-plugin");
-            pluginDescriptor.setVersion("1.1-A3-SNAPSHOT");
+            pluginDescriptor.setVersion("1.1-A4-SNAPSHOT");
             mojo.setPlugin(pluginDescriptor);
             
             mojo.setConfigDirectory(testDir);
@@ -281,7 +293,8 @@ class DqlRegressionTest {
                     snapshotManager.captureSnapshot(generatedFile, snapshotName);
                     log.info("Created snapshot for {}", snapshotName);
                 } else {
-                    log.warn("Snapshot differs for {}: {}", snapshotName, comparison.getMessage());
+                    // FAIL THE TEST INSTEAD OF JUST WARNING
+                    fail("Snapshot differs for " + snapshotName + ": " + comparison.getMessage());
                 }
             }
 

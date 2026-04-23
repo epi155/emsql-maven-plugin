@@ -132,7 +132,7 @@ public abstract class ClassContextImpl implements ClassContext {
      * @param mask       output fields mask (reflect/delegate)
      * @return output interface name
      */
-    public String outPrepare(String name, Collection<SqlParam> values, OutputMask mask) {
+    public String outPrepare(String name, Collection<SqlOutParam> values, OutputMask mask) {
         Optional<String> oResult = mc.oFind(name);
         if (oResult.isPresent())
             return oResult.get();

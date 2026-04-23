@@ -1,6 +1,5 @@
 package io.github.epi155.emsql.pojo.dql;
 
-import io.github.epi155.emsql.api.InvalidQueryException;
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
 import io.github.epi155.emsql.commons.dql.ApiDocSignature;
@@ -15,7 +14,7 @@ public class DelegateSelectSignature {
         this.api = api;
     }
 
-    public void signature(PrintModel ipw, JdbcStatement jdbc, String name) throws InvalidQueryException {
+    public void signature(PrintModel ipw, JdbcStatement jdbc, String name) {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         api.docBegin(ipw);
         api.docInput(ipw, jdbc);

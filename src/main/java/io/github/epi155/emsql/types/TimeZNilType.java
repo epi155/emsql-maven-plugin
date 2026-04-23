@@ -1,13 +1,13 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_J8TIME;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
-public final class TimeZNilType implements SqlDataType {
+public final class TimeZNilType implements SqlScalarType, SqlNullType {
     public static final TimeZNilType INSTANCE = new TimeZNilType();
 
     @Getter
@@ -18,12 +18,6 @@ public final class TimeZNilType implements SqlDataType {
     private TimeZNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public java.util.Collection<String> requires() {
         return TimeZStdType.INSTANCE.requires();
     }

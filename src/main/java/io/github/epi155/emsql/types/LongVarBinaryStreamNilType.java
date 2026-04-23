@@ -1,7 +1,7 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import java.util.Set;
@@ -9,7 +9,7 @@ import java.util.Set;
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
-public final class LongVarBinaryStreamNilType implements SqlDataType {
+public final class LongVarBinaryStreamNilType implements SqlScalarType, SqlNullType {
     public static final LongVarBinaryStreamNilType INSTANCE = new LongVarBinaryStreamNilType();
 
     @Getter
@@ -20,12 +20,6 @@ public final class LongVarBinaryStreamNilType implements SqlDataType {
     private LongVarBinaryStreamNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public java.util.Collection<String> requires() {
         return Set.of("java.io.InputStream");
     }

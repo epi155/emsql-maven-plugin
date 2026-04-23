@@ -1,6 +1,7 @@
 package io.github.epi155.emsql.commons.dql;
 
 import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlVectorType;
 import io.github.epi155.emsql.commons.*;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
@@ -64,6 +65,29 @@ public class DelegateSelectDyn {
         }
     }
 
+    public void dumpAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
+        if (cc.isDebug()) {
+            cc.add("io.github.epi155.emsql.runtime.SqlArg");
+            cc.add("java.util.List");
+            cc.add("java.util.ArrayList");
+            ipw.less();
+            ipw.printf("} catch (SQLException e) {%n");
+            ipw.more();
+            ipw.printf("SqlTrace.showCause(e, query, ");
+            cc.traceParameterBegin(ipw);
+            ipw.more();
+            ipw.printf("List<SqlArg> args = new ArrayList<>();%n");
+            debugInpStd(ipw, jdbcStatement);
+            debugInpOpt(ipw, kPrg);
+
+            ipw.printf("return args.toArray(new SqlArg[0]);%n");
+            cc.traceParameterEnds(ipw);
+            ipw.printf("});%n");
+            ipw.printf("throw e;%n");
+            ipw.ends();
+        }
+    }
+
     private void debugInpStd(PrintModel ipw, JdbcStatement jdbcStatement) {
         int nSize = mc.nSize();
         if (api.isUnboxRequest(nSize)) {
@@ -108,7 +132,7 @@ public class DelegateSelectDyn {
         }
     }
 
-    public void expandIn(@NotNull PrintModel ipw, @NotNull Map<Integer, SqlParam> notScalar, String kPrg) {
+    public void expandIn(@NotNull PrintModel ipw, @NotNull Map<Integer, SqlMulti> notScalar, String kPrg) {
         cc.add(ClassContextImpl.RUNTIME_EMSQL);
         ipw.printf("final String queryAnte = EmSQL.expandQueryParameters(Q_%s_ANTE%n", kPrg);
         ipw.more();
@@ -223,10 +247,10 @@ public class DelegateSelectDyn {
         int nSize = mc.nSize();
         if (1 <= nSize && nSize <= IMAX) {
             jdbc.getNMap().forEach((name, type) -> {
-                if (type.isScalar() || type.columns() <= 1) {
-                    ipw.printf("private final %s %s;%n", type.getPrimitive(), name);
+                if (type instanceof SqlVectorType && ((SqlVectorType) type).columns() > 1) {
+                    ipw.printf("private final List<%s> %s;%n", ((SqlVectorType) type).getGeneric(), name);
                 } else {
-                    ipw.printf("private final List<%s> %s;%n", type.getGeneric(), name);
+                    ipw.printf("private final %s %s;%n", type.getPrimitive(), name);
                 }
             });
         } else if (nSize > IMAX) {
@@ -275,10 +299,10 @@ public class DelegateSelectDyn {
         if (1 <= nSize && nSize <= IMAX) {
             jdbc.getNMap().forEach((name, type) -> {
                 ipw.commaLn();
-                if (type.isScalar() || type.columns() <= 1) {
-                    ipw.printf("        final %s %s", type.getPrimitive(), name);
+                if (type instanceof SqlVectorType && ((SqlVectorType) type).columns() > 1) {
+                    ipw.printf("        final List<%s> %s", ((SqlVectorType) type).getGeneric(), name);
                 } else {
-                    ipw.printf("        final List<%s> %s", type.getGeneric(), name);
+                    ipw.printf("        final %s %s", type.getPrimitive(), name);
                 }
             });
         } else if (nSize > IMAX) {
@@ -304,7 +328,7 @@ public class DelegateSelectDyn {
 
 
     public void writeOpenCode(PrintModel ipw, JdbcStatement jdbc, String kPrg) {
-        Map<Integer, SqlParam> notScalar = api.notScalar(jdbc.getIMap());
+        Map<Integer, SqlMulti> notScalar = api.notScalar(jdbc.getIMap());
         if (notScalar.isEmpty()) {
             ipw.printf("String query = EmSQL.buildQuery(Q_%1$s_ANTE, Q_%1$s_OPT_MAP, Q_%1$s_POST, options);%n", kPrg);
         } else {
@@ -351,7 +375,7 @@ public class DelegateSelectDyn {
     }
 
     public void writeForEachCode(PrintModel ipw, JdbcStatement jdbc, String kPrg) {
-        Map<Integer, SqlParam> notScalar = api.notScalar(jdbc.getIMap());
+        Map<Integer, SqlMulti> notScalar = api.notScalar(jdbc.getIMap());
         if (notScalar.isEmpty()) {
             ipw.printf("String query = EmSQL.buildQuery(Q_%1$s_ANTE, Q_%1$s_OPT_MAP, Q_%1$s_POST, options);%n", kPrg);
         } else {
@@ -380,7 +404,7 @@ public class DelegateSelectDyn {
     }
 
     public void writeResultListCode(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc, String kPrg) {
-        Map<Integer, SqlParam> notScalar = api.notScalar(jdbc.getIMap());
+        Map<Integer, SqlMulti> notScalar = api.notScalar(jdbc.getIMap());
         if (notScalar.isEmpty()) {
             ipw.printf("String query = EmSQL.buildQuery(Q_%1$s_ANTE, Q_%1$s_OPT_MAP, Q_%1$s_POST, options);%n", kPrg);
         } else {

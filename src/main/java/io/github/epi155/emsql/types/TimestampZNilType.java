@@ -1,13 +1,13 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_J8TIME;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
-public final class TimestampZNilType implements SqlDataType {
+public final class TimestampZNilType implements SqlScalarType, SqlNullType {
     public static final TimestampZNilType INSTANCE = new TimestampZNilType();
 
     @Getter
@@ -18,12 +18,6 @@ public final class TimestampZNilType implements SqlDataType {
     private TimestampZNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public java.util.Collection<String> requires() {
         return TimestampZStdType.INSTANCE.requires();
     }

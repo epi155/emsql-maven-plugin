@@ -1,7 +1,7 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -9,7 +9,7 @@ import java.util.Set;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
-public final class NumberStdType implements SqlDataType {
+public final class NumberStdType implements SqlScalarType {
     public static final NumberStdType INSTANCE = new NumberStdType();
 
     @Getter

@@ -2,6 +2,7 @@ package io.github.epi155.emsql.commons;
 
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlVectorType;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
@@ -16,11 +17,11 @@ import static io.github.epi155.emsql.commons.Contexts.mc;
 public class JdbcStatement implements JdbcMap {
     private final String text;
     private final Map<Integer, SqlParam> iMap;
-    private final Map<Integer, SqlParam> oMap;
+    private final Map<Integer, SqlOutParam> oMap;
     private final Map<String, SqlDataType> nMap;
     private final List<String> tKeys;
 
-    public JdbcStatement(String text, Map<Integer, SqlParam> iMap, Map<Integer, SqlParam> oMap) {
+    public JdbcStatement(String text, Map<Integer, SqlParam> iMap, Map<Integer, SqlOutParam> oMap) {
         this.text = text;
         this.oMap = oMap;
         this.nMap = normalize(iMap);
@@ -62,9 +63,10 @@ public class JdbcStatement implements JdbcMap {
         int k = 0;
         for (val e : nMap.entrySet()) {
             SqlDataType kind = e.getValue();
-            if (!kind.isScalar() && kind.columns() > 1) {
+
+            if (kind instanceof SqlVectorType && ((SqlVectorType) kind).columns() > 1) {
                 String name = e.getKey();
-                kind.setId(++k);
+                ((SqlVectorType) kind).setId(++k);
                 in.add(name);
             }
         }

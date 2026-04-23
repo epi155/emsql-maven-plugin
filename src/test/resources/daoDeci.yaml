@@ -1,0 +1,157 @@
+packageName: com.example.emsql
+className: DaoDecimal
+declare:
+  idDecimal: long
+  decimal01: Decimal?
+  decimal02: Decimal?
+  decimal03: Decimal?
+  decimal04: Decimal?
+  decimal11: Decimal
+  decimal12: Decimal
+  decimal13: Decimal
+  decimal14: Decimal
+methods:
+  - methodName: insert01
+    perform: !Insert
+      execSql: |
+        insert into tdecimal (
+          decimal01,
+          decimal11
+        ) values (
+          :decimal01,
+          :decimal11 
+        )
+  - methodName: insert02
+    perform: !Insert
+      timeout: 5
+      execSql: |
+        insert into tdecimal (
+          decimal01,
+          decimal02,
+          decimal11,
+          decimal12
+        ) values (
+          :decimal01,
+          :decimal02,
+          :decimal11,
+          :decimal12 
+        )
+  
+  - methodName: insert02K
+    perform: !InlineProcedure
+      execSql: |
+        begin
+        insert into tdecimal (
+          decimal01,
+          decimal02,
+          decimal11,
+          decimal12
+        ) values (
+          :decimal01,
+          :decimal02,
+          :decimal11,
+          :decimal12 
+        ) 
+        returning decimal13 into :decimal13;
+        end;
+
+  - methodName: insert12K
+    perform: !InlineProcedure
+      execSql: |
+        begin
+        insert into tdecimal (
+          decimal01,
+          decimal02,
+          decimal11,
+          decimal12
+        ) values (
+          :decimal01,
+          :decimal02,
+          :decimal11,
+          :decimal12 
+        ) 
+        returning decimal03 into :decimal03;
+        end;
+
+  - methodName: insert02K2
+    perform: !InlineProcedure
+      timeout: 5
+      execSql: |
+        begin
+        insert into tdecimal (
+          decimal01,
+          decimal02,
+          decimal11,
+          decimal12
+        ) values (
+          :decimal01,
+          :decimal02,
+          :decimal11,
+          :decimal12 
+        ) 
+        returning decimal13, decimal14 
+        into :decimal13, :decimal14;
+        end;
+
+  - methodName: insert12K2
+    perform: !InlineProcedure
+      execSql: |
+        begin
+        insert into tdecimal (
+          decimal01,
+          decimal02,
+          decimal11,
+          decimal12
+        ) values (
+          :decimal01,
+          :decimal02,
+          :decimal11,
+          :decimal12 
+        ) 
+        returning decimal03, decimal04 
+        into :decimal03, :decimal04;
+        end;
+
+  - methodName: findDecimalAny
+    perform: !SelectOptional
+      execSql: |
+        select
+          decimal01,
+          decimal11
+        into
+          :decimal01,
+          :decimal11 
+        from tdecimal
+        where id_Decimal = :idDecimal
+
+  
+  - methodName: findDecimalAny01
+    perform: !SelectOptional
+      execSql: |
+        select
+          decimal01
+        into
+          :decimal01
+        from tdecimal
+        where decimal02 = :decimal02
+
+  - methodName: findDecimalAny11
+    perform: !SelectOptional
+      execSql: |
+        select
+          decimal11
+        into
+          :decimal11
+        from tdecimal
+        where decimal12 = :decimal12
+
+  
+  - methodName: call01
+    perform: !CallProcedure
+      outFields:
+        - decimal02
+        - decimal12
+      execSql: |
+        call solve(:decimal01, :decimal11, :decimal02, :decimal12)
+
+  

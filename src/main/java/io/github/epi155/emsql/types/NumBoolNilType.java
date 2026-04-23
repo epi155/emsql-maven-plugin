@@ -1,14 +1,14 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import java.util.Set;
 
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 
-public final class NumBoolNilType implements SqlDataType {
+public final class NumBoolNilType implements SqlScalarType, SqlNullType {
     public static final NumBoolNilType INSTANCE = new NumBoolNilType();
 
     @Getter
@@ -19,12 +19,6 @@ public final class NumBoolNilType implements SqlDataType {
     private NumBoolNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public java.util.Collection<String> requires() {
         return Set.of(RUNTIME_EMSQL);
     }

@@ -185,9 +185,8 @@ public class SqlMojo extends AbstractMojo {
                 java7,
                 parserProvider
         );
-        if (modules == null) {
-            log.error("No modules provided.");
-            throw  new RuntimeException();
+        if (modules == null || modules.length == 0) {
+            throw  new MojoExecutionException("No modules provided.");
         }
 
         for (String module : modules) {

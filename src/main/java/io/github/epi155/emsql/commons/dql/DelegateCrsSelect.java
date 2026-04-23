@@ -2,7 +2,8 @@ package io.github.epi155.emsql.commons.dql;
 
 import io.github.epi155.emsql.api.PrintModel;
 import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.SqlMulti;
+import io.github.epi155.emsql.commons.SqlOutParam;
 
 import java.util.Map;
 
@@ -14,10 +15,10 @@ public class DelegateCrsSelect {
     }
 
     public void writeOpenCode(PrintModel ipw, JdbcStatement jdbc, String kPrg) {
-        Map<Integer, SqlParam> oMap = jdbc.getOMap();
+        Map<Integer, SqlOutParam> oMap = jdbc.getOMap();
         int oSize = oMap.size();
 
-        Map<Integer, SqlParam> notScalar = api.notScalar(jdbc.getIMap());
+        Map<Integer, SqlMulti> notScalar = api.notScalar(jdbc.getIMap());
         if (!notScalar.isEmpty()) {
             api.expandIn(ipw, notScalar, kPrg);
         }
@@ -72,7 +73,7 @@ public class DelegateCrsSelect {
     }
 
     public void writeForEachCode(PrintModel ipw, JdbcStatement jdbc, String kPrg) {
-        Map<Integer, SqlParam> oMap = jdbc.getOMap();
+        Map<Integer, SqlOutParam> oMap = jdbc.getOMap();
 
         api.debugAction(ipw, kPrg, jdbc);
         api.openQuery(ipw, jdbc, kPrg);

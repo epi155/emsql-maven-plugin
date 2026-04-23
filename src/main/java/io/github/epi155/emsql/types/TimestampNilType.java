@@ -1,13 +1,13 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
 import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.Contexts.cc;
 
-public final class TimestampNilType implements SqlDataType {
+public final class TimestampNilType implements SqlScalarType, SqlNullType {
     public static final TimestampNilType INSTANCE = new TimestampNilType();
 
     @Getter
@@ -18,12 +18,6 @@ public final class TimestampNilType implements SqlDataType {
     private TimestampNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public void psSet(PrintModel ipw, String source) {
         cc.add(RUNTIME_EMSQL);
         ipw.printf("EmSQL.setTimestamp(ps, ++ki, %s);%n", source);

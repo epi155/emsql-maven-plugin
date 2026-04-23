@@ -26,7 +26,7 @@ methods:
 
   - methodName: cursor02
     perform: !CursorForSelect
-      mode: fp
+      mode: FP
       execSql: |
         select 
           bool01 - 1,
@@ -64,3 +64,16 @@ methods:
           :bool01,
           :bool11 
         from tbool
+
+  - methodName: cursor07
+    perform: !CursorForSelect
+      mode: XXX
+      execSql: |
+        select 
+          bool01,
+          bool11
+        into
+          :bool01,
+          :bool11 
+        from tbool
+

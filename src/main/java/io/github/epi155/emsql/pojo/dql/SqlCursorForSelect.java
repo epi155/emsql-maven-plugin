@@ -2,7 +2,7 @@ package io.github.epi155.emsql.pojo.dql;
 
 import io.github.epi155.emsql.api.*;
 import io.github.epi155.emsql.commons.JdbcStatement;
-import io.github.epi155.emsql.commons.SqlParam;
+import io.github.epi155.emsql.commons.SqlOutParam;
 import io.github.epi155.emsql.commons.Tools;
 import io.github.epi155.emsql.commons.dql.ApiCrsSelect;
 import io.github.epi155.emsql.commons.dql.ApiSelectFields;
@@ -50,7 +50,7 @@ public class SqlCursorForSelect extends PojoAction
     }
 
     private void writeImperative(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
-        Map<Integer, SqlParam> oMap = jdbc.getOMap();
+        Map<Integer, SqlOutParam> oMap = jdbc.getOMap();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
@@ -82,7 +82,7 @@ public class SqlCursorForSelect extends PojoAction
 
 
     private void writeFunctional(PrintModel ipw, String name, JdbcStatement jdbc, String kPrg) {
-        Map<Integer, SqlParam> oMap = jdbc.getOMap();
+        Map<Integer, SqlOutParam> oMap = jdbc.getOMap();
         int oSize = oMap.size();
         if (oSize < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);

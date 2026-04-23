@@ -223,6 +223,13 @@ public class GeneratedCodeValidator {
         String content = readFileContent(javaFile);
         
         // Should contain SQLException handling
+        boolean z = content.contains("throws SQLException") || content.contains("catch (SQLException");
+        if (!z) {
+            log.warn("Generated code does not seem to handle SQLException properly in {}", javaFile.getName());
+            log.warn("Generated code does not seem to handle SQLException properly in {}", javaFile.getName());
+            log.warn("Generated code does not seem to handle SQLException properly in {}", javaFile.getName());
+            throw new RuntimeException("Generated code should handle SQLException");
+        }
         assertTrue(content.contains("throws SQLException") || content.contains("catch (SQLException"),
             "Generated code should handle SQLException");
         

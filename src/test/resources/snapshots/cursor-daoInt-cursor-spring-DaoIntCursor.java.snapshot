@@ -1,6 +1,6 @@
 /*
- * Code Generated at 2026-04-17T10:02:17.662759Z
- * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A3-SNAPSHOT
+ * Code Generated at 2026-04-23T10:18:47.303033Z
+ * Plugin: io.github.epi155:emsql-maven-plugin:1.1-A4-SNAPSHOT
  */
 package com.example.emsql;
 
@@ -39,7 +39,8 @@ public class DaoIntCursor {
      * @throws SQLException SQL error
      */
     @Transactional(readOnly=true, propagation=Propagation.MANDATORY)
-    public <O extends FetchAllRS> SqlCursor<O> openFetchAll(            final Supplier<O> so)
+    public <O extends FetchAllRS> SqlCursor<O> openFetchAll(
+            final Supplier<O> so)
             throws SQLException {
         final Connection c = DataSourceUtils.getConnection(dataSource);
         return new SqlCursor<O>() {

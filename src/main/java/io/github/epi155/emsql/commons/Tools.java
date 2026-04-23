@@ -1,6 +1,8 @@
 package io.github.epi155.emsql.commons;
 
 import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
+import io.github.epi155.emsql.api.SqlVectorType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -69,7 +71,7 @@ public class Tools {
                 throw new InvalidSqlParameter(parm, fields);
             Map<Integer, SqlParam> map = new HashMap<>();
             map.put(1, new SqlParam(parm, type));   // mutable map required
-            if (type.isScalar()) {
+            if (! (type instanceof SqlVectorType)) {
                 return new SqlStatement(text.substring(0, ixCol) + "?", map);
             } else if (enableList) {
                 return new SqlStatement(text.substring(0, ixCol) + "[#1]", map);
@@ -92,7 +94,7 @@ public class Tools {
                 if (type == null) {
                     throw new InvalidSqlParameter(parm, fields);
                 } else {
-                    if (type.isScalar()) {
+                    if (! (type instanceof SqlVectorType)) {
                         this.placeholder = "?";
                     } else if (enableList) {
                         this.placeholder = "[#" + k + "]";
@@ -156,11 +158,13 @@ public class Tools {
             // only one parameter at end-of-text (no space)
             String parm = text.substring(ixCol + 1);
             SqlDataType type = ioFields.get(parm);
-            if (type != null) {
+            if (type instanceof SqlScalarType) {
                 return new JdbcStatement(
                         text.substring(0, ixCol) + "?",
                         Map.of(1, new SqlParam(parm, type)),
-                        Map.of(1, new SqlParam(parm, type)));
+                        Map.of(1, new SqlOutParam(parm, (SqlScalarType) type)) );
+            } else if (type != null) {
+                throw new InvalidSqlParameter(parm, iFields, oFields);
             }
             type = iFields.get(parm);
             if (type != null) {
@@ -170,11 +174,11 @@ public class Tools {
                         Map.of());
             }
             type = oFields.get(parm);
-            if (type != null) {
+            if (type instanceof SqlScalarType) {
                 return new JdbcStatement(
                         text.substring(0, ixCol) + "?",
                         Map.of(),
-                        Map.of(1, new SqlParam(parm, type)));
+                        Map.of(1, new SqlOutParam(parm, (SqlScalarType)type)));
             }
             throw new InvalidSqlParameter(parm, iFields, oFields);
         }
@@ -182,17 +186,19 @@ public class Tools {
 
         class MapStore implements ApiStore<JdbcStatement> {
             private final Map<Integer, SqlParam> iMap = new LinkedHashMap<>();
-            private final Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
+            private final Map<Integer, SqlOutParam> oMap = new LinkedHashMap<>();
             private int k = 1;
 
             public void push(String parm) {
                 if (parm.isEmpty())
                     return;
                 SqlDataType type = ioFields.get(parm);
-                if (type != null) {
+                if (type instanceof SqlScalarType) {
                     iMap.put(k, new SqlParam(parm, type));
-                    oMap.put(k++, new SqlParam(parm, type));
+                    oMap.put(k++, new SqlOutParam(parm, (SqlScalarType) type));
                     return;
+                } else if (type != null) {
+                    throw new InvalidSqlParameter(parm, iFields, oFields);
                 }
                 type = iFields.get(parm);
                 if (type != null) {
@@ -200,8 +206,8 @@ public class Tools {
                     return;
                 }
                 type = oFields.get(parm);
-                if (type != null) {
-                    oMap.put(k++, new SqlParam(parm, type));
+                if (type instanceof SqlScalarType) {
+                    oMap.put(k++, new SqlOutParam(parm, (SqlScalarType) type));
                     return;
                 }
                 throw new InvalidSqlParameter(parm, iFields, oFields);
@@ -229,13 +235,13 @@ public class Tools {
             SqlDataType type = iFields.get(parm);
             if (type == null) {
                 type = oFields.get(parm);
-                if (type == null) {
-                    throw new InvalidSqlParameter(parm, iFields, oFields);
-                } else {
+                if (type instanceof SqlScalarType) {
                     return new JdbcStatement(
                             text.substring(0, ixCol) + "?",
                             Map.of(),
-                            Map.of(1, new SqlParam(parm, type)));
+                            Map.of(1, new SqlOutParam(parm, (SqlScalarType) type)));
+                } else {
+                    throw new InvalidSqlParameter(parm, iFields, oFields);
                 }
             } else {
                 return new JdbcStatement(
@@ -248,7 +254,7 @@ public class Tools {
 
         class MapStore implements ApiStore<JdbcStatement> {
             private final Map<Integer, SqlParam> iMap = new LinkedHashMap<>();
-            private final Map<Integer, SqlParam> oMap = new LinkedHashMap<>();
+            private final Map<Integer, SqlOutParam> oMap = new LinkedHashMap<>();
             private int k = 1;
 
             public void push(String parm) {
@@ -257,10 +263,10 @@ public class Tools {
                 SqlDataType type = iFields.get(parm);
                 if (type == null) {
                     type = oFields.get(parm);
-                    if (type == null) {
-                        throw new InvalidSqlParameter(parm, iFields, oFields);
+                    if (type instanceof SqlScalarType) {
+                        oMap.put(k++, new SqlOutParam(parm, (SqlScalarType) type));
                     } else {
-                        oMap.put(k++, new SqlParam(parm, type));
+                        throw new InvalidSqlParameter(parm, iFields, oFields);
                     }
                 } else {
                     iMap.put(k++, new SqlParam(parm, type));
@@ -277,7 +283,7 @@ public class Tools {
     }
 
     @NotNull
-    public static Map<Integer, SqlParam> mapPlaceholder(String text, Map<String, SqlDataType> fields) {
+    public static Map<Integer, SqlOutParam> mapPlaceholder(String text, Map<String, SqlDataType> fields) {
         int ixCol = text.indexOf(':');
         if (ixCol < 0) {
             // there are no parameters
@@ -288,17 +294,17 @@ public class Tools {
             // only one parameter at end-of-text (no space)
             String parm = text.substring(ixCol + 1);
             SqlDataType type = fields.get(parm);
-            if (type == null)
-                throw new IllegalArgumentException("Invalid SQL parameter " + parm);
-            return Map.of(1, new SqlParam(parm, type));
+            if (type instanceof SqlScalarType)
+                return Map.of(1, new SqlOutParam(parm, (SqlScalarType) type));
+            throw new IllegalArgumentException("Invalid SQL parameter " + parm);
         }
         String parm = text.substring(ixCol + 1, ixEnd);
         SqlDataType type = fields.get(parm);
-        if (type == null)
+        if (!(type instanceof SqlScalarType))
             throw new IllegalArgumentException("Invalid SQL parameter " + parm);
-        val map = new LinkedHashMap<Integer, SqlParam>();
+        val map = new LinkedHashMap<Integer, SqlOutParam>();
         int k = 1;
-        map.put(k++, new SqlParam(parm, type));
+        map.put(k++, new SqlOutParam(parm, (SqlScalarType) type));
         while (ixEnd < text.length()) {
             ixCol = text.indexOf(':', ixEnd);
             if (ixCol < 0) {
@@ -312,14 +318,14 @@ public class Tools {
                 type = fields.get(parm);
                 if (type == null)
                     throw new IllegalArgumentException("Invalid SQL parameter " + parm);
-                map.put(k, new SqlParam(parm, type));
+                map.put(k, new SqlOutParam(parm, (SqlScalarType) type));
                 return map;
             }
             parm = text.substring(ixCol + 1, ixEnd);
             type = fields.get(parm);
             if (type == null)
                 throw new IllegalArgumentException("Invalid SQL parameter " + parm);
-            map.put(k++, new SqlParam(parm, type));
+            map.put(k++, new SqlOutParam(parm, (SqlScalarType) type));
         }
 
         return Map.of();

@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>test</groupId>
     <artifactId>test-abc</artifactId>
-    <version>1.1-A3-SNAPSHOT</version>
+    <version>1.1-A4-SNAPSHOT</version>
 
     <build>
         <plugins>
@@ -19,15 +19,14 @@
                 </executions>
                 <configuration>
                     <configDirectory>${project.basedir}/src/test/resources</configDirectory>
-                    <generateDirectory>${project.basedir}/target/generated-test-sources/emsql-8p</generateDirectory>
+                    <generateDirectory>${project.basedir}/target/generated-test-sources/emsql-err</generateDirectory>
                     <debugCode>true</debugCode>
                     <autoPad>true</autoPad>
                     <modules>
-                        <module>daoSelectDef.yaml</module>
+                        <module>daoUpdateInErr.yaml</module>
                     </modules>
                     <addCompileSourceRoot>false</addCompileSourceRoot>
                     <addTestCompileSourceRoot>false</addTestCompileSourceRoot>
-                    <parserProvider>JSQL</parserProvider>
                 </configuration>
             </plugin>
         </plugins>

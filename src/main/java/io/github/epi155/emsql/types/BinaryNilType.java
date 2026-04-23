@@ -1,10 +1,10 @@
 package io.github.epi155.emsql.types;
 
 import io.github.epi155.emsql.api.PrintModel;
-import io.github.epi155.emsql.api.SqlDataType;
+import io.github.epi155.emsql.api.SqlScalarType;
 import lombok.Getter;
 
-public final class BinaryNilType implements SqlDataType {
+public final class BinaryNilType implements SqlScalarType, SqlNullType {
     public static final BinaryNilType INSTANCE = new BinaryNilType();
 
     @Getter
@@ -15,12 +15,6 @@ public final class BinaryNilType implements SqlDataType {
     private BinaryNilType() {
     }
 
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public void psSet(PrintModel ipw, String source) {
         ipw.printf("ps.setBytes(++ki, %s);%n", source);
     }
