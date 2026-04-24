@@ -58,7 +58,7 @@ public class JdbcStatement implements JdbcMap {
         throw new IllegalArgumentException("Input argument collision: " + String.join(",", zroMap.keySet()));
     }
 
-    private List<String> filterNotScalar(Map<String, SqlDataType> nMap) {
+    public static List<String> filterNotScalar(Map<String, SqlDataType> nMap) {
         List<String> in = new ArrayList<>();
         int k = 0;
         for (val e : nMap.entrySet()) {

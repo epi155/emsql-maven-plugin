@@ -15,6 +15,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -58,7 +59,9 @@ public class SqlSelectListDyn extends SpringAction
 
         signature(ipw, jdbc, name);
         String cName = Tools.capitalize(name);
-        ipw.putf("%sBuilder<O> %s(%n", cName, name);
+        ipw.putf("%sBuilder", cName);
+        useGenerics(ipw, jdbc.getTKeys());
+        ipw.putf(" %s(%n", name);
         ipw.commaReset();
 
         declareInput(ipw, jdbc);
@@ -69,7 +72,7 @@ public class SqlSelectListDyn extends SpringAction
         ipw.ends();
     }
 
-    private void signature(PrintModel ipw, JdbcStatement jdbc, String name) throws InvalidQueryException {
+    private void signature(PrintModel ipw, JdbcStatement jdbc, String name) {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
         docInput(ipw, jdbc);
@@ -122,13 +125,10 @@ public class SqlSelectListDyn extends SpringAction
         ipw.println();
 
         // 4. Collegamento del proxy con l'intercettore
-        ipw.printf("%1$sBuilder<O> target = new %1$sBuilder<>(", cName);
-        int c = 0;
-        for (String arg : jdbc.getNMap().keySet()) {
-            if (c++ > 0) ipw.commaLn();
-            else ipw.println();
-            ipw.printf("        %s", arg);
-        }
+        ipw.printf("%sBuilder", cName);
+        useGenerics(ipw, jdbc.getTKeys());
+        ipw.putf(" target = new %sBuilder<>(", cName);
+        int c = pushInput(ipw, jdbc, 0);
         if (mc.oSize() >= 2) {
             if (c > 0) ipw.commaLn();
             else ipw.println();
@@ -138,7 +138,9 @@ public class SqlSelectListDyn extends SpringAction
 
         ipw.printf("ProxyFactory proxyFactory = new ProxyFactory(target);%n");
         ipw.printf("proxyFactory.addAdvice(txInterceptor);%n");
-        ipw.printf("return (%sBuilder<O>) proxyFactory.getProxy();%n", cName);
+        ipw.printf("return (%sBuilder", cName);
+        useGenerics(ipw, jdbc.getTKeys());
+        ipw.putf(") proxyFactory.getProxy();%n");
 
         ipw.less();
         ipw.printf("} catch (Exception e) {%n");
@@ -152,15 +154,16 @@ public class SqlSelectListDyn extends SpringAction
         delegateSelectDyn.docEnd(ipw);
     }
 
-    public void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) throws InvalidQueryException {
+    public void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
 
         String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
         String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         // class definition
+        List<String> tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
         ipw.printf("public class %sBuilder", cName);
-        declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
+        declareGenerics(ipw, tKeys, iName, oName);
 
         ipw.putf("{%n");
         ipw.more();
@@ -178,7 +181,7 @@ public class SqlSelectListDyn extends SpringAction
         delegateSelectDyn.assignInput(ipw, jdbc);
         delegateSelectDyn.assignOutput(ipw);
         ipw.ends();
-        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName);   // final ?! CGLIB conflict
+        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName, () -> useGenerics(ipw, jdbc.getTKeys()));   // final ?! CGLIB conflict
         defineMethodList(ipw, jdbc, name, kPrg);
         ipw.ends();
     }
@@ -194,7 +197,13 @@ public class SqlSelectListDyn extends SpringAction
          */
         cc.add("org.springframework.transaction.annotation.Transactional");
         ipw.printf("@Transactional(readOnly=true) // implemented programmatically ::%n");
-        ipw.printf("public List<O> list() throws SQLException {%n");
+        ipw.printf("public List<");
+        if (mc.oSize() == 1) {
+            jdbc.getOMap().forEach((k, v) -> ipw.putf("%s", v.getType().getWrapper()));
+        } else {
+            ipw.putf("O");
+        }
+        ipw.putf("> list() throws SQLException {%n");
         ipw.more();
         cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");

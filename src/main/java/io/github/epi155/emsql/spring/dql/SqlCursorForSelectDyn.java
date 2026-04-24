@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -57,7 +58,12 @@ public class SqlCursorForSelectDyn extends SpringAction
 
         signature(ipw, jdbc, name);
         String cName = Tools.capitalize(name);
-        ipw.putf("%sBuilder<O> %s(%n", cName, name);
+        List<String> tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
+        ipw.putf("%sBuilder", cName);
+        useGenerics(ipw, tKeys);
+        ipw.putf(" %s(%n", name);
+
+//        ipw.putf("%sBuilder<O> %s(%n", cName, name);xxx
         ipw.commaReset();
 
         declareInput(ipw, jdbc);
@@ -68,7 +74,7 @@ public class SqlCursorForSelectDyn extends SpringAction
         ipw.ends();
     }
 
-    private void signature(PrintModel ipw, JdbcStatement jdbc, String name) throws InvalidQueryException {
+    private void signature(PrintModel ipw, JdbcStatement jdbc, String name) {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
         docInput(ipw, jdbc);
@@ -89,6 +95,8 @@ public class SqlCursorForSelectDyn extends SpringAction
         cc.add("org.springframework.transaction.TransactionDefinition");
         cc.add("org.springframework.transaction.annotation.Transactional");
         cc.add("org.springframework.transaction.interceptor.*");
+        cc.add("org.springframework.jdbc.datasource.DataSourceUtils");
+
 
         /*
          * La classe *Builder, viene proxy-ata e viene aggiunta la transazionalità ai metodi "open()" o "forEach()".
@@ -125,13 +133,11 @@ public class SqlCursorForSelectDyn extends SpringAction
         ipw.println();
 
         // 4. Collegamento del proxy con l'intercettore
-        ipw.printf("%1$sBuilder<O> target = new %1$sBuilder<>(", cName);
-        int c = 0;
-        for (String arg : jdbc.getNMap().keySet()) {
-            if (c++ > 0) ipw.commaLn();
-            else ipw.println();
-            ipw.printf("        %s", arg);
-        }
+//        ipw.printf("%1$sBuilder<O> target = new %1$sBuilder<>(", cName);xxx
+        ipw.printf("%sBuilder", cName);
+        useGenerics(ipw, jdbc.getTKeys());
+        ipw.putf(" target = new %sBuilder<>(", cName);
+        int c = pushInput(ipw, jdbc, 0);
         if (mc.oSize() >= 2) {
             if (c > 0) ipw.commaLn();
             else ipw.println();
@@ -141,7 +147,10 @@ public class SqlCursorForSelectDyn extends SpringAction
 
         ipw.printf("ProxyFactory proxyFactory = new ProxyFactory(target);%n");
         ipw.printf("proxyFactory.addAdvice(txInterceptor);%n");
-        ipw.printf("return (%sBuilder<O>) proxyFactory.getProxy();%n", cName);
+//        ipw.printf("return (%sBuilder<O>) proxyFactory.getProxy();%n", cName);
+        ipw.printf("return (%sBuilder", cName);
+        useGenerics(ipw, jdbc.getTKeys());
+        ipw.putf(") proxyFactory.getProxy();%n");
 
         ipw.less();
         ipw.printf("} catch (Exception e) {%n");
@@ -155,7 +164,7 @@ public class SqlCursorForSelectDyn extends SpringAction
         delegateSelectDyn.docEnd(ipw);
     }
 
-    private void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) throws InvalidQueryException {
+    private void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
 
@@ -181,7 +190,7 @@ public class SqlCursorForSelectDyn extends SpringAction
         delegateSelectDyn.assignInput(ipw, jdbc);
         delegateSelectDyn.assignOutput(ipw);
         ipw.ends();
-        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName);
+        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName, () -> useGenerics(ipw, jdbc.getTKeys()));
 
         if (mode == ProgrammingModeEnum.Functional) {
             defineForEach(ipw, jdbc, name, kPrg);
@@ -202,6 +211,7 @@ public class SqlCursorForSelectDyn extends SpringAction
          * In this case the *Builder class is created programmatically.
          */
         cc.add("org.springframework.transaction.annotation.Transactional");
+        cc.add("org.springframework.transaction.annotation.Propagation");
         ipw.printf("@Transactional(readOnly=true, propagation=Propagation.MANDATORY) // implemented programmatically ::%n");
         ipw.printf("public void forEach(");
         declareOutputConsumer(ipw, jdbc);
@@ -242,10 +252,22 @@ public class SqlCursorForSelectDyn extends SpringAction
          * In this case the *Builder class is created programmatically.
          */
         cc.add("org.springframework.transaction.annotation.Transactional");
+        cc.add("org.springframework.transaction.annotation.Propagation");
         ipw.printf("@Transactional(readOnly=true, propagation=Propagation.MANDATORY) // implemented programmatically ::%n");
-        ipw.printf("public SqlCursor<O> open() throws SQLException {%n");
+//        ipw.printf("public SqlCursor<O> open() throws SQLException {%n");
+        cc.add("io.github.epi155.emsql.runtime.SqlCursor");
+        Map<Integer, SqlOutParam> oMap = jdbc.getOMap();
+        int oSize = oMap.size();
+        ipw.printf("public ");
+        if (oSize == 1) {
+            String oType = oMap.get(1).getType().getWrapper();
+            ipw.putf("SqlCursor<%s> open() throws SQLException {%n", oType);
+        } else {
+            ipw.putf("SqlCursor<O> open() throws SQLException {%n");
+        }
+
         ipw.more();
-        ipw.printf("return new SqlCursor<O>() {%n");
+        ipw.printf("return new SqlCursor<>() {%n");
         ipw.more();
         ipw.printf("private final ResultSet rs;%n");
         ipw.printf("private final PreparedStatement ps;%n");

@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -57,7 +58,9 @@ public class SqlSelectListDyn extends PojoAction
 
         delegateSelectSignature.signature(ipw, jdbc, name);
         String cName = Tools.capitalize(name);
-        ipw.putf("%sBuilder<O> %s(%n", cName, name);
+        ipw.putf("%sBuilder", cName);
+        useGenerics(ipw, jdbc.getTKeys());
+        ipw.putf(" %s(%n", name);
 
         ipw.printf("        final Connection c");
         declareInput(ipw, jdbc);
@@ -70,10 +73,7 @@ public class SqlSelectListDyn extends PojoAction
 
     private void returnBuilder(PrintModel ipw, JdbcStatement jdbc, String cName) {
         ipw.printf("return new %sBuilder<>(c", cName);
-        jdbc.getNMap().forEach((k, q) -> {
-            ipw.commaLn();
-            ipw.printf("%s", k);
-        });
+        pushInput(ipw, jdbc, 1);
         if (mc.oSize() >= 2) {
             ipw.commaLn();
             ipw.printf("so");
@@ -86,17 +86,18 @@ public class SqlSelectListDyn extends PojoAction
         delegateSelectDyn.docEnd(ipw);
     }
 
-    public void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) throws InvalidQueryException {
+    public void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
 
         String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
         String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         // class definition
+        List<String> tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
         ipw.printf("public static class %sBuilder", cName);
-        declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
+        declareGenerics(ipw, tKeys, iName, oName);
 
-        ipw.putf("{%n");
+        ipw.putf(" {%n");
         ipw.more();
         ipw.printf("private final Connection c;%n");
         delegateSelectDyn.defineInput(ipw, jdbc);
@@ -114,14 +115,20 @@ public class SqlSelectListDyn extends PojoAction
         delegateSelectDyn.assignInput(ipw, jdbc);
         delegateSelectDyn.assignOutput(ipw);
         ipw.ends();
-        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName);
+        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName, () -> useGenerics(ipw, jdbc.getTKeys()));
         defineMethodList(ipw, jdbc, name, kPrg);
         ipw.ends();
     }
 
     private void defineMethodList(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc, String name, String kPrg) {
         DocUtils.docResultList(ipw, name);
-        ipw.printf("public List<O> list() throws SQLException {%n");
+        ipw.printf("public List<");
+        if (mc.oSize() == 1) {
+            jdbc.getOMap().forEach((k, v) -> ipw.putf("%s", v.getType().getWrapper()));
+        } else {
+            ipw.putf("O");
+        }
+        ipw.putf("> list() throws SQLException {%n");
         ipw.more();
 
         delegateSelectDyn.writeResultListCode(ipw, jdbc, kPrg);

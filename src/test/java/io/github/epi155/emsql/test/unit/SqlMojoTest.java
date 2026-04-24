@@ -30,7 +30,7 @@ class SqlMojoTest {
         log.info("Testing Java 8 POJO generation with validation...");
 
         // Execute the plugin
-        assertDoesNotThrow(() -> mojo.execute(), "Plugin execution should not throw exceptions");
+        assertDoesNotThrow(mojo::execute, "Plugin execution should not throw exceptions");
 
         // Validate generated code structure
         File generatedDir = getGenerateDirectory(mojo);
@@ -45,15 +45,12 @@ class SqlMojoTest {
         // Validate specific generated files
         validateGeneratedFiles(generatedFiles);
 
-        // Test compilation of generated code (may fail due to missing runtime dependencies)
+        // Test compilation of generated code
         CompilationTester.CompilationResult compilationResult = compilationTester.compileDirectory(generatedDir);
         log.info("Compilation result: {}", compilationResult.getMessage());
         
-        // For now, we only validate that the generated code has proper structure
-        // Runtime dependencies would be needed for full compilation
-        if (!compilationResult.isSuccess()) {
-            log.warn("Compilation failed (expected due to missing runtime dependencies): {}", compilationResult.getMessage());
-        }
+        // Compilation should succeed for valid configurations
+        assertTrue(compilationResult.isSuccess(), "Compilation should succeed: " + compilationResult.getMessage());
 
         // Validate package structure
         GeneratedCodeValidator.validatePackageStructure(generatedDir, "com.example.emsql");
@@ -65,7 +62,7 @@ class SqlMojoTest {
         log.info("Testing Java 8 Spring generation with validation...");
 
         // Execute the plugin
-        assertDoesNotThrow(() -> mojo.execute(), "Plugin execution should not throw exceptions");
+        assertDoesNotThrow(mojo::execute, "Plugin execution should not throw exceptions");
 
         // Validate generated code structure
         File generatedDir = getGenerateDirectory(mojo);
@@ -78,13 +75,12 @@ class SqlMojoTest {
         // Validate Spring-specific features
         validateSpringGeneratedFiles(generatedFiles);
 
-        // Test compilation (may fail due to missing runtime dependencies)
+        // Test compilation
         CompilationTester.CompilationResult compilationResult = compilationTester.compileDirectory(generatedDir);
         log.info("Spring compilation result: {}", compilationResult.getMessage());
         
-        if (!compilationResult.isSuccess()) {
-            log.warn("Spring compilation failed (expected due to missing runtime dependencies): {}", compilationResult.getMessage());
-        }
+        // Compilation should succeed for valid configurations
+        assertTrue(compilationResult.isSuccess(), "Compilation should succeed: " + compilationResult.getMessage());
     }
 
     @Test
@@ -93,7 +89,7 @@ class SqlMojoTest {
         log.info("Testing Java 7 POJO generation with validation...");
 
         // Execute the plugin
-        assertDoesNotThrow(() -> mojo.execute(), "Plugin execution should not throw exceptions");
+        assertDoesNotThrow(mojo::execute, "Plugin execution should not throw exceptions");
 
         File generatedDir = getGenerateDirectory(mojo);
         assertTrue(generatedDir.exists(), "Generated directory should exist");
@@ -105,11 +101,12 @@ class SqlMojoTest {
         // Validate Java 7 compatibility (no lambda expressions, etc.)
         validateJava7GeneratedFiles(generatedFiles);
 
-        // Test compilation (may fail due to missing runtime dependencies)
+        // Test compilation
         CompilationTester.CompilationResult compilationResult = compilationTester.compileDirectory(generatedDir);
-        if (!compilationResult.isSuccess()) {
-            log.warn("Java 7 compilation failed (expected due to missing runtime dependencies): {}", compilationResult.getMessage());
-        }
+        log.info("Java 7 compilation result: {}", compilationResult.getMessage());
+        
+        // Compilation should succeed for valid configurations
+        assertTrue(compilationResult.isSuccess(), "Compilation should succeed: " + compilationResult.getMessage());
     }
 
     @Test
@@ -118,7 +115,7 @@ class SqlMojoTest {
         log.info("Testing Java 7 Spring generation with validation...");
 
         // Execute the plugin
-        assertDoesNotThrow(() -> mojo.execute(), "Plugin execution should not throw exceptions");
+        assertDoesNotThrow(mojo::execute, "Plugin execution should not throw exceptions");
 
         File generatedDir = getGenerateDirectory(mojo);
         assertTrue(generatedDir.exists(), "Generated directory should exist");
@@ -131,11 +128,12 @@ class SqlMojoTest {
         validateJava7GeneratedFiles(generatedFiles);
         validateSpringGeneratedFiles(generatedFiles);
 
-        // Test compilation (may fail due to missing runtime dependencies)
+        // Test compilation
         CompilationTester.CompilationResult compilationResult = compilationTester.compileDirectory(generatedDir);
-        if (!compilationResult.isSuccess()) {
-            log.warn("Java 7 compilation failed (expected due to missing runtime dependencies): {}", compilationResult.getMessage());
-        }
+        log.info("Java 7 Spring compilation result: {}", compilationResult.getMessage());
+        
+        // Compilation should succeed for valid configurations
+        assertTrue(compilationResult.isSuccess(), "Compilation should succeed: " + compilationResult.getMessage());
     }
 
     @Test
@@ -165,7 +163,7 @@ class SqlMojoTest {
             mojo.setAddTestCompileSourceRoot(false);
 
             // Execute plugin
-            assertDoesNotThrow(() -> mojo.execute());
+            assertDoesNotThrow(mojo::execute);
 
             // Validate minimal generation
             assertTrue(generatedDir.exists(), "Generated directory should exist");
@@ -180,11 +178,12 @@ class SqlMojoTest {
             GeneratedCodeValidator.validateClassStructure(generatedFile, "TestDao");
             GeneratedCodeValidator.validateErrorHandling(generatedFile);
 
-            // Test compilation (may fail due to missing runtime dependencies)
+            // Test compilation
             CompilationTester.CompilationResult result = compilationTester.compileFile(generatedFile);
-            if (!result.isSuccess()) {
-                log.warn("Minimal compilation failed (expected due to missing runtime dependencies): {}", result.getMessage());
-            }
+            log.info("Minimal compilation result: {}", result.getMessage());
+            
+            // Compilation should succeed for valid configurations
+            assertTrue(result.isSuccess(), "Compilation should succeed: " + result.getMessage());
 
             log.info("Minimal configuration test passed");
         });
@@ -205,7 +204,7 @@ class SqlMojoTest {
             mojo.setDebugCode(true);
 
             // Should handle errors gracefully
-            assertThrows(Exception.class, () -> mojo.execute(), 
+            assertThrows(Exception.class, mojo::execute,
                 "Should throw exception for invalid configuration");
             
             log.info("Error handling test passed - exception thrown as expected");

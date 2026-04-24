@@ -7,6 +7,8 @@ import io.github.epi155.emsql.commons.SqlOutParam;
 
 import java.util.Map;
 
+import static io.github.epi155.emsql.commons.Contexts.cc;
+
 public class DelegateCrsSelect {
     private final ApiCrsSelect api;
 
@@ -30,11 +32,13 @@ public class DelegateCrsSelect {
         ipw.more();
         ipw.printf("private final ResultSet rs;%n");
         ipw.printf("private final PreparedStatement ps;%n");
-        ipw.printf("{%n");
+        ipw.printf("{%n");  // begin internal constructor
         ipw.more();
         api.debugAction(ipw, kPrg, jdbc);
-        ipw.printf("try {%n");
-        ipw.more();
+        if (cc.isDebug()) {
+            ipw.printf("try {%n");
+            ipw.more();
+        }
         if (notScalar.isEmpty()) {
             ipw.printf("this.ps = c.prepareStatement(Q_%s);%n", kPrg);
         } else {
@@ -44,8 +48,9 @@ public class DelegateCrsSelect {
         if (api.getFetchSize() != null) ipw.printf("ps.setFetchSize(%d);%n", api.getFetchSize());
         api.setQueryHints(ipw);
         ipw.printf("this.rs = ps.executeQuery();%n");
-        api.dumpAction(ipw, kPrg, jdbc);
-        ipw.ends();
+        if (cc.isDebug())
+            api.dumpAction(ipw, kPrg, jdbc);
+        ipw.ends(); // end internal constructor
         ipw.printf("@Override%n");
         ipw.printf("public boolean hasNext() throws SQLException {%n");
         ipw.more();

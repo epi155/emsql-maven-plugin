@@ -78,6 +78,19 @@ public abstract class SqlAction {
             ipw.printf("        final I i");
         }
     }
+    public int pushInput(PrintModel ipw, @NotNull JdbcStatement jdbc, int argc) {
+        int nSize = mc.nSize();
+        if (1 <= nSize && nSize <= IMAX) {
+            for(Map.Entry<String, SqlDataType> ee: jdbc.getNMap().entrySet()) {
+                if (argc++ > 0) ipw.commaLn(); else ipw.println();
+                ipw.printf("        %s", ee.getKey());
+            }
+        } else if (nSize > IMAX) {
+            if (argc++ > 0) ipw.commaLn(); else ipw.println();
+            ipw.printf("        i");
+        }
+        return argc;
+    }
 
     public void plainGenericsNew(PrintModel ipw, JdbcStatement jdbc) {
         int nSize = mc.nSize();
@@ -313,6 +326,32 @@ public abstract class SqlAction {
         }
     }
 
+    public void useGenerics(PrintModel ipw, List<String> inFlds) {
+        if (mc.oSize() <= 1) {
+            if (mc.nSize() > IMAX) {
+                ipw.putf("<I");
+                if (!inFlds.isEmpty()) {
+//                    useInner(ipw, inFlds);
+                    addInner(ipw, inFlds);
+                }
+                ipw.putf(">");
+            } else {
+                useIn(ipw, inFlds, "<", ">");
+            }
+        } else {
+            if (mc.nSize() <= IMAX) {
+                ipw.putf("<O");
+                useIn(ipw, inFlds, ",", null);
+                ipw.putf(">");
+            } else {
+                ipw.putf("<I");
+                if (!inFlds.isEmpty())
+                    useInner(ipw, inFlds);
+                ipw.putf(",O>");
+            }
+        }
+    }
+
     public void batchGenerics(PrintModel ipw, String iName) {
         if (!isUnboxRequest(mc.nSize())) {
             ipw.putf("<I extends %s", iName);
@@ -339,6 +378,21 @@ public abstract class SqlAction {
             ipw.putf(",L%d extends %s%s", ++k, capitalize(fld), REQUEST);
         }
     }
+    private void useInner(PrintModel ipw, List<String> flds) {
+        ipw.putf("<");
+        for (int k = 1; k <= flds.size(); k++) {
+            if (k > 1) ipw.putf(",");
+            ipw.putf("L%d", k);
+        }
+        ipw.putf(">");
+        addInner(ipw, flds);
+    }
+    private void addInner(PrintModel ipw, List<String> flds) {
+        int k = 0;
+        for (val ignored : flds) {
+            ipw.putf(",L%d", ++k);
+        }
+    }
 
     private void genericIn(PrintModel ipw, List<String> inFlds, String prefix, String suffix) {
         if (!inFlds.isEmpty()) {
@@ -347,6 +401,18 @@ public abstract class SqlAction {
             for (String inFld : inFlds) {
                 if (k++ > 0) ipw.putf(",");
                 ipw.putf("L%d extends %s" + REQUEST, k, capitalize(inFld));
+            }
+            if (suffix != null) ipw.putf(suffix);
+        }
+    }
+
+    private void useIn(PrintModel ipw, List<String> inFlds, String prefix, String suffix) {
+        if (!inFlds.isEmpty()) {
+            int k = 0;
+            if (prefix != null) ipw.putf(prefix);
+            for (String ignored : inFlds) {
+                if (k++ > 0) ipw.putf(",");
+                ipw.putf("L%d", k);
             }
             if (suffix != null) ipw.putf(suffix);
         }
@@ -413,8 +479,8 @@ public abstract class SqlAction {
             cc.traceParameterEnds(ipw);
             ipw.printf("});%n");
             ipw.printf("throw e;%n");
-            ipw.ends();
         }
+        ipw.ends(); // ends try () { }
     }
 
     public void setQueryHints(PrintModel ipw) {

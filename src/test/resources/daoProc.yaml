@@ -12,8 +12,10 @@ declare:
   idBool: long
   bool01: Bool?
   bool02: Bool?
+  bool03: Bool?
   bool11: Bool
   bool12: Bool
+  bool13: Bool
 methods:
   - methodName: prenota
     perform: !CallProcedure
@@ -61,5 +63,26 @@ methods:
             :bool02,
             :bool11,
             :bool12
+          )
+        end;
+
+  - methodName: insert3
+    perform: !InlineBatch
+      execSql: |
+        begin 
+          insert into tbool (
+            bool01,
+            bool02,
+            bool03,
+            bool11,
+            bool12,
+            bool13
+          ) values (
+            :bool01,
+            :bool02,
+            :bool03,
+            :bool11,
+            :bool12,
+            :bool13
           )
         end;

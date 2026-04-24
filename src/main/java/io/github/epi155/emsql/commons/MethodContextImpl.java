@@ -32,13 +32,6 @@ public class MethodContextImpl implements MethodContext {
         this.inputForce = perform instanceof ForceAware && ((ForceAware) perform).isForce();
     }
 
-//    public MethodContextImpl oSize(int size) {
-//        if (oSize == null) {
-//            oSize = size;
-//        }
-//        return this;
-//    }
-
     @Override
     public Optional<String> iFind(String name) {
         return Optional.ofNullable(inputCache.get(name));

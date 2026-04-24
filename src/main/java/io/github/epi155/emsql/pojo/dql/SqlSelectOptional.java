@@ -25,7 +25,7 @@ public class SqlSelectOptional extends SqlSelectSingle implements SelectOptional
         ipw.printf("return %s.of(o);%n", cc.optional());
         ipw.ends();
         ipw.orElse();
-        ipw.printf("log.debug(\"*** NoResult ***\");%n");
+        if (cc.isDebug()) ipw.printf("log.debug(\"*** NoResult ***\");%n");
         ipw.printf("return %s.empty();%n", cc.optional());
         ipw.ends();
         ipw.ends();

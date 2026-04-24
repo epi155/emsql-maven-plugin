@@ -1,18 +1,18 @@
 package io.github.epi155.emsql.commons.dql;
 
 import io.github.epi155.emsql.api.PrintModel;
+import io.github.epi155.emsql.api.SqlDataType;
 import io.github.epi155.emsql.api.SqlVectorType;
 import io.github.epi155.emsql.commons.*;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static io.github.epi155.emsql.commons.ClassContextImpl.RUNTIME_EMSQL;
 import static io.github.epi155.emsql.commons.Contexts.*;
+import static io.github.epi155.emsql.commons.JdbcStatement.filterNotScalar;
 import static io.github.epi155.emsql.commons.Tools.getterOf;
 
 public class DelegateSelectDyn {
@@ -133,7 +133,7 @@ public class DelegateSelectDyn {
     }
 
     public void expandIn(@NotNull PrintModel ipw, @NotNull Map<Integer, SqlMulti> notScalar, String kPrg) {
-        cc.add(ClassContextImpl.RUNTIME_EMSQL);
+        cc.add(RUNTIME_EMSQL);
         ipw.printf("final String queryAnte = EmSQL.expandQueryParameters(Q_%s_ANTE%n", kPrg);
         ipw.more();
         if (mc.nSize() <= IMAX) {
@@ -145,13 +145,15 @@ public class DelegateSelectDyn {
         ipw.printf(");%n", kPrg);
     }
 
-    public void defineMethodArgBuilder(PrintModel ipw, String kPrg, String cName) {
+    public void defineMethodArgBuilder(PrintModel ipw, String kPrg, String cName, Runnable usedGenerics) {
         int k = 1;
         for (Map.Entry<String, String> a : api.getOptionalAnd().entrySet()) {
             Map<Integer, SqlParam> parms = api.getAndParms().get(a.getKey());
             Map<OptArg, List<Integer>> args = reorgParms(parms, k);
             docMethod(ipw, a, k, cName, args);
-            ipw.printf("public %sBuilder<O> %s(", cName, a.getKey());
+            ipw.printf("public %sBuilder", cName);
+            usedGenerics.run();
+            ipw.putf(" %s(", a.getKey());
             writeArgument(ipw, args);
             ipw.putf(") {%n");
             ipw.more();
@@ -356,7 +358,15 @@ public class DelegateSelectDyn {
 
         // fetchNext
         ipw.printf("@Override%n");
-        ipw.printf("public O fetchNext() throws SQLException {%n");
+        Map<Integer, SqlOutParam> oMap = jdbc.getOMap();
+        int oSize = oMap.size();
+        if (oSize == 1) {
+            String oType = oMap.get(1).getType().getWrapper();
+            ipw.printf("public %s fetchNext() throws SQLException {%n", oType);
+        } else {
+            ipw.printf("public O fetchNext() throws SQLException {%n");
+        }
+
         ipw.more();
         api.fetch(ipw, jdbc.getOMap());
         ipw.printf("return o;%n");
@@ -404,6 +414,7 @@ public class DelegateSelectDyn {
     }
 
     public void writeResultListCode(@NotNull PrintModel ipw, @NotNull JdbcStatement jdbc, String kPrg) {
+        cc.add(RUNTIME_EMSQL);
         Map<Integer, SqlMulti> notScalar = api.notScalar(jdbc.getIMap());
         if (notScalar.isEmpty()) {
             ipw.printf("String query = EmSQL.buildQuery(Q_%1$s_ANTE, Q_%1$s_OPT_MAP, Q_%1$s_POST, options);%n", kPrg);
@@ -437,5 +448,19 @@ public class DelegateSelectDyn {
         ipw.ends(); // end try (ResultSet rs)
         ipw.ends(); // end try (PreparedStatement ps)
         ipw.ends(); // end list()
+    }
+
+    public List<String> packGenerics(String name, Collection<Map<Integer, SqlParam>> optParams, List<String> fixParams) {
+        Map<String, SqlDataType> elems = new HashMap<>();
+        for (Map<Integer, SqlParam> ak: optParams) {
+            Collection<SqlParam> params = ak.values();
+            InterfacePS.registerTensor(name, params);
+            for(SqlParam aj: params) {
+                elems.put(aj.getName(), aj.getType());
+            }
+        }
+        List<String> l1 = filterNotScalar(elems);
+        l1.addAll(fixParams);
+        return l1;
     }
 }

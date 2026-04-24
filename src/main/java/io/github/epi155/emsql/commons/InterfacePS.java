@@ -47,14 +47,9 @@ public class InterfacePS implements InterfaceWriter {
         protected abstract void writeDocField(PrintModel pw);
         protected abstract void writeFieldGetter(PrintModel pw);
         protected abstract String primitive();
-
-//        protected boolean isScalar() { return true; }
-//        protected int columns() { return 0; }
-//        protected String generic() { throw new IllegalStateException();  }
     }
     private abstract static class MorePS extends TypePS {
         protected MorePS(String name) { super(name); }
-//        protected abstract int columns();
         protected abstract String generic();
     }
     private static class BaseType extends TypePS {
@@ -102,8 +97,6 @@ public class InterfacePS implements InterfaceWriter {
             return "["+type.getPrimitive()+"]";
         }
 
-//        @Override
-//        protected int columns() { return 1; }
     }
     private static class TensType extends MorePS {
         private final String type;
@@ -131,9 +124,6 @@ public class InterfacePS implements InterfaceWriter {
         protected String primitive() {
             return "["+type+"]";
         }
-
-//        @Override
-//        protected int columns() { return cols; }
 
         @Override
         protected String generic() { return "L"+n;  }

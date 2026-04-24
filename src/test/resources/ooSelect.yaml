@@ -12,6 +12,7 @@ declare:
   state: char
   tsMin: timestamp
   tsMax: timestamp
+  now: timestamp
 methods:
   - methodName: select01
     perform: !SelectSingle
@@ -238,3 +239,72 @@ methods:
         and ( organization, organization_unit ) in ( :organizations )
         and not_before >= :tsMin
         and not_after <= :tsMax
+
+  - methodName: select37
+    perform: !SelectSingle
+      execSql: |
+        select
+          common_name
+        into
+          :commonName
+        from certificate
+        where  not_before > not_after 
+        and organization = organizationUnit
+
+  - methodName: select38
+    perform: !SelectListDyn
+      execSql: |
+        select
+          common_name
+        into
+          :commonName
+        from certificate
+        where locality = :locality
+        and ( organization, organization_unit ) in ( :organizations )
+      optionalAnd:
+        isNotExpired: NOT_BEFORE <= :now and NOT_AFTER >= :now
+
+  - methodName: select39
+    perform: !SelectListDyn
+      execSql: |
+        select
+          common_name
+        into
+          :commonName
+        from certificate
+        where locality = :locality
+      optionalAnd:
+        isNotExpired: NOT_BEFORE <= :now and NOT_AFTER >= :now
+        inOrg: ( organization, organization_unit ) in ( :organizations )
+
+  - methodName: select40
+    perform: !SelectListDyn
+      execSql: |
+        select
+          common_name
+        into
+          :commonName
+        from certificate
+        where locality = :locality
+        and organization_unit = :organizationUnit
+        and not_before >= :tsMin
+        and not_after <= :tsMax
+        and ( organization, organization_unit ) in ( :organizations )
+      optionalAnd:
+        isNotExpired: NOT_BEFORE <= :now and NOT_AFTER >= :now
+
+  - methodName: select41
+    perform: !CursorForSelectDyn
+      execSql: |
+        select
+          common_name
+        into
+          :commonName
+        from certificate
+        where locality = :locality
+        and organization_unit = :organizationUnit
+        and not_before >= :tsMin
+        and not_after <= :tsMax
+        and ( organization, organization_unit ) in ( :organizations )
+      optionalAnd:
+        isNotExpired: NOT_BEFORE <= :now and NOT_AFTER >= :now

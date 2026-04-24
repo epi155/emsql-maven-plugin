@@ -1,6 +1,7 @@
 package io.github.epi155.emsql.test.utils;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.tools.*;
 import java.io.File;
@@ -12,15 +13,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Utility class for testing compilation of generated Java code
  */
-@Slf4j
 public class CompilationTester {
 
+    private static final Logger log = LoggerFactory.getLogger(CompilationTester.class);
+    
     private final JavaCompiler compiler;
     private final List<String> options;
 
@@ -64,8 +63,8 @@ public class CompilationTester {
             }
 
             StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
-            
-            Iterable<? extends JavaFileObject> compilationUnits = 
+
+            Iterable<? extends JavaFileObject> compilationUnits =
                 fileManager.getJavaFileObjectsFromFiles(javaFiles);
 
             JavaCompiler.CompilationTask task = compiler.getTask(
@@ -82,7 +81,6 @@ public class CompilationTester {
                 log.error(errorMsg);
                 return CompilationResult.failure(errorMsg);
             }
-
         } catch (IOException e) {
             String errorMsg = "IO error during compilation: " + e.getMessage();
             log.error(errorMsg, e);
@@ -90,107 +88,105 @@ public class CompilationTester {
         }
     }
 
-    /**
-     * Compiles a single Java file
-     */
-    public CompilationResult compileFile(File javaFile) {
-        return compileFile(javaFile, null);
-    }
+     /**
+      * Compiles with detailed diagnostic information
+      */
+     public CompilationResult compileWithDiagnostics(File sourceDir) {
+         List<File> javaFiles = findJavaFiles(sourceDir);
+         
+         if (javaFiles.isEmpty()) {
+             return CompilationResult.success("No Java files found to compile");
+         }
+         
+         log.info("Compiling with diagnostics: {} files", javaFiles.size());
+         
+         try {
+             DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
+             
+             StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, null, null);
+             
+             Iterable<? extends JavaFileObject> compilationUnits = 
+                 fileManager.getJavaFileObjectsFromFiles(javaFiles);
+             
+             JavaCompiler.CompilationTask task = compiler.getTask(
+                     null, fileManager, diagnosticCollector, options, null, compilationUnits);
+             
+             boolean success = task.call();
+             fileManager.close();
+             
+             List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticCollector.getDiagnostics();
+             List<String> diagnosticMessages = diagnostics.stream()
+                     .map(this::formatDiagnostic)
+                     .collect(Collectors.toList());
+             
+             if (success) {
+                 log.info("Compilation successful with {} diagnostics", diagnostics.size());
+                 return CompilationResult.success("Compilation successful", diagnosticMessages);
+             } else {
+                 log.error("Compilation failed with {} diagnostics: {}", diagnostics.size(), String.join("\n", diagnosticMessages));
+                 return CompilationResult.failure("Compilation failed", diagnosticMessages);
+             }
+         } catch (IOException e) {
+             String errorMsg = "IO error during compilation: " + e.getMessage();
+             log.error(errorMsg, e);
+             return CompilationResult.failure(errorMsg);
+         }
+     }
 
-    /**
-     * Compiles a single Java file to a specific output directory
-     */
-    public CompilationResult compileFile(File javaFile, File outputDir) {
-        if (!javaFile.exists() || !javaFile.getName().endsWith(".java")) {
-            return CompilationResult.failure("Invalid Java file: " + javaFile.getPath());
-        }
+     /**
+      * Compiles a single Java file
+      */
+     public CompilationResult compileFile(File javaFile) {
+         return compileFile(javaFile, null);
+     }
 
-        log.info("Compiling single file: {}", javaFile.getPath());
+     /**
+      * Compiles a single Java file to a specific output directory
+      */
+     public CompilationResult compileFile(File javaFile, File outputDir) {
+         if (!javaFile.exists() || !javaFile.getName().endsWith(".java")) {
+             return CompilationResult.failure("Invalid Java file: " + javaFile.getPath());
+         }
 
-        try {
-            List<String> compileOptions = new ArrayList<>(options);
-            if (outputDir != null) {
-                outputDir.mkdirs();
-                compileOptions.add("-d");
-                compileOptions.add(outputDir.getPath());
-            }
+         log.info("Compiling single file: {}", javaFile.getPath());
 
-            StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
-            
-            Iterable<? extends JavaFileObject> compilationUnits = 
-                fileManager.getJavaFileObjectsFromFiles(List.of(javaFile));
+         try {
+             List<String> compileOptions = new ArrayList<>(options);
+             if (outputDir != null) {
+                 outputDir.mkdirs();
+                 compileOptions.add("-d");
+                 compileOptions.add(outputDir.getPath());
+             }
 
-            JavaCompiler.CompilationTask task = compiler.getTask(
-                null, fileManager, null, compileOptions, null, compilationUnits);
+             StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+             
+             Iterable<? extends JavaFileObject> compilationUnits = 
+                 fileManager.getJavaFileObjectsFromFiles(List.of(javaFile));
 
-            boolean success = task.call();
-            fileManager.close();
+             JavaCompiler.CompilationTask task = compiler.getTask(
+                     null, fileManager, null, compileOptions, null, compilationUnits);
 
-            if (success) {
-                log.info("Compilation successful for file: {}", javaFile.getName());
-                return CompilationResult.success("Successfully compiled " + javaFile.getName());
-            } else {
-                String errorMsg = "Compilation failed for file: " + javaFile.getName();
-                log.error(errorMsg);
-                return CompilationResult.failure(errorMsg);
-            }
+             boolean success = task.call();
+             fileManager.close();
 
-        } catch (IOException e) {
-            String errorMsg = "IO error during compilation: " + e.getMessage();
-            log.error(errorMsg, e);
-            return CompilationResult.failure(errorMsg);
-        }
-    }
+             if (success) {
+                 log.info("Compilation successful for file: {}", javaFile.getName());
+                 return CompilationResult.success("Successfully compiled " + javaFile.getName());
+             } else {
+                 String errorMsg = "Compilation failed for file: " + javaFile.getName();
+                 log.error(errorMsg);
+                 return CompilationResult.failure(errorMsg);
+             }
+         } catch (IOException e) {
+             String errorMsg = "IO error during compilation: " + e.getMessage();
+             log.error(errorMsg, e);
+             return CompilationResult.failure(errorMsg);
+         }
+     }
 
-    /**
-     * Compiles with detailed diagnostic information
-     */
-    public CompilationResult compileWithDiagnostics(File sourceDir) {
-        List<File> javaFiles = findJavaFiles(sourceDir);
-        
-        if (javaFiles.isEmpty()) {
-            return CompilationResult.success("No Java files found to compile");
-        }
-
-        log.info("Compiling with diagnostics: {} files", javaFiles.size());
-
-        try {
-            List<Diagnostic<? extends JavaFileObject>> diagnostics = new ArrayList<>();
-            DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
-
-            StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, null, null);
-            
-            Iterable<? extends JavaFileObject> compilationUnits = 
-                fileManager.getJavaFileObjectsFromFiles(javaFiles);
-
-            JavaCompiler.CompilationTask task = compiler.getTask(
-                null, fileManager, diagnosticCollector, options, null, compilationUnits);
-
-            boolean success = task.call();
-            fileManager.close();
-
-            List<String> diagnosticMessages = diagnostics.stream()
-                .map(d -> formatDiagnostic(d))
-                .collect(Collectors.toList());
-
-            if (success) {
-                log.info("Compilation successful with {} diagnostics", diagnostics.size());
-                return CompilationResult.success("Compilation successful", diagnosticMessages);
-            } else {
-                log.error("Compilation failed with {} diagnostics", diagnostics.size());
-                return CompilationResult.failure("Compilation failed", diagnosticMessages);
-            }
-
-        } catch (IOException e) {
-            String errorMsg = "IO error during compilation: " + e.getMessage();
-            log.error(errorMsg, e);
-            return CompilationResult.failure(errorMsg);
-        }
-    }
-
-    /**
-     * Tests if generated classes can be loaded (basic runtime test)
-     */
+     /**
+      * Tests if generated classes can be loaded (basic runtime test)
+      */
     public RuntimeTestResult testGeneratedClasses(File compiledClassesDir, String... classNames) {
         if (!compiledClassesDir.exists()) {
             return RuntimeTestResult.failure("Compiled classes directory does not exist");
@@ -337,13 +333,6 @@ public class CompilationTester {
         public String getMessage() { return message; }
         public List<String> getDiagnostics() { return diagnostics; }
 
-        public void assertSuccess() {
-            assertTrue(success, "Compilation should succeed: " + message);
-        }
-
-        public void assertFailure() {
-            assertFalse(success, "Compilation should fail: " + message);
-        }
     }
 
     /**
@@ -374,18 +363,6 @@ public class CompilationTester {
             return new RuntimeTestResult(false, message, loadedClasses, failedClasses);
         }
 
-        public boolean isSuccess() { return success; }
-        public String getMessage() { return message; }
-        public List<String> getLoadedClasses() { return loadedClasses; }
-        public List<String> getFailedClasses() { return failedClasses; }
-
-        public void assertSuccess() {
-            assertTrue(success, "Runtime test should succeed: " + message);
-        }
-
-        public void assertFailure() {
-            assertFalse(success, "Runtime test should fail: " + message);
-        }
     }
 
     /**

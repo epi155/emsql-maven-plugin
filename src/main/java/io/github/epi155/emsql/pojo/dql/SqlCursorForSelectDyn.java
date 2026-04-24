@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -54,7 +55,11 @@ public class SqlCursorForSelectDyn extends PojoAction
 
         delegateSelectSignature.signature(ipw, jdbc, name);
         String cName = Tools.capitalize(name);
-        ipw.putf("%sBuilder<O> %s(%n", cName, name);
+        List<String> tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
+        ipw.putf("%sBuilder", cName);
+        useGenerics(ipw, tKeys);
+//        declareGenerics(ipw, tKeys, iName, oName);
+        ipw.putf(" %s(%n", name);
 
         ipw.printf("        final Connection c");
         declareInput(ipw, jdbc);
@@ -67,10 +72,7 @@ public class SqlCursorForSelectDyn extends PojoAction
 
     private void returnBuilder(PrintModel ipw, JdbcStatement jdbc, String cName) {
         ipw.printf("return new %sBuilder<>(c", cName);
-        jdbc.getNMap().forEach((k, q) -> {
-            ipw.commaLn();
-            ipw.printf("%s", k);
-        });
+        pushInput(ipw, jdbc, 1);
         if (mc.oSize() >= 2) {
             ipw.commaLn();
             ipw.printf("so");
@@ -83,7 +85,7 @@ public class SqlCursorForSelectDyn extends PojoAction
         delegateSelectDyn.docEnd(ipw);
     }
 
-    private void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) throws InvalidQueryException {
+    private void defineBuilder(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         String cName = Tools.capitalize(name);
 
@@ -111,7 +113,7 @@ public class SqlCursorForSelectDyn extends PojoAction
         delegateSelectDyn.assignInput(ipw, jdbc);
         delegateSelectDyn.assignOutput(ipw);
         ipw.ends();
-        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName);
+        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName, () -> useGenerics(ipw, jdbc.getTKeys()));
 
         if (mode == ProgrammingModeEnum.Functional) {
             defineForEach(ipw, jdbc, name, kPrg);
@@ -153,9 +155,21 @@ public class SqlCursorForSelectDyn extends PojoAction
 
     private void defineOpenCursor(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {
         DocUtils.docCursorOpen(ipw, name);
-        ipw.printf("public SqlCursor<O> open() throws SQLException {%n");
+//        ipw.printf("public SqlCursor<O> open() throws SQLException {%n");
+        cc.add("io.github.epi155.emsql.runtime.SqlCursor");
+        Map<Integer, SqlOutParam> oMap = jdbc.getOMap();
+        int oSize = oMap.size();
+        String cName = Tools.capitalize(name);
+        ipw.printf("public ");
+        if (oSize == 1) {
+            String oType = oMap.get(1).getType().getWrapper();
+            ipw.putf("SqlCursor<%s> open%s() throws SQLException {%n", oType, cName);
+        } else {
+            ipw.putf("SqlCursor<O> open%s() throws SQLException {%n", cName);
+        }
+
         ipw.more();
-        ipw.printf("return new SqlCursor<O>() {%n");
+        ipw.printf("return new SqlCursor<>() {%n");
         ipw.more();
         ipw.printf("private final ResultSet rs;%n");
         ipw.printf("private final PreparedStatement ps;%n");

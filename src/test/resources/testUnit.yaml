@@ -1,5 +1,5 @@
 packageName: com.example.emsql
-className: DaoCursorDyn
+className: DaoTestUnit
 declare:
   idBool: long
   bool01: Bool?
@@ -52,32 +52,6 @@ declare:
   issuer.cdRevoke: INT?
 
 methods:
-  - methodName: cursor01
-    perform: !CursorForSelect
-      mode: ip
-      fetchSize: 250
-      execSql: |
-        select 
-          bool01,
-          bool11
-        into
-          :bool01,
-          :bool11 
-        from tbool
-
-  - methodName: cursor02
-    perform: !CursorForSelect
-      mode: fp
-      execSql: |
-        select 
-          bool01 - 1,
-          bool11      -- sql comment
-        into
-          :bool01,
-          :bool11 
-        from tbool
-        where bool02 = :bool02
-
   - methodName: certificateCursor
     perform: !CursorForSelectDyn
       timeout: 5          # (seconds) optional, default null (system default)
@@ -110,20 +84,3 @@ methods:
         isRenewed: C.ULTIMATE = 0
         isNotRenewed: C.ULTIMATE = 1
 
-   # - methodName: cursor04
-   #   perform: !CursorForSelectDyn
-   #   fetchSize: 250
-   #   mode: FP
-   #   execSql: |
-   #     select 
-   #       bool01,
-   #       bool11
-   #     into
-   #       :bool01,
-   #       :bool11 
-   #     from tbool
-   #   optionalAnd:
-   #     circuitEq: circ = :circ
-   #     dtEmisRange: dt_Emis between :dtMin and :dtMax
-   #     isRevoked: cd_revoke is null
-   #     notExpired: B.NOT_BEFORE <= :now and :now <= B.NOT_AFTER

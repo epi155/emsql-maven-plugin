@@ -96,135 +96,135 @@ class DqlRegressionTest {
     // Java8 POJO tests (default)
     @ParameterizedTest
     @MethodSource("selectSingleTestCases")
-    void testSelectSingleRegression(String testCase) throws Exception {
+    void testSelectSingleRegression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, false, false);
     }
 
     @ParameterizedTest
     @MethodSource("selectOptionalTestCases")
-    void testSelectOptionalRegression(String testCase) throws Exception {
+    void testSelectOptionalRegression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, false, false);
     }
 
     @ParameterizedTest
     @MethodSource("selectListTestCases")
-    void testSelectListRegression(String testCase) throws Exception {
+    void testSelectListRegression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, false, false);
     }
 
     @ParameterizedTest
     @MethodSource("cursorTestCases")
-    void testCursorRegression(String testCase) throws Exception {
+    void testCursorRegression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, false, false);
     }
 
     @ParameterizedTest
     @MethodSource("cursorFpTestCases")
-    void testCursorFpRegression(String testCase) throws Exception {
+    void testCursorFpRegression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, false, false);
     }
 
     @ParameterizedTest
     @MethodSource("insertTestCases")
-    void testInsertRegression(String testCase) throws Exception {
+    void testInsertRegression(String testCase) {
         runRegressionTest(testCase, DML_DIR, false, false);
     }
 
     @ParameterizedTest
     @MethodSource("updateTestCases")
-    void testUpdateRegression(String testCase) throws Exception {
+    void testUpdateRegression(String testCase) {
         runRegressionTest(testCase, DML_DIR, false, false);
     }
 
     @ParameterizedTest
     @MethodSource("deleteTestCases")
-    void testDeleteRegression(String testCase) throws Exception {
+    void testDeleteRegression(String testCase) {
         runRegressionTest(testCase, DML_DIR, false, false);
     }
 
     // Java7 tests
     @ParameterizedTest
     @MethodSource("selectSingleTestCases")
-    void testSelectSingleJava7Regression(String testCase) throws Exception {
+    void testSelectSingleJava7Regression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, true, false);
     }
 
     @ParameterizedTest
     @MethodSource("selectOptionalTestCases")
-    void testSelectOptionalJava7Regression(String testCase) throws Exception {
+    void testSelectOptionalJava7Regression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, true, false);
     }
 
     @ParameterizedTest
     @MethodSource("selectListTestCases")
-    void testSelectListJava7Regression(String testCase) throws Exception {
+    void testSelectListJava7Regression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, true, false);
     }
 
     @ParameterizedTest
     @MethodSource("cursorTestCases")
-    void testCursorJava7Regression(String testCase) throws Exception {
+    void testCursorJava7Regression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, true, false);
     }
 
     @ParameterizedTest
     @MethodSource("insertTestCases")
-    void testInsertJava7Regression(String testCase) throws Exception {
+    void testInsertJava7Regression(String testCase) {
         runRegressionTest(testCase, DML_DIR, true, false);
     }
 
     @ParameterizedTest
     @MethodSource("updateTestCases")
-    void testUpdateJava7Regression(String testCase) throws Exception {
+    void testUpdateJava7Regression(String testCase) {
         runRegressionTest(testCase, DML_DIR, true, false);
     }
 
     @ParameterizedTest
     @MethodSource("deleteTestCases")
-    void testDeleteJava7Regression(String testCase) throws Exception {
+    void testDeleteJava7Regression(String testCase) {
         runRegressionTest(testCase, DML_DIR, true, false);
     }
 
     // Spring tests (Java8 + Spring)
     @ParameterizedTest
     @MethodSource("selectSingleTestCases")
-    void testSelectSingleSpringRegression(String testCase) throws Exception {
+    void testSelectSingleSpringRegression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, false, true);
     }
 
     @ParameterizedTest
     @MethodSource("selectOptionalTestCases")
-    void testSelectOptionalSpringRegression(String testCase) throws Exception {
+    void testSelectOptionalSpringRegression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, false, true);
     }
 
     @ParameterizedTest
     @MethodSource("selectListTestCases")
-    void testSelectListSpringRegression(String testCase) throws Exception {
+    void testSelectListSpringRegression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, false, true);
     }
 
     @ParameterizedTest
     @MethodSource("cursorTestCases")
-    void testCursorSpringRegression(String testCase) throws Exception {
+    void testCursorSpringRegression(String testCase) {
         runRegressionTest(testCase, DQL_DIR, false, true);
     }
 
     @ParameterizedTest
     @MethodSource("insertTestCases")
-    void testInsertSpringRegression(String testCase) throws Exception {
+    void testInsertSpringRegression(String testCase) {
         runRegressionTest(testCase, DML_DIR, false, true);
     }
 
     @ParameterizedTest
     @MethodSource("updateTestCases")
-    void testUpdateSpringRegression(String testCase) throws Exception {
+    void testUpdateSpringRegression(String testCase) {
         runRegressionTest(testCase, DML_DIR, false, true);
     }
 
     @ParameterizedTest
     @MethodSource("deleteTestCases")
-    void testDeleteSpringRegression(String testCase) throws Exception {
+    void testDeleteSpringRegression(String testCase) {
         runRegressionTest(testCase, DML_DIR, false, true);
     }
 
@@ -267,7 +267,7 @@ class DqlRegressionTest {
             mojo.setJava7(java7);
             mojo.setProvider(spring ? "Spring" : null);
 
-            assertDoesNotThrow(() -> mojo.execute(), "Plugin should execute without errors");
+            assertDoesNotThrow(mojo::execute, "Plugin should execute without errors");
 
             List<File> generatedFiles = GeneratedCodeValidator.getAllGeneratedFiles(generatedDir);
             assertFalse(generatedFiles.isEmpty(), "Should generate at least one file");

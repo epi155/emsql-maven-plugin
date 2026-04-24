@@ -1,5 +1,5 @@
 packageName: com.example.emsql
-className: DaoP01
+className: DaoP01v1
 declare:
   idPraticaApp: bigint
   idPraticaCdm: int?
