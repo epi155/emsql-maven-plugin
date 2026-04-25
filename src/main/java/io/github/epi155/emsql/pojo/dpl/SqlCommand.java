@@ -40,14 +40,4 @@ public class SqlCommand extends PojoAction implements CommandModel {
         ipw.ends(); // end method
     }
 
-    @Override
-    public void declareNextClass(
-            PrintModel ipw,
-            String cName,
-            String eSqlObject,
-            JdbcStatement jdbc,
-            int batchSize,
-            String kPrg) {
-        throw new IllegalStateException();  // only batch mode
-    }
 }

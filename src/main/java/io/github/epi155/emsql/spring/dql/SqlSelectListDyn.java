@@ -15,7 +15,6 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -34,6 +33,7 @@ public class SqlSelectListDyn extends SpringAction
     @Getter
     @Setter
     private Integer fetchSize;
+    private TensorArgument tKeys;
 
     public SqlSelectListDyn() {
         super();
@@ -57,22 +57,23 @@ public class SqlSelectListDyn extends SpringAction
         cc.add("java.util.ArrayList");
         defineBuilder(ipw, jdbc, name, kPrg);
 
-        signature(ipw, jdbc, name);
+        tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
+        signature(ipw, jdbc, name, tKeys);
         String cName = Tools.capitalize(name);
         ipw.putf("%sBuilder", cName);
-        useGenerics(ipw, jdbc.getTKeys());
+        useGenerics(ipw, tKeys);
         ipw.putf(" %s(%n", name);
         ipw.commaReset();
 
         declareInput(ipw, jdbc);
         declareOutput(ipw);
         ipw.more();
-        returnBuilder(ipw, jdbc, cName);
+        returnBuilder(ipw, jdbc, cName, tKeys);
 
         ipw.ends();
     }
 
-    private void signature(PrintModel ipw, JdbcStatement jdbc, String name) {
+    private void signature(PrintModel ipw, JdbcStatement jdbc, String name, TensorArgument tKeys) {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
         docInput(ipw, jdbc);
@@ -82,10 +83,10 @@ public class SqlSelectListDyn extends SpringAction
         String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
         String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         ipw.printf("public ");
-        declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
+        declareGenerics(ipw, tKeys, iName, oName);
     }
 
-    private void returnBuilder(PrintModel ipw, JdbcStatement jdbc, String cName) {
+    private void returnBuilder(PrintModel ipw, JdbcStatement jdbc, String cName, TensorArgument tKeys) {
         cc.add("java.util.Collections");
         cc.add("java.lang.reflect.Method");
         cc.add("org.springframework.aop.framework.ProxyFactory");
@@ -126,7 +127,7 @@ public class SqlSelectListDyn extends SpringAction
 
         // 4. Collegamento del proxy con l'intercettore
         ipw.printf("%sBuilder", cName);
-        useGenerics(ipw, jdbc.getTKeys());
+        useGenerics(ipw, tKeys);
         ipw.putf(" target = new %sBuilder<>(", cName);
         int c = pushInput(ipw, jdbc, 0);
         if (mc.oSize() >= 2) {
@@ -139,7 +140,7 @@ public class SqlSelectListDyn extends SpringAction
         ipw.printf("ProxyFactory proxyFactory = new ProxyFactory(target);%n");
         ipw.printf("proxyFactory.addAdvice(txInterceptor);%n");
         ipw.printf("return (%sBuilder", cName);
-        useGenerics(ipw, jdbc.getTKeys());
+        useGenerics(ipw, tKeys);
         ipw.putf(") proxyFactory.getProxy();%n");
 
         ipw.less();
@@ -161,7 +162,7 @@ public class SqlSelectListDyn extends SpringAction
         String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
         String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         // class definition
-        List<String> tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
+        TensorArgument tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
         ipw.printf("public class %sBuilder", cName);
         declareGenerics(ipw, tKeys, iName, oName);
 
@@ -181,7 +182,7 @@ public class SqlSelectListDyn extends SpringAction
         delegateSelectDyn.assignInput(ipw, jdbc);
         delegateSelectDyn.assignOutput(ipw);
         ipw.ends();
-        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName, () -> useGenerics(ipw, jdbc.getTKeys()));   // final ?! CGLIB conflict
+        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName, () -> useGenerics(ipw, tKeys));   // final ?! CGLIB conflict
         defineMethodList(ipw, jdbc, name, kPrg);
         ipw.ends();
     }
@@ -209,16 +210,6 @@ public class SqlSelectListDyn extends SpringAction
         ipw.printf("final Connection c = DataSourceUtils.getConnection(dataSource);%n");
 
         delegateSelectDyn.writeResultListCode(ipw, jdbc, kPrg);
-    }
-
-    @Override
-    public void debugAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
-        delegateSelectDyn.debugAction(ipw, kPrg, jdbcStatement);
-    }
-
-    @Override
-    public void expandIn(@NotNull PrintModel ipw, @NotNull Map<Integer, SqlMulti> notScalar, String kPrg) {
-        delegateSelectDyn.expandIn(ipw, notScalar, kPrg);
     }
 
     @Override

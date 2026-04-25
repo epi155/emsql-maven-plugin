@@ -50,7 +50,7 @@ public class DelegateSelectDyn {
             cc.add("io.github.epi155.emsql.runtime.SqlArg");
             cc.add("java.util.List");
             cc.add("java.util.ArrayList");
-            ipw.more();
+//            ipw.more();
             ipw.printf("SqlTrace.showQuery(query, ");
             cc.traceParameterBegin(ipw);
             ipw.more();
@@ -61,7 +61,7 @@ public class DelegateSelectDyn {
             ipw.printf("return args.toArray(new SqlArg[0]);%n");
             cc.traceParameterEnds(ipw);
             ipw.printf("});%n");
-            ipw.less();
+//            ipw.less();
         }
     }
 
@@ -84,7 +84,7 @@ public class DelegateSelectDyn {
             cc.traceParameterEnds(ipw);
             ipw.printf("});%n");
             ipw.printf("throw e;%n");
-            ipw.ends();
+//            ipw.ends();
         }
     }
 
@@ -340,6 +340,10 @@ public class DelegateSelectDyn {
 
         debugAction(ipw, kPrg, jdbc);
 
+        if (cc.isDebug()) {
+            ipw.printf("try {%n");   // trap open
+            ipw.more();
+        }
         ipw.printf("this.ps = c.prepareStatement(query);%n");
         api.setInput(ipw, jdbc);
         setOptInput(ipw, kPrg);
@@ -347,6 +351,10 @@ public class DelegateSelectDyn {
         api.setQueryHints(ipw);
         ipw.printf("this.rs = ps.executeQuery();%n");
 
+        if (cc.isDebug()) {
+            dumpAction(ipw, kPrg, jdbc);    // catch trap open
+            ipw.ends(); // end trap open
+        }
         ipw.ends(); // end ctor
 
         // hasNext
@@ -407,9 +415,10 @@ public class DelegateSelectDyn {
         ipw.more();
         api.fetch(ipw, jdbc.getOMap());
         ipw.printf("co.accept(o);%n");
-        ipw.ends();
+        ipw.ends(); // end while
         ipw.ends(); // end try (ResultSet rs)
-        api.dumpAction(ipw, kPrg, jdbc);
+        dumpAction(ipw, kPrg, jdbc);    // catch try (PreparedStatement ps ...XXX
+        ipw.ends(); // end try (PreparedStatement ps)
         ipw.ends(); // end forEach
     }
 
@@ -446,11 +455,12 @@ public class DelegateSelectDyn {
         ipw.ends();
         ipw.printf("return list;%n");
         ipw.ends(); // end try (ResultSet rs)
+        dumpAction(ipw, kPrg, jdbc);
         ipw.ends(); // end try (PreparedStatement ps)
         ipw.ends(); // end list()
     }
 
-    public List<String> packGenerics(String name, Collection<Map<Integer, SqlParam>> optParams, List<String> fixParams) {
+    public TensorArgument packGenerics(String name, Collection<Map<Integer, SqlParam>> optParams, List<String> fixParams) {
         Map<String, SqlDataType> elems = new HashMap<>();
         for (Map<Integer, SqlParam> ak: optParams) {
             Collection<SqlParam> params = ak.values();
@@ -459,8 +469,6 @@ public class DelegateSelectDyn {
                 elems.put(aj.getName(), aj.getType());
             }
         }
-        List<String> l1 = filterNotScalar(elems);
-        l1.addAll(fixParams);
-        return l1;
+        return new TensorArgument(fixParams, filterNotScalar(elems));
     }
 }

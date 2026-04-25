@@ -1,0 +1,33 @@
+packageName: com.example.emsql
+className: DaoTestUnit
+declare:
+  idCertificate: long
+  commonName: varchar
+  locality: varchar
+  organization: varchar
+  organizationUnit: varchar
+  organizationsUnit: ( organizationUnit )
+  organizations: ( organization, organizationUnit )
+  state: char
+  tsMin: timestamp
+  tsMax: timestamp
+  now: timestamp
+
+methods:
+  - methodName: select46
+    perform: !CursorForSelectDyn
+      mode: FP
+      execSql: |
+        select
+          idCertificate, common_name
+        into
+          :idCertificate, :commonName
+        from certificate
+        where locality = :locality
+        and organization_unit = :organizationUnit
+        and not_before >= :tsMin
+        and not_after <= :tsMax
+        and organizationUnit in ( :organizationsUnit )
+      optionalAnd:
+        isNotExpired: NOT_BEFORE <= :now and NOT_AFTER >= :now
+        inOrg: ( organization, organization_unit ) in ( :organizations )

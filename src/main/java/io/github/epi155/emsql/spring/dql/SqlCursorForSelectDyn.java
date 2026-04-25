@@ -12,7 +12,6 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -56,9 +55,9 @@ public class SqlCursorForSelectDyn extends SpringAction
         cc.add("java.util.ArrayList");
         defineBuilder(ipw, jdbc, name, kPrg);
 
-        signature(ipw, jdbc, name);
+        TensorArgument tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
+        signature(ipw, jdbc, name, tKeys);
         String cName = Tools.capitalize(name);
-        List<String> tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
         ipw.putf("%sBuilder", cName);
         useGenerics(ipw, tKeys);
         ipw.putf(" %s(%n", name);
@@ -69,12 +68,12 @@ public class SqlCursorForSelectDyn extends SpringAction
         declareInput(ipw, jdbc);
         declareOutput(ipw);
         ipw.more();
-        returnBuilder(ipw, jdbc, cName);
+        returnBuilder(ipw, jdbc, cName, tKeys);
 
         ipw.ends();
     }
 
-    private void signature(PrintModel ipw, JdbcStatement jdbc, String name) {
+    private void signature(PrintModel ipw, JdbcStatement jdbc, String name, TensorArgument tKeys) {
         if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
         docBegin(ipw);
         docInput(ipw, jdbc);
@@ -84,10 +83,10 @@ public class SqlCursorForSelectDyn extends SpringAction
         String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
         String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         ipw.printf("public ");
-        declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
+        declareGenerics(ipw, tKeys, iName, oName);
     }
 
-    private void returnBuilder(PrintModel ipw, JdbcStatement jdbc, String cName) {
+    private void returnBuilder(PrintModel ipw, JdbcStatement jdbc, String cName, TensorArgument tKeys) {
         cc.add("java.util.Collections");
         cc.add("java.lang.reflect.Method");
         cc.add("org.springframework.aop.framework.ProxyFactory");
@@ -135,7 +134,7 @@ public class SqlCursorForSelectDyn extends SpringAction
         // 4. Collegamento del proxy con l'intercettore
 //        ipw.printf("%1$sBuilder<O> target = new %1$sBuilder<>(", cName);xxx
         ipw.printf("%sBuilder", cName);
-        useGenerics(ipw, jdbc.getTKeys());
+        useGenerics(ipw, tKeys);
         ipw.putf(" target = new %sBuilder<>(", cName);
         int c = pushInput(ipw, jdbc, 0);
         if (mc.oSize() >= 2) {
@@ -149,7 +148,7 @@ public class SqlCursorForSelectDyn extends SpringAction
         ipw.printf("proxyFactory.addAdvice(txInterceptor);%n");
 //        ipw.printf("return (%sBuilder<O>) proxyFactory.getProxy();%n", cName);
         ipw.printf("return (%sBuilder", cName);
-        useGenerics(ipw, jdbc.getTKeys());
+        useGenerics(ipw, tKeys);
         ipw.putf(") proxyFactory.getProxy();%n");
 
         ipw.less();
@@ -172,7 +171,8 @@ public class SqlCursorForSelectDyn extends SpringAction
         String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         // class definition
         ipw.printf("public class %sBuilder", cName);
-        declareGenerics(ipw, jdbc.getTKeys(), iName, oName);
+        TensorArgument tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
+        declareGenerics(ipw, tKeys, iName, oName);
 
         ipw.putf("{%n");
         ipw.more();
@@ -190,7 +190,7 @@ public class SqlCursorForSelectDyn extends SpringAction
         delegateSelectDyn.assignInput(ipw, jdbc);
         delegateSelectDyn.assignOutput(ipw);
         ipw.ends();
-        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName, () -> useGenerics(ipw, jdbc.getTKeys()));
+        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName, () -> useGenerics(ipw, tKeys));
 
         if (mode == ProgrammingModeEnum.Functional) {
             defineForEach(ipw, jdbc, name, kPrg);
@@ -231,15 +231,6 @@ public class SqlCursorForSelectDyn extends SpringAction
         } else {
             ipw.putf("%s<%s> co", cc.consumer(), type);
         }
-    }
-
-    @Override
-    public void debugAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
-        delegateSelectDyn.debugAction(ipw, kPrg, jdbcStatement);
-    }
-    @Override
-    public void dumpAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
-        delegateSelectDyn.dumpAction(ipw, kPrg, jdbcStatement);
     }
 
     private void defineOpenCursor(PrintModel ipw, JdbcStatement jdbc, String name, String kPrg) {

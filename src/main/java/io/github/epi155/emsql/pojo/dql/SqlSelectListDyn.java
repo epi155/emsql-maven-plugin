@@ -12,7 +12,6 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static io.github.epi155.emsql.commons.Contexts.cc;
@@ -23,7 +22,7 @@ public class SqlSelectListDyn extends PojoAction
         SelectListDynModel {
     private final DelegateSelectDyn delegateSelectDyn;
     private final DelegateSelectDynFields delegateSelectFields;
-    private final DelegateSelectSignature delegateSelectSignature;
+//    private final DelegateSelectSignature delegateSelectSignature;
     @Getter
     private final Map<String, Map<Integer, SqlParam>> andParms = new LinkedHashMap<>();
     @Setter
@@ -36,7 +35,7 @@ public class SqlSelectListDyn extends PojoAction
     public SqlSelectListDyn() {
         super();
         this.delegateSelectFields = new DelegateSelectDynFields(this);
-        this.delegateSelectSignature = new DelegateSelectSignature(this);
+//        this.delegateSelectSignature = new DelegateSelectSignature(this);
         this.delegateSelectDyn = new DelegateSelectDyn(this);
     }
 
@@ -56,10 +55,11 @@ public class SqlSelectListDyn extends PojoAction
         cc.add("java.util.ArrayList");
         defineBuilder(ipw, jdbc, name, kPrg);
 
-        delegateSelectSignature.signature(ipw, jdbc, name);
+        TensorArgument tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
+        signature(ipw, jdbc, name, tKeys);
         String cName = Tools.capitalize(name);
         ipw.putf("%sBuilder", cName);
-        useGenerics(ipw, jdbc.getTKeys());
+        useGenerics(ipw, tKeys);
         ipw.putf(" %s(%n", name);
 
         ipw.printf("        final Connection c");
@@ -69,6 +69,19 @@ public class SqlSelectListDyn extends PojoAction
         returnBuilder(ipw, jdbc, cName);
 
         ipw.ends();
+    }
+
+    private void signature(PrintModel ipw, JdbcStatement jdbc, String name, TensorArgument tKeys) {
+        if (mc.oSize() < 1) throw new IllegalStateException("Invalid output parameter number");
+        docBegin(ipw);
+        docInput(ipw, jdbc);
+        docOutput(ipw, jdbc.getOMap());
+        docEnd(ipw);
+
+        String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
+        String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
+        ipw.printf("public static ");
+        declareGenerics(ipw, tKeys, iName, oName);
     }
 
     private void returnBuilder(PrintModel ipw, JdbcStatement jdbc, String cName) {
@@ -93,7 +106,7 @@ public class SqlSelectListDyn extends PojoAction
         String iName = cc.inPrepare(name, jdbc.getIMap().values(), mc);
         String oName = cc.outPrepare(name, jdbc.getOMap().values(), mc);
         // class definition
-        List<String> tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
+        TensorArgument tKeys = delegateSelectDyn.packGenerics(name, andParms.values(), jdbc.getTKeys());
         ipw.printf("public static class %sBuilder", cName);
         declareGenerics(ipw, tKeys, iName, oName);
 
@@ -115,7 +128,7 @@ public class SqlSelectListDyn extends PojoAction
         delegateSelectDyn.assignInput(ipw, jdbc);
         delegateSelectDyn.assignOutput(ipw);
         ipw.ends();
-        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName, () -> useGenerics(ipw, jdbc.getTKeys()));
+        delegateSelectDyn.defineMethodArgBuilder(ipw, kPrg, cName, () -> useGenerics(ipw, tKeys));
         defineMethodList(ipw, jdbc, name, kPrg);
         ipw.ends();
     }
@@ -132,16 +145,6 @@ public class SqlSelectListDyn extends PojoAction
         ipw.more();
 
         delegateSelectDyn.writeResultListCode(ipw, jdbc, kPrg);
-    }
-
-    @Override
-    public void debugAction(PrintModel ipw, String kPrg, JdbcStatement jdbcStatement) {
-        delegateSelectDyn.debugAction(ipw, kPrg, jdbcStatement);
-    }
-
-    @Override
-    public void expandIn(@NotNull PrintModel ipw, @NotNull Map<Integer, SqlMulti> notScalar, String kPrg) {
-        delegateSelectDyn.expandIn(ipw, notScalar, kPrg);
     }
 
     @Override

@@ -18,10 +18,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <configDirectory>${project.basedir}/src/test/resources</configDirectory>
+                    <configDirectory>${project.basedir}/src/test/resources/unit/sandbox</configDirectory>
                     <generateDirectory>${project.basedir}/target/generated-test-sources/sandbox</generateDirectory>
                     <debugCode>true</debugCode>
-                    <provider>Spring</provider>
+                    <provider>Pojo</provider>
                     <modules>
                         <module>testUnit.yaml</module>
                     </modules>

@@ -18,7 +18,7 @@ class TestUnit {
 
     @Disabled
     @Test
-    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8/pom-test.xml")
+    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/sandbox/pom-test.xml")
     void testJ8PojoTest(SqlMojo mojo) throws Exception {
         log.info("Testing java8 fine-tuning ...");
         mojo.execute();

@@ -326,27 +326,51 @@ public abstract class SqlAction {
         }
     }
 
-    public void useGenerics(PrintModel ipw, List<String> inFlds) {
+    public void declareGenerics(PrintModel ipw, TensorArgument inFlds, String iName, String oName) {
+        if (mc.oSize() <= 1) {
+            if (mc.nSize() > IMAX) {
+                ipw.putf("<I extends %s", iName);
+                if (inFlds.isPresent())
+                    genericInner(ipw, inFlds);
+                ipw.putf("> ");
+            } else {
+                genericIn(ipw, inFlds.getAll(), "<", "> ");
+            }
+        } else {
+            if (mc.nSize() <= IMAX) {
+                ipw.putf("<O extends %s", oName);
+                genericIn(ipw, inFlds.getAll(), ",", null);
+                ipw.putf("> ");
+            } else {
+                ipw.putf("<I extends %1$s", iName);
+                if (inFlds.isPresent())
+                    genericInner(ipw, inFlds);
+                ipw.putf(",O extends %1$s> ", oName);
+            }
+        }
+    }
+
+    public void useGenerics(PrintModel ipw, TensorArgument inFlds) {
         if (mc.oSize() <= 1) {
             if (mc.nSize() > IMAX) {
                 ipw.putf("<I");
-                if (!inFlds.isEmpty()) {
+                if (inFlds.isPresent()) {
 //                    useInner(ipw, inFlds);
-                    addInner(ipw, inFlds);
+                    addInner(ipw, inFlds.getAll());
                 }
                 ipw.putf(">");
             } else {
-                useIn(ipw, inFlds, "<", ">");
+                useIn(ipw, inFlds.getAll(), "<", ">");
             }
         } else {
             if (mc.nSize() <= IMAX) {
                 ipw.putf("<O");
-                useIn(ipw, inFlds, ",", null);
+                useIn(ipw, inFlds.getAll(), ",", null);
                 ipw.putf(">");
             } else {
                 ipw.putf("<I");
-                if (!inFlds.isEmpty())
-                    useInner(ipw, inFlds);
+                if (inFlds.isPresent())
+                    addInner(ipw, inFlds.getAll());
                 ipw.putf(",O>");
             }
         }
@@ -378,15 +402,21 @@ public abstract class SqlAction {
             ipw.putf(",L%d extends %s%s", ++k, capitalize(fld), REQUEST);
         }
     }
-    private void useInner(PrintModel ipw, List<String> flds) {
-        ipw.putf("<");
-        for (int k = 1; k <= flds.size(); k++) {
-            if (k > 1) ipw.putf(",");
-            ipw.putf("L%d", k);
+    private void genericInner(PrintModel ipw, TensorArgument flds) {
+        if (flds.haveStatic()) {
+            ipw.putf("<");
+            for (int k = 1; k <= flds.staticSize(); k++) {
+                if (k > 1) ipw.putf(",");
+                ipw.putf("L%d", k);
+            }
+            ipw.putf(">");
         }
-        ipw.putf(">");
-        addInner(ipw, flds);
+        int k = 0;
+        for (val fld : flds.getAll()) {
+            ipw.putf(",L%d extends %s%s", ++k, capitalize(fld), REQUEST);
+        }
     }
+
     private void addInner(PrintModel ipw, List<String> flds) {
         int k = 0;
         for (val ignored : flds) {
