@@ -147,41 +147,13 @@ public class Tools {
             Map<String, SqlDataType> iFields,
             Map<String, SqlDataType> oFields,
             Map<String, SqlDataType> ioFields
-    ) {
+    ) { // match ^CALL (\w+)\((.*)\)$
         int ixCol = text.indexOf(':');
         if (ixCol < 0) {
             // there are no parameters
             return new JdbcStatement(text, Map.of(), Map.of());
         }
         int ixEnd = indexOf(text, ixCol + 1);
-        if (ixEnd < 0) {
-            // only one parameter at end-of-text (no space)
-            String parm = text.substring(ixCol + 1);
-            SqlDataType type = ioFields.get(parm);
-            if (type instanceof SqlScalarType) {
-                return new JdbcStatement(
-                        text.substring(0, ixCol) + "?",
-                        Map.of(1, new SqlParam(parm, type)),
-                        Map.of(1, new SqlOutParam(parm, (SqlScalarType) type)) );
-            } else if (type != null) {
-                throw new InvalidSqlParameter(parm, iFields, oFields);
-            }
-            type = iFields.get(parm);
-            if (type != null) {
-                return new JdbcStatement(
-                        text.substring(0, ixCol) + "?",
-                        Map.of(1, new SqlParam(parm, type)),
-                        Map.of());
-            }
-            type = oFields.get(parm);
-            if (type instanceof SqlScalarType) {
-                return new JdbcStatement(
-                        text.substring(0, ixCol) + "?",
-                        Map.of(),
-                        Map.of(1, new SqlOutParam(parm, (SqlScalarType)type)));
-            }
-            throw new InvalidSqlParameter(parm, iFields, oFields);
-        }
         String parm = text.substring(ixCol + 1, ixEnd);
 
         class MapStore implements ApiStore<JdbcStatement> {

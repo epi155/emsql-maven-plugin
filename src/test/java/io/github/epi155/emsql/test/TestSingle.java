@@ -144,6 +144,25 @@ class TestSingle {
         assertTrue(result.isSuccess(), "Compilation should succeed: " + result.getMessage());
     }
 
+    @Test
+    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-j8/pom-tools-ixend.xml")
+    void testJ8PojoEnNull(SqlMojo mojo) throws Exception {
+        log.info("Testing java8 pojo ixend) ...");
+        mojo.execute();
+
+        File generatedDir = getGenerateDirectory(mojo);
+        assertTrue(generatedDir.exists(), "Generated directory should exist");
+
+        CompilationTester compilationTester = new CompilationTester();
+        CompilationTester.CompilationResult result = compilationTester.compileWithDiagnostics(generatedDir);
+
+        log.info("Compilation diagnostics: {}", result.getMessage());
+        if (!result.isSuccess()) {
+            log.error("Compilation failed with diagnostics: {}", String.join("\n", result.getDiagnostics()));
+        }
+        assertTrue(result.isSuccess(), "Compilation should succeed: " + result.getMessage());
+    }
+
     private File getGenerateDirectory(SqlMojo mojo) {
         try {
             java.lang.reflect.Field field = SqlMojo.class.getDeclaredField("generateDirectory");

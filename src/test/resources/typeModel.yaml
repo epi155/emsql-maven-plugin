@@ -1,0 +1,11 @@
+packageName: com.example.emsql
+className: DaoTypeModel
+declare:
+  id: long
+  fieldList: (packageName)
+methods:
+  - methodName: findById
+    perform: !SelectOptional
+      execSql: |
+        select id into :id from table1 where id = :id
+

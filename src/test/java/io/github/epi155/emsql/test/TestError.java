@@ -131,4 +131,12 @@ class TestError {
                 .isInstanceOf(MojoExecutionException.class)
                 .hasCauseInstanceOf(InvalidQueryException.class);
     }
+    @Test
+    @InjectMojo(goal = "generate", pom = "src/test/resources/unit/test-err/pom-type-model.xml")
+    void testJ8PojoTypeModel(SqlMojo mojo) {
+        log.info("Testing typeModel/undefined field pojo ...");
+        assertThatThrownBy(mojo::execute)
+                .isInstanceOf(MojoExecutionException.class)
+                .hasCauseInstanceOf(ConstructorException.class);
+    }
 }

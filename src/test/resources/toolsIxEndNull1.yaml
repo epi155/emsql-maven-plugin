@@ -1,0 +1,13 @@
+packageName: com.example.emsql
+className: DaoToolsIxEndNull1
+declare:
+  ioParam: int
+methods:
+  - methodName: callWithInOut
+    perform: !InlineProcedure
+      execSql: |
+        DECLARE
+          v_io_param int;
+        BEGIN
+          HELO;
+        END; :ioParam
