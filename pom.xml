@@ -4,7 +4,7 @@
 
     <groupId>io.github.epi155</groupId>
     <artifactId>emsql-maven-plugin</artifactId>
-    <version>1.1-A4-SNAPSHOT</version>
+    <version>1.1-RC1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>JDBC DAO code generator</name>
 
@@ -45,12 +45,11 @@
     </scm>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <spring.version>5.3.39</spring.version>
-        <jupiter.version>5.14.3</jupiter.version>
+        <maven.compiler.release>11</maven.compiler.release>
+        <spring.version>6.2.18</spring.version>
+        <jupiter.version>6.0.3</jupiter.version>
     </properties>
 
     <dependencies>
@@ -131,7 +130,7 @@
         <dependency>
             <groupId>io.github.epi155</groupId>
             <artifactId>emsql-runtime</artifactId>
-            <version>1.1-A4-SNAPSHOT</version>
+            <version>1.1-RC1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -156,7 +155,7 @@
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq</artifactId>
-            <version>3.16.23</version>
+            <version>3.19.32</version>
             <scope>test</scope>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.assertj/assertj-core -->
@@ -295,8 +294,44 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.1</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.46</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test-compile-java-17</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <release>17</release>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.projectlombok</groupId>
+                                    <artifactId>lombok</artifactId>
+                                    <version>1.18.46</version>
+                                </path>
+                            </annotationProcessorPaths>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.3</version>
+                <configuration>
+                    <jvm>/usr/lib/jvm/java-17-openjdk/bin/java</jvm>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -309,21 +344,21 @@
                                 <groupId>org.junit.jupiter</groupId>
                                 <ignoreVersion>
                                     <type>range</type>
-                                    <version>[6.0.0,)</version>
+                                    <version>[7.0.0,)</version>
                                 </ignoreVersion>
                             </rule>
                             <rule>
                                 <groupId>org.springframework</groupId>
                                 <ignoreVersion>
                                     <type>range</type>
-                                    <version>[6.0.0,)</version>
+                                    <version>[7.0.0,)</version>
                                 </ignoreVersion>
                             </rule>
                             <rule>
                                 <groupId>org.jooq</groupId>
                                 <ignoreVersion>
                                     <type>range</type>
-                                    <version>[3.17.0,)</version>
+                                    <version>[3.20.0,)</version>
                                 </ignoreVersion>
                             </rule>
                         </rules>

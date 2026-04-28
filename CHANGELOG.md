@@ -4,14 +4,12 @@
 
 ### Added
 - new *SelectListDyn* template with optional AND conditions in the WHERE clause (since A1)
-- added new `CHAR(n)` sql types for `autoPad`:
+- added new `CHAR(n)` sql types for `autoPad` (since A3):
 
 | Field Type | JDBC Type | java type |
 |------------|-----------|-----------|
 | CHAR(n)    | CHAR      | String    |
 | CHAR(n)?   | CHAR      | String    |
-
-(since A3)
 
 - added more tests (since A3) and many more (since A4)
 

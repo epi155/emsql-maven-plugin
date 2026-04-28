@@ -9,7 +9,7 @@
             <plugin>
                 <groupId>io.github.epi155</groupId>
                 <artifactId>emsql-maven-plugin</artifactId>
-                <version>1.1-A4-SNAPSHOT</version>
+                <version>1.1-RC1-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <goals>
